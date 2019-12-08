@@ -1,6 +1,6 @@
 package meilisearch
 
-type SubClientIndexes interface {
+type ApiIndexes interface {
 	Get(uid string) (Index, error)
 	List() ([]Index, error)
 	Create(request CreateIndexRequest) (CreateIndexResponse, error)
@@ -13,7 +13,7 @@ type SubClientIndexes interface {
 	UpdateWithRawSchema(schema SchemaRaw) (UpdateIdResponse, error)
 }
 
-type SubClientDocuments interface {
+type ApiDocuments interface {
 	Get(identifier string) (interface{}, error)
 	Delete(identifier string) (UpdateIdResponse, error)
 	Deletes(identifier []string) (UpdateIdResponse, error)
@@ -22,11 +22,11 @@ type SubClientDocuments interface {
 	ClearAllDocuments() (UpdateIdResponse, error)
 }
 
-type SubClientSearch interface {
+type ApiSearch interface {
 	Search(params SearchRequest) (SearchResponse, error)
 }
 
-type SubClientSynonyms interface {
+type ApiSynonyms interface {
 	List(word string) ([]string, error)
 	ListAll() ([]ListSynonymsResponse, error)
 	Create(word string, synonyms []string) (UpdateIdResponse, error)
@@ -36,18 +36,18 @@ type SubClientSynonyms interface {
 	DeleteAll() (UpdateIdResponse, error)
 }
 
-type SubClientStopWords interface {
+type ApiStopWords interface {
 	List() ([]string, error)
 	Add(words []string) ([]UpdateIdResponse, error)
 	Deletes(words []string) ([]UpdateIdResponse, error)
 }
 
-type SubClientUpdates interface {
+type ApiUpdates interface {
 	Get(id int64) (Unknown, error)
 	List() ([]Unknown, error)
 }
 
-type SubClientKey interface {
+type ApiKey interface {
 	Get(key string) (APIKey, error)
 	List() ([]APIKey, error)
 	Create(request CreateApiKeyRequest) (APIKey, error)
@@ -55,26 +55,26 @@ type SubClientKey interface {
 	Delete(key string) error
 }
 
-type SubClientSettings interface {
+type ApiSettings interface {
 	Get() (Settings, error)
 	AddOrUpdate(request Settings) (UpdateIdResponse, error)
 }
 
-type SubClientStats interface {
+type ApiStats interface {
 	Get() (Stats, error)
 	List() ([]Stats, error)
 }
 
-type SubClientHealth interface {
+type ApiHealth interface {
 	Get() error
 	Set(health bool) error
 }
 
-type SubClientVersion interface {
+type ApiVersion interface {
 	Get() (Version, error)
 }
 
-type SubClientSystemInformation interface {
+type ApiSystemInformation interface {
 	Get() (SystemInformation, error)
 	GetPretty() (SystemInformationPretty, error)
 }
