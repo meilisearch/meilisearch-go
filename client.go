@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"path"
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -33,7 +34,7 @@ func NewClient(config Config) *Client {
 	}
 }
 
-func NewClientWithHttpClient(config Config, client http.Client) *Client {
+func NewClientWithCustomHttpClient(config Config, client http.Client) *Client {
 	return &Client{
 		config:     config,
 		httpClient: client,
@@ -110,4 +111,28 @@ func (c Client) executeRequest(i internalRequest) error {
 	}
 
 	return nil
+}
+
+func IsStatusCodeErr(err error) bool {
+	return strings.HasPrefix(err.Error(), "status code received is not a status code of success")
+}
+
+func IsRequestMarshalErr(err error) bool {
+	return strings.HasPrefix(err.Error(), "unable to marshal body from request")
+}
+
+func IsRequestCreationErr(err error) bool {
+	return strings.HasPrefix(err.Error(), "unable to create new request")
+}
+
+func IsRequestExecutionErr(err error) bool {
+	return strings.HasPrefix(err.Error(), "unable to execute request")
+}
+
+func IsResponseBodyErr(err error) bool {
+	return strings.HasPrefix(err.Error(), "unable to read body from response")
+}
+
+func IsResponseUnmarshalErr(err error) bool {
+	return strings.HasPrefix(err.Error(), "unable to unmarshal body from response")
 }
