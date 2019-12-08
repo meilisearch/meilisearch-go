@@ -1,6 +1,6 @@
 package meilisearch
 
-type IIndexes interface {
+type SubClientIndexes interface {
 	Get(uid string) (Index, error)
 	List() ([]Index, error)
 	Create(request CreateIndexRequest) (CreateIndexResponse, error)
@@ -13,7 +13,7 @@ type IIndexes interface {
 	UpdateWithRawSchema(schema SchemaRaw) (UpdateIdResponse, error)
 }
 
-type IDocuments interface {
+type SubClientDocuments interface {
 	Get(identifier string) (interface{}, error)
 	Delete(identifier string) (UpdateIdResponse, error)
 	Deletes(identifier []string) (UpdateIdResponse, error)
@@ -22,11 +22,11 @@ type IDocuments interface {
 	ClearAllDocuments() (UpdateIdResponse, error)
 }
 
-type ISearch interface {
+type SubClientSearch interface {
 	Search(params SearchRequest) (SearchResponse, error)
 }
 
-type ISynonyms interface {
+type SubClientSynonyms interface {
 	List(word string) ([]string, error)
 	ListAll() ([]ListSynonymsResponse, error)
 	Create(word string, synonyms []string) (UpdateIdResponse, error)
@@ -36,18 +36,18 @@ type ISynonyms interface {
 	DeleteAll() (UpdateIdResponse, error)
 }
 
-type IStopWords interface {
+type SubClientStopWords interface {
 	List() ([]string, error)
 	Add(words []string) ([]UpdateIdResponse, error)
 	Deletes(words []string) ([]UpdateIdResponse, error)
 }
 
-type IUpdates interface {
+type SubClientUpdates interface {
 	Get(id int64) (Unknown, error)
 	List() ([]Unknown, error)
 }
 
-type IKey interface {
+type SubClientKey interface {
 	Get(key string) (APIKey, error)
 	List() ([]APIKey, error)
 	Create(request CreateApiKeyRequest) (APIKey, error)
@@ -55,26 +55,26 @@ type IKey interface {
 	Delete(key string) error
 }
 
-type ISettings interface {
+type SubClientSettings interface {
 	Get() (Settings, error)
 	AddOrUpdate(request Settings) (UpdateIdResponse, error)
 }
 
-type IStats interface {
+type SubClientStats interface {
 	Get() (Stats, error)
 	List() ([]Stats, error)
 }
 
-type IHealth interface {
+type SubClientHealth interface {
 	Get() error
 	Set(health bool) error
 }
 
-type IVersion interface {
+type SubClientVersion interface {
 	Get() (Version, error)
 }
 
-type ISystemInformation interface {
+type SubClientSystemInformation interface {
 	Get() (SystemInformation, error)
 	GetPretty() (SystemInformationPretty, error)
 }
