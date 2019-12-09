@@ -14,11 +14,11 @@ type ApiIndexes interface {
 }
 
 type ApiDocuments interface {
-	Get(identifier string) (interface{}, error)
+	Get(identifier string, documentPtr interface{}) error
 	Delete(identifier string) (*UpdateIdResponse, error)
 	Deletes(identifier []string) (*UpdateIdResponse, error)
-	List(request ListDocumentsRequest) ([]interface{}, error)
-	AddOrUpdate([]interface{}) (*UpdateIdResponse, error)
+	List(request ListDocumentsRequest, documentsPtr interface{}) error
+	AddOrUpdate(documentsPtr interface{}) (*UpdateIdResponse, error)
 	ClearAllDocuments() (*UpdateIdResponse, error)
 }
 

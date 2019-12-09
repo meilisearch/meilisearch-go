@@ -2,11 +2,15 @@ package meilisearch
 
 import "net/http"
 
-type ClientIndexes struct {
+type clientIndexes struct {
 	client *Client
 }
 
-func (c ClientIndexes) Get(uid string) (resp *Index, err error) {
+func newClientIndexes(client *Client) *clientIndexes {
+	return &clientIndexes{client: client}
+}
+
+func (c clientIndexes) Get(uid string) (resp *Index, err error) {
 	resp = &Index{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid,
@@ -25,7 +29,7 @@ func (c ClientIndexes) Get(uid string) (resp *Index, err error) {
 	return resp, nil
 }
 
-func (c ClientIndexes) List() (resp []Index, err error) {
+func (c clientIndexes) List() (resp []Index, err error) {
 	resp = []Index{}
 	req := internalRequest{
 		endpoint:            "/indexes",
@@ -44,7 +48,7 @@ func (c ClientIndexes) List() (resp []Index, err error) {
 	return resp, nil
 }
 
-func (c ClientIndexes) Create(request CreateIndexRequest) (resp *CreateIndexResponse, err error) {
+func (c clientIndexes) Create(request CreateIndexRequest) (resp *CreateIndexResponse, err error) {
 	resp = &CreateIndexResponse{}
 	req := internalRequest{
 		endpoint:            "/indexes",
@@ -63,7 +67,7 @@ func (c ClientIndexes) Create(request CreateIndexRequest) (resp *CreateIndexResp
 	return resp, nil
 }
 
-func (c ClientIndexes) Update(uid string, name string) (resp *Index, err error) {
+func (c clientIndexes) Update(uid string, name string) (resp *Index, err error) {
 	resp = &Index{}
 	req := internalRequest{
 		endpoint: "/indexes/" + uid,
@@ -84,7 +88,7 @@ func (c ClientIndexes) Update(uid string, name string) (resp *Index, err error) 
 	return resp, nil
 }
 
-func (c ClientIndexes) Delete(uid string) (ok bool, err error) {
+func (c clientIndexes) Delete(uid string) (ok bool, err error) {
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid,
 		method:              http.MethodDelete,
@@ -103,7 +107,7 @@ func (c ClientIndexes) Delete(uid string) (ok bool, err error) {
 	return true, nil
 }
 
-func (c ClientIndexes) GetRawSchema(uid string) (resp *SchemaRaw, err error) {
+func (c clientIndexes) GetRawSchema(uid string) (resp *SchemaRaw, err error) {
 	resp = &SchemaRaw{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid + "/schema?raw=true",
@@ -121,7 +125,7 @@ func (c ClientIndexes) GetRawSchema(uid string) (resp *SchemaRaw, err error) {
 	return resp, nil
 }
 
-func (c ClientIndexes) GetSchema(uid string) (resp *Schema, err error) {
+func (c clientIndexes) GetSchema(uid string) (resp *Schema, err error) {
 	resp = &Schema{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid + "/schema",
@@ -140,7 +144,7 @@ func (c ClientIndexes) GetSchema(uid string) (resp *Schema, err error) {
 	return resp, nil
 }
 
-func (c ClientIndexes) UpdateSchema(uid string, schema Schema) (resp *UpdateIdResponse, err error) {
+func (c clientIndexes) UpdateSchema(uid string, schema Schema) (resp *UpdateIdResponse, err error) {
 	resp = &UpdateIdResponse{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid + "/schema",
@@ -159,7 +163,7 @@ func (c ClientIndexes) UpdateSchema(uid string, schema Schema) (resp *UpdateIdRe
 	return resp, nil
 }
 
-func (c ClientIndexes) UpdateWithRawSchema(uid string, schema SchemaRaw) (resp *UpdateIdResponse, err error) {
+func (c clientIndexes) UpdateWithRawSchema(uid string, schema SchemaRaw) (resp *UpdateIdResponse, err error) {
 	resp = &UpdateIdResponse{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid + "/schema",

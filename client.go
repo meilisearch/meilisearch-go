@@ -22,26 +22,34 @@ type Config struct {
 type Client struct {
 	config     Config
 	httpClient http.Client
+
+	// singleton clients which don't need index id
+	apiIndexes ApiIndexes
 }
 
 func NewClient(config Config) *Client {
-	return &Client{
-		config: config,
-		httpClient: http.Client{
-			Timeout: time.Second,
-		},
-	}
+	return NewClientWithCustomHttpClient(config, http.Client{
+		Timeout: time.Second,
+	})
 }
 
 func NewClientWithCustomHttpClient(config Config, client http.Client) *Client {
-	return &Client{
+	c := &Client{
 		config:     config,
 		httpClient: client,
 	}
+
+	c.apiIndexes = newClientIndexes(c)
+
+	return c
 }
 
-func (c *Client) Indexes() ClientIndexes {
-	return ClientIndexes{client: c}
+func (c *Client) Indexes() ApiIndexes {
+	return c.apiIndexes
+}
+
+func (c *Client) Documents(indexId string) ApiDocuments {
+	return newClientDocuments(c, indexId)
 }
 
 type internalRequest struct {
@@ -99,7 +107,9 @@ func (c Client) executeRequest(i internalRequest) error {
 		}
 
 		if !ok {
-			return fmt.Errorf("status code received is not a status code of success: %v (%s)", i.acceptedStatusCodes, errContext)
+			b, _ := ioutil.ReadAll(response.Body)
+			fmt.Println(string(b))
+			return fmt.Errorf("status code received is not a status code of success: %v found %s (%s)", i.acceptedStatusCodes, response.Status, errContext)
 		}
 	}
 

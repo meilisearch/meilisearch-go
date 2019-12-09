@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var indexes ClientIndexes
+var indexes clientIndexes
 
 func TestClientIndexes_Create(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_Create")
@@ -134,5 +134,5 @@ func init() {
 		Host: "http://localhost:7700",
 	})
 
-	indexes = ClientIndexes{client}
+	indexes = clientIndexes{client}
 }
