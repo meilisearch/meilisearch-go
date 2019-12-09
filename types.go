@@ -8,22 +8,29 @@ type Unknown map[string]interface{}
 // Internal types to Meilisearch
 //
 
-type AttributesKeys string
+type SchemaAttributes string
 
 const (
-	AttributesKeysDisplayed AttributesKeys = "displayed"
-	AttributesKeysIndexed   AttributesKeys = "indexed"
-	AttributesKeysRanked    AttributesKeys = "ranked"
+	SchemaAttributesDisplayed  SchemaAttributes = "displayed"
+	SchemaAttributesIndexed    SchemaAttributes = "indexed"
+	SchemaAttributesRanked     SchemaAttributes = "ranked"
+	SchemaAttributesIdentifier SchemaAttributes = "identifier"
 )
 
-type Attributes map[AttributesKeys]bool
+type Attributes map[string]bool
 
+type RawAttribute struct {
+	Displayed  bool `json:"displayed"`
+	Indexed    bool `json:"indexed"`
+	Ranked     bool `json:"ranked"`
+	Identifier bool `json:"identifier"`
+}
 type SchemaRaw struct {
-	Identifier string     `json:"identifier"`
-	Attributes Attributes `json:"attributes"`
+	Identifier string                  `json:"identifier"`
+	Attributes map[string]RawAttribute `json:"attributes"`
 }
 
-type Schema map[string][]string
+type Schema map[string][]SchemaAttributes
 
 type Index struct {
 	Name      string    `json:"name"`
@@ -132,11 +139,6 @@ type CreateIndexResponse struct {
 	UpdateId  int64     `json:"updateId,omitempty"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
-}
-
-type UpdateIndexRequest struct {
-	Uid  string `json:"uid"`
-	Name string `json:"name"`
 }
 
 type SearchRequest struct {

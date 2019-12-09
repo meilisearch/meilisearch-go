@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-	"path"
 	"strings"
 	"time"
 
@@ -55,7 +54,7 @@ type internalRequest struct {
 }
 
 func (c Client) executeRequest(i internalRequest) error {
-	errContext := fmt.Sprintf(`Endpoint="%s %s" Function=%s ApiName=%s`, i.method, i.endpoint, i.functionName, i.apiName)
+	errContext := fmt.Sprintf(`Endpoint="%s %s" Function="%s" Api="%s"`, i.method, i.endpoint, i.functionName, i.apiName)
 
 	var (
 		request *http.Request
@@ -67,9 +66,9 @@ func (c Client) executeRequest(i internalRequest) error {
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("unable to marshal body from request (%s)", errContext))
 		}
-		request, err = http.NewRequest(i.method, path.Join(c.config.Host, i.endpoint), bytes.NewBuffer(b))
+		request, err = http.NewRequest(i.method, c.config.Host+i.endpoint, bytes.NewBuffer(b))
 	} else {
-		request, err = http.NewRequest(i.method, path.Join(c.config.Host, i.endpoint), nil)
+		request, err = http.NewRequest(i.method, c.config.Host+i.endpoint, nil)
 	}
 
 	if err != nil {
@@ -105,7 +104,9 @@ func (c Client) executeRequest(i internalRequest) error {
 		if err != nil {
 			return errors.Wrap(err, fmt.Sprintf("unable to read body from response (%s)", errContext))
 		}
+
 		if err := json.Unmarshal(b, i.withResponse); err != nil {
+			fmt.Println(string(b), response.Status)
 			return errors.Wrap(err, fmt.Sprintf("unable to unmarshal body from response (%s)", errContext))
 		}
 	}
