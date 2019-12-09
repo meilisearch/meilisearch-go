@@ -40,6 +40,10 @@ func NewClientWithCustomHttpClient(config Config, client http.Client) *Client {
 	}
 }
 
+func (c *Client) Indexes() ClientIndexes {
+	return ClientIndexes{client: c}
+}
+
 type internalRequest struct {
 	endpoint string
 	method   string
