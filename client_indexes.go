@@ -107,8 +107,8 @@ func (c clientIndexes) Delete(uid string) (ok bool, err error) {
 	return true, nil
 }
 
-func (c clientIndexes) GetRawSchema(uid string) (resp *SchemaRaw, err error) {
-	resp = &SchemaRaw{}
+func (c clientIndexes) GetRawSchema(uid string) (resp *RawSchema, err error) {
+	resp = &RawSchema{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid + "/schema?raw=true",
 		method:              http.MethodGet,
@@ -163,7 +163,7 @@ func (c clientIndexes) UpdateSchema(uid string, schema Schema) (resp *UpdateIdRe
 	return resp, nil
 }
 
-func (c clientIndexes) UpdateWithRawSchema(uid string, schema SchemaRaw) (resp *UpdateIdResponse, err error) {
+func (c clientIndexes) UpdateWithRawSchema(uid string, schema RawSchema) (resp *UpdateIdResponse, err error) {
 	resp = &UpdateIdResponse{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid + "/schema",

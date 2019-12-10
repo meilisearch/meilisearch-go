@@ -103,7 +103,7 @@ func TestClientIndexes_UpdateWithRawSchema(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_GetSchemaRaw")
 
 	time.Sleep(100 * time.Millisecond)
-	_, err := indexes.UpdateWithRawSchema(resp.Uid, SchemaRaw{
+	_, err := indexes.UpdateWithRawSchema(resp.Uid, RawSchema{
 		Identifier: "id",
 		Attributes: map[string]RawAttribute{
 			"id":    {Identifier: true, Indexed: true, Displayed: true},

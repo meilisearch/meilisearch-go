@@ -25,7 +25,7 @@ type RawAttribute struct {
 	Ranked     bool `json:"ranked"`
 	Identifier bool `json:"identifier"`
 }
-type SchemaRaw struct {
+type RawSchema struct {
 	Identifier string                  `json:"identifier"`
 	Attributes map[string]RawAttribute `json:"attributes"`
 }
