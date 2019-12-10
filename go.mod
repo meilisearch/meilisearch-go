@@ -1,4 +1,4 @@
-module github.com/alexisvisco/meilisearch-go
+module github.com/meilisearch/meilisearch-go
 
 go 1.12
 
