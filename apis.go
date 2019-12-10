@@ -40,12 +40,27 @@ type ApiIndexes interface {
 	UpdateWithRawSchema(uid string, schema RawSchema) (*UpdateIdResponse, error)
 }
 
+// Documents are objects composed of fields containing any data.
 type ApiDocuments interface {
+
+	// Get one document using its unique identifier.
+	// documentPtr should be a pointer.
 	Get(identifier string, documentPtr interface{}) error
+
+	// Delete one document based on its unique identifier.
 	Delete(identifier string) (*UpdateIdResponse, error)
+
+	// Delete a selection of documents based on array of identifiers.
 	Deletes(identifier []string) (*UpdateIdResponse, error)
+
+	// List the documents in an unordered way.
+	// WARNING: this route is a non-optimized route, it can be a little bit slow to answer.
 	List(request ListDocumentsRequest, documentsPtr interface{}) error
+
+	// AddOrUpdate a list of documents, update them if they already exist based on their unique identifiers.
 	AddOrUpdate(documentsPtr interface{}) (*UpdateIdResponse, error)
+
+	// Delete all documents in the specified index.
 	ClearAllDocuments() (*UpdateIdResponse, error)
 }
 
