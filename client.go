@@ -48,6 +48,10 @@ func (c *Client) Documents(indexId string) ApiDocuments {
 	return newClientDocuments(c, indexId)
 }
 
+func (c *Client) Search(indexId string) ApiSearch {
+	return newClientSearch(c, indexId)
+}
+
 type internalRequest struct {
 	endpoint string
 	method   string
