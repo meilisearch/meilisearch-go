@@ -142,31 +142,17 @@ type CreateIndexResponse struct {
 }
 
 type SearchRequest struct {
-	Query                 string   `json:"q"`
-	Offset                int64    `json:"offset,omitempty"`
-	Limit                 int64    `json:"limit,omitempty"`
-	AttributesToRetrieve  []string `json:"attributesToRetrieve,omitempty"`
-	AttributesToSearchIn  []string `json:"attributesToSearchIn,omitempty"`
-	AttributesToCrop      []string `json:"attributesYoCrop,omitempty"`
-	CropLength            int64    `json:"cropLength,omitempty"`
-	AttributesToHighlight []string `json:"attributesToHighlight,omitempty"`
-	Filters               string   `json:"filters,omitempty"`
-	TimeoutMs             int64    `json:"timeoutMs,omitempty"`
-	Matches               bool     `json:"matches,omitempty"`
-}
-
-type realSearchRequest struct {
-	Query                 string `json:"q"`
-	Offset                int64  `json:"offset,omitempty"`
-	Limit                 int64  `json:"limit,omitempty"`
-	AttributesToRetrieve  string `json:"attributesToRetrieve,omitempty"`
-	AttributesToSearchIn  string `json:"attributesToSearchIn,omitempty"`
-	AttributesToCrop      string `json:"attributesYoCrop,omitempty"`
-	CropLength            int64  `json:"cropLength,omitempty"`
-	AttributesToHighlight string `json:"attributesToHighlight,omitempty"`
-	Filters               string `json:"filters,omitempty"`
-	TimeoutMs             int64  `json:"timeoutMs,omitempty"`
-	Matches               bool   `json:"matches,omitempty"`
+	Query                 string
+	Filters               string
+	Offset                int64
+	Limit                 int64
+	TimeoutMs             int64
+	CropLength            int64
+	AttributesToRetrieve  []string
+	AttributesToSearchIn  []string
+	AttributesToCrop      []string
+	AttributesToHighlight []string
+	Matches               bool
 }
 
 type SearchResponse struct {

@@ -18,16 +18,17 @@ const (
 	ErrCodeResponseStatusCode
 	ErrCodeResponseReadBody
 	ErrCodeResponseUnmarshalBody
+	ErrCodeUrlParsing
 )
 
 const (
 	rawStringCtx                   = `(path "${method} ${endpoint}" with method "${apiName}.${function})`
-	rawStringMarshalRequest        = `unable to marshal body from request: ${request}`
+	rawStringMarshalRequest        = `unable to marshal body from request: '${request}'`
 	rawStringRequestCreation       = `unable to create new request`
 	rawStringRequestExecution      = `unable to execute request`
 	rawStringResponseStatusCode    = `unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, message from api: '${meilisearchMessage}'`
-	rawStringResponseReadBody      = `unable to read body from response ${response}`
-	rawStringResponseUnmarshalBody = `unable to unmarshal body from response ${response}`
+	rawStringResponseReadBody      = `unable to read body from response: '${response}'`
+	rawStringResponseUnmarshalBody = `unable to unmarshal body from response: '${response}' status code: ${statusCode}`
 )
 
 func (e ErrCode) rawMessage() string {
