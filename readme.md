@@ -29,7 +29,11 @@ func main() {
     index, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
         Name: "Meilimelo",
         Schema: meilisearch.Schema{
-            "id": {"identifier", "indexed", "displayed"},
+            "id": {
+                meilisearch.SchemaAttributesIdentifier,
+                meilisearch.SchemaAttributesIndexed, 
+                meilisearch.SchemaAttributesDisplayed, 
+            },
         },
     })
     
