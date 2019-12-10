@@ -57,3 +57,5 @@ func main() {
 - Indexes https://docs.meilisearch.com/references/indexes.html 
 - Documents https://docs.meilisearch.com/references/documents.html 
 - Search https://docs.meilisearch.com/references/search.html 
+- Updates https://docs.meilisearch.com/references/updates.html 
+- Version https://docs.meilisearch.com/references/version.html 
