@@ -1,3 +1,5 @@
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/meilisearch/meilisearch-go/Go)
+
 ### Description
 
 This Go library is a client for the MeiliSearch Database. 
