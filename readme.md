@@ -2,7 +2,9 @@
 
 This Go library is a client for the MeiliSearch Database. 
 
-Currently the whole API is not yet implemented. This is not yet usable in production.
+Currently the whole API is not yet implemented. 
+
+**Warning: WIP this is not yet usable in production.**
 
 ### Dependencies
 
