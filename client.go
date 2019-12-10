@@ -3,13 +3,9 @@ package meilisearch
 import (
 	"bytes"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 type Config struct {
@@ -66,7 +62,16 @@ type internalRequest struct {
 }
 
 func (c Client) executeRequest(i internalRequest) error {
-	errContext := fmt.Sprintf(`Endpoint="%s %s" Function="%s" Api="%s"`, i.method, i.endpoint, i.functionName, i.apiName)
+	meiliErr := &MeiliError{
+		Endpoint:           i.endpoint,
+		Method:             i.method,
+		Function:           i.functionName,
+		APIName:            i.apiName,
+		RequestToString:    "empty request",
+		ResponseToString:   "empty response",
+		MeilisearchMessage: "empty response",
+		StatusCodeExpected: i.acceptedStatusCodes,
+	}
 
 	var (
 		request *http.Request
@@ -76,15 +81,16 @@ func (c Client) executeRequest(i internalRequest) error {
 	if i.withRequest != nil {
 		b, err := json.Marshal(i.withRequest)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("unable to marshal body from request (%s)", errContext))
+			return meiliErr.WithErrCode(ErrCodeMarshalRequest, err)
 		}
+		meiliErr.RequestToString = string(b)
 		request, err = http.NewRequest(i.method, c.config.Host+i.endpoint, bytes.NewBuffer(b))
 	} else {
 		request, err = http.NewRequest(i.method, c.config.Host+i.endpoint, nil)
 	}
 
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("unable to create new request (%s)", errContext))
+		return meiliErr.WithErrCode(ErrCodeRequestCreation, err)
 	}
 
 	if c.config.APIKey != "" {
@@ -93,10 +99,12 @@ func (c Client) executeRequest(i internalRequest) error {
 
 	response, err := c.httpClient.Do(request)
 	if err != nil {
-		return errors.Wrap(err, fmt.Sprintf("unable to execute request (%s)", errContext))
+		return meiliErr.WithErrCode(ErrCodeRequestExecution, err)
 	}
 
 	code := response.StatusCode
+	meiliErr.StatusCode = code
+
 	if i.acceptedStatusCodes != nil {
 		ok := false
 		for _, acceptedCode := range i.acceptedStatusCodes {
@@ -107,47 +115,25 @@ func (c Client) executeRequest(i internalRequest) error {
 		}
 
 		if !ok {
-			b, _ := ioutil.ReadAll(response.Body)
-			fmt.Println(string(b))
-			return fmt.Errorf("status code received is not a status code of success: %v found %s (%s)", i.acceptedStatusCodes, response.Status, errContext)
+			b, errbody := ioutil.ReadAll(response.Body)
+			if errbody == nil {
+				meiliErr.ErrorBody(b)
+			}
+
+			return meiliErr.WithErrCode(ErrCodeResponseStatusCode)
 		}
 	}
 
 	if i.withResponse != nil {
 		b, err := ioutil.ReadAll(response.Body)
 		if err != nil {
-			return errors.Wrap(err, fmt.Sprintf("unable to read body from response (%s)", errContext))
+			return meiliErr.WithErrCode(ErrCodeResponseReadBody, err)
 		}
-
+		meiliErr.ResponseToString = string(b)
 		if err := json.Unmarshal(b, i.withResponse); err != nil {
-			fmt.Println(string(b), response.Status)
-			return errors.Wrap(err, fmt.Sprintf("unable to unmarshal body from response (%s)", errContext))
+			return meiliErr.WithErrCode(ErrCodeResponseUnmarshalBody, err)
 		}
 	}
 
 	return nil
-}
-
-func IsStatusCodeErr(err error) bool {
-	return strings.HasPrefix(err.Error(), "status code received is not a status code of success")
-}
-
-func IsRequestMarshalErr(err error) bool {
-	return strings.HasPrefix(err.Error(), "unable to marshal body from request")
-}
-
-func IsRequestCreationErr(err error) bool {
-	return strings.HasPrefix(err.Error(), "unable to create new request")
-}
-
-func IsRequestExecutionErr(err error) bool {
-	return strings.HasPrefix(err.Error(), "unable to execute request")
-}
-
-func IsResponseBodyErr(err error) bool {
-	return strings.HasPrefix(err.Error(), "unable to read body from response")
-}
-
-func IsResponseUnmarshalErr(err error) bool {
-	return strings.HasPrefix(err.Error(), "unable to unmarshal body from response")
 }

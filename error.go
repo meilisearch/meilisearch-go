@@ -1,8 +1,11 @@
 package meilisearch
 
 import (
+	"encoding/json"
 	"fmt"
 	"strings"
+
+	"github.com/pkg/errors"
 )
 
 type ErrCode int
@@ -18,11 +21,11 @@ const (
 )
 
 const (
-	rawStringCtx                   = `"ctx: Endpoint "${method} ${endpoint}" Function "${function}" Api "${apiName}"`
-	rawStringMarshalRequest        = `unable to marshal body from request ${request}`
+	rawStringCtx                   = `(path "${method} ${endpoint}" with method "${apiName}.${function})`
+	rawStringMarshalRequest        = `unable to marshal body from request: ${request}`
 	rawStringRequestCreation       = `unable to create new request`
 	rawStringRequestExecution      = `unable to execute request`
-	rawStringResponseStatusCode    = `unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, message from api: '${RawMessage}'`
+	rawStringResponseStatusCode    = `unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, message from api: '${meilisearchMessage}'`
 	rawStringResponseReadBody      = `unable to read body from response ${response}`
 	rawStringResponseUnmarshalBody = `unable to unmarshal body from response ${response}`
 )
@@ -43,7 +46,7 @@ func (e ErrCode) rawMessage() string {
 	case ErrCodeResponseUnmarshalBody:
 		return rawStringResponseUnmarshalBody + " " + rawStringCtx
 	default:
-		return "Unknown error " + rawStringCtx
+		return rawStringCtx
 	}
 }
 
@@ -51,7 +54,7 @@ type apiMessage struct {
 	Message string `json:"message"`
 }
 
-type Error struct {
+type MeiliError struct {
 	Endpoint string
 	Method   string
 	Function string
@@ -65,13 +68,15 @@ type Error struct {
 	StatusCode         int
 	StatusCodeExpected []int
 
-	RawMessage string
+	rawMessage string
+
+	OriginError error
 
 	ErrCode ErrCode
 }
 
-func (e Error) Error() string {
-	return namedSprintf(e.RawMessage, map[string]interface{}{
+func (e MeiliError) Error() string {
+	message := namedSprintf(e.rawMessage, map[string]interface{}{
 		"endpoint":           e.Endpoint,
 		"method":             e.Method,
 		"function":           e.Function,
@@ -82,11 +87,45 @@ func (e Error) Error() string {
 		"statusCodeExpected": e.StatusCodeExpected,
 		"statusCode":         e.StatusCode,
 	})
+	if e.OriginError != nil {
+		return errors.Wrap(e.OriginError, message).Error()
+	}
+
+	return message
+}
+
+func (e *MeiliError) WithMessage(str string, errs ...error) *MeiliError {
+	if errs != nil {
+		e.OriginError = errs[0]
+	}
+
+	e.rawMessage = str
+	e.ErrCode = ErrCodeUnknown
+	return e
+}
+
+func (e *MeiliError) WithErrCode(err ErrCode, errs ...error) *MeiliError {
+	if errs != nil {
+		e.OriginError = errs[0]
+	}
+
+	e.rawMessage = err.rawMessage()
+	e.ErrCode = err
+	return e
+}
+
+func (e *MeiliError) ErrorBody(body []byte) {
+	e.ResponseToString = string(body)
+	msg := apiMessage{}
+	err := json.Unmarshal(body, &msg)
+	if err != nil {
+		e.MeilisearchMessage = msg.Message
+	}
 }
 
 func namedSprintf(format string, params map[string]interface{}) string {
 	for key, val := range params {
-		format = strings.ReplaceAll(format, "${"+key+"}s", fmt.Sprintf("%s", val))
+		format = strings.ReplaceAll(format, "${"+key+"}", fmt.Sprintf("%v", val))
 	}
 	return format
 }
