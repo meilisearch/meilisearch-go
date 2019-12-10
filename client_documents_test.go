@@ -53,7 +53,7 @@ func TestClientDocuments_Delete(t *testing.T) {
 	var doc docTest
 	err = documents.Get("bloubiboulga2", &doc)
 
-	if err.(*MeiliError).ErrCode != ErrCodeResponseStatusCode {
+	if err.(*Error).ErrCode != ErrCodeResponseStatusCode {
 		t.Fatal(err)
 	}
 }
@@ -80,7 +80,7 @@ func TestClientDocuments_Deletes(t *testing.T) {
 	var doc docTest
 	err = documents.Get("bloubiboulga", &doc)
 
-	if err.(*MeiliError).ErrCode != ErrCodeResponseStatusCode {
+	if err.(*Error).ErrCode != ErrCodeResponseStatusCode {
 		t.Fatal(err)
 	}
 }

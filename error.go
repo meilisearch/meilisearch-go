@@ -54,7 +54,7 @@ type apiMessage struct {
 	Message string `json:"message"`
 }
 
-type MeiliError struct {
+type Error struct {
 	Endpoint string
 	Method   string
 	Function string
@@ -75,7 +75,7 @@ type MeiliError struct {
 	ErrCode ErrCode
 }
 
-func (e MeiliError) Error() string {
+func (e Error) Error() string {
 	message := namedSprintf(e.rawMessage, map[string]interface{}{
 		"endpoint":           e.Endpoint,
 		"method":             e.Method,
@@ -94,7 +94,7 @@ func (e MeiliError) Error() string {
 	return message
 }
 
-func (e *MeiliError) WithMessage(str string, errs ...error) *MeiliError {
+func (e *Error) WithMessage(str string, errs ...error) *Error {
 	if errs != nil {
 		e.OriginError = errs[0]
 	}
@@ -104,7 +104,7 @@ func (e *MeiliError) WithMessage(str string, errs ...error) *MeiliError {
 	return e
 }
 
-func (e *MeiliError) WithErrCode(err ErrCode, errs ...error) *MeiliError {
+func (e *Error) WithErrCode(err ErrCode, errs ...error) *Error {
 	if errs != nil {
 		e.OriginError = errs[0]
 	}
@@ -114,7 +114,7 @@ func (e *MeiliError) WithErrCode(err ErrCode, errs ...error) *MeiliError {
 	return e
 }
 
-func (e *MeiliError) ErrorBody(body []byte) {
+func (e *Error) ErrorBody(body []byte) {
 	e.ResponseToString = string(body)
 	msg := apiMessage{}
 	err := json.Unmarshal(body, &msg)

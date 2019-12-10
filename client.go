@@ -62,7 +62,7 @@ type internalRequest struct {
 }
 
 func (c Client) executeRequest(i internalRequest) error {
-	meiliErr := &MeiliError{
+	meiliErr := &Error{
 		Endpoint:           i.endpoint,
 		Method:             i.method,
 		Function:           i.functionName,
