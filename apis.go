@@ -18,8 +18,7 @@ type ApiIndexes interface {
 	// The schema definition is optionally send through the body. If no schema has been defined when the first document
 	// is sent it will be inferred based on that document.
 	// If no UID is specified in the request a randomly generated UID will be returned.
-	// It's associated to the new index. This UID will be essential to make
-	// all request over the created index.
+	// It's associated to the new index. This UID will be essential to make all request over the created index.
 	Create(request CreateIndexRequest) (*CreateIndexResponse, error)
 
 	// Update an index name.
