@@ -69,7 +69,7 @@ func (c Client) executeRequest(i internalRequest) error {
 		APIName:            i.apiName,
 		RequestToString:    "empty request",
 		ResponseToString:   "empty response",
-		MeilisearchMessage: "empty response",
+		MeilisearchMessage: "empty meilisearch message",
 		StatusCodeExpected: i.acceptedStatusCodes,
 	}
 

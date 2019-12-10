@@ -54,27 +54,47 @@ type apiMessage struct {
 	Message string `json:"message"`
 }
 
+// Error is the internal error structure that all exposed method use.
+// So ALL errors returned by this library can be cast to this struct (as a pointer)
 type Error struct {
+	// Endpoint is the path of the request (host is not in)
 	Endpoint string
-	Method   string
-	Function string
-	APIName  string
 
-	RequestToString  string
+	// Method is the HTTP verb of the request
+	Method string
+
+	// Function name used
+	Function string
+
+	// APIName is which part/module of the api
+	APIName string
+
+	// RequestToString is the raw request into string ('empty request' if not present)
+	RequestToString string
+
+	// RequestToString is the raw request into string ('empty response' if not present)
 	ResponseToString string
 
+	// MeilisearchMessage is the raw request into string ('empty meilisearch message' if not present)
 	MeilisearchMessage string
 
-	StatusCode         int
+	// StatusCode of the request
+	StatusCode int
+
+	// StatusCode expected by the endpoint to be considered as a success
 	StatusCodeExpected []int
 
 	rawMessage string
 
+	// OriginError is the origin error that produce the current Error. It can be nil in case of a bad status code.
 	OriginError error
 
+	// ErrCode is the internal error code that represent the different step when executing a request that can produce
+	// an error.
 	ErrCode ErrCode
 }
 
+// Error return a well human formatted message.
 func (e Error) Error() string {
 	message := namedSprintf(e.rawMessage, map[string]interface{}{
 		"endpoint":           e.Endpoint,
