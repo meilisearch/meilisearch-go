@@ -22,8 +22,8 @@ func main() {
 
     // meilisearch package will maybe be renamed into ms ?
 
-	client := meilisearch.NewClient(meilisearch.Config{
-    		Host: "http://localhost:7700",
+    client := meilisearch.NewClient(meilisearch.Config{
+        Host: "http://localhost:7700",
     })
     
     index, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
