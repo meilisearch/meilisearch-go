@@ -117,7 +117,10 @@ type ApiHealth interface {
 	Set(health bool) error
 }
 
+// ApiVersion retrieve the version of MeiliSearch.
 type ApiVersion interface {
+
+	// Get version of MeiliSearch.
 	Get() (*Version, error)
 }
 
