@@ -9,11 +9,11 @@ import (
 
 type clientSearch struct {
 	client  *Client
-	indexId string
+	indexID string
 }
 
-func newClientSearch(client *Client, indexId string) *clientSearch {
-	return &clientSearch{client: client, indexId: indexId}
+func newClientSearch(client *Client, indexId string) clientSearch {
+	return clientSearch{client: client, indexID: indexId}
 }
 
 func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
@@ -35,7 +35,7 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 	values.Add("matches", strconv.FormatBool(request.Matches))
 
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexId + "/search?" + values.Encode(),
+		endpoint:            "/indexes/" + c.indexID + "/search?" + values.Encode(),
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,

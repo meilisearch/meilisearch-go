@@ -4,7 +4,7 @@ import (
 	"testing"
 )
 
-var version *clientVersion
+var version clientVersion
 
 func TestClientVersion_Get(t *testing.T) {
 	if _, err := version.Get(); err != nil {

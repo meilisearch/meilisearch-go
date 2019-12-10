@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var search *clientSearch
+var search clientSearch
 
 func TestClientSearch_Search(t *testing.T) {
 	time.Sleep(150 * time.Millisecond)
@@ -30,7 +30,7 @@ func init() {
 
 	resp, err := newClientIndexes(client).Create(CreateIndexRequest{
 		Name: "search_tests",
-		Uid:  "search_tests",
+		UID:  "search_tests",
 		Schema: Schema{
 			"id":   {"identifier", "indexed", "displayed"},
 			"name": {"indexed", "indexed", "displayed"},
@@ -41,7 +41,7 @@ func init() {
 		panic(err)
 	}
 
-	documents := newClientDocuments(client, resp.Uid)
+	documents := newClientDocuments(client, resp.UID)
 
 	_, err = documents.AddOrUpdate(&[]docTest{
 		{"0", "J'adore les citrons"},
@@ -52,5 +52,5 @@ func init() {
 		panic(err)
 	}
 
-	search = newClientSearch(client, resp.Uid)
+	search = newClientSearch(client, resp.UID)
 }

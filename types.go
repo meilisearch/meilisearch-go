@@ -34,7 +34,7 @@ type Schema map[string][]SchemaAttributes
 
 type Index struct {
 	Name      string    `json:"name"`
-	Uid       string    `json:"uid"`
+	UID       string    `json:"uid"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -118,25 +118,42 @@ type SystemInformationPretty struct {
 	} `json:"process"`
 }
 
+type Status string
+
+const (
+	StatusEnqueued  Status = "enqueued"
+	StatusProcessed Status = "processed"
+	StatusFailed    Status = "failed"
+)
+
+type Update struct {
+	Status      Status    `json:"status"`
+	UpdateID    int64     `json:"updateId"`
+	Type        Unknown   `json:"type"`
+	Error       string    `json:"error"`
+	EnqueuedAt  time.Time `json:"enqueuedAt"`
+	ProcessedAt time.Time `json:"processedAt"`
+}
+
 //
 // Request/Response
 //
 
 type UpdateIdResponse struct {
-	UpdateId int64 `json:"updateId"`
+	UpdateID int64 `json:"updateId"`
 }
 
 type CreateIndexRequest struct {
 	Name   string `json:"name"`
-	Uid    string `json:"uid,omitempty"`
+	UID    string `json:"uid,omitempty"`
 	Schema Schema `json:"schema,omitempty"`
 }
 
 type CreateIndexResponse struct {
 	Name      string    `json:"name"`
-	Uid       string    `json:"uid"`
+	UID       string    `json:"uid"`
 	Schema    Schema    `json:"schema,omitempty"`
-	UpdateId  int64     `json:"updateId,omitempty"`
+	UpdateID  int64     `json:"updateId,omitempty"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }

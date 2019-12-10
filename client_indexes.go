@@ -6,8 +6,8 @@ type clientIndexes struct {
 	client *Client
 }
 
-func newClientIndexes(client *Client) *clientIndexes {
-	return &clientIndexes{client: client}
+func newClientIndexes(client *Client) clientIndexes {
+	return clientIndexes{client: client}
 }
 
 func (c clientIndexes) Get(uid string) (resp *Index, err error) {

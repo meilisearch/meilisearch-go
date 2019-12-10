@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-var documents *clientDocuments
+var documents clientDocuments
 
 type docTest struct {
 	Id   string `json:"id"`
@@ -166,7 +166,7 @@ func init() {
 
 	resp, err := newClientIndexes(client).Create(CreateIndexRequest{
 		Name: "documents_tests",
-		Uid:  "documents_tests",
+		UID:  "documents_tests",
 		Schema: Schema{
 			"id":   {"identifier", "indexed", "displayed"},
 			"name": {"indexed", "displayed"},
@@ -177,5 +177,5 @@ func init() {
 		log.Fatal(err)
 	}
 
-	documents = newClientDocuments(client, resp.Uid)
+	documents = newClientDocuments(client, resp.UID)
 }

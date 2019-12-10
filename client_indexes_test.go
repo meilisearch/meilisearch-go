@@ -18,7 +18,7 @@ func TestClientIndexes_Create(t *testing.T) {
 func TestClientIndexes_Get(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_Get")
 
-	i, err := indexes.Get(resp.Uid)
+	i, err := indexes.Get(resp.UID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -30,7 +30,7 @@ func TestClientIndexes_Get(t *testing.T) {
 
 func TestClientIndexes_Delete(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_Delete")
-	ok, err := indexes.Delete(resp.Uid)
+	ok, err := indexes.Delete(resp.UID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -55,7 +55,7 @@ func TestClientIndexes_List(t *testing.T) {
 func TestClientIndexes_Update(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_Update")
 
-	update, err := indexes.Update(resp.Uid, "TestClientIndexes_Update2")
+	update, err := indexes.Update(resp.UID, "TestClientIndexes_Update2")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -69,7 +69,7 @@ func TestClientIndexes_GetSchema(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_GetSchema")
 
 	time.Sleep(100 * time.Millisecond)
-	_, err := indexes.GetSchema(resp.Uid)
+	_, err := indexes.GetSchema(resp.UID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -79,7 +79,7 @@ func TestClientIndexes_GetSchemaRaw(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_GetSchemaRaw")
 
 	time.Sleep(100 * time.Millisecond)
-	_, err := indexes.GetRawSchema(resp.Uid)
+	_, err := indexes.GetRawSchema(resp.UID)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -89,7 +89,7 @@ func TestClientIndexes_UpdateSchema(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_GetSchemaRaw")
 
 	time.Sleep(100 * time.Millisecond)
-	_, err := indexes.UpdateSchema(resp.Uid, Schema{
+	_, err := indexes.UpdateSchema(resp.UID, Schema{
 		"id":     resp.Schema["id"],
 		"movies": []SchemaAttributes{SchemaAttributesDisplayed, SchemaAttributesIndexed},
 	})
@@ -103,7 +103,7 @@ func TestClientIndexes_UpdateWithRawSchema(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_GetSchemaRaw")
 
 	time.Sleep(100 * time.Millisecond)
-	_, err := indexes.UpdateWithRawSchema(resp.Uid, RawSchema{
+	_, err := indexes.UpdateWithRawSchema(resp.UID, RawSchema{
 		Identifier: "id",
 		Attributes: map[string]RawAttribute{
 			"id":    {Identifier: true, Indexed: true, Displayed: true},

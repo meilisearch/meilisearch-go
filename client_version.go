@@ -6,8 +6,8 @@ type clientVersion struct {
 	client *Client
 }
 
-func newClientVersion(client *Client) *clientVersion {
-	return &clientVersion{client: client}
+func newClientVersion(client *Client) clientVersion {
+	return clientVersion{client: client}
 }
 
 func (c clientVersion) Get() (resp *Version, err error) {

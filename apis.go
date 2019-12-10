@@ -89,9 +89,20 @@ type ApiStopWords interface {
 	Deletes(words []string) ([]UpdateIdResponse, error)
 }
 
+// ApiUpdates, MeiliSearch is an asynchronous API. It means that the API does not behave as you would typically expect
+// when handling the request's responses.
+//
+// Some actions are put in a queue and will be executed in turn (asynchronously). In this case, the server response
+// contains the identifier to track the execution of the action.
+//
+// This API permit to get the state of an update id.
 type ApiUpdates interface {
-	Get(id int64) (*Unknown, error)
-	List() ([]Unknown, error)
+
+	// Get the status of an update in a given index.
+	Get(id int64) (*Update, error)
+
+	// Get the status of all updates in a given index.
+	List() ([]Update, error)
 }
 
 type ApiKey interface {

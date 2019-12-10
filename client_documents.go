@@ -4,16 +4,16 @@ import "net/http"
 
 type clientDocuments struct {
 	client  *Client
-	indexId string
+	indexID string
 }
 
-func newClientDocuments(client *Client, indexId string) *clientDocuments {
-	return &clientDocuments{client: client, indexId: indexId}
+func newClientDocuments(client *Client, indexId string) clientDocuments {
+	return clientDocuments{client: client, indexID: indexId}
 }
 
 func (c clientDocuments) Get(identifier string, documentPtr interface{}) error {
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexId + "/documents/" + identifier,
+		endpoint:            "/indexes/" + c.indexID + "/documents/" + identifier,
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        documentPtr,
@@ -32,7 +32,7 @@ func (c clientDocuments) Get(identifier string, documentPtr interface{}) error {
 func (c clientDocuments) Delete(identifier string) (resp *UpdateIdResponse, err error) {
 	resp = &UpdateIdResponse{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexId + "/documents/" + identifier,
+		endpoint:            "/indexes/" + c.indexID + "/documents/" + identifier,
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -51,7 +51,7 @@ func (c clientDocuments) Delete(identifier string) (resp *UpdateIdResponse, err 
 func (c clientDocuments) Deletes(identifier []string) (resp *UpdateIdResponse, err error) {
 	resp = &UpdateIdResponse{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexId + "/documents/delete",
+		endpoint:            "/indexes/" + c.indexID + "/documents/delete",
 		method:              http.MethodPost,
 		withRequest:         &identifier,
 		withResponse:        resp,
@@ -69,7 +69,7 @@ func (c clientDocuments) Deletes(identifier []string) (resp *UpdateIdResponse, e
 
 func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interface{}) error {
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexId + "/documents",
+		endpoint:            "/indexes/" + c.indexID + "/documents",
 		method:              http.MethodGet,
 		withRequest:         &request,
 		withResponse:        documentsPtr,
@@ -88,7 +88,7 @@ func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interfa
 func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *UpdateIdResponse, err error) {
 	resp = &UpdateIdResponse{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexId + "/documents",
+		endpoint:            "/indexes/" + c.indexID + "/documents",
 		method:              http.MethodPost,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
@@ -107,7 +107,7 @@ func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *UpdateIdRe
 func (c clientDocuments) ClearAllDocuments() (resp *UpdateIdResponse, err error) {
 	resp = &UpdateIdResponse{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexId + "/documents",
+		endpoint:            "/indexes/" + c.indexID + "/documents",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
