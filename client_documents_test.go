@@ -3,7 +3,6 @@ package meilisearch
 import (
 	"log"
 	"testing"
-	"time"
 )
 
 var documents clientDocuments
@@ -14,7 +13,7 @@ type docTest struct {
 }
 
 func TestClientDocuments_Get(t *testing.T) {
-	_, err := documents.AddOrUpdate([]interface{}{
+	updateIdRes, err := documents.AddOrUpdate([]interface{}{
 		docTest{Id: "leslapins", Name: "nestle"},
 	})
 
@@ -22,7 +21,7 @@ func TestClientDocuments_Get(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	time.Sleep(1000 * time.Millisecond)
+	AwaitAsyncUpdateId(documents, updateIdRes)
 
 	var doc docTest
 	err = documents.Get("leslapins", &doc)
@@ -33,7 +32,7 @@ func TestClientDocuments_Get(t *testing.T) {
 }
 
 func TestClientDocuments_Delete(t *testing.T) {
-	_, err := documents.AddOrUpdate([]interface{}{
+	updateIdRes, err := documents.AddOrUpdate([]interface{}{
 		docTest{Id: "bloubiboulga2", Name: "nestle"},
 	})
 
@@ -41,14 +40,14 @@ func TestClientDocuments_Delete(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	time.Sleep(500 * time.Millisecond)
+	AwaitAsyncUpdateId(documents, updateIdRes)
 
-	_, err = documents.Delete("bloubiboulga2")
+	updateIdRes, err = documents.Delete("bloubiboulga2")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	time.Sleep(500 * time.Millisecond)
+	AwaitAsyncUpdateId(documents, updateIdRes)
 
 	var doc docTest
 	err = documents.Get("bloubiboulga2", &doc)
@@ -59,7 +58,7 @@ func TestClientDocuments_Delete(t *testing.T) {
 }
 
 func TestClientDocuments_Deletes(t *testing.T) {
-	_, err := documents.AddOrUpdate([]interface{}{
+	updateIdRes, err := documents.AddOrUpdate([]interface{}{
 		docTest{Id: "bloubiboulga", Name: "nestle"},
 		docTest{Id: "bloubiboulga1", Name: "nestle"},
 	})
@@ -68,14 +67,14 @@ func TestClientDocuments_Deletes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	time.Sleep(500 * time.Millisecond)
+	AwaitAsyncUpdateId(documents, updateIdRes)
 
-	_, err = documents.Deletes([]string{"bloubiboulga", "bloubiboulga1"})
+	updateIdRes, err = documents.Deletes([]string{"bloubiboulga", "bloubiboulga1"})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	time.Sleep(500 * time.Millisecond)
+	AwaitAsyncUpdateId(documents, updateIdRes)
 
 	var doc docTest
 	err = documents.Get("bloubiboulga", &doc)
@@ -86,7 +85,7 @@ func TestClientDocuments_Deletes(t *testing.T) {
 }
 
 func TestClientDocuments_List(t *testing.T) {
-	_, err := documents.AddOrUpdate([]interface{}{
+	updateIdRes, err := documents.AddOrUpdate([]interface{}{
 		docTest{Id: "chocapic3", Name: "nestle"},
 	})
 
@@ -94,7 +93,7 @@ func TestClientDocuments_List(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	time.Sleep(500 * time.Millisecond)
+	AwaitAsyncUpdateId(documents, updateIdRes)
 
 	var list []docTest
 	err = documents.List(ListDocumentsRequest{
@@ -113,7 +112,7 @@ func TestClientDocuments_List(t *testing.T) {
 }
 
 func TestClientDocuments_AddOrUpdate(t *testing.T) {
-	_, err := documents.AddOrUpdate([]interface{}{
+	updateIdRes, err := documents.AddOrUpdate([]interface{}{
 		docTest{Id: "chocapic", Name: "nestle"},
 		docTest{Id: "chocapic2", Name: "nestle2"},
 	})
@@ -122,7 +121,7 @@ func TestClientDocuments_AddOrUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	time.Sleep(500 * time.Millisecond)
+	AwaitAsyncUpdateId(documents, updateIdRes)
 
 	var list []docTest
 	err = documents.List(ListDocumentsRequest{
@@ -141,7 +140,7 @@ func TestClientDocuments_AddOrUpdate(t *testing.T) {
 }
 
 func TestClientDocuments_ClearAllDocuments(t *testing.T) {
-	_, err := documents.AddOrUpdate([]interface{}{
+	updateIdRes, err := documents.AddOrUpdate([]interface{}{
 		docTest{Id: "chocapic", Name: "nestle"},
 		docTest{Id: "chocapic2", Name: "nestle2"},
 	})
@@ -150,7 +149,7 @@ func TestClientDocuments_ClearAllDocuments(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	time.Sleep(500 * time.Millisecond)
+	AwaitAsyncUpdateId(documents, updateIdRes)
 
 	_, err = documents.ClearAllDocuments()
 

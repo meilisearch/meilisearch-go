@@ -118,30 +118,31 @@ type SystemInformationPretty struct {
 	} `json:"process"`
 }
 
-type Status string
+type UpdateStatus string
 
 const (
-	StatusEnqueued  Status = "enqueued"
-	StatusProcessed Status = "processed"
-	StatusFailed    Status = "failed"
+	UpdateStatusUnknown   UpdateStatus = "unknown"
+	UpdateStatusEnqueued  UpdateStatus = "enqueued"
+	UpdateStatusProcessed UpdateStatus = "processed"
+	UpdateStatusFailed    UpdateStatus = "failed"
 )
 
 type Update struct {
-	Status      Status    `json:"status"`
-	UpdateID    int64     `json:"updateId"`
-	Type        Unknown   `json:"type"`
-	Error       string    `json:"error"`
-	EnqueuedAt  time.Time `json:"enqueuedAt"`
-	ProcessedAt time.Time `json:"processedAt"`
+	Status      UpdateStatus `json:"status"`
+	UpdateID    int64        `json:"updateId"`
+	Type        Unknown      `json:"type"`
+	Error       string       `json:"error"`
+	EnqueuedAt  time.Time    `json:"enqueuedAt"`
+	ProcessedAt time.Time    `json:"processedAt"`
+}
+
+type AsyncUpdateId struct {
+	UpdateID int64 `json:"updateId"`
 }
 
 //
 // Request/Response
 //
-
-type UpdateIdResponse struct {
-	UpdateID int64 `json:"updateId"`
-}
 
 type CreateIndexRequest struct {
 	Name   string `json:"name"`

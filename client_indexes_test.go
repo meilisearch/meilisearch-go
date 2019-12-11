@@ -68,7 +68,7 @@ func TestClientIndexes_Update(t *testing.T) {
 func TestClientIndexes_GetSchema(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_GetSchema")
 
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	_, err := indexes.GetSchema(resp.UID)
 	if err != nil {
 		t.Fatal(err)
@@ -78,7 +78,7 @@ func TestClientIndexes_GetSchema(t *testing.T) {
 func TestClientIndexes_GetSchemaRaw(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_GetSchemaRaw")
 
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	_, err := indexes.GetRawSchema(resp.UID)
 	if err != nil {
 		t.Fatal(err)
@@ -88,7 +88,7 @@ func TestClientIndexes_GetSchemaRaw(t *testing.T) {
 func TestClientIndexes_UpdateSchema(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_GetSchemaRaw")
 
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	_, err := indexes.UpdateSchema(resp.UID, Schema{
 		"id":     resp.Schema["id"],
 		"movies": []SchemaAttributes{SchemaAttributesDisplayed, SchemaAttributesIndexed},
@@ -102,7 +102,7 @@ func TestClientIndexes_UpdateSchema(t *testing.T) {
 func TestClientIndexes_UpdateWithRawSchema(t *testing.T) {
 	resp := createIndex(t, "TestClientIndexes_GetSchemaRaw")
 
-	time.Sleep(100 * time.Millisecond)
+	time.Sleep(10 * time.Millisecond)
 	_, err := indexes.UpdateWithRawSchema(resp.UID, RawSchema{
 		Identifier: "id",
 		Attributes: map[string]RawAttribute{

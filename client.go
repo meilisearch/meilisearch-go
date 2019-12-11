@@ -151,3 +151,26 @@ func (c Client) executeRequest(i internalRequest) error {
 
 	return nil
 }
+
+// AwaitAsyncUpdateId check each 16ms the status of a AsyncUpdateId.
+// This method should be avoided.
+// TODO: improve this method by returning a channel
+func (c Client) AwaitAsyncUpdateId(indexId string, updateId *AsyncUpdateId) UpdateStatus {
+	apiUpdates := c.Updates(indexId)
+	for {
+		update, err := apiUpdates.Get(updateId.UpdateID)
+		if err != nil {
+			return UpdateStatusUnknown
+		}
+		if update.Status != UpdateStatusEnqueued {
+			return update.Status
+		}
+		time.Sleep(time.Millisecond * 16)
+	}
+}
+
+// AwaitAsyncUpdateId check each 25ms the status of a AsyncUpdateId.
+// This method should be avoided.
+func AwaitAsyncUpdateId(api ApiWithIndexID, updateId *AsyncUpdateId) UpdateStatus {
+	return api.Client().AwaitAsyncUpdateId(api.IndexId(), updateId)
+}

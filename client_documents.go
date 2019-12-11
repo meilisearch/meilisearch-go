@@ -29,8 +29,8 @@ func (c clientDocuments) Get(identifier string, documentPtr interface{}) error {
 	return nil
 }
 
-func (c clientDocuments) Delete(identifier string) (resp *UpdateIdResponse, err error) {
-	resp = &UpdateIdResponse{}
+func (c clientDocuments) Delete(identifier string) (resp *AsyncUpdateId, err error) {
+	resp = &AsyncUpdateId{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/documents/" + identifier,
 		method:              http.MethodDelete,
@@ -48,8 +48,8 @@ func (c clientDocuments) Delete(identifier string) (resp *UpdateIdResponse, err 
 	return resp, nil
 }
 
-func (c clientDocuments) Deletes(identifier []string) (resp *UpdateIdResponse, err error) {
-	resp = &UpdateIdResponse{}
+func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateId, err error) {
+	resp = &AsyncUpdateId{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/documents/delete",
 		method:              http.MethodPost,
@@ -85,8 +85,8 @@ func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interfa
 	return nil
 }
 
-func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *UpdateIdResponse, err error) {
-	resp = &UpdateIdResponse{}
+func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdateId, err error) {
+	resp = &AsyncUpdateId{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/documents",
 		method:              http.MethodPost,
@@ -104,8 +104,8 @@ func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *UpdateIdRe
 	return resp, nil
 }
 
-func (c clientDocuments) ClearAllDocuments() (resp *UpdateIdResponse, err error) {
-	resp = &UpdateIdResponse{}
+func (c clientDocuments) ClearAllDocuments() (resp *AsyncUpdateId, err error) {
+	resp = &AsyncUpdateId{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/documents",
 		method:              http.MethodDelete,
@@ -121,4 +121,12 @@ func (c clientDocuments) ClearAllDocuments() (resp *UpdateIdResponse, err error)
 	}
 
 	return resp, nil
+}
+
+func (c clientDocuments) IndexId() string {
+	return c.indexID
+}
+
+func (c clientDocuments) Client() *Client {
+	return c.client
 }

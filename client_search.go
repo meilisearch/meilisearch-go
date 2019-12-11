@@ -50,3 +50,11 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 
 	return resp, nil
 }
+
+func (c clientSearch) IndexId() string {
+	return c.indexID
+}
+
+func (c clientSearch) Client() *Client {
+	return c.client
+}

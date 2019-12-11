@@ -2,13 +2,11 @@ package meilisearch
 
 import (
 	"testing"
-	"time"
 )
 
 var search clientSearch
 
 func TestClientSearch_Search(t *testing.T) {
-	time.Sleep(150 * time.Millisecond)
 	resp, err := search.Search(SearchRequest{
 		Query: "citrons",
 		Limit: 10,
@@ -43,7 +41,7 @@ func init() {
 
 	documents := newClientDocuments(client, resp.UID)
 
-	_, err = documents.AddOrUpdate(&[]docTest{
+	u, err := documents.AddOrUpdate(&[]docTest{
 		{"0", "J'adore les citrons"},
 		{"1", "Les citrons c'est la vie"},
 		{"2", "Les ponchos c'est bien !"},
@@ -51,6 +49,8 @@ func init() {
 	if err != nil {
 		panic(err)
 	}
+
+	AwaitAsyncUpdateId(documents, u)
 
 	search = newClientSearch(client, resp.UID)
 }

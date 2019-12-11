@@ -144,8 +144,8 @@ func (c clientIndexes) GetSchema(uid string) (resp *Schema, err error) {
 	return resp, nil
 }
 
-func (c clientIndexes) UpdateSchema(uid string, schema Schema) (resp *UpdateIdResponse, err error) {
-	resp = &UpdateIdResponse{}
+func (c clientIndexes) UpdateSchema(uid string, schema Schema) (resp *AsyncUpdateId, err error) {
+	resp = &AsyncUpdateId{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid + "/schema",
 		method:              http.MethodPut,
@@ -163,8 +163,8 @@ func (c clientIndexes) UpdateSchema(uid string, schema Schema) (resp *UpdateIdRe
 	return resp, nil
 }
 
-func (c clientIndexes) UpdateWithRawSchema(uid string, schema RawSchema) (resp *UpdateIdResponse, err error) {
-	resp = &UpdateIdResponse{}
+func (c clientIndexes) UpdateWithRawSchema(uid string, schema RawSchema) (resp *AsyncUpdateId, err error) {
+	resp = &AsyncUpdateId{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid + "/schema",
 		method:              http.MethodPut,
