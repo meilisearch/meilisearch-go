@@ -76,6 +76,8 @@ type ApiDocuments interface {
 }
 
 // Search through documents list in an index.
+//
+// Documentation: https://docs.meilisearch.com/references/search.html
 type ApiSearch interface {
 
 	// Search for documents matching a specific query in the given index.
@@ -96,10 +98,25 @@ type ApiSynonyms interface {
 	ApiWithIndexID
 }
 
+// ApiStopWords, stop-words words allow you to ignore certain words in the relevance of your search.
+//
+// During a search, if your query contains words that you have put in stop-words, they will be ignored by the algorithm
+// that defines the relevance of each document. This increases the speed of the search.
+//
+// Using stop-words allows the relevance of the search to be focused on more interesting elements such as ranking rather
+// than on the accuracy of the sequence with another one.
+//
+// Documentation: https://docs.meilisearch.com/references/stop_words.html
 type ApiStopWords interface {
+
+	// List of the stop-words.
 	List() ([]string, error)
-	Add(words []string) ([]AsyncUpdateId, error)
-	Deletes(words []string) ([]AsyncUpdateId, error)
+
+	// Add stop-words to the list.
+	Add(words []string) (*AsyncUpdateId, error)
+
+	// Deletes a list of stop-words from the list.
+	Deletes(words []string) (*AsyncUpdateId, error)
 
 	ApiWithIndexID
 }

@@ -59,3 +59,4 @@ func main() {
 - Search https://docs.meilisearch.com/references/search.html 
 - Updates https://docs.meilisearch.com/references/updates.html 
 - Version https://docs.meilisearch.com/references/version.html 
+- Stop words https://docs.meilisearch.com/references/stop-words.html 

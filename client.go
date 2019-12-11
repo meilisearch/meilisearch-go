@@ -62,6 +62,10 @@ func (c *Client) Updates(indexId string) ApiUpdates {
 	return newClientUpdates(c, indexId)
 }
 
+func (c *Client) StopWords(indexId string) ApiStopWords {
+	return newClientStopWords(c, indexId)
+}
+
 type internalRequest struct {
 	endpoint string
 	method   string
