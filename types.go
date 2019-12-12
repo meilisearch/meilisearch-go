@@ -53,14 +53,14 @@ type Synonym struct {
 type ACL string
 
 const (
-	IndexesRead    ACL = "IndexesRead"
-	IndexesWrite   ACL = "IndexesWrite"
-	DocumentsRead  ACL = "DocumentsRead"
-	DocumentsWrite ACL = "DocumentsWrite"
-	SettingsRead   ACL = "SettingsRead"
-	SettingsWrite  ACL = "SettingsWrite"
-	Admin          ACL = "Admin"
-	All            ACL = "All"
+	AclIndexesRead    ACL = "indexesRead"
+	AclIndexesWrite   ACL = "indexesWrite"
+	AclDocumentsRead  ACL = "documentsRead"
+	AclDocumentsWrite ACL = "documentsWrite"
+	AclSettingsRead   ACL = "settingsRead"
+	AclSettingsWrite  ACL = "settingsWrite"
+	AclAdmin          ACL = "admin"
+	AclAll            ACL = "all"
 )
 
 type APIKey struct {
@@ -192,10 +192,10 @@ type ListSynonymsResponse map[string][]string
 type BatchCreateSynonymsRequest []Synonym
 
 type CreateApiKeyRequest struct {
-	Description string    `json:"description"`
-	Acl         []ACL     `json:"acl"`
-	Indexes     []string  `json:"indexes"`
-	ExpireAt    time.Time `json:"expire_at"`
+	Description string   `json:"description"`
+	Acl         []ACL    `json:"acl"`
+	Indexes     []string `json:"indexes"`
+	ExpireAt    int64    `json:"expiresAt"`
 }
 
 type UpdateApiKeyRequest struct {

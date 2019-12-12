@@ -22,6 +22,7 @@ type Client struct {
 	// singleton clients which don't need index id
 	apiIndexes ApiIndexes
 	apiVersion ApiVersion
+	apiKeys    ApiKeys
 }
 
 func NewClient(config Config) *Client {
@@ -38,6 +39,7 @@ func NewClientWithCustomHttpClient(config Config, client http.Client) *Client {
 
 	c.apiIndexes = newClientIndexes(c)
 	c.apiVersion = newClientVersion(c)
+	c.apiKeys = newClientKeys(c)
 
 	return c
 }
@@ -64,6 +66,10 @@ func (c *Client) Updates(indexId string) ApiUpdates {
 
 func (c *Client) StopWords(indexId string) ApiStopWords {
 	return newClientStopWords(c, indexId)
+}
+
+func (c *Client) Keys() ApiKeys {
+	return c.apiKeys
 }
 
 type internalRequest struct {

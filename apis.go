@@ -137,12 +137,23 @@ type ApiUpdates interface {
 	List() ([]Update, error)
 }
 
-type ApiKey interface {
+// ApiKeys, To communicate with MeiliSearch's RESTfull API most of the routes require an API key.
+type ApiKeys interface {
+
+	// Get information for a given API key.
 	Get(key string) (*APIKey, error)
+
+	// Get all API keys information.
 	List() ([]APIKey, error)
+
+	// Create an API key.
 	Create(request CreateApiKeyRequest) (*APIKey, error)
-	Update(request UpdateApiKeyRequest) (*APIKey, error)
-	Delete(key string) error
+
+	// Update an API key.
+	Update(key string, request UpdateApiKeyRequest) (*APIKey, error)
+
+	// Delete an API key.
+	Delete(key string) (deleted bool, err error)
 }
 
 type ApiSettings interface {

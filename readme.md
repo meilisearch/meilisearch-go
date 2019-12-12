@@ -60,3 +60,4 @@ func main() {
 - Updates https://docs.meilisearch.com/references/updates.html 
 - Version https://docs.meilisearch.com/references/version.html 
 - Stop words https://docs.meilisearch.com/references/stop-words.html 
+- Keys https://docs.meilisearch.com/references/stop-words.html 

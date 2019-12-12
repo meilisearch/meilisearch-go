@@ -22,11 +22,11 @@ const (
 )
 
 const (
-	rawStringCtx                   = `(path "${method} ${endpoint}" with method "${apiName}.${function})`
+	rawStringCtx                   = `(path "${method} ${endpoint}" with method "${apiName}.${function}")`
 	rawStringMarshalRequest        = `unable to marshal body from request: '${request}'`
 	rawStringRequestCreation       = `unable to create new request`
 	rawStringRequestExecution      = `unable to execute request`
-	rawStringResponseStatusCode    = `unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, message from api: '${meilisearchMessage}'`
+	rawStringResponseStatusCode    = `unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, message from api: '${meilisearchMessage}', request: ${request}`
 	rawStringResponseReadBody      = `unable to read body from response: '${response}'`
 	rawStringResponseUnmarshalBody = `unable to unmarshal body from response: '${response}' status code: ${statusCode}`
 )
@@ -139,7 +139,7 @@ func (e *Error) ErrorBody(body []byte) {
 	e.ResponseToString = string(body)
 	msg := apiMessage{}
 	err := json.Unmarshal(body, &msg)
-	if err != nil {
+	if err == nil {
 		e.MeilisearchMessage = msg.Message
 	}
 }
