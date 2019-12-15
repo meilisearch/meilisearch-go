@@ -5,7 +5,7 @@ import "testing"
 var stats clientStats
 
 func TestClientStats_Get(t *testing.T) {
-	if _, err := stats.Get(); err != nil {
+	if _, err := stats.Get("stats_tests"); err != nil {
 		return
 	}
 }
@@ -21,7 +21,7 @@ func init() {
 		Host: "http://localhost:7700",
 	})
 
-	resp, err := newClientIndexes(client).Create(CreateIndexRequest{
+	_, err := newClientIndexes(client).Create(CreateIndexRequest{
 		Name: "stats_tests",
 		UID:  "stats_tests",
 		Schema: Schema{
@@ -34,5 +34,5 @@ func init() {
 		panic(err)
 	}
 
-	stats = newClientStats(client, resp.UID)
+	stats = newClientStats(client)
 }

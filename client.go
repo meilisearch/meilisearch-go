@@ -23,6 +23,7 @@ type Client struct {
 	apiIndexes ApiIndexes
 	apiVersion ApiVersion
 	apiKeys    ApiKeys
+	apiStats   ApiStats
 }
 
 func NewClient(config Config) *Client {
@@ -70,6 +71,10 @@ func (c *Client) StopWords(indexId string) ApiStopWords {
 
 func (c *Client) Keys() ApiKeys {
 	return c.apiKeys
+}
+
+func (c *Client) Stats() ApiStats {
+	return c.apiStats
 }
 
 type internalRequest struct {

@@ -3,18 +3,17 @@ package meilisearch
 import "net/http"
 
 type clientStats struct {
-	client  *Client
-	indexID string
+	client *Client
 }
 
-func newClientStats(client *Client, indexId string) clientStats {
-	return clientStats{client: client, indexID: indexId}
+func newClientStats(client *Client) clientStats {
+	return clientStats{client: client}
 }
 
-func (c clientStats) Get() (resp *Stats, err error) {
+func (c clientStats) Get(indexId string) (resp *Stats, err error) {
 	resp = &Stats{}
 	req := internalRequest{
-		endpoint:            "/stats/" + c.indexID,
+		endpoint:            "/stats/" + indexId,
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -47,12 +46,4 @@ func (c clientStats) List() (resp []Stats, err error) {
 	}
 
 	return resp, nil
-}
-
-func (c clientStats) IndexId() string {
-	return c.indexID
-}
-
-func (c clientStats) Client() *Client {
-	return c.client
 }

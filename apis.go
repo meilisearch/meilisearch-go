@@ -161,8 +161,13 @@ type ApiSettings interface {
 	AddOrUpdate(request Settings) (*AsyncUpdateId, error)
 }
 
+// ApiStats retrieve statistic over all indexes or a specific index id.
 type ApiStats interface {
-	Get() (*Stats, error)
+
+	// Get stats of an index.
+	Get(indexId string) (*Stats, error)
+
+	// Get stats of all indexes.
 	List() ([]Stats, error)
 }
 
