@@ -24,6 +24,7 @@ type Client struct {
 	apiVersion ApiVersion
 	apiKeys    ApiKeys
 	apiStats   ApiStats
+	apiHealth  ApiHealth
 }
 
 func NewClient(config Config) *Client {
@@ -41,6 +42,8 @@ func NewClientWithCustomHttpClient(config Config, client http.Client) *Client {
 	c.apiIndexes = newClientIndexes(c)
 	c.apiVersion = newClientVersion(c)
 	c.apiKeys = newClientKeys(c)
+	c.apiHealth = newClientHealth(c)
+	c.apiStats = newClientStats(c)
 
 	return c
 }
@@ -75,6 +78,10 @@ func (c *Client) Keys() ApiKeys {
 
 func (c *Client) Stats() ApiStats {
 	return c.apiStats
+}
+
+func (c *Client) Health() ApiHealth {
+	return c.apiHealth
 }
 
 type internalRequest struct {

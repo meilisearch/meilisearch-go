@@ -37,7 +37,7 @@ func (c clientStats) List() (resp []Stats, err error) {
 		withRequest:         nil,
 		withResponse:        &resp,
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "Get",
+		functionName:        "List",
 		apiName:             "Stats",
 	}
 
