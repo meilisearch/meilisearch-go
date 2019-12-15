@@ -1,30 +1,26 @@
 package meilisearch
 
-import (
-	"net/http"
-	"strconv"
-)
+import "net/http"
 
-type clientUpdates struct {
+type clientStats struct {
 	client  *Client
 	indexID string
 }
 
-func newClientUpdates(client *Client, indexId string) clientUpdates {
-	return clientUpdates{client: client, indexID: indexId}
+func newClientStats(client *Client, indexId string) clientStats {
+	return clientStats{client: client, indexID: indexId}
 }
 
-func (c clientUpdates) Get(id int64) (resp *Update, err error) {
-	resp = &Update{}
-
+func (c clientStats) Get() (resp *Stats, err error) {
+	resp = &Stats{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/updates/" + strconv.FormatInt(id, 10),
+		endpoint:            "/stats/" + c.indexID,
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Get",
-		apiName:             "Updates",
+		apiName:             "Stats",
 	}
 
 	if err := c.client.executeRequest(req); err != nil {
@@ -34,17 +30,16 @@ func (c clientUpdates) Get(id int64) (resp *Update, err error) {
 	return resp, nil
 }
 
-func (c clientUpdates) List() (resp []Update, err error) {
-	resp = []Update{}
-
+func (c clientStats) List() (resp []Stats, err error) {
+	resp = []Stats{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/updates",
+		endpoint:            "/stats",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "List",
-		apiName:             "Updates",
+		functionName:        "Get",
+		apiName:             "Stats",
 	}
 
 	if err := c.client.executeRequest(req); err != nil {
@@ -52,4 +47,12 @@ func (c clientUpdates) List() (resp []Update, err error) {
 	}
 
 	return resp, nil
+}
+
+func (c clientStats) IndexId() string {
+	return c.indexID
+}
+
+func (c clientStats) Client() *Client {
+	return c.client
 }

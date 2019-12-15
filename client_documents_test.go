@@ -151,7 +151,7 @@ func TestClientDocuments_ClearAllDocuments(t *testing.T) {
 
 	AwaitAsyncUpdateId(documents, updateIdRes)
 
-	_, err = documents.ClearAllDocuments()
+	_, err = documents.DeleteAllDocuments()
 
 	if err != nil {
 		t.Fatal(err)

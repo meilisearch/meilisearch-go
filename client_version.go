@@ -18,7 +18,7 @@ func (c clientVersion) Get() (resp *Version, err error) {
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Get",
 		apiName:             "Version",
 	}

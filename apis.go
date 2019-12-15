@@ -69,8 +69,8 @@ type ApiDocuments interface {
 	// AddOrUpdate a list of documents, update them if they already exist based on their unique identifiers.
 	AddOrUpdate(documentsPtr interface{}) (*AsyncUpdateId, error)
 
-	// Delete all documents in the specified index.
-	ClearAllDocuments() (*AsyncUpdateId, error)
+	// DeleteAllDocuments in the specified index.
+	DeleteAllDocuments() (*AsyncUpdateId, error)
 
 	ApiWithIndexID
 }

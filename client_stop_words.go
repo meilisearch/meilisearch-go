@@ -18,7 +18,7 @@ func (c clientStopWords) List() (resp []string, err error) {
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "List",
 		apiName:             "StopWords",
 	}
@@ -36,7 +36,7 @@ func (c clientStopWords) Add(words []string) (resp *AsyncUpdateId, err error) {
 		method:              http.MethodPatch,
 		withRequest:         &words,
 		withResponse:        &resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "Add",
 		apiName:             "StopWords",
 	}
@@ -54,7 +54,7 @@ func (c clientStopWords) Deletes(words []string) (resp *AsyncUpdateId, err error
 		method:              http.MethodPost,
 		withRequest:         &words,
 		withResponse:        &resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "Add",
 		apiName:             "StopWords",
 	}

@@ -36,7 +36,7 @@ func (c clientDocuments) Delete(identifier string) (resp *AsyncUpdateId, err err
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "Delete",
 		apiName:             "Documents",
 	}
@@ -55,7 +55,7 @@ func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateId, err 
 		method:              http.MethodPost,
 		withRequest:         &identifier,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "Deletes",
 		apiName:             "Documents",
 	}
@@ -92,7 +92,7 @@ func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdat
 		method:              http.MethodPost,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "AddOrUpdate",
 		apiName:             "Documents",
 	}
@@ -104,15 +104,15 @@ func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdat
 	return resp, nil
 }
 
-func (c clientDocuments) ClearAllDocuments() (resp *AsyncUpdateId, err error) {
+func (c clientDocuments) DeleteAllDocuments() (resp *AsyncUpdateId, err error) {
 	resp = &AsyncUpdateId{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/documents",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
-		functionName:        "ClearAllDocuments",
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "DeleteAllDocuments",
 		apiName:             "Documents",
 	}
 

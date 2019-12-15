@@ -17,7 +17,7 @@ func (c clientIndexes) Get(uid string) (resp *Index, err error) {
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Get",
 		apiName:             "Indexes",
 	}
@@ -36,7 +36,7 @@ func (c clientIndexes) List() (resp []Index, err error) {
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "List",
 		apiName:             "Indexes",
 	}
@@ -55,7 +55,7 @@ func (c clientIndexes) Create(request CreateIndexRequest) (resp *CreateIndexResp
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusCreated},
 		functionName:        "Create",
 		apiName:             "Indexes",
 	}
@@ -76,7 +76,7 @@ func (c clientIndexes) Update(uid string, name string) (resp *Index, err error) 
 			"name": name,
 		},
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Update",
 		apiName:             "Indexes",
 	}
@@ -113,7 +113,7 @@ func (c clientIndexes) GetRawSchema(uid string) (resp *RawSchema, err error) {
 		endpoint:            "/indexes/" + uid + "/schema?raw=true",
 		method:              http.MethodGet,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetRawSchema",
 		apiName:             "Indexes",
 	}
@@ -132,7 +132,7 @@ func (c clientIndexes) GetSchema(uid string) (resp *Schema, err error) {
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetSchema",
 		apiName:             "Indexes",
 	}
@@ -151,7 +151,7 @@ func (c clientIndexes) UpdateSchema(uid string, schema Schema) (resp *AsyncUpdat
 		method:              http.MethodPut,
 		withRequest:         &schema,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateSchema",
 		apiName:             "Indexes",
 	}
@@ -166,11 +166,11 @@ func (c clientIndexes) UpdateSchema(uid string, schema Schema) (resp *AsyncUpdat
 func (c clientIndexes) UpdateWithRawSchema(uid string, schema RawSchema) (resp *AsyncUpdateId, err error) {
 	resp = &AsyncUpdateId{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + uid + "/schema",
+		endpoint:            "/indexes/" + uid + "/schema?raw=true",
 		method:              http.MethodPut,
 		withRequest:         &schema,
 		withResponse:        resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateWithRawSchema",
 		apiName:             "Indexes",
 	}

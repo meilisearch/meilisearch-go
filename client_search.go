@@ -39,7 +39,7 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
-		acceptedStatusCodes: nil,
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Search",
 		apiName:             "Search",
 	}

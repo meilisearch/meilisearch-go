@@ -106,7 +106,7 @@ func TestClientIndexes_UpdateWithRawSchema(t *testing.T) {
 	_, err := indexes.UpdateWithRawSchema(resp.UID, RawSchema{
 		Identifier: "id",
 		Attributes: map[string]RawAttribute{
-			"id":    {Identifier: true, Indexed: true, Displayed: true},
+			"id":    {Indexed: true, Displayed: true},
 			"title": {Indexed: true, Displayed: true},
 		},
 	})

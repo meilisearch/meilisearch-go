@@ -20,10 +20,9 @@ const (
 type Attributes map[string]bool
 
 type RawAttribute struct {
-	Displayed  bool `json:"displayed"`
-	Indexed    bool `json:"indexed"`
-	Ranked     bool `json:"ranked"`
-	Identifier bool `json:"identifier"`
+	Displayed bool `json:"displayed"`
+	Indexed   bool `json:"indexed"`
+	Ranked    bool `json:"ranked"`
 }
 type RawSchema struct {
 	Identifier string                  `json:"identifier"`
