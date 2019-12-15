@@ -61,3 +61,4 @@ func main() {
 - Version https://docs.meilisearch.com/references/version.html 
 - Stop words https://docs.meilisearch.com/references/stop-words.html 
 - Keys https://docs.meilisearch.com/references/stop-words.html 
+- Stats https://docs.meilisearch.com/references/stats.html 
