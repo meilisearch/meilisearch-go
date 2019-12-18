@@ -1,4 +1,4 @@
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/meilisearch/meilisearch-go/Go)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/meilisearch/meilisearch-go/Go) [![Go Report Card](https://goreportcard.com/badge/github.com/meilisearch/meilisearch-go)](https://goreportcard.com/report/github.com/meilisearch/meilisearch-go)
 
 ### Description
 
