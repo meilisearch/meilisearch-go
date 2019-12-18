@@ -8,13 +8,18 @@ import (
 	"time"
 )
 
+// Config configure the Client
 type Config struct {
+
+	// Host is the host of your meilisearch database
+	// Example: 'http://localhost:7700'
 	Host string
 
 	// APIKey is optional
 	APIKey string
 }
 
+// Client is a structure that give you the power for interacting with an high-level api with meilisearch.
 type Client struct {
 	config     Config
 	httpClient http.Client
@@ -27,12 +32,14 @@ type Client struct {
 	apiHealth  ApiHealth
 }
 
+// NewClient create a Client from a Config structure.
 func NewClient(config Config) *Client {
 	return NewClientWithCustomHttpClient(config, http.Client{
 		Timeout: time.Second,
 	})
 }
 
+// NewClientWithCustomHttpClient create a Client from a Config structure and a http.Client which you can customize.
 func NewClientWithCustomHttpClient(config Config, client http.Client) *Client {
 	c := &Client{
 		config:     config,
@@ -48,38 +55,47 @@ func NewClientWithCustomHttpClient(config Config, client http.Client) *Client {
 	return c
 }
 
+// Indexes return an ApiIndexes client.
 func (c *Client) Indexes() ApiIndexes {
 	return c.apiIndexes
 }
 
+// Version return an ApiVersion client.
 func (c *Client) Version() ApiVersion {
 	return c.apiVersion
 }
 
+// Documents return an ApiDocuments client.
 func (c *Client) Documents(indexId string) ApiDocuments {
 	return newClientDocuments(c, indexId)
 }
 
+// Search return an ApiSearch client.
 func (c *Client) Search(indexId string) ApiSearch {
 	return newClientSearch(c, indexId)
 }
 
+// Updates return an ApiUpdates client.
 func (c *Client) Updates(indexId string) ApiUpdates {
 	return newClientUpdates(c, indexId)
 }
 
+// StopWords return an ApiStopWords client.
 func (c *Client) StopWords(indexId string) ApiStopWords {
 	return newClientStopWords(c, indexId)
 }
 
+// Keys return an ApiKeys client.
 func (c *Client) Keys() ApiKeys {
 	return c.apiKeys
 }
 
+// Stats return an ApiStats client.
 func (c *Client) Stats() ApiStats {
 	return c.apiStats
 }
 
+// Health return an ApiHealth client.
 func (c *Client) Health() ApiHealth {
 	return c.apiHealth
 }
@@ -97,80 +113,119 @@ type internalRequest struct {
 	apiName      string
 }
 
-func (c Client) executeRequest(i internalRequest) error {
-	meiliErr := &Error{
-		Endpoint:           i.endpoint,
-		Method:             i.method,
-		Function:           i.functionName,
-		APIName:            i.apiName,
+func (c Client) executeRequest(req internalRequest) error {
+	internalError := &Error{
+		Endpoint:           req.endpoint,
+		Method:             req.method,
+		Function:           req.functionName,
+		APIName:            req.apiName,
 		RequestToString:    "empty request",
 		ResponseToString:   "empty response",
 		MeilisearchMessage: "empty meilisearch message",
-		StatusCodeExpected: i.acceptedStatusCodes,
+		StatusCodeExpected: req.acceptedStatusCodes,
 	}
 
+	response, err := c.sendRequest(&req, internalError)
+	if err != nil {
+		return err
+	}
+
+	internalError.StatusCode = response.StatusCode
+
+	err = c.handleStatusCode(&req, response, internalError)
+	if err != nil {
+		return err
+	}
+
+	err = c.handleResponse(&req, response, internalError)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.Response, error) {
 	var (
 		request *http.Request
 		err     error
 	)
 
-	if i.withRequest != nil {
-		b, err := json.Marshal(i.withRequest)
-		if err != nil {
-			return meiliErr.WithErrCode(ErrCodeMarshalRequest, err)
+	if req.withRequest != nil {
+
+		// A json request is mandatory, so the request interface{} need to be passed as a raw json body.
+		rawJsonRequest, errJsonMarshalling := json.Marshal(req.withRequest)
+		if errJsonMarshalling != nil {
+			return nil, internalError.WithErrCode(ErrCodeMarshalRequest, errJsonMarshalling)
 		}
-		meiliErr.RequestToString = string(b)
-		request, err = http.NewRequest(i.method, c.config.Host+i.endpoint, bytes.NewBuffer(b))
+
+		internalError.RequestToString = string(rawJsonRequest)
+
+		request, err = http.NewRequest(req.method, c.config.Host+req.endpoint, bytes.NewBuffer(rawJsonRequest))
 	} else {
-		request, err = http.NewRequest(i.method, c.config.Host+i.endpoint, nil)
+		request, err = http.NewRequest(req.method, c.config.Host+req.endpoint, nil)
 	}
 
 	if err != nil {
-		return meiliErr.WithErrCode(ErrCodeRequestCreation, err)
+		return nil, internalError.WithErrCode(ErrCodeRequestCreation, err)
 	}
 
+	// adding apikey to the request
 	if c.config.APIKey != "" {
 		request.Header.Set("X-Meili-API-Key", c.config.APIKey)
 	}
 
+	// request is sent
 	response, err := c.httpClient.Do(request)
+
+	// request execution fail
 	if err != nil {
-		return meiliErr.WithErrCode(ErrCodeRequestExecution, err)
+		return nil, internalError.WithErrCode(ErrCodeRequestExecution, err)
 	}
 
-	code := response.StatusCode
-	meiliErr.StatusCode = code
+	return response, nil
+}
 
-	if i.acceptedStatusCodes != nil {
-		ok := false
-		for _, acceptedCode := range i.acceptedStatusCodes {
-			if code == acceptedCode {
-				ok = true
-				break
+func (c Client) handleStatusCode(req *internalRequest, response *http.Response, internalError *Error) error {
+	if req.acceptedStatusCodes != nil {
+
+		// A successful status code is required so check if the response status code is in the
+		// expected status code list.
+		for _, acceptedCode := range req.acceptedStatusCodes {
+			if response.StatusCode == acceptedCode {
+				return nil
 			}
 		}
 
-		if !ok {
-			b, errbody := ioutil.ReadAll(response.Body)
-			if errbody == nil {
-				meiliErr.ErrorBody(b)
-			}
-
-			return meiliErr.WithErrCode(ErrCodeResponseStatusCode)
+		// At this point the response status code is a failure.
+		rawBody, err := ioutil.ReadAll(response.Body)
+		if err == nil {
+			internalError.ErrorBody(rawBody)
+		} else {
+			return internalError.WithErrCode(ErrCodeResponseStatusCode, err)
 		}
+
+		return internalError.WithErrCode(ErrCodeResponseStatusCode)
 	}
 
-	if i.withResponse != nil {
-		b, err := ioutil.ReadAll(response.Body)
+	return nil
+}
+
+func (c Client) handleResponse(req *internalRequest, response *http.Response, internalError *Error) error {
+	if req.withResponse != nil {
+
+		// A json response is mandatory, so the response interface{} need to be unmarshal from the response payload.
+		rawBody, err := ioutil.ReadAll(response.Body)
 		if err != nil {
-			return meiliErr.WithErrCode(ErrCodeResponseReadBody, err)
+			return internalError.WithErrCode(ErrCodeResponseReadBody, err)
 		}
-		meiliErr.ResponseToString = string(b)
-		if err := json.Unmarshal(b, i.withResponse); err != nil {
-			return meiliErr.WithErrCode(ErrCodeResponseUnmarshalBody, err)
+
+		internalError.ResponseToString = string(rawBody)
+
+		if err := json.Unmarshal(rawBody, req.withResponse); err != nil {
+			return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
 		}
 	}
-
 	return nil
 }
 
