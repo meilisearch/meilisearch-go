@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
 docker kill testmeili \
-; docker run -d -p 7700:7700 --name testmeili --rm getmeili/meilisearch \
+; docker run -d -p 7700:7700 --name testmeili --rm getmeili/meilisearch:v0.9.0-rc.1 \
 ; sleep 1 \
 ; go test -v ./...

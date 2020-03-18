@@ -67,7 +67,7 @@ func (c clientIndexes) Create(request CreateIndexRequest) (resp *CreateIndexResp
 	return resp, nil
 }
 
-func (c clientIndexes) Update(uid string, name string) (resp *Index, err error) {
+func (c clientIndexes) UpdateName(uid string, name string) (resp *Index, err error) {
 	resp = &Index{}
 	req := internalRequest{
 		endpoint: "/indexes/" + uid,
@@ -77,7 +77,28 @@ func (c clientIndexes) Update(uid string, name string) (resp *Index, err error) 
 		},
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "Update",
+		functionName:        "UpdateName",
+		apiName:             "Indexes",
+	}
+
+	if err := c.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (c clientIndexes) UpdatePrimaryKey(uid string, primaryKey string) (resp *Index, err error) {
+	resp = &Index{}
+	req := internalRequest{
+		endpoint: "/indexes/" + uid,
+		method:   http.MethodPut,
+		withRequest: &map[string]string{
+			"primaryKey": primaryKey,
+		},
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "UpdatePrimaryKey",
 		apiName:             "Indexes",
 	}
 
@@ -105,79 +126,4 @@ func (c clientIndexes) Delete(uid string) (ok bool, err error) {
 	}
 
 	return true, nil
-}
-
-func (c clientIndexes) GetRawSchema(uid string) (resp *RawSchema, err error) {
-	resp = &RawSchema{}
-	req := internalRequest{
-		endpoint:            "/indexes/" + uid + "/schema?raw=true",
-		method:              http.MethodGet,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetRawSchema",
-		apiName:             "Indexes",
-	}
-
-	if err := c.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (c clientIndexes) GetSchema(uid string) (resp *Schema, err error) {
-	resp = &Schema{}
-	req := internalRequest{
-		endpoint:            "/indexes/" + uid + "/schema",
-		method:              http.MethodGet,
-		withRequest:         nil,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetSchema",
-		apiName:             "Indexes",
-	}
-
-	if err := c.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (c clientIndexes) UpdateSchema(uid string, schema Schema) (resp *AsyncUpdateId, err error) {
-	resp = &AsyncUpdateId{}
-	req := internalRequest{
-		endpoint:            "/indexes/" + uid + "/schema",
-		method:              http.MethodPut,
-		withRequest:         &schema,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "UpdateSchema",
-		apiName:             "Indexes",
-	}
-
-	if err := c.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
-func (c clientIndexes) UpdateWithRawSchema(uid string, schema RawSchema) (resp *AsyncUpdateId, err error) {
-	resp = &AsyncUpdateId{}
-	req := internalRequest{
-		endpoint:            "/indexes/" + uid + "/schema?raw=true",
-		method:              http.MethodPut,
-		withRequest:         &schema,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "UpdateWithRawSchema",
-		apiName:             "Indexes",
-	}
-
-	if err := c.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
 }

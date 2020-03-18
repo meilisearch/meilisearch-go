@@ -10,10 +10,10 @@ func newClientStats(client *Client) clientStats {
 	return clientStats{client: client}
 }
 
-func (c clientStats) Get(indexId string) (resp *Stats, err error) {
+func (c clientStats) Get(indexID string) (resp *Stats, err error) {
 	resp = &Stats{}
 	req := internalRequest{
-		endpoint:            "/stats/" + indexId,
+		endpoint:            "/stats/" + indexID,
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
