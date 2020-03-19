@@ -180,8 +180,8 @@ func TestClientDocuments_List(t *testing.T) {
 	}
 }
 
-func TestClientDocuments_AddOrUpdate(t *testing.T) {
-	var indexUID = "TestClientDocuments_AddOrUpdate"
+func TestClientDocuments_AddOrReplace(t *testing.T) {
+	var indexUID = "TestClientDocuments_AddOrReplace"
 
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
@@ -197,9 +197,9 @@ func TestClientDocuments_AddOrUpdate(t *testing.T) {
 
 	updateIDRes, err := client.
 		Documents(indexUID).
-		AddOrUpdate([]interface{}{
-			docTest{ID: "123", Name: "nestle"},
-			docTest{ID: "456", Name: "nestle"},
+		AddOrReplace([]docTest{
+			{ID: "123", Name: "nestle"},
+			{ID: "456", Name: "nestle"},
 		})
 
 	if err != nil {
@@ -224,8 +224,52 @@ func TestClientDocuments_AddOrUpdate(t *testing.T) {
 	}
 }
 
-func TestClientDocuments_ClearAllDocuments(t *testing.T) {
-	var indexUID = "TestClientDocuments_ClearAllDocuments"
+func TestClientDocuments_AddOrUpdate(t *testing.T) {
+	var indexUID = "TestClientDocuments_AddOrUpdate"
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	updateIDRes, err := client.
+		Documents(indexUID).
+		AddOrUpdate([]docTest{
+			{ID: "123", Name: "nestle"},
+			{ID: "456", Name: "nestle"},
+		})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.AwaitAsyncUpdateID(indexUID, updateIDRes)
+
+	var list []docTest
+	err = client.Documents(indexUID).List(ListDocumentsRequest{
+		Offset: 0,
+		Limit:  100,
+	}, &list)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// tests are running in parallel so there can be more than 1 docs
+	if len(list) < 2 {
+		t.Fatal("number of doc should be at least 1")
+	}
+}
+
+func TestClientDocuments_DeleteAllDocuments(t *testing.T) {
+	var indexUID = "TestClientDocuments_DeleteAllDocuments"
 
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",

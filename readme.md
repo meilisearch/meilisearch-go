@@ -1,65 +1,286 @@
-![GitHub Workflow Status](https://img.shields.io/github/workflow/status/meilisearch/meilisearch-go/Go) [![Go Report Card](https://goreportcard.com/badge/github.com/meilisearch/meilisearch-go)](https://goreportcard.com/report/github.com/meilisearch/meilisearch-go)
+# MeiliSearch Go Client <!-- omit in toc -->
 
-### Description
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/meilisearch/meilisearch-go/Go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/meilisearch/meilisearch-go)](https://goreportcard.com/report/github.com/meilisearch/meilisearch-go)
+[![Licence](https://img.shields.io/badge/licence-MIT-blue.svg)](https://img.shields.io/badge/licence-MIT-blue.svg)
 
-This Go library is a client for the MeiliSearch Database. 
+The go client for MeiliSearch API.
 
-Currently the whole API is not yet implemented. 
+MeiliSearch provides an ultra relevant and instant full-text search. Our solution is open-source and you can check out [our repository here](https://github.com/meilisearch/MeiliSearch).
 
-**Warning: WIP this is not yet usable in production.**
+Here is the [MeiliSearch documentation](https://docs.meilisearch.com/) 📖
 
-### Dependencies
+## Table of Contents <!-- omit in toc -->
 
-- github.com/pkg/errors for error wrapping
+- [🔧 Installation](#-installation)
+- [🚀 Getting started](#-getting-started)
+- [🎬 Examples](#-examples)
+  - [Indexes](#indexes)
+  - [Documents](#documents)
+  - [Update status](#update-status)
+  - [Search](#search)
+- [⚙️ Development Workflow](#️-development-workflow)
+  - [Install Go](#install-go)
+  - [Install dependencies](#install-dependencies)
+  - [Tests and Linter](#tests-and-linter)
+- [🤖 Compatibility with MeiliSearch](#-compatibility-with-meilisearch)
 
-### How to use it
+## 🔧 Installation
+
+With `go get` in command line:
+```bash
+$ go get github.com/meilisearch/meilisearch-go
+```
+
+### Run MeiliSearch <!-- omit in toc -->
+
+There are many easy ways to [download and run a MeiliSearch instance](https://docs.meilisearch.com/guides/advanced_guides/installation.html#download-and-launch).
+
+For example, if you use Docker:
+```bash
+$ docker run -it --rm -p 7700:7700 getmeili/meilisearch:latest --master-key=masterKey
+```
+
+NB: you can also download MeiliSearch from **Homebrew** or **APT**.
+
+## 🚀 Getting started
+
+#### Add documents <!-- omit in toc -->
 
 ```go
-package main
+var client = NewClient(Config{
+    Host: "http://127.0.0.1:7700",
+    APIKey: "masterKey"
+})
 
-import (
-    "github.com/alexisvisco/meilisearch-go"
-    "fmt"
-)
+resp, err := client.Indexes().Create(CreateIndexRequest{
+    UID: "books",
+})
 
-func main() {
+if err != nil {
+    t.Fatal(err)
+}
 
-    // meilisearch package will maybe be renamed into ms ?
+documents := map[int]string{
+    { book_id: 123,  title: "Pride and Prejudice" },
+    { book_id: 456,  title: "Le Petit Prince" },
+    { book_id: 1,    title: "Alice In Wonderland" },
+    { book_id: 1344, title: "The Hobbit" },
+    { book_id: 4,    title: "Harry Potter and the Half-Blood Prince" },
+    { book_id: 42,   title: "The Hitchhiker\'s Guide to the Galaxy" }
+}
 
-    client := meilisearch.NewClient(meilisearch.Config{
-        Host: "http://localhost:7700",
-    })
-    
-    index, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
-        Name: "Meilimelo",
-        Schema: meilisearch.Schema{
-            "id": {
-                meilisearch.SchemaAttributesIdentifier,
-                meilisearch.SchemaAttributesIndexed, 
-                meilisearch.SchemaAttributesDisplayed, 
-            },
-        },
-    })
-    
-    // advanced error handling  err.(*meilisearch.Error)
-    // do stuff with index and err
-    
-    if err != nil {
-        panic(err)
-    }
-    
-    fmt.Println(index)
+updateIDRes, err := client.Documents("books").AddOrUpdate(documents) // => { "updateId": 0 }
+```
+
+With the `updateId`, you can check the status (`processed` or `failed`) of your documents addition thanks to this [method](#update-status).
+
+#### Search in index <!-- omit in toc -->
+
+```go
+// MeiliSearch is typo-tolerant:
+resp, err := client.Search(indexUID).Search(SearchRequest{
+    Query: "harry pottre",
+    Limit: 10,
+})
+```
+Output:
+```go
+{
+  "hits": [{
+    "book_id": 4,
+    "title": "Harry Potter and the Half-Blood Prince"
+  }],
+  "offset": 0,
+  "limit": 20,
+  "processingTimeMs": 1,
+  "query": "harry pottre"
 }
 ```
 
-### Stable part of this library
+## 🎬 Examples
 
-- Indexes https://docs.meilisearch.com/references/indexes.html 
-- Documents https://docs.meilisearch.com/references/documents.html 
-- Search https://docs.meilisearch.com/references/search.html 
-- Updates https://docs.meilisearch.com/references/updates.html 
-- Version https://docs.meilisearch.com/references/version.html 
-- Stop words https://docs.meilisearch.com/references/stop-words.html 
-- Keys https://docs.meilisearch.com/references/stop-words.html 
-- Stats https://docs.meilisearch.com/references/stats.html 
-- Health https://docs.meilisearch.com/references/health.html 
+All HTTP routes of MeiliSearch are accessible via methods in this SDK.</br>
+You can check out [the API documentation](https://docs.meilisearch.com/references/).
+
+### Indexes
+
+#### Create an index <!-- omit in toc -->
+
+```go
+// Create an index with a specific uid (uid must be unique)
+resp, err := client.Indexes().Create(CreateIndexRequest{
+    UID: "books",
+})
+// Create an index with a primary key
+resp, err := client.Indexes().Create(CreateIndexRequest{
+    UID: "books",
+    PrimaryKey: "book_id",
+})
+```
+
+#### List all indexes <!-- omit in toc -->
+
+```go
+list, err := client.Indexes().List()
+```
+
+#### Get an index object <!-- omit in toc -->
+
+```go
+index, err := client.Indexes().Get("books")
+```
+
+### Documents
+
+#### Fetch documents <!-- omit in toc -->
+
+```go
+// Get one document
+var document map[int]interface{}
+err := client.Documents("books").Get("123", &doc)
+// Get documents by batch
+var list []map[int]interface{}
+err = client.Documents("books").List(ListDocumentsRequest{
+    Offset: 0,
+    Limit:  10,
+}, &list)
+```
+
+#### Add documents <!-- omit in toc -->
+
+```go
+documents := map[int]string{
+    { book_id: 123,  title: "Pride and Prejudice" },
+    { book_id: 456,  title: "Le Petit Prince" },
+    { book_id: 1,    title: "Alice In Wonderland" },
+    { book_id: 1344, title: "The Hobbit" },
+    { book_id: 4,    title: "Harry Potter and the Half-Blood Prince" },
+    { book_id: 42,   title: "The Hitchhiker\'s Guide to the Galaxy" }
+}
+
+updateIDRes, err := client.Documents("books").AddOrUpdate(documents)
+```
+
+Response:
+```json
+{
+    "updateId": 1
+}
+```
+With this `updateId` you can track your [operation update](#update-status).
+
+#### Delete documents <!-- omit in toc -->
+
+```go
+// Delete one document
+updateIDRes, err = client.Documents("books").Delete("123")
+// Delete several documents
+updateIDRes, err = client.Documents("books").Deletes([]string{"123", "456"})
+// Delete all documents /!\
+_, err = client.Documents("books").DeleteAllDocuments()
+```
+
+### Update status
+```go
+// Get one update status
+// Parameter: the updateId got after an asynchronous request (e.g. documents addition)
+update, err := client.Updates("books").Get(1)
+// Get all update satus
+list, err := client.Updates("books").List()
+```
+
+### Search
+
+#### Basic search <!-- omit in toc -->
+
+```go
+resp, err := client.Search(indexUID).Search(SearchRequest{
+    Query: "prince",
+    Limit: 10,
+})
+```
+
+```json
+{
+    "hits": [
+        {
+            "book_id": 456,
+            "title": "Le Petit Prince"
+        },
+        {
+            "book_id": 4,
+            "title": "Harry Potter and the Half-Blood Prince"
+        }
+    ],
+    "offset": 0,
+    "limit": 20,
+    "processingTimeMs": 13,
+    "query": "prince"
+}
+```
+
+#### Custom search <!-- omit in toc -->
+
+All the supported options are described in [this documentation section](https://docs.meilisearch.com/references/search.html#search-in-an-index).
+
+```go
+resp, err := client.Search(indexUID).Search(SearchRequest{
+    Query: "harry pottre",
+    AttributesToHighlight: "*"
+})
+```
+
+```json
+{
+    "hits": [
+        {
+            "book_id": 456,
+            "title": "Le Petit Prince",
+            "_formatted": {
+                "book_id": 456,
+                "title": "Le Petit <em>Prince</em>"
+            }
+        }
+    ],
+    "offset": 0,
+    "limit": 1,
+    "processingTimeMs": 0,
+    "query": "prince"
+}
+```
+
+## ⚙️ Development Workflow
+
+If you want to contribute, this section describes the steps to follow.
+
+Thank you for your interest in a MeiliSearch tool! ♥️
+
+### Install Go
+
+Follow the official [tutorial](https://golang.org/doc/install)
+
+### Install dependencies
+
+```bash
+$ go get -v -t -d ./...
+```
+
+### Tests and Linter
+
+Each PR should pass the tests and the linter to be accepted.
+
+```bash
+# Tests
+$ ./run_test.sh
+# Install golint
+$ go get -u golang.org/x/lint/golint
+# Use golint
+$ golint
+# Use gofmt
+$ gofmt -w ./..
+```
+
+## 🤖 Compatibility with MeiliSearch
+
+This gem works for MeiliSearch `v0.9.x`.

@@ -39,7 +39,7 @@ func (c clientSettings) GetAll() (resp *Settings, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) AddOrUpdateAll(request Settings) (resp *AsyncUpdateID, err error) {
+func (c clientSettings) UpdateAll(request Settings) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/settings",
@@ -47,7 +47,7 @@ func (c clientSettings) AddOrUpdateAll(request Settings) (resp *AsyncUpdateID, e
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "AddOrUpdateAll",
+		functionName:        "UpdateAll",
 		apiName:             "Documents",
 	}
 
@@ -95,7 +95,7 @@ func (c clientSettings) GetRankingRules() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) SetRankingRules(request []string) (resp *AsyncUpdateID, err error) {
+func (c clientSettings) UpdateRankingRules(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/settings/ranking-rules",
@@ -103,7 +103,7 @@ func (c clientSettings) SetRankingRules(request []string) (resp *AsyncUpdateID, 
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "SetRankingRules",
+		functionName:        "UpdateRankingRules",
 		apiName:             "Documents",
 	}
 
@@ -152,7 +152,7 @@ func (c clientSettings) GetDistinctAttribute() (resp *string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) SetDistinctAttribute(request string) (resp *AsyncUpdateID, err error) {
+func (c clientSettings) UpdateDistinctAttribute(request string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/settings/distinct-attribute",
@@ -160,7 +160,7 @@ func (c clientSettings) SetDistinctAttribute(request string) (resp *AsyncUpdateI
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "SetDistinctAttribute",
+		functionName:        "UpdateDistinctAttribute",
 		apiName:             "Documents",
 	}
 
@@ -208,7 +208,7 @@ func (c clientSettings) GetSearchableAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) SetSearchableAttributes(request []string) (resp *AsyncUpdateID, err error) {
+func (c clientSettings) UpdateSearchableAttributes(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/settings/searchable-attributes",
@@ -216,7 +216,7 @@ func (c clientSettings) SetSearchableAttributes(request []string) (resp *AsyncUp
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "SetSearchableAttributes",
+		functionName:        "UpdateSearchableAttributes",
 		apiName:             "Documents",
 	}
 
@@ -264,7 +264,7 @@ func (c clientSettings) GetDisplayedAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) SetDisplayedAttributes(request []string) (resp *AsyncUpdateID, err error) {
+func (c clientSettings) UpdateDisplayedAttributes(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/settings/displayed-attributes",
@@ -272,7 +272,7 @@ func (c clientSettings) SetDisplayedAttributes(request []string) (resp *AsyncUpd
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "SetDisplayedAttributes",
+		functionName:        "UpdateDisplayedAttributes",
 		apiName:             "Documents",
 	}
 
@@ -320,7 +320,7 @@ func (c clientSettings) GetStopWords() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) SetStopWords(request []string) (resp *AsyncUpdateID, err error) {
+func (c clientSettings) UpdateStopWords(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/settings/stop-words",
@@ -328,7 +328,7 @@ func (c clientSettings) SetStopWords(request []string) (resp *AsyncUpdateID, err
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "SetStopWords",
+		functionName:        "UpdateStopWords",
 		apiName:             "Documents",
 	}
 
@@ -376,7 +376,7 @@ func (c clientSettings) GetSynonyms() (resp *map[string][]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) SetSynonyms(request map[string][]string) (resp *AsyncUpdateID, err error) {
+func (c clientSettings) UpdateSynonyms(request map[string][]string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/settings/synonyms",
@@ -384,7 +384,7 @@ func (c clientSettings) SetSynonyms(request map[string][]string) (resp *AsyncUpd
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "SetSynonyms",
+		functionName:        "UpdateSynonyms",
 		apiName:             "Documents",
 	}
 
@@ -433,7 +433,7 @@ func (c clientSettings) GetAcceptNewFields() (resp *bool, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) SetAcceptNewFields(request bool) (resp *AsyncUpdateID, err error) {
+func (c clientSettings) UpdateAcceptNewFields(request bool) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/settings/accept-new-fields",
@@ -441,7 +441,7 @@ func (c clientSettings) SetAcceptNewFields(request bool) (resp *AsyncUpdateID, e
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "SetAcceptNewFields",
+		functionName:        "UpdateAcceptNewFields",
 		apiName:             "Documents",
 	}
 

@@ -41,8 +41,8 @@ func TestClientSettings_GetAll(t *testing.T) {
 	}
 }
 
-func TestClientSettings_AddOrUpdateAll(t *testing.T) {
-	var indexUID = "TestClientSettings_AddOrUpdateAll"
+func TestClientSettings_UpdateAll(t *testing.T) {
+	var indexUID = "TestClientSettings_UpdateAll"
 
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
@@ -67,7 +67,7 @@ func TestClientSettings_AddOrUpdateAll(t *testing.T) {
 		AcceptNewFields: false,
 	}
 
-	updateIDRes, err := client.Settings(indexUID).AddOrUpdateAll(settings)
+	updateIDRes, err := client.Settings(indexUID).UpdateAll(settings)
 
 	if err != nil {
 		t.Fatal(err)
@@ -129,8 +129,8 @@ func TestClientSettings_GetRankingRules(t *testing.T) {
 	}
 }
 
-func TestClientSettings_SetRankingRules(t *testing.T) {
-	var indexUID = "TestClientSettings_SetRankingRules"
+func TestClientSettings_UpdateRankingRules(t *testing.T) {
+	var indexUID = "TestClientSettings_UpdateRankingRules"
 
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
@@ -146,7 +146,7 @@ func TestClientSettings_SetRankingRules(t *testing.T) {
 
 	rankingRules := []string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"}
 
-	updateIDRes, err := client.Settings(indexUID).SetRankingRules(rankingRules)
+	updateIDRes, err := client.Settings(indexUID).UpdateRankingRules(rankingRules)
 
 	if err != nil {
 		t.Fatal(err)
@@ -205,8 +205,8 @@ func TestClientSettings_GetDistinctAttribute(t *testing.T) {
 	}
 }
 
-func TestClientSettings_SetDistinctAttribute(t *testing.T) {
-	var indexUID = "TestClientSettings_SetDistinctAttribute"
+func TestClientSettings_UpdateDistinctAttribute(t *testing.T) {
+	var indexUID = "TestClientSettings_UpdateDistinctAttribute"
 
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
@@ -220,7 +220,7 @@ func TestClientSettings_SetDistinctAttribute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	updateIDRes, err := client.Settings(indexUID).SetDistinctAttribute("skuid")
+	updateIDRes, err := client.Settings(indexUID).UpdateDistinctAttribute("skuid")
 
 	if err != nil {
 		t.Fatal(err)
@@ -281,8 +281,8 @@ func TestClientSettings_GetSearchableAttributes(t *testing.T) {
 	}
 }
 
-func TestClientSettings_SetSearchableAttributes(t *testing.T) {
-	var indexUID = "TestClientSettings_SetSearchableAttributes"
+func TestClientSettings_UpdateSearchableAttributes(t *testing.T) {
+	var indexUID = "TestClientSettings_UpdateSearchableAttributes"
 
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
@@ -298,7 +298,7 @@ func TestClientSettings_SetSearchableAttributes(t *testing.T) {
 
 	searchableAttributes := []string{"id", "title", "description"}
 
-	updateIDRes, err := client.Settings(indexUID).SetSearchableAttributes(searchableAttributes)
+	updateIDRes, err := client.Settings(indexUID).UpdateSearchableAttributes(searchableAttributes)
 
 	if err != nil {
 		t.Fatal(err)
@@ -357,8 +357,8 @@ func TestClientSettings_GetDisplayedAttributes(t *testing.T) {
 	}
 }
 
-func TestClientSettings_SetDisplayedAttributes(t *testing.T) {
-	var indexUID = "TestClientSettings_SetDisplayedAttributes"
+func TestClientSettings_UpdateDisplayedAttributes(t *testing.T) {
+	var indexUID = "TestClientSettings_UpdateDisplayedAttributes"
 
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
@@ -374,7 +374,7 @@ func TestClientSettings_SetDisplayedAttributes(t *testing.T) {
 
 	displayedAttributes := []string{"id", "title", "description"}
 
-	updateIDRes, err := client.Settings(indexUID).SetDisplayedAttributes(displayedAttributes)
+	updateIDRes, err := client.Settings(indexUID).UpdateDisplayedAttributes(displayedAttributes)
 
 	if err != nil {
 		t.Fatal(err)
@@ -434,8 +434,8 @@ func TestClientSettings_GetStopWords(t *testing.T) {
 
 }
 
-func TestClientSettings_SetStopWords(t *testing.T) {
-	var indexUID = "TestClientSettings_SetStopWords"
+func TestClientSettings_UpdateStopWords(t *testing.T) {
+	var indexUID = "TestClientSettings_UpdateStopWords"
 
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
@@ -451,7 +451,7 @@ func TestClientSettings_SetStopWords(t *testing.T) {
 
 	stopWords := []string{"a", "the"}
 
-	updateIDRes, err := client.Settings(indexUID).SetStopWords(stopWords)
+	updateIDRes, err := client.Settings(indexUID).UpdateStopWords(stopWords)
 
 	if err != nil {
 		t.Fatal(err)
@@ -513,8 +513,8 @@ func TestClientSettings_GetSynonyms(t *testing.T) {
 
 }
 
-func TestClientSettings_SetSynonyms(t *testing.T) {
-	var indexUID = "TestClientSettings_SetSynonyms"
+func TestClientSettings_UpdateSynonyms(t *testing.T) {
+	var indexUID = "TestClientSettings_UpdateSynonyms"
 
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
@@ -532,7 +532,7 @@ func TestClientSettings_SetSynonyms(t *testing.T) {
 		"car": []string{"automobile"},
 	}
 
-	updateIDRes, err := client.Settings(indexUID).SetSynonyms(synonyms)
+	updateIDRes, err := client.Settings(indexUID).UpdateSynonyms(synonyms)
 
 	if err != nil {
 		t.Fatal(err)
@@ -592,8 +592,8 @@ func TestClientSettings_GetAcceptNewFields(t *testing.T) {
 	}
 }
 
-func TestClientSettings_SetAcceptNewFields(t *testing.T) {
-	var indexUID = "TestClientSettings_SetAcceptNewFields"
+func TestClientSettings_UpdateAcceptNewFields(t *testing.T) {
+	var indexUID = "TestClientSettings_UpdateAcceptNewFields"
 
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
@@ -607,7 +607,7 @@ func TestClientSettings_SetAcceptNewFields(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	updateIDRes, err := client.Settings(indexUID).SetAcceptNewFields(false)
+	updateIDRes, err := client.Settings(indexUID).UpdateAcceptNewFields(false)
 
 	if err != nil {
 		t.Fatal(err)

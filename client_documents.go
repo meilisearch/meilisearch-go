@@ -106,6 +106,25 @@ func (c clientDocuments) AddOrReplace(documentsPtr interface{}) (resp *AsyncUpda
 	return resp, nil
 }
 
+func (c clientDocuments) AddOrReplaceWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + c.indexID + "/documents?primaryKey=" + primaryKey,
+		method:              http.MethodPost,
+		withRequest:         documentsPtr,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "AddOrReplaceWithPrimaryKey",
+		apiName:             "Documents",
+	}
+
+	if err = c.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
 func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
@@ -115,6 +134,25 @@ func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdat
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "AddOrUpdate",
+		apiName:             "Documents",
+	}
+
+	if err = c.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (c clientDocuments) AddOrUpdateWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + c.indexID + "/documents?primaryKey=" + primaryKey,
+		method:              http.MethodPut,
+		withRequest:         documentsPtr,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "AddOrUpdateWithPrimaryKey",
 		apiName:             "Documents",
 	}
 

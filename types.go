@@ -122,7 +122,7 @@ type Keys struct {
 
 // CreateIndexRequest is the request body for create index method
 type CreateIndexRequest struct {
-	Name       string `json:"name"`
+	Name       string `json:"name,omitempty"`
 	UID        string `json:"uid,omitempty"`
 	PrimaryKey string `json:"primaryKey,omitempty"`
 }

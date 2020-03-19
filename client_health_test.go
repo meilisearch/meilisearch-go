@@ -8,7 +8,7 @@ func TestClientHealth_Get(t *testing.T) {
 	})
 
 	if err := client.Health().Get(); err != nil {
-		return
+		t.Fatal(err)
 	}
 }
 
@@ -17,7 +17,7 @@ func TestClientHealth_Set(t *testing.T) {
 		Host: "http://localhost:7700",
 	})
 
-	if err := client.Health().Set(true); err != nil {
-		return
+	if err := client.Health().Update(true); err != nil {
+		t.Fatal(err)
 	}
 }

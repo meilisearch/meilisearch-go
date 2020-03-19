@@ -16,7 +16,7 @@ func (c clientHealth) Get() error {
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        nil,
-		acceptedStatusCodes: []int{http.StatusNoContent},
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Get",
 		apiName:             "Health",
 	}
@@ -24,7 +24,7 @@ func (c clientHealth) Get() error {
 	return c.client.executeRequest(req)
 }
 
-func (c clientHealth) Set(health bool) error {
+func (c clientHealth) Update(health bool) error {
 	req := internalRequest{
 		endpoint: "/health",
 		method:   http.MethodPut,
@@ -32,7 +32,7 @@ func (c clientHealth) Set(health bool) error {
 			"health": health,
 		},
 		withResponse:        nil,
-		acceptedStatusCodes: []int{http.StatusNoContent},
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Set",
 		apiName:             "Health",
 	}

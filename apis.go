@@ -58,8 +58,14 @@ type APIDocuments interface {
 	// AddOrReplace a list of documents, replace them if they already exist based on their unique identifiers.
 	AddOrReplace(documentsPtr interface{}) (*AsyncUpdateID, error)
 
+	// AddOrReplaceWithPrimaryKey do the same as AddOrReplace but will specify during the update to primaryKey to use for indexing
+	AddOrReplaceWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error)
+
 	// AddOrUpdate a list of documents, update them if they already exist based on their unique identifiers.
 	AddOrUpdate(documentsPtr interface{}) (*AsyncUpdateID, error)
+
+	// AddOrUpdateWithPrimaryKey do the same as AddOrUpdate but will specify during the update to primaryKey to use for indexing
+	AddOrUpdateWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error)
 
 	// DeleteAllDocuments in the specified index.
 	DeleteAllDocuments() (*AsyncUpdateID, error)
@@ -113,49 +119,49 @@ type APIKeys interface {
 type APISettings interface {
 	GetAll() (*Settings, error)
 
-	AddOrUpdateAll(request Settings) (*AsyncUpdateID, error)
+	UpdateAll(request Settings) (*AsyncUpdateID, error)
 
 	ResetAll() (*AsyncUpdateID, error)
 
 	GetRankingRules() (*[]string, error)
 
-	SetRankingRules([]string) (*AsyncUpdateID, error)
+	UpdateRankingRules([]string) (*AsyncUpdateID, error)
 
 	ResetRankingRules() (*AsyncUpdateID, error)
 
 	GetDistinctAttribute() (*string, error)
 
-	SetDistinctAttribute(string) (*AsyncUpdateID, error)
+	UpdateDistinctAttribute(string) (*AsyncUpdateID, error)
 
 	ResetDistinctAttribute() (*AsyncUpdateID, error)
 
 	GetSearchableAttributes() (*[]string, error)
 
-	SetSearchableAttributes([]string) (*AsyncUpdateID, error)
+	UpdateSearchableAttributes([]string) (*AsyncUpdateID, error)
 
 	ResetSearchableAttributes() (*AsyncUpdateID, error)
 
 	GetDisplayedAttributes() (*[]string, error)
 
-	SetDisplayedAttributes([]string) (*AsyncUpdateID, error)
+	UpdateDisplayedAttributes([]string) (*AsyncUpdateID, error)
 
 	ResetDisplayedAttributes() (*AsyncUpdateID, error)
 
 	GetStopWords() (*[]string, error)
 
-	SetStopWords([]string) (*AsyncUpdateID, error)
+	UpdateStopWords([]string) (*AsyncUpdateID, error)
 
 	ResetStopWords() (*AsyncUpdateID, error)
 
 	GetSynonyms() (*map[string][]string, error)
 
-	SetSynonyms(map[string][]string) (*AsyncUpdateID, error)
+	UpdateSynonyms(map[string][]string) (*AsyncUpdateID, error)
 
 	ResetSynonyms() (*AsyncUpdateID, error)
 
 	GetAcceptNewFields() (*bool, error)
 
-	SetAcceptNewFields(bool) (*AsyncUpdateID, error)
+	UpdateAcceptNewFields(bool) (*AsyncUpdateID, error)
 }
 
 // APIStats retrieve statistic over all indexes or a specific index id.
@@ -164,10 +170,7 @@ type APISettings interface {
 type APIStats interface {
 
 	// Get stats of an index.
-	Get(indexID string) (*Stats, error)
-
-	// Get stats of all indexes.
-	List() ([]Stats, error)
+	Get() (*Stats, error)
 }
 
 // APIHealth handle health of a MeiliSearch server.
@@ -179,7 +182,7 @@ type APIHealth interface {
 	Get() error
 
 	// Update health of MeiliSearch server.
-	Set(health bool) error
+	Update(health bool) error
 }
 
 // APIVersion retrieve the version of MeiliSearch.
