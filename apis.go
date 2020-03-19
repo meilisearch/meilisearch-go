@@ -117,43 +117,43 @@ type APISettings interface {
 
 	ResetAll() (*AsyncUpdateID, error)
 
-	GetRankingRules() ([]string, error)
+	GetRankingRules() (*[]string, error)
 
 	SetRankingRules([]string) (*AsyncUpdateID, error)
 
 	ResetRankingRules() (*AsyncUpdateID, error)
 
-	GetDistinctAttribute() (string, error)
+	GetDistinctAttribute() (*string, error)
 
 	SetDistinctAttribute(string) (*AsyncUpdateID, error)
 
 	ResetDistinctAttribute() (*AsyncUpdateID, error)
 
-	GetSearchableAttributes() ([]string, error)
+	GetSearchableAttributes() (*[]string, error)
 
 	SetSearchableAttributes([]string) (*AsyncUpdateID, error)
 
 	ResetSearchableAttributes() (*AsyncUpdateID, error)
 
-	GetDisplayedAttributes() ([]string, error)
+	GetDisplayedAttributes() (*[]string, error)
 
 	SetDisplayedAttributes([]string) (*AsyncUpdateID, error)
 
 	ResetDisplayedAttributes() (*AsyncUpdateID, error)
 
-	GetStopWords() ([]string, error)
+	GetStopWords() (*[]string, error)
 
 	SetStopWords([]string) (*AsyncUpdateID, error)
 
 	ResetStopWords() (*AsyncUpdateID, error)
 
-	GetSynonyms() (map[string]string, error)
+	GetSynonyms() (*map[string][]string, error)
 
-	SetSynonyms(map[string]string) (*AsyncUpdateID, error)
+	SetSynonyms(map[string][]string) (*AsyncUpdateID, error)
 
 	ResetSynonyms() (*AsyncUpdateID, error)
 
-	GetAcceptNewFields() (bool, error)
+	GetAcceptNewFields() (*bool, error)
 
 	SetAcceptNewFields(bool) (*AsyncUpdateID, error)
 }

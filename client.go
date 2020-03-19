@@ -26,10 +26,10 @@ type Client struct {
 
 	// singleton clients which don't need index id
 	apiIndexes APIIndexes
-	apiVersion APIVersion
 	apiKeys    APIKeys
 	apiStats   APIStats
 	apiHealth  APIHealth
+	apiVersion APIVersion
 }
 
 // NewClient create a Client from a Config structure.
@@ -47,10 +47,10 @@ func NewClientWithCustomHTTPClient(config Config, client http.Client) *Client {
 	}
 
 	c.apiIndexes = newClientIndexes(c)
-	c.apiVersion = newClientVersion(c)
 	c.apiKeys = newClientKeys(c)
 	c.apiHealth = newClientHealth(c)
 	c.apiStats = newClientStats(c)
+	c.apiVersion = newClientVersion(c)
 
 	return c
 }
@@ -78,6 +78,11 @@ func (c *Client) Search(indexID string) APISearch {
 // Updates return an APIUpdates client.
 func (c *Client) Updates(indexID string) APIUpdates {
 	return newClientUpdates(c, indexID)
+}
+
+// Settings return an APISettings client.
+func (c *Client) Settings(indexID string) APISettings {
+	return newClientSettings(c, indexID)
 }
 
 // Keys return an APIKeys client.

@@ -20,13 +20,13 @@ type Index struct {
 
 // Settings is the type that represent the settings in MeiliSearch
 type Settings struct {
-	RankingRules         []string          `json:"rankingRules,omitempty"`
-	DistinctAttribute    string            `json:"distinctAttribute,omitempty"`
-	SearchableAttributes []string          `json:"searchableAttributes,omitempty"`
-	DisplayedAttributes  []string          `json:"displayedAttributes,omitempty"`
-	StopWords            []string          `json:"stopWords,omitempty"`
-	Synonyms             map[string]string `json:"synonyms,omitempty"`
-	AcceptNewFields      bool              `json:"acceptNewFields,omitempty"`
+	RankingRules         []string            `json:"rankingRules,omitempty"`
+	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
+	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
+	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
+	StopWords            []string            `json:"stopWords,omitempty"`
+	Synonyms             map[string][]string `json:"synonyms,omitempty"`
+	AcceptNewFields      bool                `json:"acceptNewFields,omitempty"`
 }
 
 // Version is the type that represent the versions in MeiliSearch
