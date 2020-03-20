@@ -12,8 +12,8 @@ type clientSearch struct {
 	indexID string
 }
 
-func newClientSearch(client *Client, indexId string) clientSearch {
-	return clientSearch{client: client, indexID: indexId}
+func newClientSearch(client *Client, indexID string) clientSearch {
+	return clientSearch{client: client, indexID: indexID}
 }
 
 func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
@@ -26,10 +26,8 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 	values.Add("filters", request.Filters)
 	values.Add("offset", strconv.FormatInt(request.Offset, 10))
 	values.Add("limit", strconv.FormatInt(request.Limit, 10))
-	values.Add("timeoutMs", strconv.FormatInt(request.TimeoutMs, 10))
 	values.Add("cropLength", strconv.FormatInt(request.CropLength, 10))
 	values.Add("attributesToRetrieve", strings.Join(request.AttributesToRetrieve, ","))
-	values.Add("attributesToSearchIn", strings.Join(request.AttributesToSearchIn, ","))
 	values.Add("attributesToCrop", strings.Join(request.AttributesToCrop, ","))
 	values.Add("attributesToHighlight", strings.Join(request.AttributesToHighlight, ","))
 	values.Add("matches", strconv.FormatBool(request.Matches))
@@ -51,7 +49,7 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 	return resp, nil
 }
 
-func (c clientSearch) IndexId() string {
+func (c clientSearch) IndexID() string {
 	return c.indexID
 }
 

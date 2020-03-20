@@ -25,78 +25,78 @@ type Client struct {
 	httpClient http.Client
 
 	// singleton clients which don't need index id
-	apiIndexes ApiIndexes
-	apiVersion ApiVersion
-	apiKeys    ApiKeys
-	apiStats   ApiStats
-	apiHealth  ApiHealth
+	apiIndexes APIIndexes
+	apiKeys    APIKeys
+	apiStats   APIStats
+	apiHealth  APIHealth
+	apiVersion APIVersion
 }
 
 // NewClient create a Client from a Config structure.
 func NewClient(config Config) *Client {
-	return NewClientWithCustomHttpClient(config, http.Client{
+	return NewClientWithCustomHTTPClient(config, http.Client{
 		Timeout: time.Second,
 	})
 }
 
-// NewClientWithCustomHttpClient create a Client from a Config structure and a http.Client which you can customize.
-func NewClientWithCustomHttpClient(config Config, client http.Client) *Client {
+// NewClientWithCustomHTTPClient create a Client from a Config structure and a http.Client which you can customize.
+func NewClientWithCustomHTTPClient(config Config, client http.Client) *Client {
 	c := &Client{
 		config:     config,
 		httpClient: client,
 	}
 
 	c.apiIndexes = newClientIndexes(c)
-	c.apiVersion = newClientVersion(c)
 	c.apiKeys = newClientKeys(c)
 	c.apiHealth = newClientHealth(c)
 	c.apiStats = newClientStats(c)
+	c.apiVersion = newClientVersion(c)
 
 	return c
 }
 
-// Indexes return an ApiIndexes client.
-func (c *Client) Indexes() ApiIndexes {
+// Indexes return an APIIndexes client.
+func (c *Client) Indexes() APIIndexes {
 	return c.apiIndexes
 }
 
-// Version return an ApiVersion client.
-func (c *Client) Version() ApiVersion {
+// Version return an APIVersion client.
+func (c *Client) Version() APIVersion {
 	return c.apiVersion
 }
 
-// Documents return an ApiDocuments client.
-func (c *Client) Documents(indexId string) ApiDocuments {
-	return newClientDocuments(c, indexId)
+// Documents return an APIDocuments client.
+func (c *Client) Documents(indexID string) APIDocuments {
+	return newClientDocuments(c, indexID)
 }
 
-// Search return an ApiSearch client.
-func (c *Client) Search(indexId string) ApiSearch {
-	return newClientSearch(c, indexId)
+// Search return an APISearch client.
+func (c *Client) Search(indexID string) APISearch {
+	return newClientSearch(c, indexID)
 }
 
-// Updates return an ApiUpdates client.
-func (c *Client) Updates(indexId string) ApiUpdates {
-	return newClientUpdates(c, indexId)
+// Updates return an APIUpdates client.
+func (c *Client) Updates(indexID string) APIUpdates {
+	return newClientUpdates(c, indexID)
 }
 
-// StopWords return an ApiStopWords client.
-func (c *Client) StopWords(indexId string) ApiStopWords {
-	return newClientStopWords(c, indexId)
+// Settings return an APISettings client.
+func (c *Client) Settings(indexID string) APISettings {
+	return newClientSettings(c, indexID)
 }
 
-// Keys return an ApiKeys client.
-func (c *Client) Keys() ApiKeys {
+// Keys return an APIKeys client.
+func (c *Client) Keys() APIKeys {
 	return c.apiKeys
 }
 
-// Stats return an ApiStats client.
-func (c *Client) Stats() ApiStats {
+// Stats return an APIStats client.
+func (c *Client) Stats() APIStats {
 	return c.apiStats
 }
 
-// Health return an ApiHealth client.
-func (c *Client) Health() ApiHealth {
+// Health return an APIHealth client.
+func (c *Client) Health() APIHealth {
 	return c.apiHealth
 }
 
@@ -154,14 +154,14 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 	if req.withRequest != nil {
 
 		// A json request is mandatory, so the request interface{} need to be passed as a raw json body.
-		rawJsonRequest, errJsonMarshalling := json.Marshal(req.withRequest)
-		if errJsonMarshalling != nil {
-			return nil, internalError.WithErrCode(ErrCodeMarshalRequest, errJsonMarshalling)
+		rawJSONRequest, errJSONMarshalling := json.Marshal(req.withRequest)
+		if errJSONMarshalling != nil {
+			return nil, internalError.WithErrCode(ErrCodeMarshalRequest, errJSONMarshalling)
 		}
 
-		internalError.RequestToString = string(rawJsonRequest)
+		internalError.RequestToString = string(rawJSONRequest)
 
-		request, err = http.NewRequest(req.method, c.config.Host+req.endpoint, bytes.NewBuffer(rawJsonRequest))
+		request, err = http.NewRequest(req.method, c.config.Host+req.endpoint, bytes.NewBuffer(rawJSONRequest))
 	} else {
 		request, err = http.NewRequest(req.method, c.config.Host+req.endpoint, nil)
 	}
@@ -229,13 +229,22 @@ func (c Client) handleResponse(req *internalRequest, response *http.Response, in
 	return nil
 }
 
-// AwaitAsyncUpdateId check each 16ms the status of a AsyncUpdateId.
+func contains(slice []int, val int) bool {
+	for _, item := range slice {
+		if item == val {
+			return true
+		}
+	}
+	return false
+}
+
+// AwaitAsyncUpdateID check each 16ms the status of a AsyncUpdateID.
 // This method should be avoided.
 // TODO: improve this method by returning a channel
-func (c Client) AwaitAsyncUpdateId(indexId string, updateId *AsyncUpdateId) UpdateStatus {
-	apiUpdates := c.Updates(indexId)
+func (c Client) AwaitAsyncUpdateID(indexID string, updateID *AsyncUpdateID) UpdateStatus {
+	apiUpdates := c.Updates(indexID)
 	for {
-		update, err := apiUpdates.Get(updateId.UpdateID)
+		update, err := apiUpdates.Get(updateID.UpdateID)
 		if err != nil {
 			return UpdateStatusUnknown
 		}
@@ -246,8 +255,8 @@ func (c Client) AwaitAsyncUpdateId(indexId string, updateId *AsyncUpdateId) Upda
 	}
 }
 
-// AwaitAsyncUpdateId check each 25ms the status of a AsyncUpdateId.
+// AwaitAsyncUpdateID check each 25ms the status of a AsyncUpdateID.
 // This method should be avoided.
-func AwaitAsyncUpdateId(api ApiWithIndexID, updateId *AsyncUpdateId) UpdateStatus {
-	return api.Client().AwaitAsyncUpdateId(api.IndexId(), updateId)
+func AwaitAsyncUpdateID(api APIWithIndexID, updateID *AsyncUpdateID) UpdateStatus {
+	return api.Client().AwaitAsyncUpdateID(api.IndexID(), updateID)
 }

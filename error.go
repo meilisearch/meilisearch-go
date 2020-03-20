@@ -8,17 +8,26 @@ import (
 	"github.com/pkg/errors"
 )
 
+// ErrCode are all possible errors found during requests
 type ErrCode int
 
 const (
-	ErrCodeUnknown        ErrCode = 0
+	// ErrCodeUnknown default error code, undefined
+	ErrCodeUnknown ErrCode = 0
+	// ErrCodeMarshalRequest impossible to serialize request body
 	ErrCodeMarshalRequest ErrCode = iota + 1
+	// ErrCodeRequestCreation impossible create a request
 	ErrCodeRequestCreation
+	// ErrCodeRequestExecution impossible execute a request
 	ErrCodeRequestExecution
+	// ErrCodeResponseStatusCode the response status code is not comform
 	ErrCodeResponseStatusCode
+	// ErrCodeResponseReadBody impossible to read the reponse body
 	ErrCodeResponseReadBody
+	// ErrCodeResponseUnmarshalBody impossible deserialize the response body
 	ErrCodeResponseUnmarshalBody
-	ErrCodeUrlParsing
+	// ErrCodeURLParsing impossible to parse url parameters
+	ErrCodeURLParsing
 )
 
 const (
@@ -115,6 +124,7 @@ func (e Error) Error() string {
 	return message
 }
 
+// WithMessage add a message to an error
 func (e *Error) WithMessage(str string, errs ...error) *Error {
 	if errs != nil {
 		e.OriginError = errs[0]
@@ -125,6 +135,7 @@ func (e *Error) WithMessage(str string, errs ...error) *Error {
 	return e
 }
 
+// WithErrCode add an error code to an error
 func (e *Error) WithErrCode(err ErrCode, errs ...error) *Error {
 	if errs != nil {
 		e.OriginError = errs[0]
@@ -135,6 +146,7 @@ func (e *Error) WithErrCode(err ErrCode, errs ...error) *Error {
 	return e
 }
 
+// ErrorBody add a body to an error
 func (e *Error) ErrorBody(body []byte) {
 	e.ResponseToString = string(body)
 	msg := apiMessage{}

@@ -1,56 +1,91 @@
 package meilisearch
 
 import (
-	"log"
 	"testing"
 )
 
-var documents clientDocuments
-
 type docTest struct {
-	Id   string `json:"id"`
+	ID   string `json:"id"`
 	Name string `json:"name"`
 }
 
 func TestClientDocuments_Get(t *testing.T) {
-	updateIdRes, err := documents.AddOrUpdate([]interface{}{
-		docTest{Id: "leslapins", Name: "nestle"},
+	var indexUID = "TestClientDocuments_Get"
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
 	})
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	AwaitAsyncUpdateId(documents, updateIdRes)
-
-	var doc docTest
-	err = documents.Get("leslapins", &doc)
+	updateIDRes, err := client.
+		Documents(indexUID).
+		AddOrUpdate([]interface{}{
+			docTest{ID: "123", Name: "nestle"},
+		})
 
 	if err != nil {
 		t.Fatal(err)
+	}
+
+	client.AwaitAsyncUpdateID(indexUID, updateIDRes)
+
+	var doc docTest
+	if err = client.
+		Documents(indexUID).
+		Get("123", &doc); err != nil {
+		t.Fatal(err)
+	}
+
+	expect := docTest{ID: "123", Name: "nestle"}
+	if doc != expect {
+		t.Errorf("%v != %v", doc, expect)
 	}
 }
 
 func TestClientDocuments_Delete(t *testing.T) {
-	updateIdRes, err := documents.AddOrUpdate([]interface{}{
-		docTest{Id: "bloubiboulga2", Name: "nestle"},
+	var indexUID = "TestClientDocuments_Delete"
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
 	})
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	AwaitAsyncUpdateId(documents, updateIdRes)
+	updateIDRes, err := client.
+		Documents(indexUID).
+		AddOrUpdate([]interface{}{
+			docTest{ID: "123", Name: "nestle"},
+		})
 
-	updateIdRes, err = documents.Delete("bloubiboulga2")
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	AwaitAsyncUpdateId(documents, updateIdRes)
+	client.AwaitAsyncUpdateID(indexUID, updateIDRes)
+
+	updateIDRes, err = client.Documents(indexUID).Delete("123")
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.AwaitAsyncUpdateID(indexUID, updateIDRes)
 
 	var doc docTest
-	err = documents.Get("bloubiboulga2", &doc)
+	err = client.Documents(indexUID).Get("123", &doc)
 
 	if err.(*Error).ErrCode != ErrCodeResponseStatusCode {
 		t.Fatal(err)
@@ -58,26 +93,43 @@ func TestClientDocuments_Delete(t *testing.T) {
 }
 
 func TestClientDocuments_Deletes(t *testing.T) {
-	updateIdRes, err := documents.AddOrUpdate([]interface{}{
-		docTest{Id: "bloubiboulga", Name: "nestle"},
-		docTest{Id: "bloubiboulga1", Name: "nestle"},
+	var indexUID = "deletes"
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
 	})
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	AwaitAsyncUpdateId(documents, updateIdRes)
+	updateIDRes, err := client.
+		Documents(indexUID).
+		AddOrUpdate([]interface{}{
+			docTest{ID: "123", Name: "nestle"},
+			docTest{ID: "456", Name: "nestle"},
+		})
 
-	updateIdRes, err = documents.Deletes([]string{"bloubiboulga", "bloubiboulga1"})
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	AwaitAsyncUpdateId(documents, updateIdRes)
+	client.AwaitAsyncUpdateID(indexUID, updateIDRes)
+
+	updateIDRes, err = client.Documents(indexUID).Deletes([]string{"123", "456"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.AwaitAsyncUpdateID(indexUID, updateIDRes)
 
 	var doc docTest
-	err = documents.Get("bloubiboulga", &doc)
+	err = client.Documents(indexUID).Get("123", &doc)
 
 	if err.(*Error).ErrCode != ErrCodeResponseStatusCode {
 		t.Fatal(err)
@@ -85,18 +137,35 @@ func TestClientDocuments_Deletes(t *testing.T) {
 }
 
 func TestClientDocuments_List(t *testing.T) {
-	updateIdRes, err := documents.AddOrUpdate([]interface{}{
-		docTest{Id: "chocapic3", Name: "nestle"},
+	var indexUID = "TestClientDocuments_List"
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
 	})
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	AwaitAsyncUpdateId(documents, updateIdRes)
+	updateIDRes, err := client.
+		Documents(indexUID).
+		AddOrUpdate([]interface{}{
+			docTest{ID: "123", Name: "nestle"},
+			docTest{ID: "456", Name: "nestle"},
+		})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.AwaitAsyncUpdateID(indexUID, updateIDRes)
 
 	var list []docTest
-	err = documents.List(ListDocumentsRequest{
+	err = client.Documents(indexUID).List(ListDocumentsRequest{
 		Offset: 0,
 		Limit:  100,
 	}, &list)
@@ -111,20 +180,36 @@ func TestClientDocuments_List(t *testing.T) {
 	}
 }
 
-func TestClientDocuments_AddOrUpdate(t *testing.T) {
-	updateIdRes, err := documents.AddOrUpdate([]interface{}{
-		docTest{Id: "chocapic", Name: "nestle"},
-		docTest{Id: "chocapic2", Name: "nestle2"},
+func TestClientDocuments_AddOrReplace(t *testing.T) {
+	var indexUID = "TestClientDocuments_AddOrReplace"
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
 	})
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	AwaitAsyncUpdateId(documents, updateIdRes)
+	updateIDRes, err := client.
+		Documents(indexUID).
+		AddOrReplace([]docTest{
+			{ID: "123", Name: "nestle"},
+			{ID: "456", Name: "nestle"},
+		})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.AwaitAsyncUpdateID(indexUID, updateIDRes)
 
 	var list []docTest
-	err = documents.List(ListDocumentsRequest{
+	err = client.Documents(indexUID).List(ListDocumentsRequest{
 		Offset: 0,
 		Limit:  100,
 	}, &list)
@@ -133,48 +218,87 @@ func TestClientDocuments_AddOrUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	// tests are running in parallel so there can be more than 2 docs
+	// tests are running in parallel so there can be more than 1 docs
 	if len(list) < 2 {
-		t.Fatal("number of doc should at least 2")
+		t.Fatal("number of doc should be at least 1")
 	}
 }
 
-func TestClientDocuments_ClearAllDocuments(t *testing.T) {
-	updateIdRes, err := documents.AddOrUpdate([]interface{}{
-		docTest{Id: "chocapic", Name: "nestle"},
-		docTest{Id: "chocapic2", Name: "nestle2"},
-	})
+func TestClientDocuments_AddOrUpdate(t *testing.T) {
+	var indexUID = "TestClientDocuments_AddOrUpdate"
 
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	AwaitAsyncUpdateId(documents, updateIdRes)
-
-	_, err = documents.DeleteAllDocuments()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-}
-
-func init() {
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
 	})
 
-	resp, err := newClientIndexes(client).Create(CreateIndexRequest{
-		Name: "documents_tests",
-		UID:  "documents_tests",
-		Schema: Schema{
-			"id":   {"identifier", "indexed", "displayed"},
-			"name": {"indexed", "displayed"},
-		},
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
 	})
 
 	if err != nil {
-		log.Fatal(err)
+		t.Fatal(err)
 	}
 
-	documents = newClientDocuments(client, resp.UID)
+	updateIDRes, err := client.
+		Documents(indexUID).
+		AddOrUpdate([]docTest{
+			{ID: "123", Name: "nestle"},
+			{ID: "456", Name: "nestle"},
+		})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.AwaitAsyncUpdateID(indexUID, updateIDRes)
+
+	var list []docTest
+	err = client.Documents(indexUID).List(ListDocumentsRequest{
+		Offset: 0,
+		Limit:  100,
+	}, &list)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	// tests are running in parallel so there can be more than 1 docs
+	if len(list) < 2 {
+		t.Fatal("number of doc should be at least 1")
+	}
+}
+
+func TestClientDocuments_DeleteAllDocuments(t *testing.T) {
+	var indexUID = "TestClientDocuments_DeleteAllDocuments"
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	updateIDRes, err := client.
+		Documents(indexUID).
+		AddOrUpdate([]interface{}{
+			docTest{ID: "123", Name: "nestle"},
+			docTest{ID: "456", Name: "nestle"},
+		})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.AwaitAsyncUpdateID(indexUID, updateIDRes)
+
+	_, err = client.Documents(indexUID).DeleteAllDocuments()
+
+	if err != nil {
+		t.Fatal(err)
+	}
 }

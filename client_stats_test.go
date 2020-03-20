@@ -1,38 +1,15 @@
 package meilisearch
 
-import "testing"
-
-var stats clientStats
+import (
+	"testing"
+)
 
 func TestClientStats_Get(t *testing.T) {
-	if _, err := stats.Get("stats_tests"); err != nil {
-		return
-	}
-}
-
-func TestClientStats_List(t *testing.T) {
-	if _, err := stats.List(); err != nil {
-		return
-	}
-}
-
-func init() {
 	var client = NewClient(Config{
 		Host: "http://localhost:7700",
 	})
 
-	_, err := newClientIndexes(client).Create(CreateIndexRequest{
-		Name: "stats_tests",
-		UID:  "stats_tests",
-		Schema: Schema{
-			"id":   {"identifier", "indexed", "displayed"},
-			"name": {"indexed", "indexed", "displayed"},
-		},
-	})
-
-	if err != nil {
-		panic(err)
+	if _, err := client.Stats().Get(); err != nil {
+		t.Fatal(err)
 	}
-
-	stats = newClientStats(client)
 }

@@ -10,8 +10,8 @@ type clientUpdates struct {
 	indexID string
 }
 
-func newClientUpdates(client *Client, indexId string) clientUpdates {
-	return clientUpdates{client: client, indexID: indexId}
+func newClientUpdates(client *Client, indexID string) clientUpdates {
+	return clientUpdates{client: client, indexID: indexID}
 }
 
 func (c clientUpdates) Get(id int64) (resp *Update, err error) {
@@ -52,4 +52,12 @@ func (c clientUpdates) List() (resp []Update, err error) {
 	}
 
 	return resp, nil
+}
+
+func (c clientUpdates) IndexID() string {
+	return c.indexID
+}
+
+func (c clientUpdates) Client() *Client {
+	return c.client
 }

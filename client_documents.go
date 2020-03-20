@@ -1,14 +1,16 @@
 package meilisearch
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type clientDocuments struct {
 	client  *Client
 	indexID string
 }
 
-func newClientDocuments(client *Client, indexId string) clientDocuments {
-	return clientDocuments{client: client, indexID: indexId}
+func newClientDocuments(client *Client, indexID string) clientDocuments {
+	return clientDocuments{client: client, indexID: indexID}
 }
 
 func (c clientDocuments) Get(identifier string, documentPtr interface{}) error {
@@ -29,8 +31,8 @@ func (c clientDocuments) Get(identifier string, documentPtr interface{}) error {
 	return nil
 }
 
-func (c clientDocuments) Delete(identifier string) (resp *AsyncUpdateId, err error) {
-	resp = &AsyncUpdateId{}
+func (c clientDocuments) Delete(identifier string) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/documents/" + identifier,
 		method:              http.MethodDelete,
@@ -48,10 +50,10 @@ func (c clientDocuments) Delete(identifier string) (resp *AsyncUpdateId, err err
 	return resp, nil
 }
 
-func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateId, err error) {
-	resp = &AsyncUpdateId{}
+func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/documents/delete",
+		endpoint:            "/indexes/" + c.indexID + "/documents/delete-batch",
 		method:              http.MethodPost,
 		withRequest:         &identifier,
 		withResponse:        resp,
@@ -85,11 +87,49 @@ func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interfa
 	return nil
 }
 
-func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdateId, err error) {
-	resp = &AsyncUpdateId{}
+func (c clientDocuments) AddOrReplace(documentsPtr interface{}) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/documents",
 		method:              http.MethodPost,
+		withRequest:         documentsPtr,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "AddOrReplace",
+		apiName:             "Documents",
+	}
+
+	if err = c.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (c clientDocuments) AddOrReplaceWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + c.indexID + "/documents?primaryKey=" + primaryKey,
+		method:              http.MethodPost,
+		withRequest:         documentsPtr,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "AddOrReplaceWithPrimaryKey",
+		apiName:             "Documents",
+	}
+
+	if err = c.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + c.indexID + "/documents",
+		method:              http.MethodPut,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -104,8 +144,27 @@ func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdat
 	return resp, nil
 }
 
-func (c clientDocuments) DeleteAllDocuments() (resp *AsyncUpdateId, err error) {
-	resp = &AsyncUpdateId{}
+func (c clientDocuments) AddOrUpdateWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + c.indexID + "/documents?primaryKey=" + primaryKey,
+		method:              http.MethodPut,
+		withRequest:         documentsPtr,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "AddOrUpdateWithPrimaryKey",
+		apiName:             "Documents",
+	}
+
+	if err = c.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (c clientDocuments) DeleteAllDocuments() (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexID + "/documents",
 		method:              http.MethodDelete,
@@ -123,7 +182,7 @@ func (c clientDocuments) DeleteAllDocuments() (resp *AsyncUpdateId, err error) {
 	return resp, nil
 }
 
-func (c clientDocuments) IndexId() string {
+func (c clientDocuments) IndexID() string {
 	return c.indexID
 }
 
