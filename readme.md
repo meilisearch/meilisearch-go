@@ -186,7 +186,7 @@ err = client.Documents("books").List(ListDocumentsRequest{
 #### Add documents <!-- omit in toc -->
 
 ```go
-documents := []Book{
+documents := []map[string]interface{}{
     {BookID: 90, Title: "Madame Bovary"},
 }
 
