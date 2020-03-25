@@ -48,29 +48,47 @@ NB: you can also download MeiliSearch from **Homebrew** or **APT**.
 #### Add documents <!-- omit in toc -->
 
 ```go
-var client = NewClient(Config{
-    Host: "http://127.0.0.1:7700",
-    APIKey: "masterKey"
-})
+package main
 
-resp, err := client.Indexes().Create(CreateIndexRequest{
-    UID: "books",
-})
+import (
+    "fmt"
+    "os"
 
-if err != nil {
-    t.Fatal(err)
+    "github.com/meilisearch/meilisearch-go"
+)
+
+func main() {
+    var client = meilisearch.NewClient(meilisearch.Config{
+        Host: "http://127.0.0.1:7700",
+        APIKey: "masterKey"
+    })
+
+    // Create an index if your index does not already exist
+    _, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
+        UID: "books",
+    })
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+
+    documents := []map[string]interface{}{
+        {"book_id": 123,  "title": "Pride and Prejudice"},
+        {"book_id": 456,  "title": "Le Petit Prince"},
+        {"book_id": 1,    "title": "Alice In Wonderland"},
+        {"book_id": 1344, "title": "The Hobbit"},
+        {"book_id": 4,    "title": "Harry Potter and the Half-Blood Prince"},
+        {"book_id": 42,   "title": "The Hitchhiker's Guide to the Galaxy"},
+    }
+
+    updateRes, err := client.Documents("books").AddOrUpdate(documents) // => { "updateId": 0 }
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+
+    fmt.Println(updateRes.UpdateID)
 }
-
-documents := map[int]string{
-    { book_id: 123,  title: "Pride and Prejudice" },
-    { book_id: 456,  title: "Le Petit Prince" },
-    { book_id: 1,    title: "Alice In Wonderland" },
-    { book_id: 1344, title: "The Hobbit" },
-    { book_id: 4,    title: "Harry Potter and the Half-Blood Prince" },
-    { book_id: 42,   title: "The Hitchhiker\'s Guide to the Galaxy" }
-}
-
-updateIDRes, err := client.Documents("books").AddOrUpdate(documents) // => { "updateId": 0 }
 ```
 
 With the `updateId`, you can check the status (`processed` or `failed`) of your documents addition thanks to this [method](#update-status).
@@ -78,21 +96,39 @@ With the `updateId`, you can check the status (`processed` or `failed`) of your 
 #### Search in index <!-- omit in toc -->
 
 ```go
-// MeiliSearch is typo-tolerant:
-resp, err := client.Search(indexUID).Search(SearchRequest{
-    Query: "harry pottre",
-    Limit: 10,
-})
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/meilisearch/meilisearch-go"
+)
+
+func main() {
+    // MeiliSearch is typo-tolerant:
+    searchRes, err := client.Search("books").Search(meilisearch.SearchRequest{
+        Query: "harry pottre",
+        Limit: 10,
+    })
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
+
+    fmt.Println(searchRes.Hits)
+}
 ```
-Output:
-```go
+
+JSON output:
+```json
 {
   "hits": [{
     "book_id": 4,
     "title": "Harry Potter and the Half-Blood Prince"
   }],
   "offset": 0,
-  "limit": 20,
+  "limit": 10,
   "processingTimeMs": 1,
   "query": "harry pottre"
 }
@@ -109,11 +145,11 @@ You can check out [the API documentation](https://docs.meilisearch.com/reference
 
 ```go
 // Create an index with a specific uid (uid must be unique)
-resp, err := client.Indexes().Create(CreateIndexRequest{
+resp, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
     UID: "books",
 })
 // Create an index with a primary key
-resp, err := client.Indexes().Create(CreateIndexRequest{
+resp, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
     UID: "books",
     PrimaryKey: "book_id",
 })
@@ -150,16 +186,11 @@ err = client.Documents("books").List(ListDocumentsRequest{
 #### Add documents <!-- omit in toc -->
 
 ```go
-documents := map[int]string{
-    { book_id: 123,  title: "Pride and Prejudice" },
-    { book_id: 456,  title: "Le Petit Prince" },
-    { book_id: 1,    title: "Alice In Wonderland" },
-    { book_id: 1344, title: "The Hobbit" },
-    { book_id: 4,    title: "Harry Potter and the Half-Blood Prince" },
-    { book_id: 42,   title: "The Hitchhiker\'s Guide to the Galaxy" }
+documents := []map[string]interface{}{
+    {BookID: 90, Title: "Madame Bovary"},
 }
 
-updateIDRes, err := client.Documents("books").AddOrUpdate(documents)
+upd_res, err := client.Documents("books").AddOrUpdate(documents)
 ```
 
 Response:
@@ -174,14 +205,15 @@ With this `updateId` you can track your [operation update](#update-status).
 
 ```go
 // Delete one document
-updateIDRes, err = client.Documents("books").Delete("123")
+updateRes, err = client.Documents("books").Delete("123")
 // Delete several documents
-updateIDRes, err = client.Documents("books").Deletes([]string{"123", "456"})
+updateRes, err = client.Documents("books").Deletes([]string{"123", "456"})
 // Delete all documents /!\
-_, err = client.Documents("books").DeleteAllDocuments()
+updateRes, err = client.Documents("books").DeleteAllDocuments()
 ```
 
 ### Update status
+
 ```go
 // Get one update status
 // Parameter: the updateId got after an asynchronous request (e.g. documents addition)
@@ -195,7 +227,7 @@ list, err := client.Updates("books").List()
 #### Basic search <!-- omit in toc -->
 
 ```go
-resp, err := client.Search(indexUID).Search(SearchRequest{
+resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
     Query: "prince",
     Limit: 10,
 })
@@ -225,9 +257,9 @@ resp, err := client.Search(indexUID).Search(SearchRequest{
 All the supported options are described in [this documentation section](https://docs.meilisearch.com/references/search.html#search-in-an-index).
 
 ```go
-resp, err := client.Search(indexUID).Search(SearchRequest{
+resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
     Query: "harry pottre",
-    AttributesToHighlight: "*"
+    AttributesToHighlight: "*",
 })
 ```
 
@@ -272,7 +304,7 @@ Each PR should pass the tests and the linter to be accepted.
 
 ```bash
 # Tests
-$ ./run_test.sh
+$ ./run_tests.sh
 # Install golint
 $ go get -u golang.org/x/lint/golint
 # Use golint
