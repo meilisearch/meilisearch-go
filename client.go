@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -238,25 +239,37 @@ func contains(slice []int, val int) bool {
 	return false
 }
 
-// AwaitAsyncUpdateID check each 16ms the status of a AsyncUpdateID.
+// AwaitAsyncUpdateID check each 50ms the status of a AsyncUpdateID.
 // This method should be avoided.
-// TODO: improve this method by returning a channel
-func (c Client) AwaitAsyncUpdateID(indexID string, updateID *AsyncUpdateID) UpdateStatus {
-	apiUpdates := c.Updates(indexID)
-	for {
-		update, err := apiUpdates.Get(updateID.UpdateID)
-		if err != nil {
-			return UpdateStatusUnknown
-		}
-		if update.Status != UpdateStatusEnqueued {
-			return update.Status
-		}
-		time.Sleep(time.Millisecond * 16)
-	}
+func (c Client) AwaitAsyncUpdateIDSimplified(indexUID string, updateID *AsyncUpdateID) (UpdateStatus, error) {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancelFunc()
+
+	return c.AwaitAsyncUpdateID(ctx, time.Millisecond*50, indexUID, updateID)
 }
 
-// AwaitAsyncUpdateID check each 25ms the status of a AsyncUpdateID.
-// This method should be avoided.
-func AwaitAsyncUpdateID(api APIWithIndexID, updateID *AsyncUpdateID) UpdateStatus {
-	return api.Client().AwaitAsyncUpdateID(api.IndexID(), updateID)
+// AwaitAsyncUpdateID wait for the end of an update.
+// The function will check by regular interval provided in parameter interval
+// the UpdateStatus. If it is not UpdateStatusEnqueued or the ctx cancelled
+// we return the UpdateStatus.
+func (c Client) AwaitAsyncUpdateID(
+	ctx context.Context,
+	interval time.Duration,
+	indexID string,
+	updateID *AsyncUpdateID) (UpdateStatus, error) {
+
+	apiUpdates := c.Updates(indexID)
+	for {
+		if err := ctx.Err(); err != nil {
+			return "", err
+		}
+		update, err := apiUpdates.Get(updateID.UpdateID)
+		if err != nil {
+			return UpdateStatusUnknown, nil
+		}
+		if update.Status != UpdateStatusEnqueued {
+			return update.Status, nil
+		}
+		time.Sleep(interval)
+	}
 }
