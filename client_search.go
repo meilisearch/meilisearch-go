@@ -22,6 +22,10 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 
 	values := url.Values{}
 
+	if request.Limit == 0 {
+		request.Limit = 20
+	}
+
 	values.Add("q", request.Query)
 	values.Add("filters", request.Filters)
 	values.Add("offset", strconv.FormatInt(request.Offset, 10))
