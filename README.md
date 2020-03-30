@@ -315,4 +315,4 @@ $ gofmt -w ./..
 
 ## 🤖 Compatibility with MeiliSearch
 
-This gem works for MeiliSearch `v0.9.x`.
+This module works for MeiliSearch `v0.9.x`.
