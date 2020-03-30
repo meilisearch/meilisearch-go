@@ -36,11 +36,18 @@ type Version struct {
 	PkgVersion string    `json:"pkgVersion"`
 }
 
-// Stats is the type that represent the stats in MeiliSearch
-type Stats struct {
+// StatsIndex is the type that represent the stats of an index in MeiliSearch
+type StatsIndex struct {
 	NumberOfDocuments int64            `json:"numberOfDocuments"`
 	IsIndexing        bool             `json:"isIndexing"`
 	FieldsFrequency   map[string]int64 `json:"fieldsFrequency"`
+}
+
+// Stats is the type that represent all stats
+type Stats struct {
+	DatabaseSize int64                 `json:"database_size"`
+	LastUpdate   time.Time             `json:"last_update"`
+	Indexes      map[string]StatsIndex `json:"indexes"`
 }
 
 // SystemInformation is the type that represent the information system in MeiliSearch
