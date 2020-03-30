@@ -6,19 +6,19 @@ import (
 )
 
 type clientUpdates struct {
-	client  *Client
-	indexID string
+	client   *Client
+	indexUID string
 }
 
-func newClientUpdates(client *Client, indexID string) clientUpdates {
-	return clientUpdates{client: client, indexID: indexID}
+func newClientUpdates(client *Client, indexUID string) clientUpdates {
+	return clientUpdates{client: client, indexUID: indexUID}
 }
 
 func (c clientUpdates) Get(id int64) (resp *Update, err error) {
 	resp = &Update{}
 
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/updates/" + strconv.FormatInt(id, 10),
+		endpoint:            "/indexes/" + c.indexUID + "/updates/" + strconv.FormatInt(id, 10),
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -38,7 +38,7 @@ func (c clientUpdates) List() (resp []Update, err error) {
 	resp = []Update{}
 
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/updates",
+		endpoint:            "/indexes/" + c.indexUID + "/updates",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
@@ -55,7 +55,7 @@ func (c clientUpdates) List() (resp []Update, err error) {
 }
 
 func (c clientUpdates) IndexID() string {
-	return c.indexID
+	return c.indexUID
 }
 
 func (c clientUpdates) Client() *Client {

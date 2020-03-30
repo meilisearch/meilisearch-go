@@ -8,12 +8,12 @@ import (
 )
 
 type clientSearch struct {
-	client  *Client
-	indexID string
+	client   *Client
+	indexUID string
 }
 
-func newClientSearch(client *Client, indexID string) clientSearch {
-	return clientSearch{client: client, indexID: indexID}
+func newClientSearch(client *Client, indexUID string) clientSearch {
+	return clientSearch{client: client, indexUID: indexUID}
 }
 
 func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
@@ -33,7 +33,7 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 	values.Add("matches", strconv.FormatBool(request.Matches))
 
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/search?" + values.Encode(),
+		endpoint:            "/indexes/" + c.indexUID + "/search?" + values.Encode(),
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
@@ -50,7 +50,7 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 }
 
 func (c clientSearch) IndexID() string {
-	return c.indexID
+	return c.indexUID
 }
 
 func (c clientSearch) Client() *Client {

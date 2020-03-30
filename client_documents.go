@@ -5,17 +5,17 @@ import (
 )
 
 type clientDocuments struct {
-	client  *Client
-	indexID string
+	client   *Client
+	indexUID string
 }
 
-func newClientDocuments(client *Client, indexID string) clientDocuments {
-	return clientDocuments{client: client, indexID: indexID}
+func newClientDocuments(client *Client, indexUID string) clientDocuments {
+	return clientDocuments{client: client, indexUID: indexUID}
 }
 
 func (c clientDocuments) Get(identifier string, documentPtr interface{}) error {
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/documents/" + identifier,
+		endpoint:            "/indexes/" + c.indexUID + "/documents/" + identifier,
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        documentPtr,
@@ -34,7 +34,7 @@ func (c clientDocuments) Get(identifier string, documentPtr interface{}) error {
 func (c clientDocuments) Delete(identifier string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/documents/" + identifier,
+		endpoint:            "/indexes/" + c.indexUID + "/documents/" + identifier,
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -53,7 +53,7 @@ func (c clientDocuments) Delete(identifier string) (resp *AsyncUpdateID, err err
 func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/documents/delete-batch",
+		endpoint:            "/indexes/" + c.indexUID + "/documents/delete-batch",
 		method:              http.MethodPost,
 		withRequest:         &identifier,
 		withResponse:        resp,
@@ -71,7 +71,7 @@ func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateID, err 
 
 func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interface{}) error {
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/documents",
+		endpoint:            "/indexes/" + c.indexUID + "/documents",
 		method:              http.MethodGet,
 		withRequest:         &request,
 		withResponse:        documentsPtr,
@@ -90,7 +90,7 @@ func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interfa
 func (c clientDocuments) AddOrReplace(documentsPtr interface{}) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/documents",
+		endpoint:            "/indexes/" + c.indexUID + "/documents",
 		method:              http.MethodPost,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
@@ -109,7 +109,7 @@ func (c clientDocuments) AddOrReplace(documentsPtr interface{}) (resp *AsyncUpda
 func (c clientDocuments) AddOrReplaceWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/documents?primaryKey=" + primaryKey,
+		endpoint:            "/indexes/" + c.indexUID + "/documents?primaryKey=" + primaryKey,
 		method:              http.MethodPost,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
@@ -128,7 +128,7 @@ func (c clientDocuments) AddOrReplaceWithPrimaryKey(documentsPtr interface{}, pr
 func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/documents",
+		endpoint:            "/indexes/" + c.indexUID + "/documents",
 		method:              http.MethodPut,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
@@ -147,7 +147,7 @@ func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdat
 func (c clientDocuments) AddOrUpdateWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/documents?primaryKey=" + primaryKey,
+		endpoint:            "/indexes/" + c.indexUID + "/documents?primaryKey=" + primaryKey,
 		method:              http.MethodPut,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
@@ -166,7 +166,7 @@ func (c clientDocuments) AddOrUpdateWithPrimaryKey(documentsPtr interface{}, pri
 func (c clientDocuments) DeleteAllDocuments() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/documents",
+		endpoint:            "/indexes/" + c.indexUID + "/documents",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -183,7 +183,7 @@ func (c clientDocuments) DeleteAllDocuments() (resp *AsyncUpdateID, err error) {
 }
 
 func (c clientDocuments) IndexID() string {
-	return c.indexID
+	return c.indexUID
 }
 
 func (c clientDocuments) Client() *Client {
