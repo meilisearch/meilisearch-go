@@ -5,26 +5,26 @@ import (
 )
 
 type clientSettings struct {
-	client  *Client
-	indexID string
+	client   *Client
+	indexUID string
+}
+
+func newClientSettings(client *Client, indexUID string) clientSettings {
+	return clientSettings{client: client, indexUID: indexUID}
 }
 
 func (c clientSettings) IndexID() string {
-	return c.indexID
+	return c.indexUID
 }
 
 func (c clientSettings) Client() *Client {
 	return c.client
 }
 
-func newClientSettings(client *Client, indexID string) clientSettings {
-	return clientSettings{client: client, indexID: indexID}
-}
-
 func (c clientSettings) GetAll() (resp *Settings, err error) {
 	resp = &Settings{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings",
+		endpoint:            "/indexes/" + c.indexUID + "/settings",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -42,7 +42,7 @@ func (c clientSettings) GetAll() (resp *Settings, err error) {
 func (c clientSettings) UpdateAll(request Settings) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings",
+		endpoint:            "/indexes/" + c.indexUID + "/settings",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -61,7 +61,7 @@ func (c clientSettings) UpdateAll(request Settings) (resp *AsyncUpdateID, err er
 func (c clientSettings) ResetAll() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings",
+		endpoint:            "/indexes/" + c.indexUID + "/settings",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -80,7 +80,7 @@ func (c clientSettings) ResetAll() (resp *AsyncUpdateID, err error) {
 func (c clientSettings) GetRankingRules() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/ranking-rules",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/ranking-rules",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -98,7 +98,7 @@ func (c clientSettings) GetRankingRules() (resp *[]string, err error) {
 func (c clientSettings) UpdateRankingRules(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/ranking-rules",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/ranking-rules",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -117,7 +117,7 @@ func (c clientSettings) UpdateRankingRules(request []string) (resp *AsyncUpdateI
 func (c clientSettings) ResetRankingRules() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/ranking-rules",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/ranking-rules",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -137,7 +137,7 @@ func (c clientSettings) GetDistinctAttribute() (resp *string, err error) {
 	empty := ""
 	resp = &empty
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/distinct-attribute",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -155,7 +155,7 @@ func (c clientSettings) GetDistinctAttribute() (resp *string, err error) {
 func (c clientSettings) UpdateDistinctAttribute(request string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/distinct-attribute",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -174,7 +174,7 @@ func (c clientSettings) UpdateDistinctAttribute(request string) (resp *AsyncUpda
 func (c clientSettings) ResetDistinctAttribute() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/distinct-attribute",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -193,7 +193,7 @@ func (c clientSettings) ResetDistinctAttribute() (resp *AsyncUpdateID, err error
 func (c clientSettings) GetSearchableAttributes() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/searchable-attributes",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/searchable-attributes",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -211,7 +211,7 @@ func (c clientSettings) GetSearchableAttributes() (resp *[]string, err error) {
 func (c clientSettings) UpdateSearchableAttributes(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/searchable-attributes",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/searchable-attributes",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -230,7 +230,7 @@ func (c clientSettings) UpdateSearchableAttributes(request []string) (resp *Asyn
 func (c clientSettings) ResetSearchableAttributes() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/searchable-attributes",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/searchable-attributes",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -249,7 +249,7 @@ func (c clientSettings) ResetSearchableAttributes() (resp *AsyncUpdateID, err er
 func (c clientSettings) GetDisplayedAttributes() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/displayed-attributes",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/displayed-attributes",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -267,7 +267,7 @@ func (c clientSettings) GetDisplayedAttributes() (resp *[]string, err error) {
 func (c clientSettings) UpdateDisplayedAttributes(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/displayed-attributes",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/displayed-attributes",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -286,7 +286,7 @@ func (c clientSettings) UpdateDisplayedAttributes(request []string) (resp *Async
 func (c clientSettings) ResetDisplayedAttributes() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/displayed-attributes",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/displayed-attributes",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -305,7 +305,7 @@ func (c clientSettings) ResetDisplayedAttributes() (resp *AsyncUpdateID, err err
 func (c clientSettings) GetStopWords() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/stop-words",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/stop-words",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -323,7 +323,7 @@ func (c clientSettings) GetStopWords() (resp *[]string, err error) {
 func (c clientSettings) UpdateStopWords(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/stop-words",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/stop-words",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -342,7 +342,7 @@ func (c clientSettings) UpdateStopWords(request []string) (resp *AsyncUpdateID, 
 func (c clientSettings) ResetStopWords() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/stop-words",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/stop-words",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -361,7 +361,7 @@ func (c clientSettings) ResetStopWords() (resp *AsyncUpdateID, err error) {
 func (c clientSettings) GetSynonyms() (resp *map[string][]string, err error) {
 	resp = &map[string][]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/synonyms",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/synonyms",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -379,7 +379,7 @@ func (c clientSettings) GetSynonyms() (resp *map[string][]string, err error) {
 func (c clientSettings) UpdateSynonyms(request map[string][]string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/synonyms",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/synonyms",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -398,7 +398,7 @@ func (c clientSettings) UpdateSynonyms(request map[string][]string) (resp *Async
 func (c clientSettings) ResetSynonyms() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/synonyms",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/synonyms",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -418,7 +418,7 @@ func (c clientSettings) GetAcceptNewFields() (resp *bool, err error) {
 	empty := true
 	resp = &empty
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/accept-new-fields",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/accept-new-fields",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -436,7 +436,7 @@ func (c clientSettings) GetAcceptNewFields() (resp *bool, err error) {
 func (c clientSettings) UpdateAcceptNewFields(request bool) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexID + "/settings/accept-new-fields",
+		endpoint:            "/indexes/" + c.indexUID + "/settings/accept-new-fields",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,

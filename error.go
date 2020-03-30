@@ -20,9 +20,9 @@ const (
 	ErrCodeRequestCreation
 	// ErrCodeRequestExecution impossible execute a request
 	ErrCodeRequestExecution
-	// ErrCodeResponseStatusCode the response status code is not comform
+	// ErrCodeResponseStatusCode the response status code is not conform
 	ErrCodeResponseStatusCode
-	// ErrCodeResponseReadBody impossible to read the reponse body
+	// ErrCodeResponseReadBody impossible to read the response body
 	ErrCodeResponseReadBody
 	// ErrCodeResponseUnmarshalBody impossible deserialize the response body
 	ErrCodeResponseUnmarshalBody
