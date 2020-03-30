@@ -170,7 +170,9 @@ type APISettings interface {
 type APIStats interface {
 
 	// Get stats of an index.
-	Get() (*Stats, error)
+	Get(indexUID string) (*StatsIndex, error)
+
+	GetAll() (*Stats, error)
 }
 
 // APIHealth handle health of a MeiliSearch server.
