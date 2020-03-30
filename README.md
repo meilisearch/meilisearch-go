@@ -259,7 +259,7 @@ All the supported options are described in [this documentation section](https://
 ```go
 resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
     Query: "harry pottre",
-    AttributesToHighlight: "*",
+    AttributesToHighlight: []string{"*"},
 })
 ```
 
