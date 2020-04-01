@@ -60,7 +60,7 @@ import (
 func main() {
     var client = meilisearch.NewClient(meilisearch.Config{
         Host: "http://127.0.0.1:7700",
-        APIKey: "masterKey"
+        APIKey: "masterKey",
     })
 
     // Create an index if your index does not already exist
