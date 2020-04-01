@@ -230,15 +230,6 @@ func (c Client) handleResponse(req *internalRequest, response *http.Response, in
 	return nil
 }
 
-func contains(slice []int, val int) bool {
-	for _, item := range slice {
-		if item == val {
-			return true
-		}
-	}
-	return false
-}
-
 // defaultWaitForPendingUpdate check each 50ms the status of a AsyncUpdateID.
 // This method is used for test purpose
 func (c Client) defaultWaitForPendingUpdate(indexUID string, updateID *AsyncUpdateID) (UpdateStatus, error) {
