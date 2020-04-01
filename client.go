@@ -239,20 +239,20 @@ func contains(slice []int, val int) bool {
 	return false
 }
 
-// AwaitAsyncUpdateID check each 50ms the status of a AsyncUpdateID.
-// This method should be avoided.
-func (c Client) AwaitAsyncUpdateIDSimplified(indexUID string, updateID *AsyncUpdateID) (UpdateStatus, error) {
+// defaultWaitForPendingUpdate check each 50ms the status of a AsyncUpdateID.
+// This method is used for test purpose
+func (c Client) defaultWaitForPendingUpdate(indexUID string, updateID *AsyncUpdateID) (UpdateStatus, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancelFunc()
 
-	return c.AwaitAsyncUpdateID(ctx, time.Millisecond*50, indexUID, updateID)
+	return c.WaitForPendingUpdate(ctx, time.Millisecond*50, indexUID, updateID)
 }
 
-// AwaitAsyncUpdateID wait for the end of an update.
+// WaitForPendingUpdate wait for the end of an update.
 // The function will check by regular interval provided in parameter interval
 // the UpdateStatus. If it is not UpdateStatusEnqueued or the ctx cancelled
 // we return the UpdateStatus.
-func (c Client) AwaitAsyncUpdateID(
+func (c Client) WaitForPendingUpdate(
 	ctx context.Context,
 	interval time.Duration,
 	indexID string,
