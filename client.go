@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"io/ioutil"
 	"net/http"
@@ -229,34 +230,37 @@ func (c Client) handleResponse(req *internalRequest, response *http.Response, in
 	return nil
 }
 
-func contains(slice []int, val int) bool {
-	for _, item := range slice {
-		if item == val {
-			return true
-		}
-	}
-	return false
+// defaultWaitForPendingUpdate checks each 50ms the status of a WaitForPendingUpdate.
+// This method is used for test purpose
+func (c Client) defaultWaitForPendingUpdate(indexUID string, updateID *AsyncUpdateID) (UpdateStatus, error) {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancelFunc()
+
+	return c.WaitForPendingUpdate(ctx, time.Millisecond*50, indexUID, updateID)
 }
 
-// AwaitAsyncUpdateID check each 16ms the status of a AsyncUpdateID.
-// This method should be avoided.
-// TODO: improve this method by returning a channel
-func (c Client) AwaitAsyncUpdateID(indexID string, updateID *AsyncUpdateID) UpdateStatus {
+// WaitForPendingUpdate waits for the end of an update.
+// The function will check by regular interval provided in parameter interval
+// the UpdateStatus. If it is not UpdateStatusEnqueued or the ctx cancelled
+// we return the UpdateStatus.
+func (c Client) WaitForPendingUpdate(
+	ctx context.Context,
+	interval time.Duration,
+	indexID string,
+	updateID *AsyncUpdateID) (UpdateStatus, error) {
+
 	apiUpdates := c.Updates(indexID)
 	for {
+		if err := ctx.Err(); err != nil {
+			return "", err
+		}
 		update, err := apiUpdates.Get(updateID.UpdateID)
 		if err != nil {
-			return UpdateStatusUnknown
+			return UpdateStatusUnknown, nil
 		}
 		if update.Status != UpdateStatusEnqueued {
-			return update.Status
+			return update.Status, nil
 		}
-		time.Sleep(time.Millisecond * 16)
+		time.Sleep(interval)
 	}
-}
-
-// AwaitAsyncUpdateID check each 25ms the status of a AsyncUpdateID.
-// This method should be avoided.
-func AwaitAsyncUpdateID(api APIWithIndexID, updateID *AsyncUpdateID) UpdateStatus {
-	return api.Client().AwaitAsyncUpdateID(api.IndexID(), updateID)
 }
