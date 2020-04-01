@@ -73,7 +73,7 @@ func TestClientSettings_UpdateAll(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_ResetAll(t *testing.T) {
@@ -97,7 +97,7 @@ func TestClientSettings_ResetAll(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -152,7 +152,7 @@ func TestClientSettings_UpdateRankingRules(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_ResetRankingRules(t *testing.T) {
@@ -176,7 +176,7 @@ func TestClientSettings_ResetRankingRules(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_GetDistinctAttribute(t *testing.T) {
@@ -226,7 +226,7 @@ func TestClientSettings_UpdateDistinctAttribute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -251,7 +251,7 @@ func TestClientSettings_ResetDistinctAttribute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -304,7 +304,7 @@ func TestClientSettings_UpdateSearchableAttributes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_ResetSearchableAttributes(t *testing.T) {
@@ -328,7 +328,7 @@ func TestClientSettings_ResetSearchableAttributes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_GetDisplayedAttributes(t *testing.T) {
@@ -380,7 +380,7 @@ func TestClientSettings_UpdateDisplayedAttributes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_ResetDisplayedAttributes(t *testing.T) {
@@ -404,7 +404,7 @@ func TestClientSettings_ResetDisplayedAttributes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_GetStopWords(t *testing.T) {
@@ -457,7 +457,7 @@ func TestClientSettings_UpdateStopWords(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -482,7 +482,7 @@ func TestClientSettings_ResetStopWords(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -538,7 +538,7 @@ func TestClientSettings_UpdateSynonyms(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_ResetSynonyms(t *testing.T) {
@@ -562,7 +562,7 @@ func TestClientSettings_ResetSynonyms(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -613,6 +613,6 @@ func TestClientSettings_UpdateAcceptNewFields(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.AwaitAsyncUpdateIDSimplified(indexUID, updateIDRes)
+	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
