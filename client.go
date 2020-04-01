@@ -239,7 +239,7 @@ func (c Client) defaultWaitForPendingUpdate(indexUID string, updateID *AsyncUpda
 	return c.WaitForPendingUpdate(ctx, time.Millisecond*50, indexUID, updateID)
 }
 
-// WaitForPendingUpdate wait for the end of an update.
+// WaitForPendingUpdate waits for the end of an update.
 // The function will check by regular interval provided in parameter interval
 // the UpdateStatus. If it is not UpdateStatusEnqueued or the ctx cancelled
 // we return the UpdateStatus.
