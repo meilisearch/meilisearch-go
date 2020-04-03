@@ -31,7 +31,7 @@ func TestClientSearch_Search(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.defaultWaitForPendingUpdate(indexUID, updateIDRes)
+	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	resp, err := client.Search(indexUID).Search(SearchRequest{
 		Query: "citrons",

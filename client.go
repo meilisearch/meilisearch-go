@@ -230,9 +230,9 @@ func (c Client) handleResponse(req *internalRequest, response *http.Response, in
 	return nil
 }
 
-// defaultWaitForPendingUpdate checks each 50ms the status of a WaitForPendingUpdate.
-// This method is used for test purpose
-func (c Client) defaultWaitForPendingUpdate(indexUID string, updateID *AsyncUpdateID) (UpdateStatus, error) {
+// DefaultWaitForPendingUpdate checks each 50ms the status of a WaitForPendingUpdate.
+// This is a default implementation of WaitForPendingUpdate.
+func (c Client) DefaultWaitForPendingUpdate(indexUID string, updateID *AsyncUpdateID) (UpdateStatus, error) {
 	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
 	defer cancelFunc()
 
