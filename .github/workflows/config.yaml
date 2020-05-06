@@ -1,0 +1,4 @@
+helpr:
+  opened: 'open-pr-linked'
+  merged: 'merged-pr-linked'
+  rejected: 'rejected-pr-linked'
