@@ -330,3 +330,7 @@ $ gofmt -w ./..
 ## 🤖 Compatibility with MeiliSearch
 
 This module works for MeiliSearch `v0.9.x`.
+
+<hr>
+
+**MeiliSearch** provides and maintains many **SDKs and Integration tools** like this one. We want to provide everyone with an **amazing search experience for any kind of project**. If you want to contribute, make suggestions, or just know what's going on right now, visit us in the [integration-guides](https://github.com/meilisearch/integration-guides) repository.
