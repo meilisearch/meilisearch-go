@@ -172,7 +172,7 @@ func TestClientDocuments_List(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if list[0].ID != "456" {
+	if len(list) == 0 || list[0].ID != "456" {
 		t.Fatal("expected to return the document[1]")
 	}
 }
