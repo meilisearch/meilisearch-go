@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strings"
 	"time"
 )
 
@@ -162,7 +164,19 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 
 		internalError.RequestToString = string(rawJSONRequest)
 
-		request, err = http.NewRequest(req.method, c.config.Host+req.endpoint, bytes.NewBuffer(rawJSONRequest))
+		URL := c.config.Host + req.endpoint
+
+		// Build query params for Batch GET 'Documents.List'
+		if req.method == "GET" {
+			r, ok := req.withRequest.(*ListDocumentsRequest)
+			if ok {
+				URL = fmt.Sprintf("%s?limit=%d&offset=%d&attributesToRetrieve=%s",
+					URL, r.Limit, r.Offset, strings.Join(r.AttributesToRetrieve, ","),
+				)
+			}
+		}
+
+		request, err = http.NewRequest(req.method, URL, bytes.NewBuffer(rawJSONRequest))
 	} else {
 		request, err = http.NewRequest(req.method, c.config.Host+req.endpoint, nil)
 	}

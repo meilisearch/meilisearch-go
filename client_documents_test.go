@@ -143,11 +143,9 @@ func TestClientDocuments_List(t *testing.T) {
 		Host: "http://localhost:7700",
 	})
 
-	_, err := client.Indexes().Create(CreateIndexRequest{
+	if _, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
-	})
-
-	if err != nil {
+	}); err != nil {
 		t.Fatal(err)
 	}
 
@@ -155,7 +153,7 @@ func TestClientDocuments_List(t *testing.T) {
 		Documents(indexUID).
 		AddOrUpdate([]interface{}{
 			docTest{ID: "123", Name: "nestle"},
-			docTest{ID: "456", Name: "nestle"},
+			docTest{ID: "456", Name: "hershey"},
 		})
 
 	if err != nil {
@@ -166,17 +164,16 @@ func TestClientDocuments_List(t *testing.T) {
 
 	var list []docTest
 	err = client.Documents(indexUID).List(ListDocumentsRequest{
-		Offset: 0,
-		Limit:  100,
+		Offset: 1,
+		Limit:  1,
 	}, &list)
 
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	// tests are running in parallel so there can be more than 1 docs
-	if len(list) < 1 {
-		t.Fatal("number of doc should be at least 1")
+	if len(list) == 0 || list[0].ID != "456" {
+		t.Fatal("expected to return the document[1]")
 	}
 }
 
