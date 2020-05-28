@@ -28,6 +28,7 @@
 
 - [🔧 Installation](#-installation)
 - [🚀 Getting started](#-getting-started)
+- [🤖 Compatibility with MeiliSearch](#-compatibility-with-meilisearch)
 - [🎬 Examples](#-examples)
   - [Indexes](#indexes)
   - [Documents](#documents)
@@ -37,7 +38,6 @@
   - [Install Go](#install-go)
   - [Install dependencies](#install-dependencies)
   - [Tests and Linter](#tests-and-linter)
-- [🤖 Compatibility with MeiliSearch](#-compatibility-with-meilisearch)
 
 ## 🔧 Installation
 
@@ -147,6 +147,11 @@ JSON output:
   "query": "harry pottre"
 }
 ```
+
+## 🤖 Compatibility with MeiliSearch
+
+This package is compatible with the following MeiliSearch versions:
+- `v0.10.X`
 
 ## 🎬 Examples
 
@@ -326,10 +331,6 @@ $ golint
 # Use gofmt
 $ gofmt -w ./..
 ```
-
-## 🤖 Compatibility with MeiliSearch
-
-This module works for MeiliSearch `v0.9.x`.
 
 <hr>
 
