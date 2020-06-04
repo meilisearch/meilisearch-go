@@ -185,7 +185,8 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 		return nil, internalError.WithErrCode(ErrCodeRequestCreation, err)
 	}
 
-	// adding apikey to the request
+	// adding request headers
+	request.Header.Set("Content-Type", "application/json")
 	if c.config.APIKey != "" {
 		request.Header.Set("X-Meili-API-Key", c.config.APIKey)
 	}
