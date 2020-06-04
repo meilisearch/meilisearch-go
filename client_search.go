@@ -27,14 +27,30 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 	}
 
 	values.Add("q", request.Query)
-	values.Add("filters", request.Filters)
-	values.Add("offset", strconv.FormatInt(request.Offset, 10))
-	values.Add("limit", strconv.FormatInt(request.Limit, 10))
-	values.Add("cropLength", strconv.FormatInt(request.CropLength, 10))
-	values.Add("attributesToRetrieve", strings.Join(request.AttributesToRetrieve, ","))
-	values.Add("attributesToCrop", strings.Join(request.AttributesToCrop, ","))
-	values.Add("attributesToHighlight", strings.Join(request.AttributesToHighlight, ","))
-	values.Add("matches", strconv.FormatBool(request.Matches))
+	if request.Filters != "" {
+		values.Add("filters", request.Filters)
+	}
+	if request.Offset != 0 {
+		values.Add("offset", strconv.FormatInt(request.Offset, 10))
+	}
+	if request.Limit != 20 {
+		values.Add("limit", strconv.FormatInt(request.Limit, 10))
+	}
+	if request.CropLength != 0 {
+		values.Add("cropLength", strconv.FormatInt(request.CropLength, 10))
+	}
+	if len(request.AttributesToRetrieve) != 0 {
+		values.Add("attributesToRetrieve", strings.Join(request.AttributesToRetrieve, ","))
+	}
+	if len(request.AttributesToCrop) != 0 {
+		values.Add("attributesToCrop", strings.Join(request.AttributesToCrop, ","))
+	}
+	if len(request.AttributesToHighlight) != 0 {
+		values.Add("attributesToHighlight", strings.Join(request.AttributesToHighlight, ","))
+	}
+	if request.Matches {
+		values.Add("matches", strconv.FormatBool(request.Matches))
+	}
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/search?" + values.Encode(),
