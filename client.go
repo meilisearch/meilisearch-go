@@ -170,9 +170,14 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 		if req.method == "GET" {
 			r, ok := req.withRequest.(*ListDocumentsRequest)
 			if ok {
-				URL = fmt.Sprintf("%s?limit=%d&offset=%d&attributesToRetrieve=%s",
-					URL, r.Limit, r.Offset, strings.Join(r.AttributesToRetrieve, ","),
+				URL = fmt.Sprintf("%s?limit=%d&offset=%d",
+					URL, r.Limit, r.Offset,
 				)
+				if len(r.AttributesToRetrieve) > 0 {
+					URL = fmt.Sprintf("%s&attributesToRetrieve=%s",
+						URL, strings.Join(r.AttributesToRetrieve, ","),
+					)
+				}
 			}
 		}
 
