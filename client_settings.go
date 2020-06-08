@@ -478,8 +478,8 @@ func (c clientSettings) UpdateAttributesForFaceting(request []string) (resp *Asy
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "GetAttributesForFaceting",
-		apiName:             "Documents",
+		functionName:        "UpdateAttributesForFaceting",
+		apiName:             "Settings",
 	}
 
 	if err := c.client.executeRequest(req); err != nil {
@@ -497,8 +497,8 @@ func (c clientSettings) ResetAttributesForFaceting() (resp *AsyncUpdateID, err e
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "GetAttributesForFaceting",
-		apiName:             "Documents",
+		functionName:        "ResetAttributesForFaceting",
+		apiName:             "Settings",
 	}
 
 	if err := c.client.executeRequest(req); err != nil {
