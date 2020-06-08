@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -50,6 +51,9 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 	}
 	if request.Matches {
 		values.Add("matches", strconv.FormatBool(request.Matches))
+	}
+	if len(request.FacetsDistribution) != 0 {
+		values.Add("facetsDistribution", fmt.Sprintf("[\"%s\"]", strings.Join(request.FacetsDistribution, "\",\"")))
 	}
 
 	req := internalRequest{

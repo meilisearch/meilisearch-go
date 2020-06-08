@@ -451,3 +451,59 @@ func (c clientSettings) UpdateAcceptNewFields(request bool) (resp *AsyncUpdateID
 
 	return resp, nil
 }
+
+func (c clientSettings) GetAttributesForFaceting() (resp *[]string, err error) {
+	resp = &[]string{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + c.indexUID + "/settings/attributes-for-faceting",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetAttributesForFaceting",
+		apiName:             "Settings",
+	}
+
+	if err := c.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c clientSettings) UpdateAttributesForFaceting(request []string) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + c.indexUID + "/settings/attributes-for-faceting",
+		method:              http.MethodPost,
+		withRequest:         &request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "GetAttributesForFaceting",
+		apiName:             "Documents",
+	}
+
+	if err := c.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (c clientSettings) ResetAttributesForFaceting() (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + c.indexUID + "/settings/attributes-for-faceting",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "GetAttributesForFaceting",
+		apiName:             "Documents",
+	}
+
+	if err := c.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}

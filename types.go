@@ -158,15 +158,18 @@ type SearchRequest struct {
 	AttributesToHighlight []string
 	Filters               string
 	Matches               bool
+	FacetsDistribution    []string
+	FacetFilters          []string
 }
 
 // SearchResponse is the response body for search method
 type SearchResponse struct {
-	Hits             []interface{} `json:"hits"`
-	Offset           int64         `json:"offset"`
-	Limit            int64         `json:"limit"`
-	ProcessingTimeMs int64         `json:"processingTimeMs"`
-	Query            string        `json:"query"`
+	Hits               []interface{} `json:"hits"`
+	Offset             int64         `json:"offset"`
+	Limit              int64         `json:"limit"`
+	ProcessingTimeMs   int64         `json:"processingTimeMs"`
+	Query              string        `json:"query"`
+	FacetsDistribution interface{}   `json:"facetsDistribution"`
 }
 
 // ListDocumentsRequest is the request body for list documents method
