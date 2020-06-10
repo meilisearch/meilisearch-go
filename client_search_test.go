@@ -215,4 +215,57 @@ func TestClientSearch_Search(t *testing.T) {
 		fmt.Println(reflect.TypeOf(tagCount.(map[string]interface{})["interesting book"]))
 		t.Fatal("facetsDistribution: Wrong count on facetDistribution")
 	}
+
+	r2, _ = client.Settings(indexUID).ResetAttributesForFaceting()
+	client.DefaultWaitForPendingUpdate(indexUID, r2)
+
+	// Test basic search with facetFilters
+
+	r2, err = client.Settings(indexUID).UpdateAttributesForFaceting([]string{"tag", "title"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.DefaultWaitForPendingUpdate(indexUID, r2)
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		Query:        "prince",
+		FacetFilters: []string{"tag:interesting book"},
+	})
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+
+	if len(resp.Hits) != 2 {
+		fmt.Println(resp)
+		t.Fatal("facetsFilters: Error on single attribute facet search")
+	}
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		Query:        "prince",
+		FacetFilters: []string{"tag:interesting book", "tag:nice book"},
+	})
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+
+	if len(resp.Hits) != 0 {
+		fmt.Println(resp)
+		t.Fatal("facetsFilters: Error on 'AND' in attribute facet search")
+	}
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		Query:        "prince",
+		FacetFilters: [][]string{{"tag:interesting book", "tag:nice book"}},
+	})
+	if err != nil {
+		fmt.Println("Error:", err)
+	}
+
+	if len(resp.Hits) != 3 {
+		fmt.Println(resp)
+		t.Fatal("facetsFilters: Error on 'OR' in attribute facet search")
+	}
+
 }
