@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -168,4 +169,50 @@ func TestClientSearch_Search(t *testing.T) {
 		t.Fatal("filters: Unable to filter properly")
 	}
 
+	// Test basic search with matches
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		Query:   "and",
+		Matches: true,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Hits[0].(map[string]interface{})["_matchesInfo"] == nil {
+		fmt.Println(resp)
+		t.Fatal("matches: Mathes info not found")
+	}
+
+	// Test basic search with facetsDistribution
+
+	r2, err := client.Settings(indexUID).UpdateAttributesForFaceting([]string{"tag"})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.DefaultWaitForPendingUpdate(indexUID, r2)
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		Query:              "prince",
+		FacetsDistribution: []string{"*"},
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	tagCount := resp.FacetsDistribution.(map[string]interface{})["tag"]
+
+	if len(tagCount.(map[string]interface{})) != 2 {
+		fmt.Println(tagCount.(map[string]interface{}))
+		t.Fatal("facetsDistribution: Wrong count of facet options")
+	}
+
+	if tagCount.(map[string]interface{})["interesting book"] != float64(2) {
+		fmt.Println(reflect.TypeOf(tagCount.(map[string]interface{})["interesting book"]))
+		t.Fatal("facetsDistribution: Wrong count on facetDistribution")
+	}
 }
