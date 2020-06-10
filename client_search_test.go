@@ -90,4 +90,82 @@ func TestClientSearch_Search(t *testing.T) {
 		t.Fatal("number of hits should be equal to 2")
 	}
 
+	// Test basic search with offset
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		Query:  "prince",
+		Offset: 1,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(resp.Hits) != 2 {
+		fmt.Println(resp)
+		t.Fatal("number of hits should be equal to 2")
+	}
+
+	// Test basic search with attributesToRetrieve
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		Query:                "prince",
+		AttributesToRetrieve: []string{"book_id", "title"},
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Hits[0].(map[string]interface{})["title"] == nil {
+		fmt.Println(resp)
+		t.Fatal("attributesToRetrieve: Couldn't retrieve field in response")
+	}
+	if resp.Hits[0].(map[string]interface{})["tag"] != nil {
+		fmt.Println(resp)
+		t.Fatal("attributesToRetrieve: Retrieve unrequested field in response")
+	}
+
+	// Test basic search with attributesToCrop
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		Query:            "to",
+		AttributesToCrop: []string{"title"},
+		CropLength:       7,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if resp.Hits[0].(map[string]interface{})["title"] == nil {
+		fmt.Println(resp)
+		t.Fatal("attributesToCrop: Couldn't retrieve field in response")
+	}
+	formatted := resp.Hits[0].(map[string]interface{})["_formatted"]
+	if formatted.(map[string]interface{})["title"] != "Guide to the" {
+		fmt.Println(resp)
+		t.Fatal("attributesToCrop: CropLength didn't work as expected")
+	}
+
+	// Test basic search with filters
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		Query:   "and",
+		Filters: "tag = \"Nice book\"",
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(resp.Hits) != 1 {
+		fmt.Println(resp)
+		t.Fatal("filters: Unable to filter properly")
+	}
+	if resp.Hits[0].(map[string]interface{})["title"] != "Pride and Prejudice" {
+		fmt.Println(resp)
+		t.Fatal("filters: Unable to filter properly")
+	}
+
 }
