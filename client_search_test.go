@@ -2,7 +2,6 @@ package meilisearch
 
 import (
 	"fmt"
-	"reflect"
 	"testing"
 )
 
@@ -212,7 +211,7 @@ func TestClientSearch_Search(t *testing.T) {
 	}
 
 	if tagCount.(map[string]interface{})["interesting book"] != float64(2) {
-		fmt.Println(reflect.TypeOf(tagCount.(map[string]interface{})["interesting book"]))
+		fmt.Println(tagCount.(map[string]interface{})["interesting book"])
 		t.Fatal("facetsDistribution: Wrong count on facetDistribution")
 	}
 
