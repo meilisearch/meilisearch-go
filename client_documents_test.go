@@ -9,6 +9,12 @@ type docTest struct {
 	Name string `json:"name"`
 }
 
+type docTestBooks struct {
+	Book_id int    `json:"book_id"`
+	Title   string `json:"title"`
+	Tag     string `json:"tag"`
+}
+
 func TestClientDocuments_Get(t *testing.T) {
 	var indexUID = "TestClientDocuments_Get"
 
