@@ -147,3 +147,37 @@ func TestClientIndexes_UpdatePrimaryKey(t *testing.T) {
 		t.Fatal("name of the index should be TestClientIndexes_Update2, found ", update.Name)
 	}
 }
+
+func TestClientIndexes_DeleteAllIndexes(t *testing.T) {
+	var indexUIDs = []string{
+		"TestClientIndexes_DeleteAllIndexes",
+		"TestClientIndexes_DeleteAllIndexes2",
+		"TestClientIndexes_DeleteAllIndexes3",
+	}
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	for _, uid := range indexUIDs {
+		_, err := client.Indexes().Create(CreateIndexRequest{
+			UID: uid,
+		})
+
+		if err != nil {
+			t.Fatal(err)
+		}
+	}
+
+	client.Indexes().DeleteAllIndexes()
+
+	for _, uid := range indexUIDs {
+		resp, err := client.Indexes().Get(uid)
+		if err == nil {
+			t.Fatal(err)
+		}
+		if resp != nil {
+			t.Fatal("deleteAllIndexes: An index was not deleted")
+		}
+	}
+}

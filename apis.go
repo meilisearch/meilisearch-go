@@ -35,6 +35,9 @@ type APIIndexes interface {
 
 	// Delete an index.
 	Delete(uid string) (bool, error)
+
+	// Delete all existing indexes.
+	DeleteAllIndexes() (bool, error)
 }
 
 // APIDocuments are objects composed of fields containing any data.

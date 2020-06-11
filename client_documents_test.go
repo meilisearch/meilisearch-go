@@ -1,12 +1,23 @@
 package meilisearch
 
 import (
+	"os"
 	"testing"
 )
 
 type docTest struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+func TestMain(m *testing.M) {
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+	client.Indexes().DeleteAllIndexes()
+	m.Run()
+	client.Indexes().DeleteAllIndexes()
+	os.Exit(0)
 }
 
 func TestClientDocuments_Get(t *testing.T) {

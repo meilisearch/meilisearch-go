@@ -1,6 +1,8 @@
 package meilisearch
 
-import "net/http"
+import (
+	"net/http"
+)
 
 type clientIndexes struct {
 	client *Client
@@ -123,6 +125,20 @@ func (c clientIndexes) Delete(uid string) (ok bool, err error) {
 	// err is not nil if status code is not 204 StatusNoContent
 	if err := c.client.executeRequest(req); err != nil {
 		return false, err
+	}
+
+	return true, nil
+}
+
+func (c clientIndexes) DeleteAllIndexes() (ok bool, err error) {
+	list, err := c.List()
+
+	if err != nil {
+		return false, err
+	}
+
+	for _, index := range list {
+		c.Delete(index.UID)
 	}
 
 	return true, nil
