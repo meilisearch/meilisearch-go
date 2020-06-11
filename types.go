@@ -18,7 +18,7 @@ type Index struct {
 	PrimaryKey string    `json:"primaryKey,omitempty"`
 }
 
-// Settings is the type that represent the settings in MeiliSearch
+// Settings is the type that represents the settings in MeiliSearch
 type Settings struct {
 	RankingRules          []string            `json:"rankingRules,omitempty"`
 	DistinctAttribute     *string             `json:"distinctAttribute,omitempty"`
@@ -30,7 +30,7 @@ type Settings struct {
 	AttributesForFaceting []string            `json:"attributesForFaceting,omitempty"`
 }
 
-// Version is the type that represent the versions in MeiliSearch
+// Version is the type that represents the versions in MeiliSearch
 type Version struct {
 	CommitSha  string    `json:"commitSha"`
 	BuildDate  time.Time `json:"buildDate"`
