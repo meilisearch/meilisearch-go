@@ -20,17 +20,19 @@ func TestClientSearch_Search(t *testing.T) {
 		t.Fatal(err)
 	}
 
+	booksTest := []docTestBooks{
+		{Book_id: 123, Title: "Pride and Prejudice", Tag: "Nice book"},
+		{Book_id: 456, Title: "Le Petit Prince", Tag: "Nice book"},
+		{Book_id: 1, Title: "Alice In Wonderland", Tag: "Nice book"},
+		{Book_id: 1344, Title: "The Hobbit", Tag: "Nice book"},
+		{Book_id: 4, Title: "Harry Potter and the Half-Blood Prince", Tag: "Interesting book"},
+		{Book_id: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Interesting book"},
+		{Book_id: 24, Title: "You are a princess", Tag: "Interesting book"},
+	}
+
 	updateIDRes, err := client.
 		Documents(indexUID).
-		AddOrUpdate([]docTestBooks{
-			{Book_id: 123, Title: "Pride and Prejudice", Tag: "Nice book"},
-			{Book_id: 456, Title: "Le Petit Prince", Tag: "Nice book"},
-			{Book_id: 1, Title: "Alice In Wonderland", Tag: "Nice book"},
-			{Book_id: 1344, Title: "The Hobbit", Tag: "Nice book"},
-			{Book_id: 4, Title: "Harry Potter and the Half-Blood Prince", Tag: "Interesting book"},
-			{Book_id: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Interesting book"},
-			{Book_id: 24, Title: "You are a princess", Tag: "Interesting book"},
-		})
+		AddOrUpdate(booksTest)
 
 	if err != nil {
 		t.Fatal(err)
@@ -50,7 +52,12 @@ func TestClientSearch_Search(t *testing.T) {
 
 	if len(resp.Hits) != 3 {
 		fmt.Println(resp)
-		t.Fatal("number of hits should be equal to 3")
+		t.Fatal("Basic search: number of hits should be equal to 3")
+	}
+	title := resp.Hits[0].(map[string]interface{})["title"]
+	if title != booksTest[1].Title {
+		fmt.Println(resp)
+		t.Fatalf("Basic search: should have found %s\n", booksTest[1].Title)
 	}
 
 	// Test basic search with limit
@@ -66,12 +73,12 @@ func TestClientSearch_Search(t *testing.T) {
 
 	if len(resp.Hits) != 1 {
 		fmt.Println(resp)
-		t.Fatal("number of hits should be equal to 1")
+		t.Fatal("Search offset: number of hits should be equal to 1")
 	}
-	title := resp.Hits[0].(map[string]interface{})["title"]
-	if title != "Le Petit Prince" {
+	title = resp.Hits[0].(map[string]interface{})["title"]
+	if title != booksTest[1].Title {
 		fmt.Println(resp)
-		t.Fatal("Should have found: Le Petit Prince")
+		t.Fatalf("Basic search: should have found %s\n", booksTest[1].Title)
 	}
 
 	// Test basic search with offset
@@ -89,21 +96,27 @@ func TestClientSearch_Search(t *testing.T) {
 		fmt.Println(resp)
 		t.Fatal("number of hits should be equal to 2")
 	}
-
-	// Test basic search with offset
-
-	resp, err = client.Search(indexUID).Search(SearchRequest{
-		Query:  "prince",
-		Offset: 1,
-	})
-
-	if err != nil {
-		t.Fatal(err)
+	retrievedTitles := []string{
+		fmt.Sprint(resp.Hits[0].(map[string]interface{})["title"]),
+		fmt.Sprint(resp.Hits[1].(map[string]interface{})["title"]),
+	}
+	expectedTitles := []string{
+		booksTest[4].Title,
+		booksTest[6].Title,
 	}
 
-	if len(resp.Hits) != 2 {
-		fmt.Println(resp)
-		t.Fatal("number of hits should be equal to 2")
+	for title := range expectedTitles {
+		found := false
+		for retrievedTitle := range retrievedTitles {
+			if title == retrievedTitle {
+				found = true
+				break
+			}
+		}
+		if !found {
+			fmt.Println(resp)
+			t.Fatal("Search offset: should have found 'Harry Potter and the Half-Blood Prince'")
+		}
 	}
 
 	// Test basic search with attributesToRetrieve
