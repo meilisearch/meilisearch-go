@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"fmt"
 	"net/http"
 	"net/url"
 	"strconv"
@@ -51,6 +52,13 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 	if request.Matches {
 		values.Add("matches", strconv.FormatBool(request.Matches))
 	}
+	if len(request.FacetsDistribution) != 0 {
+		values.Add("facetsDistribution", fmt.Sprintf("[%q]", strings.Join(request.FacetsDistribution, "\",\"")))
+	}
+	if request.FacetFilters != nil {
+		facetFiltersToStr := facetFiltersToStr(request.FacetFilters)
+		values.Add("facetFilters", facetFiltersToStr)
+	}
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/search?" + values.Encode(),
@@ -75,4 +83,28 @@ func (c clientSearch) IndexID() string {
 
 func (c clientSearch) Client() *Client {
 	return c.client
+}
+
+func facetFiltersToStr(i interface{}) string {
+	facetsToStr := ""
+	switch v := i.(type) {
+	case []string:
+		for _, slice := range v {
+			stringSlice := slice
+			facetsToStr += fmt.Sprintf("%q,", stringSlice)
+		}
+		facetsToStr = fmt.Sprintf("[%s]", facetsToStr[:len(facetsToStr)-1])
+	case [][]string:
+		for _, mainSlice := range v {
+			facetsToStr += "["
+			for _, slice := range mainSlice {
+				stringSlice := slice
+				facetsToStr += fmt.Sprintf("%q,", stringSlice)
+			}
+			facetsToStr = facetsToStr[:len(facetsToStr)-1] + "],"
+
+		}
+		facetsToStr = fmt.Sprintf("[%s]", facetsToStr[:len(facetsToStr)-1])
+	}
+	return (facetsToStr)
 }

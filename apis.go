@@ -162,6 +162,12 @@ type APISettings interface {
 	GetAcceptNewFields() (*bool, error)
 
 	UpdateAcceptNewFields(bool) (*AsyncUpdateID, error)
+
+	GetAttributesForFaceting() (*[]string, error)
+
+	UpdateAttributesForFaceting([]string) (*AsyncUpdateID, error)
+
+	ResetAttributesForFaceting() (*AsyncUpdateID, error)
 }
 
 // APIStats retrieve statistic over all indexes or a specific index id.

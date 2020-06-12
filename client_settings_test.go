@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -27,13 +28,14 @@ func TestClientSettings_GetAll(t *testing.T) {
 	}
 
 	expected := Settings{
-		RankingRules:         []string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"},
-		DistinctAttribute:    nil,
-		SearchableAttributes: []string{},
-		DisplayedAttributes:  []string{},
-		StopWords:            []string{},
-		Synonyms:             map[string][]string{},
-		AcceptNewFields:      true,
+		RankingRules:          []string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"},
+		DistinctAttribute:     nil,
+		SearchableAttributes:  []string{},
+		DisplayedAttributes:   []string{},
+		StopWords:             []string{},
+		Synonyms:              map[string][]string{},
+		AcceptNewFields:       true,
+		AttributesForFaceting: []string{},
 	}
 
 	if !reflect.DeepEqual(*settingsRes, expected) {
@@ -64,7 +66,8 @@ func TestClientSettings_UpdateAll(t *testing.T) {
 		Synonyms: map[string][]string{
 			"car": []string{"automobile"},
 		},
-		AcceptNewFields: false,
+		AcceptNewFields:       false,
+		AttributesForFaceting: []string{"title"},
 	}
 
 	updateIDRes, err := client.Settings(indexUID).UpdateAll(settings)
@@ -615,4 +618,104 @@ func TestClientSettings_UpdateAcceptNewFields(t *testing.T) {
 
 	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
+}
+
+func TestClientSettings_GetAttributesForFaceting(t *testing.T) {
+	var indexUID = "TestClientSettings_GetAttributesForFaceting"
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	AttributesForFacetingRes, err := client.Settings(indexUID).GetAttributesForFaceting()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if reflect.DeepEqual(*AttributesForFacetingRes, nil) {
+		t.Fatal("getAttributesForFaceting: Error getting attributesForFaceting on empty index")
+	}
+}
+
+func TestClientSettings_UpdateAttributesForFaceting(t *testing.T) {
+	var indexUID = "TestClientSettings_UpdateAttributesForFaceting"
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	attributesForFaceting := []string{"tag", "title"}
+
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	updateIDRes, err := client.Settings(indexUID).UpdateAttributesForFaceting(attributesForFaceting)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	r, _ := client.Settings(indexUID).GetAttributesForFaceting()
+	if !reflect.DeepEqual(*r, attributesForFaceting) {
+		fmt.Println(*r)
+		t.Fatal("updateAttributesForFaceting: Error getting attributesForFaceting after update")
+	}
+}
+
+func TestClientSettings_ResetAttributesForFaceting(t *testing.T) {
+	var indexUID = "TestClientSettings_ResetAttributesForFaceting"
+
+	var client = NewClient(Config{
+		Host: "http://localhost:7700",
+	})
+
+	attributesForFaceting := []string{"tag", "title"}
+
+	_, err := client.Indexes().Create(CreateIndexRequest{
+		UID: indexUID,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	updateIDRes, err := client.Settings(indexUID).UpdateAttributesForFaceting(attributesForFaceting)
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	r, _ := client.Settings(indexUID).GetAttributesForFaceting()
+	if !reflect.DeepEqual(*r, attributesForFaceting) {
+		fmt.Println(*r)
+		t.Fatal("resetAttributesForFaceting: Error getting attributesForFaceting after update")
+	}
+
+	updateIDRes, err = client.Settings(indexUID).ResetAttributesForFaceting()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	r, _ = client.Settings(indexUID).GetAttributesForFaceting()
+	if reflect.DeepEqual(*r, nil) {
+		t.Fatal("resetAttributesForFaceting: Error getting attributesForFaceting after reset")
+	}
 }
