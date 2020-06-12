@@ -21,13 +21,13 @@ func TestClientSearch_Search(t *testing.T) {
 	}
 
 	booksTest := []docTestBooks{
-		{Book_id: 123, Title: "Pride and Prejudice", Tag: "Nice book"},
-		{Book_id: 456, Title: "Le Petit Prince", Tag: "Nice book"},
-		{Book_id: 1, Title: "Alice In Wonderland", Tag: "Nice book"},
-		{Book_id: 1344, Title: "The Hobbit", Tag: "Nice book"},
-		{Book_id: 4, Title: "Harry Potter and the Half-Blood Prince", Tag: "Interesting book"},
-		{Book_id: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Interesting book"},
-		{Book_id: 24, Title: "You are a princess", Tag: "Interesting book"},
+		{BookId: 123, Title: "Pride and Prejudice", Tag: "Nice book"},
+		{BookId: 456, Title: "Le Petit Prince", Tag: "Nice book"},
+		{BookId: 1, Title: "Alice In Wonderland", Tag: "Nice book"},
+		{BookId: 1344, Title: "The Hobbit", Tag: "Nice book"},
+		{BookId: 4, Title: "Harry Potter and the Half-Blood Prince", Tag: "Interesting book"},
+		{BookId: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Interesting book"},
+		{BookId: 24, Title: "You are a princess", Tag: "Interesting book"},
 	}
 
 	updateIDRes, err := client.

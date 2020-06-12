@@ -53,7 +53,7 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 		values.Add("matches", strconv.FormatBool(request.Matches))
 	}
 	if len(request.FacetsDistribution) != 0 {
-		values.Add("facetsDistribution", fmt.Sprintf("[\"%s\"]", strings.Join(request.FacetsDistribution, "\",\"")))
+		values.Add("facetsDistribution", fmt.Sprintf("[%q]", strings.Join(request.FacetsDistribution, "\",\"")))
 	}
 	if request.FacetFilters != nil {
 		facetFiltersToStr := facetFiltersToStr(request.FacetFilters)
@@ -91,7 +91,7 @@ func facetFiltersToStr(i interface{}) string {
 	case []string:
 		for _, slice := range v {
 			stringSlice := slice
-			facetsToStr += fmt.Sprintf("\"%s\",", stringSlice)
+			facetsToStr += fmt.Sprintf("%q,", stringSlice)
 		}
 		facetsToStr = fmt.Sprintf("[%s]", facetsToStr[:len(facetsToStr)-1])
 	case [][]string:
@@ -99,7 +99,7 @@ func facetFiltersToStr(i interface{}) string {
 			facetsToStr += "["
 			for _, slice := range mainSlice {
 				stringSlice := slice
-				facetsToStr += fmt.Sprintf("\"%s\",", stringSlice)
+				facetsToStr += fmt.Sprintf("%q,", stringSlice)
 			}
 			facetsToStr = facetsToStr[:len(facetsToStr)-1] + "],"
 
