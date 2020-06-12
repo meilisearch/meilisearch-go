@@ -4,11 +4,12 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
-	"strings"
+	"net/url"
 	"time"
+
+	"github.com/pkg/errors"
 )
 
 // Config configure the Client
@@ -107,8 +108,9 @@ type internalRequest struct {
 	endpoint string
 	method   string
 
-	withRequest  interface{}
-	withResponse interface{}
+	withRequest     interface{}
+	withResponse    interface{}
+	withQueryParams map[string]string
 
 	acceptedStatusCodes []int
 
@@ -154,6 +156,22 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 		err     error
 	)
 
+	// Setup URL
+	requestUrl, err := url.Parse(c.config.Host + req.endpoint)
+	if err != nil {
+		return nil, errors.Wrap(err, "unable to parse url")
+	}
+
+	// Build query parameters
+	if req.withQueryParams != nil {
+		query := requestUrl.Query()
+		for key, value := range req.withQueryParams {
+			query.Set(key, value)
+		}
+
+		requestUrl.RawQuery = query.Encode()
+	}
+
 	if req.withRequest != nil {
 
 		// A json request is mandatory, so the request interface{} need to be passed as a raw json body.
@@ -164,21 +182,9 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 
 		internalError.RequestToString = string(rawJSONRequest)
 
-		URL := c.config.Host + req.endpoint
-
-		// Build query params for Batch GET 'Documents.List'
-		if req.method == "GET" {
-			r, ok := req.withRequest.(*ListDocumentsRequest)
-			if ok {
-				URL = fmt.Sprintf("%s?limit=%d&offset=%d&attributesToRetrieve=%s",
-					URL, r.Limit, r.Offset, strings.Join(r.AttributesToRetrieve, ","),
-				)
-			}
-		}
-
-		request, err = http.NewRequest(req.method, URL, bytes.NewBuffer(rawJSONRequest))
+		request, err = http.NewRequest(req.method, requestUrl.String(), bytes.NewBuffer(rawJSONRequest))
 	} else {
-		request, err = http.NewRequest(req.method, c.config.Host+req.endpoint, nil)
+		request, err = http.NewRequest(req.method, requestUrl.String(), nil)
 	}
 
 	if err != nil {
