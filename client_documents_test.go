@@ -10,7 +10,7 @@ type docTest struct {
 }
 
 type docTestBooks struct {
-	BookId int    `json:"book_id"`
+	BookID int    `json:"book_id"`
 	Title  string `json:"title"`
 	Tag    string `json:"tag"`
 }
