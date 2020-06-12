@@ -2,6 +2,8 @@ package meilisearch
 
 import (
 	"net/http"
+	"strconv"
+	"strings"
 )
 
 type clientDocuments struct {
@@ -71,10 +73,15 @@ func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateID, err 
 
 func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interface{}) error {
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/documents",
-		method:              http.MethodGet,
-		withRequest:         &request,
-		withResponse:        documentsPtr,
+		endpoint:     "/indexes/" + c.indexUID + "/documents",
+		method:       http.MethodGet,
+		withRequest:  &request,
+		withResponse: documentsPtr,
+		withQueryParams: map[string]string{
+			"limit":                strconv.FormatInt(request.Limit, 10),
+			"offset":               strconv.FormatInt(request.Offset, 10),
+			"attributesToRetrieve": strings.Join(request.AttributesToRetrieve, ","),
+		},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "List",
 		apiName:             "Documents",
