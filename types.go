@@ -18,18 +18,19 @@ type Index struct {
 	PrimaryKey string    `json:"primaryKey,omitempty"`
 }
 
-// Settings is the type that represent the settings in MeiliSearch
+// Settings is the type that represents the settings in MeiliSearch
 type Settings struct {
-	RankingRules         []string            `json:"rankingRules,omitempty"`
-	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
-	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
-	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
-	StopWords            []string            `json:"stopWords,omitempty"`
-	Synonyms             map[string][]string `json:"synonyms,omitempty"`
-	AcceptNewFields      bool                `json:"acceptNewFields,omitempty"`
+	RankingRules          []string            `json:"rankingRules,omitempty"`
+	DistinctAttribute     *string             `json:"distinctAttribute,omitempty"`
+	SearchableAttributes  []string            `json:"searchableAttributes,omitempty"`
+	DisplayedAttributes   []string            `json:"displayedAttributes,omitempty"`
+	StopWords             []string            `json:"stopWords,omitempty"`
+	Synonyms              map[string][]string `json:"synonyms,omitempty"`
+	AcceptNewFields       bool                `json:"acceptNewFields,omitempty"`
+	AttributesForFaceting []string            `json:"attributesForFaceting,omitempty"`
 }
 
-// Version is the type that represent the versions in MeiliSearch
+// Version is the type that represents the versions in MeiliSearch
 type Version struct {
 	CommitSha  string    `json:"commitSha"`
 	BuildDate  time.Time `json:"buildDate"`
@@ -158,15 +159,19 @@ type SearchRequest struct {
 	AttributesToHighlight []string
 	Filters               string
 	Matches               bool
+	FacetsDistribution    []string
+	FacetFilters          interface{}
 }
 
 // SearchResponse is the response body for search method
 type SearchResponse struct {
-	Hits             []interface{} `json:"hits"`
-	Offset           int64         `json:"offset"`
-	Limit            int64         `json:"limit"`
-	ProcessingTimeMs int64         `json:"processingTimeMs"`
-	Query            string        `json:"query"`
+	Hits                  []interface{} `json:"hits"`
+	Offset                int64         `json:"offset"`
+	Limit                 int64         `json:"limit"`
+	ProcessingTimeMs      int64         `json:"processingTimeMs"`
+	Query                 string        `json:"query"`
+	FacetsDistribution    interface{}   `json:"facetsDistribution,omitempty"`
+	ExhaustiveFacetsCount interface{}   `json:"exhaustiveFacetsCount,omitempty"`
 }
 
 // ListDocumentsRequest is the request body for list documents method

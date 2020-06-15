@@ -4,11 +4,6 @@ import (
 	"testing"
 )
 
-type docTest struct {
-	ID   string `json:"id"`
-	Name string `json:"name"`
-}
-
 func TestClientDocuments_Get(t *testing.T) {
 	var indexUID = "TestClientDocuments_Get"
 
