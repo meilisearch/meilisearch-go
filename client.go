@@ -4,11 +4,9 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 	"net/url"
-	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -184,24 +182,7 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 
 		internalError.RequestToString = string(rawJSONRequest)
 
-		URL := c.config.Host + req.endpoint
-
-		// Build query params for Batch GET 'Documents.List'
-		if req.method == "GET" {
-			r, ok := req.withRequest.(*ListDocumentsRequest)
-			if ok {
-				URL = fmt.Sprintf("%s?limit=%d&offset=%d",
-					URL, r.Limit, r.Offset,
-				)
-				if len(r.AttributesToRetrieve) > 0 {
-					URL = fmt.Sprintf("%s&attributesToRetrieve=%s",
-						URL, strings.Join(r.AttributesToRetrieve, ","),
-					)
-				}
-			}
-		}
-
-		request, err = http.NewRequest(req.method, URL, bytes.NewBuffer(rawJSONRequest))
+		request, err = http.NewRequest(req.method, requestUrl.String(), bytes.NewBuffer(rawJSONRequest))
 	} else {
 		request, err = http.NewRequest(req.method, requestUrl.String(), nil)
 	}
