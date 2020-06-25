@@ -324,13 +324,15 @@ Each PR should pass the tests and the linter to be accepted.
 ```bash
 # Tests
 $ ./run_tests.sh
-# Install golint
+# Install golint (see comment below)
 $ go get -u golang.org/x/lint/golint
 # Use golint
 $ golint
 # Use gofmt
 $ gofmt -w ./..
 ```
+
+> To find out where golint was installed you can run go list -f {{.Target}} golang.org/x/lint/golint. For golint to be used globally add that directory to the $PATH environment setting (taken from golint docs)
 
 <hr>
 
