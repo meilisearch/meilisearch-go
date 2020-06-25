@@ -157,19 +157,19 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 	)
 
 	// Setup URL
-	requestUrl, err := url.Parse(c.config.Host + req.endpoint)
+	requestURL, err := url.Parse(c.config.Host + req.endpoint)
 	if err != nil {
 		return nil, errors.Wrap(err, "unable to parse url")
 	}
 
 	// Build query parameters
 	if req.withQueryParams != nil {
-		query := requestUrl.Query()
+		query := requestURL.Query()
 		for key, value := range req.withQueryParams {
 			query.Set(key, value)
 		}
 
-		requestUrl.RawQuery = query.Encode()
+		requestURL.RawQuery = query.Encode()
 	}
 
 	if req.withRequest != nil {
@@ -182,9 +182,9 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 
 		internalError.RequestToString = string(rawJSONRequest)
 
-		request, err = http.NewRequest(req.method, requestUrl.String(), bytes.NewBuffer(rawJSONRequest))
+		request, err = http.NewRequest(req.method, requestURL.String(), bytes.NewBuffer(rawJSONRequest))
 	} else {
-		request, err = http.NewRequest(req.method, requestUrl.String(), nil)
+		request, err = http.NewRequest(req.method, requestURL.String(), nil)
 	}
 
 	if err != nil {
