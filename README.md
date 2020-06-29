@@ -14,7 +14,7 @@
 </h4>
 
 <p align="center">
-  <a href="https://github.com/meilisearch/meilisearch-go/actions"><img src="https://img.shields.io/github/workflow/status/meilisearch/meilisearch-go/Go" alt="GitHub Workflow Status"></a>
+  <a href="https://github.com/meilisearch/meilisearch-go/actions"><img src="https://img.shields.io/github/workflow/status/meilisearch/meilisearch-go/Tests" alt="GitHub Workflow Status"></a>
   <a href="https://goreportcard.com/report/github.com/meilisearch/meilisearch-go"><img src="https://goreportcard.com/badge/github.com/meilisearch/meilisearch-go" alt="Test"></a>
   <a href="https://github.com/meilisearch/meilisearch-go/blob/master/LICENSE"><img src="https://img.shields.io/badge/license-MIT-informational" alt="License"></a>
   <a href="https://slack.meilisearch.com"><img src="https://img.shields.io/badge/slack-MeiliSearch-blue.svg?logo=slack" alt="Slack"></a>
