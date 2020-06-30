@@ -30,11 +30,12 @@ func deleteAllIndexes(client *Client) (ok bool, err error) {
 	return true, nil
 }
 
+var client = NewClient(Config{
+	Host:   "http://localhost:7700",
+	APIKey: "masterKey",
+})
+
 func TestMain(m *testing.M) {
-	var client = NewClient(Config{
-		Host:   "http://localhost:7700",
-		APIKey: "masterKey",
-	})
 	deleteAllIndexes(client)
 	code := m.Run()
 	deleteAllIndexes(client)
@@ -48,18 +49,13 @@ func Test_deleteAllIndexes(t *testing.T) {
 		"Test_deleteAllIndexes3",
 	}
 
-	var client = NewClient(Config{
-		Host:   "http://localhost:7700",
-		APIKey: "masterKey",
-	})
-
 	for _, uid := range indexUIDs {
 		_, err := client.Indexes().Create(CreateIndexRequest{
 			UID: uid,
 		})
 
 		if err != nil {
-			t.Error(err)
+			t.Fatal(err)
 		}
 	}
 
@@ -68,10 +64,10 @@ func Test_deleteAllIndexes(t *testing.T) {
 	for _, uid := range indexUIDs {
 		resp, err := client.Indexes().Get(uid)
 		if err == nil {
-			t.Error(err)
+			t.Fatal(err)
 		}
 		if resp != nil {
-			t.Error("deleteAllIndexes: One or more indexes were not deleted")
+			t.Fatal("deleteAllIndexes: One or more indexes were not deleted")
 		}
 	}
 }

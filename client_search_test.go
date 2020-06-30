@@ -8,11 +8,6 @@ import (
 func TestClientSearch_Search(t *testing.T) {
 	var indexUID = "TestClientSearch_Search"
 
-	var client = NewClient(Config{
-		Host:   "http://localhost:7700",
-		APIKey: "masterKey",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
