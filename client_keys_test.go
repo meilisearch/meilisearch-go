@@ -6,7 +6,8 @@ import (
 
 func TestClientKeys_Get(t *testing.T) {
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	if _, err := client.Keys().Get(); err != nil {

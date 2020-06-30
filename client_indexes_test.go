@@ -8,7 +8,8 @@ func TestClientIndexes_Create(t *testing.T) {
 	var indexUID = "TestClientIndexes_Create"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	resp, err := client.Indexes().Create(CreateIndexRequest{
@@ -28,7 +29,8 @@ func TestClientIndexes_Get(t *testing.T) {
 	var indexUID = "TestClientIndexes_Get"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	resp, err := client.Indexes().Create(CreateIndexRequest{
@@ -53,7 +55,8 @@ func TestClientIndexes_Delete(t *testing.T) {
 	var indexUID = "TestClientIndexes_Delete"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	resp, err := client.Indexes().Create(CreateIndexRequest{
@@ -77,7 +80,8 @@ func TestClientIndexes_List(t *testing.T) {
 	var indexUID = "TestClientIndexes_List"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
@@ -102,7 +106,8 @@ func TestClientIndexes_UpdateName(t *testing.T) {
 	var indexUID = "TestClientIndexes_UpdateName"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	resp, err := client.Indexes().Create(CreateIndexRequest{
@@ -127,7 +132,8 @@ func TestClientIndexes_UpdatePrimaryKey(t *testing.T) {
 	var indexUID = "TestClientIndexes_UpdatePrimaryKey"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	resp, err := client.Indexes().Create(CreateIndexRequest{

@@ -25,8 +25,11 @@ jobs:
             dep ensure
         fi
 
+    - name: Docker setup
+      run: docker run -d -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=masterKey --no-analytics=true
+
     - name: Test
-      run: sh run_tests.sh
+      run: go test -v ./...
 
     - name: Linter
       run: |

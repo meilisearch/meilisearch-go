@@ -8,7 +8,8 @@ func TestClientDocuments_Get(t *testing.T) {
 	var indexUID = "TestClientDocuments_Get"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
@@ -48,7 +49,8 @@ func TestClientDocuments_Delete(t *testing.T) {
 	var indexUID = "TestClientDocuments_Delete"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
@@ -91,7 +93,8 @@ func TestClientDocuments_Deletes(t *testing.T) {
 	var indexUID = "deletes"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
@@ -135,7 +138,8 @@ func TestClientDocuments_List(t *testing.T) {
 	var indexUID = "TestClientDocuments_List"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	if _, err := client.Indexes().Create(CreateIndexRequest{
@@ -176,7 +180,8 @@ func TestClientDocuments_AddOrReplace(t *testing.T) {
 	var indexUID = "TestClientDocuments_AddOrReplace"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
@@ -220,7 +225,8 @@ func TestClientDocuments_AddOrUpdate(t *testing.T) {
 	var indexUID = "TestClientDocuments_AddOrUpdate"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
@@ -264,7 +270,8 @@ func TestClientDocuments_DeleteAllDocuments(t *testing.T) {
 	var indexUID = "TestClientDocuments_DeleteAllDocuments"
 
 	var client = NewClient(Config{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
+		APIKey: "masterKey",
 	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
