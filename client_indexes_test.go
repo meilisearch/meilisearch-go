@@ -7,10 +7,6 @@ import (
 func TestClientIndexes_Create(t *testing.T) {
 	var indexUID = "TestClientIndexes_Create"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	resp, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -26,10 +22,6 @@ func TestClientIndexes_Create(t *testing.T) {
 
 func TestClientIndexes_Get(t *testing.T) {
 	var indexUID = "TestClientIndexes_Get"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	resp, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -52,10 +44,6 @@ func TestClientIndexes_Get(t *testing.T) {
 func TestClientIndexes_Delete(t *testing.T) {
 	var indexUID = "TestClientIndexes_Delete"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	resp, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -75,10 +63,6 @@ func TestClientIndexes_Delete(t *testing.T) {
 
 func TestClientIndexes_List(t *testing.T) {
 	var indexUID = "TestClientIndexes_List"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -101,10 +85,6 @@ func TestClientIndexes_List(t *testing.T) {
 func TestClientIndexes_UpdateName(t *testing.T) {
 	var indexUID = "TestClientIndexes_UpdateName"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	resp, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -125,10 +105,6 @@ func TestClientIndexes_UpdateName(t *testing.T) {
 
 func TestClientIndexes_UpdatePrimaryKey(t *testing.T) {
 	var indexUID = "TestClientIndexes_UpdatePrimaryKey"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	resp, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,

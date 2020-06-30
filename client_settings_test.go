@@ -9,10 +9,6 @@ import (
 func TestClientSettings_GetAll(t *testing.T) {
 	var indexUID = "TestClientSettings_GetAll"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -46,10 +42,6 @@ func TestClientSettings_GetAll(t *testing.T) {
 func TestClientSettings_UpdateAll(t *testing.T) {
 	var indexUID = "TestClientSettings_UpdateAll"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -82,10 +74,6 @@ func TestClientSettings_UpdateAll(t *testing.T) {
 func TestClientSettings_ResetAll(t *testing.T) {
 	var indexUID = "TestClientSettings_ResetAll"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -106,10 +94,6 @@ func TestClientSettings_ResetAll(t *testing.T) {
 
 func TestClientSettings_GetRankingRules(t *testing.T) {
 	var indexUID = "TestClientSettings_GetRankingRules"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -135,10 +119,6 @@ func TestClientSettings_GetRankingRules(t *testing.T) {
 func TestClientSettings_UpdateRankingRules(t *testing.T) {
 	var indexUID = "TestClientSettings_UpdateRankingRules"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -161,10 +141,6 @@ func TestClientSettings_UpdateRankingRules(t *testing.T) {
 func TestClientSettings_ResetRankingRules(t *testing.T) {
 	var indexUID = "TestClientSettings_ResetRankingRules"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -184,10 +160,6 @@ func TestClientSettings_ResetRankingRules(t *testing.T) {
 
 func TestClientSettings_GetDistinctAttribute(t *testing.T) {
 	var indexUID = "TestClientSettings_GetDistinctAttribute"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -211,10 +183,6 @@ func TestClientSettings_GetDistinctAttribute(t *testing.T) {
 func TestClientSettings_UpdateDistinctAttribute(t *testing.T) {
 	var indexUID = "TestClientSettings_UpdateDistinctAttribute"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -236,10 +204,6 @@ func TestClientSettings_UpdateDistinctAttribute(t *testing.T) {
 func TestClientSettings_ResetDistinctAttribute(t *testing.T) {
 	var indexUID = "TestClientSettings_ResetDistinctAttribute"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -260,10 +224,6 @@ func TestClientSettings_ResetDistinctAttribute(t *testing.T) {
 
 func TestClientSettings_GetSearchableAttributes(t *testing.T) {
 	var indexUID = "TestClientSettings_GetSearchableAttributes"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -287,10 +247,6 @@ func TestClientSettings_GetSearchableAttributes(t *testing.T) {
 func TestClientSettings_UpdateSearchableAttributes(t *testing.T) {
 	var indexUID = "TestClientSettings_UpdateSearchableAttributes"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -313,10 +269,6 @@ func TestClientSettings_UpdateSearchableAttributes(t *testing.T) {
 func TestClientSettings_ResetSearchableAttributes(t *testing.T) {
 	var indexUID = "TestClientSettings_ResetSearchableAttributes"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -336,10 +288,6 @@ func TestClientSettings_ResetSearchableAttributes(t *testing.T) {
 
 func TestClientSettings_GetDisplayedAttributes(t *testing.T) {
 	var indexUID = "TestClientSettings_GetDisplayedAttributes"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -363,10 +311,6 @@ func TestClientSettings_GetDisplayedAttributes(t *testing.T) {
 func TestClientSettings_UpdateDisplayedAttributes(t *testing.T) {
 	var indexUID = "TestClientSettings_UpdateDisplayedAttributes"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -389,10 +333,6 @@ func TestClientSettings_UpdateDisplayedAttributes(t *testing.T) {
 func TestClientSettings_ResetDisplayedAttributes(t *testing.T) {
 	var indexUID = "TestClientSettings_ResetDisplayedAttributes"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -412,10 +352,6 @@ func TestClientSettings_ResetDisplayedAttributes(t *testing.T) {
 
 func TestClientSettings_GetStopWords(t *testing.T) {
 	var indexUID = "TestClientSettings_GetStopWords"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -440,10 +376,6 @@ func TestClientSettings_GetStopWords(t *testing.T) {
 func TestClientSettings_UpdateStopWords(t *testing.T) {
 	var indexUID = "TestClientSettings_UpdateStopWords"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -467,10 +399,6 @@ func TestClientSettings_UpdateStopWords(t *testing.T) {
 func TestClientSettings_ResetStopWords(t *testing.T) {
 	var indexUID = "TestClientSettings_ResetStopWords"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -491,10 +419,6 @@ func TestClientSettings_ResetStopWords(t *testing.T) {
 
 func TestClientSettings_GetSynonyms(t *testing.T) {
 	var indexUID = "TestClientSettings_GetSynonyms"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -518,10 +442,6 @@ func TestClientSettings_GetSynonyms(t *testing.T) {
 
 func TestClientSettings_UpdateSynonyms(t *testing.T) {
 	var indexUID = "TestClientSettings_UpdateSynonyms"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -547,10 +467,6 @@ func TestClientSettings_UpdateSynonyms(t *testing.T) {
 func TestClientSettings_ResetSynonyms(t *testing.T) {
 	var indexUID = "TestClientSettings_ResetSynonyms"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -571,10 +487,6 @@ func TestClientSettings_ResetSynonyms(t *testing.T) {
 
 func TestClientSettings_GetAcceptNewFields(t *testing.T) {
 	var indexUID = "TestClientSettings_GetAcceptNewFields"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -598,10 +510,6 @@ func TestClientSettings_GetAcceptNewFields(t *testing.T) {
 func TestClientSettings_UpdateAcceptNewFields(t *testing.T) {
 	var indexUID = "TestClientSettings_UpdateAcceptNewFields"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -622,10 +530,6 @@ func TestClientSettings_UpdateAcceptNewFields(t *testing.T) {
 
 func TestClientSettings_GetAttributesForFaceting(t *testing.T) {
 	var indexUID = "TestClientSettings_GetAttributesForFaceting"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -648,10 +552,6 @@ func TestClientSettings_GetAttributesForFaceting(t *testing.T) {
 
 func TestClientSettings_UpdateAttributesForFaceting(t *testing.T) {
 	var indexUID = "TestClientSettings_UpdateAttributesForFaceting"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	attributesForFaceting := []string{"tag", "title"}
 
@@ -679,10 +579,6 @@ func TestClientSettings_UpdateAttributesForFaceting(t *testing.T) {
 
 func TestClientSettings_ResetAttributesForFaceting(t *testing.T) {
 	var indexUID = "TestClientSettings_ResetAttributesForFaceting"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	attributesForFaceting := []string{"tag", "title"}
 

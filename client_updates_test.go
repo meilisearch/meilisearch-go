@@ -7,10 +7,6 @@ import (
 func TestClientUpdates_List(t *testing.T) {
 	var indexUID = "TestClientUpdates_List"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})

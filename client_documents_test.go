@@ -7,10 +7,6 @@ import (
 func TestClientDocuments_Get(t *testing.T) {
 	var indexUID = "TestClientDocuments_Get"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -46,10 +42,6 @@ func TestClientDocuments_Get(t *testing.T) {
 
 func TestClientDocuments_Delete(t *testing.T) {
 	var indexUID = "TestClientDocuments_Delete"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -89,10 +81,6 @@ func TestClientDocuments_Delete(t *testing.T) {
 
 func TestClientDocuments_Deletes(t *testing.T) {
 	var indexUID = "deletes"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -134,10 +122,6 @@ func TestClientDocuments_Deletes(t *testing.T) {
 func TestClientDocuments_List(t *testing.T) {
 	var indexUID = "TestClientDocuments_List"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	if _, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	}); err != nil {
@@ -174,10 +158,6 @@ func TestClientDocuments_List(t *testing.T) {
 
 func TestClientDocuments_AddOrReplace(t *testing.T) {
 	var indexUID = "TestClientDocuments_AddOrReplace"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
@@ -219,10 +199,6 @@ func TestClientDocuments_AddOrReplace(t *testing.T) {
 func TestClientDocuments_AddOrUpdate(t *testing.T) {
 	var indexUID = "TestClientDocuments_AddOrUpdate"
 
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
-
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
 	})
@@ -262,10 +238,6 @@ func TestClientDocuments_AddOrUpdate(t *testing.T) {
 
 func TestClientDocuments_DeleteAllDocuments(t *testing.T) {
 	var indexUID = "TestClientDocuments_DeleteAllDocuments"
-
-	var client = NewClient(Config{
-		Host: "http://localhost:7700",
-	})
 
 	_, err := client.Indexes().Create(CreateIndexRequest{
 		UID: indexUID,
