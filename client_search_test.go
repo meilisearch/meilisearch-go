@@ -59,6 +59,10 @@ func TestClientSearch_Search(t *testing.T) {
 		fmt.Println(resp)
 		t.Fatalf("Basic search: should have found %s\n", booksTest[1].Title)
 	}
+	if resp.NbHits != 3 {
+		fmt.Println(resp)
+		t.Fatalf("Basic search: wrong number of hits, should have 3, got %d\n", resp.NbHits)
+	}
 
 	// Test basic search with limit
 

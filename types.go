@@ -166,6 +166,7 @@ type SearchRequest struct {
 // SearchResponse is the response body for search method
 type SearchResponse struct {
 	Hits                  []interface{} `json:"hits"`
+	NbHits                int64         `json:"nbHits"`
 	Offset                int64         `json:"offset"`
 	Limit                 int64         `json:"limit"`
 	ProcessingTimeMs      int64         `json:"processingTimeMs"`
