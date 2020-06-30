@@ -72,19 +72,26 @@ func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateID, err 
 }
 
 func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interface{}) error {
+
 	req := internalRequest{
-		endpoint:     "/indexes/" + c.indexUID + "/documents",
-		method:       http.MethodGet,
-		withRequest:  &request,
-		withResponse: documentsPtr,
-		withQueryParams: map[string]string{
-			"limit":                strconv.FormatInt(request.Limit, 10),
-			"offset":               strconv.FormatInt(request.Offset, 10),
-			"attributesToRetrieve": strings.Join(request.AttributesToRetrieve, ","),
-		},
+		endpoint:            "/indexes/" + c.indexUID + "/documents",
+		method:              http.MethodGet,
+		withRequest:         &request,
+		withResponse:        documentsPtr,
+		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "List",
 		apiName:             "Documents",
+	}
+
+	if request.Limit != 0 {
+		req.withQueryParams["limit"] = strconv.FormatInt(request.Limit, 10)
+	}
+	if request.Offset != 0 {
+		req.withQueryParams["offset"] = strconv.FormatInt(request.Offset, 10)
+	}
+	if len(request.AttributesToRetrieve) != 0 {
+		req.withQueryParams["attributesToRetrieve"] = strings.Join(request.AttributesToRetrieve, ",")
 	}
 
 	if err := c.client.executeRequest(req); err != nil {
