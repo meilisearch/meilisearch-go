@@ -34,10 +34,7 @@
   - [Documents](#documents)
   - [Update status](#update-status)
   - [Search](#search)
-- [⚙️ Development Workflow](#️-development-workflow)
-  - [Install Go](#install-go)
-  - [Install dependencies](#install-dependencies)
-  - [Tests and Linter](#tests-and-linter)
+- [⚙️ Development Workflow and Contributing](#️-development-workflow-and-contributing)
 
 ## 🔧 Installation
 
@@ -302,38 +299,11 @@ resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
 }
 ```
 
-## ⚙️ Development Workflow
+## ⚙️ Development Workflow and Contributing
 
-If you want to contribute, this section describes the steps to follow.
+Any new contribution is more than welcome in this project!
 
-Thank you for your interest in a MeiliSearch tool! ♥️
-
-### Install Go
-
-Follow the official [tutorial](https://golang.org/doc/install)
-
-### Install dependencies
-
-```bash
-$ go get -v -t -d ./...
-```
-
-### Tests and Linter
-
-Each PR should pass the tests and the linter to be accepted.
-
-```bash
-# Tests
-$ ./run_tests.sh
-# Install golint if needed (see comment below)
-$ go get -u golang.org/x/lint/golint
-# Use golint
-$ golint
-# Use gofmt
-$ gofmt -w ./..
-```
-
-> To find out where golint was installed you can run `go list -f {{.Target}} golang.org/x/lint/golint`. For golint to be used globally add that directory to the $PATH environment setting (taken from golint docs)
+If you want to know more about the development workflow or want to contribute, please visit our [contributing guidelines](/CONTRIBUTING.md) for detailed instructions!
 
 <hr>
 
