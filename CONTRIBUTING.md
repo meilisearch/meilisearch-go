@@ -29,9 +29,6 @@ First of all, thank you for contributing to MeiliSearch! The goal of this docume
 
 ## Development Workflow
 
-### Install Go
-
-Follow the official [tutorial](https://golang.org/doc/install)
 
 ### Install dependencies
 
