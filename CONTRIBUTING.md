@@ -29,8 +29,7 @@ First of all, thank you for contributing to MeiliSearch! The goal of this docume
 
 ## Development Workflow
 
-
-### Install dependencies
+### Install Dependencies
 
 ```bash
 $ go get -v -t -d ./...
@@ -42,7 +41,8 @@ Each PR should pass the tests and the linter to be accepted.
 
 ```bash
 # Tests
-$ ./run_tests.sh
+$ docker run -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=masterKey --no-analytics
+$ go test -v ./...
 # Install golint if needed (see comment below)
 $ go get -u golang.org/x/lint/golint
 # Use golint
