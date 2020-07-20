@@ -201,11 +201,3 @@ type APIVersion interface {
 	// Get version of MeiliSearch.
 	Get() (*Version, error)
 }
-
-// APISystemInformation retrieve information about the MeiliSearch consuption
-//
-// Documentation: https://docs.meilisearch.com/references/sys-info.html
-type APISystemInformation interface {
-	Get() (*SystemInformation, error)
-	GetPretty() (*SystemInformationPretty, error)
-}

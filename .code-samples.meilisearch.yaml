@@ -50,8 +50,6 @@ get_indexes_stats_1: |-
 get_health_1: |-
 update_health_1: |-
 get_version_1: |-
-get_pretty_sys_info_1: |-
-get_sys_info_1: |-
 distinct_attribute_guide_1: |-
 field_properties_guide_searchable_1: |-
 field_properties_guide_displayed_1: |-
