@@ -159,10 +159,6 @@ type APISettings interface {
 
 	ResetSynonyms() (*AsyncUpdateID, error)
 
-	GetAcceptNewFields() (*bool, error)
-
-	UpdateAcceptNewFields(bool) (*AsyncUpdateID, error)
-
 	GetAttributesForFaceting() (*[]string, error)
 
 	UpdateAttributesForFaceting([]string) (*AsyncUpdateID, error)

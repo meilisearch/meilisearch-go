@@ -26,7 +26,6 @@ type Settings struct {
 	DisplayedAttributes   []string            `json:"displayedAttributes,omitempty"`
 	StopWords             []string            `json:"stopWords,omitempty"`
 	Synonyms              map[string][]string `json:"synonyms,omitempty"`
-	AcceptNewFields       bool                `json:"acceptNewFields,omitempty"`
 	AttributesForFaceting []string            `json:"attributesForFaceting,omitempty"`
 }
 

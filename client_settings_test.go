@@ -26,11 +26,10 @@ func TestClientSettings_GetAll(t *testing.T) {
 	expected := Settings{
 		RankingRules:          []string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"},
 		DistinctAttribute:     nil,
-		SearchableAttributes:  []string{},
-		DisplayedAttributes:   []string{},
+		SearchableAttributes:  []string{"*"},
+		DisplayedAttributes:   []string{"*"},
 		StopWords:             []string{},
 		Synonyms:              map[string][]string{},
-		AcceptNewFields:       true,
 		AttributesForFaceting: []string{},
 	}
 
@@ -58,7 +57,6 @@ func TestClientSettings_UpdateAll(t *testing.T) {
 		Synonyms: map[string][]string{
 			"car": []string{"automobile"},
 		},
-		AcceptNewFields:       false,
 		AttributesForFaceting: []string{"title"},
 	}
 
@@ -239,8 +237,19 @@ func TestClientSettings_GetSearchableAttributes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(*searchableAttributesRes) > 0 {
-		t.Fatal("The response body is not good")
+	if len(*searchableAttributesRes) != 1 {
+		t.Fatal("Wrong response for searchableAttributes")
+	}
+
+	searchableAttibutesString := *searchableAttributesRes
+	expectedSearchableAttributesString := "*"
+
+	if searchableAttibutesString[0] != expectedSearchableAttributesString {
+		t.Fatalf(
+			"Wrong response for searchableAttributes, expected %s, got %s\n",
+			searchableAttibutesString,
+			expectedSearchableAttributesString,
+		)
 	}
 }
 
@@ -284,6 +293,27 @@ func TestClientSettings_ResetSearchableAttributes(t *testing.T) {
 	}
 
 	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+
+	searchableAttributesRes, err := client.Settings(indexUID).GetSearchableAttributes()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(*searchableAttributesRes) != 1 {
+		t.Fatal("Wrong response for searchableAttributes after reset")
+	}
+
+	searchableAttibutesString := *searchableAttributesRes
+	expectedSearchableAttributesString := "*"
+
+	if searchableAttibutesString[0] != expectedSearchableAttributesString {
+		t.Fatalf(
+			"Wrong response for searchableAttributes after reset, expected %s, got %s\n",
+			searchableAttibutesString,
+			expectedSearchableAttributesString,
+		)
+	}
 }
 
 func TestClientSettings_GetDisplayedAttributes(t *testing.T) {
@@ -303,8 +333,19 @@ func TestClientSettings_GetDisplayedAttributes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(*displayedAttributesRes) > 0 {
-		t.Fatal("The response body is not good")
+	if len(*displayedAttributesRes) != 1 {
+		t.Fatal("Wrong response for displayedAttributes")
+	}
+
+	displayedAttributesString := *displayedAttributesRes
+	expecteddisplayedAttrributesString := "*"
+
+	if displayedAttributesString[0] != expecteddisplayedAttrributesString {
+		t.Fatalf(
+			"Wrong response for displayedAttributes, expected %s, got %s\n",
+			displayedAttributesString,
+			expecteddisplayedAttrributesString,
+		)
 	}
 }
 
@@ -348,6 +389,27 @@ func TestClientSettings_ResetDisplayedAttributes(t *testing.T) {
 	}
 
 	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+
+	displayedAttributesRes, err := client.Settings(indexUID).GetDisplayedAttributes()
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(*displayedAttributesRes) != 1 {
+		t.Fatal("Wrong response for displayedAttributes after reset")
+	}
+
+	displayedAttributesString := *displayedAttributesRes
+	expecteddisplayedAttrributesString := "*"
+
+	if displayedAttributesString[0] != expecteddisplayedAttrributesString {
+		t.Fatalf(
+			"Wrong response for displayedAttributes after reset, expected %s, got %s\n",
+			displayedAttributesString,
+			expecteddisplayedAttrributesString,
+		)
+	}
 }
 
 func TestClientSettings_GetStopWords(t *testing.T) {
@@ -476,49 +538,6 @@ func TestClientSettings_ResetSynonyms(t *testing.T) {
 	}
 
 	updateIDRes, err := client.Settings(indexUID).ResetSynonyms()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
-
-}
-
-func TestClientSettings_GetAcceptNewFields(t *testing.T) {
-	var indexUID = "TestClientSettings_GetAcceptNewFields"
-
-	_, err := client.Indexes().Create(CreateIndexRequest{
-		UID: indexUID,
-	})
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	acceptNewFieldsRes, err := client.Settings(indexUID).GetAcceptNewFields()
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	if !*acceptNewFieldsRes {
-		t.Fatal("The response body is not good")
-	}
-}
-
-func TestClientSettings_UpdateAcceptNewFields(t *testing.T) {
-	var indexUID = "TestClientSettings_UpdateAcceptNewFields"
-
-	_, err := client.Indexes().Create(CreateIndexRequest{
-		UID: indexUID,
-	})
-
-	if err != nil {
-		t.Fatal(err)
-	}
-
-	updateIDRes, err := client.Settings(indexUID).UpdateAcceptNewFields(false)
 
 	if err != nil {
 		t.Fatal(err)
