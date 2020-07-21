@@ -84,6 +84,11 @@ func (c *Client) Updates(indexID string) APIUpdates {
 	return newClientUpdates(c, indexID)
 }
 
+// Settings return an APISettings client.
+func (c *Client) Settings(indexID string) APISettings {
+	return newClientSettings(c, indexID)
+}
+
 // Keys return an APIKeys client.
 func (c *Client) Keys() APIKeys {
 	return c.apiKeys
