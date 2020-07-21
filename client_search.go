@@ -27,7 +27,9 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 		request.Limit = 20
 	}
 
-	values.Add("q", request.Query)
+	if !request.PlaceholderSearch {
+		values.Add("q", request.Query)
+	}
 	if request.Filters != "" {
 		values.Add("filters", request.Filters)
 	}

@@ -60,6 +60,36 @@ func TestClientSearch_Search(t *testing.T) {
 		t.Fatalf("Basic search: wrong number of hits, should have 3, got %d\n", resp.NbHits)
 	}
 
+	// Test basic empty search
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		Query: "",
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(resp.Hits) != 0 {
+		fmt.Println(resp)
+		t.Fatal("Basic search: empty search should return 0 results")
+	}
+
+	// Test basic placeholder search
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		PlaceholderSearch: true,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(resp.Hits) != len(booksTest) {
+		fmt.Println(resp)
+		t.Fatal("Basic placeholder search: should return placeholder results")
+	}
+
 	// Test basic search with limit
 
 	resp, err = client.Search(indexUID).Search(SearchRequest{
@@ -79,6 +109,22 @@ func TestClientSearch_Search(t *testing.T) {
 	if title != booksTest[1].Title {
 		fmt.Println(resp)
 		t.Fatalf("Basic search: should have found %s\n", booksTest[1].Title)
+	}
+
+	// Test basic placeholder search with limit
+
+	resp, err = client.Search(indexUID).Search(SearchRequest{
+		PlaceholderSearch: true,
+		Limit:             3,
+	})
+
+	if err != nil {
+		t.Fatal(err)
+	}
+
+	if len(resp.Hits) != 3 {
+		fmt.Println(resp)
+		t.Fatal("Basic placeholder search with limit: should return 3 results")
 	}
 
 	// Test basic search with offset
