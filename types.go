@@ -126,6 +126,7 @@ type SearchRequest struct {
 	Matches               bool
 	FacetsDistribution    []string
 	FacetFilters          interface{}
+	PlaceholderSearch     bool
 }
 
 // SearchResponse is the response body for search method
