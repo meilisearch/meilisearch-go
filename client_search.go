@@ -1,11 +1,7 @@
 package meilisearch
 
 import (
-	"fmt"
 	"net/http"
-	"net/url"
-	"strconv"
-	"strings"
 )
 
 type clientSearch struct {
@@ -21,49 +17,48 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 
 	resp := &SearchResponse{}
 
-	values := url.Values{}
+	searchPostRequestParams := map[string]interface{}{}
 
 	if request.Limit == 0 {
 		request.Limit = 20
 	}
 
-	values.Add("q", request.Query)
+	searchPostRequestParams["q"] = request.Query
 	if request.Filters != "" {
-		values.Add("filters", request.Filters)
+		searchPostRequestParams["filters"] = request.Filters
 	}
 	if request.Offset != 0 {
-		values.Add("offset", strconv.FormatInt(request.Offset, 10))
+		searchPostRequestParams["offset"] = request.Offset
 	}
 	if request.Limit != 20 {
-		values.Add("limit", strconv.FormatInt(request.Limit, 10))
+		searchPostRequestParams["limit"] = request.Limit
 	}
 	if request.CropLength != 0 {
-		values.Add("cropLength", strconv.FormatInt(request.CropLength, 10))
+		searchPostRequestParams["cropLength"] = request.CropLength
 	}
 	if len(request.AttributesToRetrieve) != 0 {
-		values.Add("attributesToRetrieve", strings.Join(request.AttributesToRetrieve, ","))
+		searchPostRequestParams["attributesToRetrieve"] = request.AttributesToRetrieve
 	}
 	if len(request.AttributesToCrop) != 0 {
-		values.Add("attributesToCrop", strings.Join(request.AttributesToCrop, ","))
+		searchPostRequestParams["attributesToCrop"] = request.AttributesToCrop
 	}
 	if len(request.AttributesToHighlight) != 0 {
-		values.Add("attributesToHighlight", strings.Join(request.AttributesToHighlight, ","))
+		searchPostRequestParams["attributesToHighlight"] = request.AttributesToHighlight
 	}
 	if request.Matches {
-		values.Add("matches", strconv.FormatBool(request.Matches))
+		searchPostRequestParams["matches"] = request.Matches
 	}
 	if len(request.FacetsDistribution) != 0 {
-		values.Add("facetsDistribution", fmt.Sprintf("[%q]", strings.Join(request.FacetsDistribution, "\",\"")))
+		searchPostRequestParams["facetsDistribution"] = request.FacetsDistribution
 	}
 	if request.FacetFilters != nil {
-		facetFiltersToStr := facetFiltersToStr(request.FacetFilters)
-		values.Add("facetFilters", facetFiltersToStr)
+		searchPostRequestParams["facetFilters"] = request.FacetFilters
 	}
 
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/search?" + values.Encode(),
-		method:              http.MethodGet,
-		withRequest:         nil,
+		endpoint:            "/indexes/" + c.indexUID + "/search",
+		method:              http.MethodPost,
+		withRequest:         searchPostRequestParams,
 		withResponse:        &resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Search",
@@ -83,28 +78,4 @@ func (c clientSearch) IndexID() string {
 
 func (c clientSearch) Client() *Client {
 	return c.client
-}
-
-func facetFiltersToStr(i interface{}) string {
-	facetsToStr := ""
-	switch v := i.(type) {
-	case []string:
-		for _, slice := range v {
-			stringSlice := slice
-			facetsToStr += fmt.Sprintf("%q,", stringSlice)
-		}
-		facetsToStr = fmt.Sprintf("[%s]", facetsToStr[:len(facetsToStr)-1])
-	case [][]string:
-		for _, mainSlice := range v {
-			facetsToStr += "["
-			for _, slice := range mainSlice {
-				stringSlice := slice
-				facetsToStr += fmt.Sprintf("%q,", stringSlice)
-			}
-			facetsToStr = facetsToStr[:len(facetsToStr)-1] + "],"
-
-		}
-		facetsToStr = fmt.Sprintf("[%s]", facetsToStr[:len(facetsToStr)-1])
-	}
-	return (facetsToStr)
 }
