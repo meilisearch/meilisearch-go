@@ -159,10 +159,6 @@ type APISettings interface {
 
 	ResetSynonyms() (*AsyncUpdateID, error)
 
-	GetAcceptNewFields() (*bool, error)
-
-	UpdateAcceptNewFields(bool) (*AsyncUpdateID, error)
-
 	GetAttributesForFaceting() (*[]string, error)
 
 	UpdateAttributesForFaceting([]string) (*AsyncUpdateID, error)
@@ -200,12 +196,4 @@ type APIVersion interface {
 
 	// Get version of MeiliSearch.
 	Get() (*Version, error)
-}
-
-// APISystemInformation retrieve information about the MeiliSearch consuption
-//
-// Documentation: https://docs.meilisearch.com/references/sys-info.html
-type APISystemInformation interface {
-	Get() (*SystemInformation, error)
-	GetPretty() (*SystemInformationPretty, error)
 }

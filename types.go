@@ -26,7 +26,6 @@ type Settings struct {
 	DisplayedAttributes   []string            `json:"displayedAttributes,omitempty"`
 	StopWords             []string            `json:"stopWords,omitempty"`
 	Synonyms              map[string][]string `json:"synonyms,omitempty"`
-	AcceptNewFields       bool                `json:"acceptNewFields,omitempty"`
 	AttributesForFaceting []string            `json:"attributesForFaceting,omitempty"`
 }
 
@@ -49,40 +48,6 @@ type Stats struct {
 	DatabaseSize int64                 `json:"database_size"`
 	LastUpdate   time.Time             `json:"last_update"`
 	Indexes      map[string]StatsIndex `json:"indexes"`
-}
-
-// SystemInformation is the type that represent the information system in MeiliSearch
-type SystemInformation struct {
-	MemoryUsage    float64   `json:"memoryUsage"`
-	ProcessorUsage []float64 `json:"processorUsage"`
-	Global         struct {
-		TotalMemory int64 `json:"totalMemory"`
-		UsedMemory  int64 `json:"usedMemory"`
-		UsedSwap    int64 `json:"usedSwap"`
-		InputData   int64 `json:"inputData"`
-		OutputData  int64 `json:"outputData"`
-	} `json:"global"`
-	Process struct {
-		Memory int64 `json:"memory"`
-		CPU    int64 `json:"cpu"`
-	} `json:"process"`
-}
-
-// SystemInformationPretty is the type that represent the information system (human readable) in MeiliSearch
-type SystemInformationPretty struct {
-	MemoryUsage    string   `json:"memoryUsage"`
-	ProcessorUsage []string `json:"processorUsage"`
-	Global         struct {
-		TotalMemory string `json:"totalMemory"`
-		UsedMemory  string `json:"usedMemory"`
-		UsedSwap    string `json:"usedSwap"`
-		InputData   string `json:"inputData"`
-		OutputData  string `json:"outputData"`
-	} `json:"global"`
-	Process struct {
-		Memory string `json:"memory"`
-		CPU    string `json:"cpu"`
-	} `json:"process"`
 }
 
 // UpdateStatus is the status of an update.
@@ -161,6 +126,7 @@ type SearchRequest struct {
 	Matches               bool
 	FacetsDistribution    []string
 	FacetFilters          interface{}
+	PlaceholderSearch     bool
 }
 
 // SearchResponse is the response body for search method

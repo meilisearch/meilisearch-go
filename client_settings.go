@@ -414,44 +414,6 @@ func (c clientSettings) ResetSynonyms() (resp *AsyncUpdateID, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) GetAcceptNewFields() (resp *bool, err error) {
-	empty := true
-	resp = &empty
-	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/accept-new-fields",
-		method:              http.MethodGet,
-		withRequest:         nil,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetAcceptNewFields",
-		apiName:             "Settings",
-	}
-
-	if err := c.client.executeRequest(req); err != nil {
-		return resp, err
-	}
-	return resp, nil
-}
-
-func (c clientSettings) UpdateAcceptNewFields(request bool) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
-	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/accept-new-fields",
-		method:              http.MethodPost,
-		withRequest:         &request,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "UpdateAcceptNewFields",
-		apiName:             "Documents",
-	}
-
-	if err := c.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
-}
-
 func (c clientSettings) GetAttributesForFaceting() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
