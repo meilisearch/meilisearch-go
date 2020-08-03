@@ -23,7 +23,9 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 		request.Limit = 20
 	}
 
-	searchPostRequestParams["q"] = request.Query
+	if !request.PlaceholderSearch {
+		searchPostRequestParams["q"] = request.Query
+	}
 	if request.Filters != "" {
 		searchPostRequestParams["filters"] = request.Filters
 	}
