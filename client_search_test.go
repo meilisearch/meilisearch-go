@@ -269,8 +269,8 @@ func TestClientSearch_Search(t *testing.T) {
 		t.Fatal("facetsDistribution: Wrong count of facet options")
 	}
 
-	if tagCount.(map[string]interface{})["interesting book"] != float64(2) {
-		fmt.Println(tagCount.(map[string]interface{})["interesting book"])
+	if tagCount.(map[string]interface{})["Interesting book"] != float64(2) {
+		fmt.Println(tagCount.(map[string]interface{})["Interesting book"])
 		t.Fatal("facetsDistribution: Wrong count on facetDistribution")
 	}
 
