@@ -111,31 +111,87 @@ update_settings_1: |-
 reset_settings_1: |-
   client.Settings("movies").ResetAll()
 get_synonyms_1: |-
+  client.Settings("movies").GetSynonyms()
 update_synonyms_1: |-
+  synonyms := map[string][]string{
+		"wolverine": []string{"xmen", "logan"},
+		"logan":     []string{"wolverine", "xmen"},
+		"wow":       []string{"world of warcraft"},
+	}
+	client.Settings("movies").UpdateSynonyms(synonyms)
 reset_synonyms_1: |-
+  client.Settings("movies").ResetSynonyms()
 get_stop_words_1: |-
+  client.Settings("movies").GetStopWords()
 update_stop_words_1: |-
+  stopWords := []string{"of", "the", "to"}
+	client.Settings("movies").UpdateStopWords(stopWords)
 reset_stop_words_1: |-
+  client.Settings(indexUID).ResetStopWords()
 get_ranking_rules_1: |-
+  client.Settings("movies").GetRankingRules()
 update_ranking_rules_1: |-
+  rankingRules := []string{
+		"typo",
+		"words",
+		"proximity",
+		"attribute",
+		"wordsPosition",
+		"exactness",
+		"asc(release_date)",
+		"desc(rank)",
+	}
+	client.Settings("movies").UpdateRankingRules(rankingRules)
 reset_ranking_rules_1: |-
+  client.Settings("movies").ResetRankingRules()
 get_distinct_attribute_1: |-
+  client.Settings("movies").GetDistinctAttribute()
 update_distinct_attribute_1: |-
+  client.Settings("movies").UpdateDistinctAttribute("movie_id")
 reset_distinct_attribute_1: |-
+  client.Settings("movies").ResetDistinctAttribute()
 get_searchable_attributes_1: |-
+  client.Settings("movies").GetSearchableAttributes()
 update_searchable_attributes_1: |-
+  searchableAttributes := []string{
+		"title",
+		"description",
+		"uid",
+	}
+	client.Settings("movies").UpdateSearchableAttributes(searchableAttributes)
 reset_searchable_attributes_1: |-
+  client.Settings("movies").ResetSearchableAttributes()
 get_attributes_for_faceting_1: |-
+  client.Settings("movies").GetAttributesForFaceting()
 update_attributes_for_faceting_1: |-
+  attributesForFaceting := []string{
+		"genre",
+		"director",
+	}
+	client.Settings("movies").UpdateAttributesForFaceting(attributesForFaceting)
 reset_attributes_for_faceting_1: |-
+  client.Settings("movies").ResetAttributesForFaceting()
 get_displayed_attributes_1: |-
+  client.Settings("movies").GetDisplayedAttributes()
 update_displayed_attributes_1: |-
+  displayedAttributes := []string{
+		"title",
+		"description",
+		"release_date",
+		"rank",
+		"poster",
+	}
+	client.Settings("movies").UpdateDisplayedAttributes(displayedAttributes)
 reset_displayed_attributes_1: |-
+  client.Settings("movies").ResetDisplayedAttributes()
 get_index_stats_1: |-
+  client.Stats().Get("movies")
 get_indexes_stats_1: |-
+  client.Stats().GetAll()
 get_health_1: |-
-update_health_1: |-
+  client.Health().Get()
 get_version_1: |-
+  client.Version().Get()
 distinct_attribute_guide_1: |-
 field_properties_guide_searchable_1: |-
 field_properties_guide_displayed_1: |-
@@ -228,5 +284,5 @@ faceted_search_facets_distribution_1: |-
 faceted_search_walkthrough_attributes_for_faceting_1: |-
 faceted_search_walkthrough_facet_filters_1: |-
 faceted_search_walkthrough_facets_distribution_1: |-
-settings_guide_synonyms_1
-add_movies_json_1
+settings_guide_synonyms_1: |-
+add_movies_json_1: |-
