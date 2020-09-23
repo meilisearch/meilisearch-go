@@ -9,39 +9,39 @@ list_all_indexes_1: |-
   client.Indexes().List()
 create_an_index_1: |-
   client.Indexes().Create(meilisearch.CreateIndexRequest{
-		UID: "movies",
-	})
+    UID: "movies",
+  })
 update_an_index_1: |-
   r, _ := client.Indexes().Get("movies")
-	client.Indexes().UpdatePrimaryKey(r.UID, "movie_id")
+  client.Indexes().UpdatePrimaryKey(r.UID, "movie_id")
 delete_an_index_1: |-
   client.Indexes().Delete("movies")
 get_one_document_1: |-
   var a interface{}
-	client.Documents("movies").Get("25684", &a)
+  client.Documents("movies").Get("25684", &a)
 get_documents_1: |-
   var a []interface{}
-	client.Documents("movies").List(meilisearch.ListDocumentsRequest{
-		Limit: 2,
-	}, &a)
+  client.Documents("movies").List(meilisearch.ListDocumentsRequest{
+    Limit: 2,
+  }, &a)
 add_or_replace_documents_1: |-
   documents := []map[string]interface{}{
-		{
-			"id":           287947,
-			"title":        "Shazam",
-			"poster":       "https://image.tmdb.org/t/p/w1280/xnopI5Xtky18MPhK40cZAGAOVeV.jpg",
-			"overview":     "A boy is given the ability to become an adult superhero in times of need with a single magic word.",
-			"release_date": "2019-03-23",
-		},
+    {
+      "id":           287947,
+      "title":        "Shazam",
+      "poster":       "https://image.tmdb.org/t/p/w1280/xnopI5Xtky18MPhK40cZAGAOVeV.jpg",
+      "overview":     "A boy is given the ability to become an adult superhero in times of need with a single magic word.",
+      "release_date": "2019-03-23",
+    },
   }
   client.Documents("movies").AddOrReplace(documents)
 add_or_update_documents_1: |-
   documents := []map[string]interface{}{
-		{
-			"id":           287947,
-			"title":        "Shazam",
-			"genre": "comedy",
-		},
+    {
+      "id":           287947,
+      "title":        "Shazam",
+      "genre": "comedy",
+    },
   }
   client.Documents("movies").AddOrUpdate(documents)
 delete_all_documents_1: |-
@@ -57,8 +57,8 @@ delete_documents_1: |-
   })
 search_1: |-
   client.Search("movies").Search(SearchRequest{
-		Query:        "American ninja",
-	})
+    Query:        "American ninja",
+  })
 get_update_1: |-
   client.Updates("movies").Get(0),
 get_all_updates_1: |-
@@ -69,43 +69,43 @@ get_settings_1: |-
   client.Settings("movies").GetAll()
 update_settings_1: |-
   distinctAttribute := "movie_id"
-	settings := meilisearch.Settings{
-		RankingRules: []string{
-			"typo",
-			"words",
-			"proximity",
-			"attribute",
-			"wordsPosition",
-			"exactness",
-			"desc(release_date)",
-			"desc(rank)",
-		},
-		DistinctAttribute: &distinctAttribute,
-		SearchableAttributes: []string{
-			"uid",
-			"movie_id",
-			"title",
-			"description",
-			"poster",
-			"release_date",
-			"rank",
-		},
-		DisplayedAttributes: []string{
-			"title",
-			"description",
-			"poster",
-			"release_date",
-			"rank",
-		},
-		StopWords: []string{
-			"the",
-			"a",
-			"an",
-		},
-		Synonyms: map[string][]string{
-			"wolverine": []string{"xmen", "logan"},
-			"logan":     []string{"wolverine"},
-		},
+  settings := meilisearch.Settings{
+    RankingRules: []string{
+      "typo",
+      "words",
+      "proximity",
+      "attribute",
+      "wordsPosition",
+      "exactness",
+      "desc(release_date)",
+      "desc(rank)",
+    },
+    DistinctAttribute: &distinctAttribute,
+    SearchableAttributes: []string{
+      "uid",
+      "movie_id",
+      "title",
+      "description",
+      "poster",
+      "release_date",
+      "rank",
+    },
+    DisplayedAttributes: []string{
+      "title",
+      "description",
+      "poster",
+      "release_date",
+      "rank",
+    },
+    StopWords: []string{
+      "the",
+      "a",
+      "an",
+    },
+    Synonyms: map[string][]string{
+      "wolverine": []string{"xmen", "logan"},
+      "logan":     []string{"wolverine"},
+    },
   }
   client.Settings("movies").UpdateAll(settings)
 reset_settings_1: |-
@@ -114,34 +114,34 @@ get_synonyms_1: |-
   client.Settings("movies").GetSynonyms()
 update_synonyms_1: |-
   synonyms := map[string][]string{
-		"wolverine": []string{"xmen", "logan"},
-		"logan":     []string{"wolverine", "xmen"},
-		"wow":       []string{"world of warcraft"},
-	}
-	client.Settings("movies").UpdateSynonyms(synonyms)
+    "wolverine": []string{"xmen", "logan"},
+    "logan":     []string{"wolverine", "xmen"},
+    "wow":       []string{"world of warcraft"},
+  }
+  client.Settings("movies").UpdateSynonyms(synonyms)
 reset_synonyms_1: |-
   client.Settings("movies").ResetSynonyms()
 get_stop_words_1: |-
   client.Settings("movies").GetStopWords()
 update_stop_words_1: |-
   stopWords := []string{"of", "the", "to"}
-	client.Settings("movies").UpdateStopWords(stopWords)
+  client.Settings("movies").UpdateStopWords(stopWords)
 reset_stop_words_1: |-
   client.Settings(indexUID).ResetStopWords()
 get_ranking_rules_1: |-
   client.Settings("movies").GetRankingRules()
 update_ranking_rules_1: |-
   rankingRules := []string{
-		"typo",
-		"words",
-		"proximity",
-		"attribute",
-		"wordsPosition",
-		"exactness",
-		"asc(release_date)",
-		"desc(rank)",
-	}
-	client.Settings("movies").UpdateRankingRules(rankingRules)
+    "typo",
+    "words",
+    "proximity",
+    "attribute",
+    "wordsPosition",
+    "exactness",
+    "asc(release_date)",
+    "desc(rank)",
+  }
+  client.Settings("movies").UpdateRankingRules(rankingRules)
 reset_ranking_rules_1: |-
   client.Settings("movies").ResetRankingRules()
 get_distinct_attribute_1: |-
@@ -161,31 +161,31 @@ update_searchable_attributes_1: |-
     "poster",
     "release_date",
     "rank",
-	}
-	client.Settings("movies").UpdateSearchableAttributes(searchableAttributes)
+  }
+  client.Settings("movies").UpdateSearchableAttributes(searchableAttributes)
 reset_searchable_attributes_1: |-
   client.Settings("movies").ResetSearchableAttributes()
 get_attributes_for_faceting_1: |-
   client.Settings("movies").GetAttributesForFaceting()
 update_attributes_for_faceting_1: |-
   attributesForFaceting := []string{
-		"genre",
-		"director",
-	}
-	client.Settings("movies").UpdateAttributesForFaceting(attributesForFaceting)
+    "genre",
+    "director",
+  }
+  client.Settings("movies").UpdateAttributesForFaceting(attributesForFaceting)
 reset_attributes_for_faceting_1: |-
   client.Settings("movies").ResetAttributesForFaceting()
 get_displayed_attributes_1: |-
   client.Settings("movies").GetDisplayedAttributes()
 update_displayed_attributes_1: |-
   displayedAttributes := []string{
-		"title",
-		"description",
-		"release_date",
-		"rank",
-		"poster",
-	}
-	client.Settings("movies").UpdateDisplayedAttributes(displayedAttributes)
+    "title",
+    "description",
+    "release_date",
+    "rank",
+    "poster",
+  }
+  client.Settings("movies").UpdateDisplayedAttributes(displayedAttributes)
 reset_displayed_attributes_1: |-
   client.Settings("movies").ResetDisplayedAttributes()
 get_index_stats_1: |-
@@ -200,24 +200,24 @@ distinct_attribute_guide_1: |-
   client.Settings("jackets").UpdateDistinctAttribute("product_id")
 field_properties_guide_searchable_1: |-
   searchableAttributes := []string{
-		"uid",
+    "uid",
     "movie_id",
     "title",
     "description",
     "poster",
     "release_date",
     "rank",
-	}
-	client.Settings("movies").UpdateSearchableAttributes(searchableAttributes)
+  }
+  client.Settings("movies").UpdateSearchableAttributes(searchableAttributes)
 field_properties_guide_displayed_1: |-
   displayedAttributes := []string{
-		"title",
-		"description",
-		"poster",
-		"release_date",
-		"rank",
-	}
-	client.Settings("movies").UpdateDisplayedAttributes(displayedAttributes)
+    "title",
+    "description",
+    "poster",
+    "release_date",
+    "rank",
+  }
+  client.Settings("movies").UpdateDisplayedAttributes(displayedAttributes)
 filtering_guide_1: |-
 filtering_guide_2: |-
 filtering_guide_3: |-
