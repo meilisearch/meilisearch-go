@@ -12,17 +12,48 @@ create_an_index_1: |-
 		UID: "movies",
 	})
 update_an_index_1: |-
-  r, _ := client.Indexes().Get("books")
+  r, _ := client.Indexes().Get("movies")
 	client.Indexes().UpdatePrimaryKey(r.UID, "movie_id")
 delete_an_index_1: |-
   client.Indexes().Delete("movies")
 get_one_document_1: |-
+  var a interface{}
+	client.Documents("movies").Get("25684", &a)
 get_documents_1: |-
+  var a []interface{}
+	client.Documents("movies").List(meilisearch.ListDocumentsRequest{
+		Limit: 2,
+	}, &a)
 add_or_replace_documents_1: |-
+  documents := []map[string]interface{}{
+		{
+			"id":           287947,
+			"title":        "Shazam",
+			"poster":       "https://image.tmdb.org/t/p/w1280/xnopI5Xtky18MPhK40cZAGAOVeV.jpg",
+			"overview":     "A boy is given the ability to become an adult superhero in times of need with a single magic word.",
+			"release_date": "2019-03-23",
+		},
+  }
+  client.Documents("movies").AddOrReplace(documents)
 add_or_update_documents_1: |-
+  documents := []map[string]interface{}{
+		{
+			"id":           287947,
+			"title":        "Shazam",
+			"genre": "comedy",
+		},
+	}client.Documents("movies").AddOrUpdate(documents)
 delete_all_documents_1: |-
+  client.Documents("movies").DeleteAllDocuments()
 delete_one_document_1: |-
+  client.Documents("movies").Delete("25684")
 delete_documents_1: |-
+  client.Documents("movies").Deletes([]string{
+    "23488",
+    "153738",
+    "437035",
+    "363869",
+  })
 search_1: |-
 get_update_1: |-
 get_all_updates_1: |-
