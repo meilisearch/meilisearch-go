@@ -4,10 +4,18 @@
 # You can read more on https://github.com/meilisearch/documentation/tree/master/.vuepress/code-samples
 ---
 get_one_index_1: |-
+  client.Indexes().Get("movies")
 list_all_indexes_1: |-
+  client.Indexes().List()
 create_an_index_1: |-
+  client.Indexes().Create(meilisearch.CreateIndexRequest{
+		UID: "movies",
+	})
 update_an_index_1: |-
+  r, _ := client.Indexes().Get("books")
+	client.Indexes().UpdatePrimaryKey(r.UID, "movie_id")
 delete_an_index_1: |-
+  client.Indexes().Delete("movies")
 get_one_document_1: |-
 get_documents_1: |-
 add_or_replace_documents_1: |-
@@ -140,3 +148,5 @@ faceted_search_facets_distribution_1: |-
 faceted_search_walkthrough_attributes_for_faceting_1: |-
 faceted_search_walkthrough_facet_filters_1: |-
 faceted_search_walkthrough_facets_distribution_1: |-
+settings_guide_synonyms_1
+add_movies_json_1
