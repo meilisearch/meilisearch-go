@@ -42,7 +42,8 @@ add_or_update_documents_1: |-
 			"title":        "Shazam",
 			"genre": "comedy",
 		},
-	}client.Documents("movies").AddOrUpdate(documents)
+  }
+  client.Documents("movies").AddOrUpdate(documents)
 delete_all_documents_1: |-
   client.Documents("movies").DeleteAllDocuments()
 delete_one_document_1: |-
@@ -55,12 +56,60 @@ delete_documents_1: |-
     "363869",
   })
 search_1: |-
+  client.Search("movies").Search(SearchRequest{
+		Query:        "American ninja",
+	})
 get_update_1: |-
+  client.Updates("movies").Get(0),
 get_all_updates_1: |-
+  client.Updates("movies").List()
 get_keys_1: |-
+  client.Keys().Get()
 get_settings_1: |-
+  client.Settings("movies").GetAll()
 update_settings_1: |-
+  distinctAttribute := "movie_id"
+	settings := meilisearch.Settings{
+		RankingRules: []string{
+			"typo",
+			"words",
+			"proximity",
+			"attribute",
+			"wordsPosition",
+			"exactness",
+			"desc(release_date)",
+			"desc(rank)",
+		},
+		DistinctAttribute: &distinctAttribute,
+		SearchableAttributes: []string{
+			"uid",
+			"movie_id",
+			"title",
+			"description",
+			"poster",
+			"release_date",
+			"rank",
+		},
+		DisplayedAttributes: []string{
+			"title",
+			"description",
+			"poster",
+			"release_date",
+			"rank",
+		},
+		StopWords: []string{
+			"the",
+			"a",
+			"an",
+		},
+		Synonyms: map[string][]string{
+			"wolverine": []string{"xmen", "logan"},
+			"logan":     []string{"wolverine"},
+		},
+  }
+  client.Settings("movies").UpdateAll(settings)
 reset_settings_1: |-
+  client.Settings("movies").ResetAll()
 get_synonyms_1: |-
 update_synonyms_1: |-
 reset_synonyms_1: |-
