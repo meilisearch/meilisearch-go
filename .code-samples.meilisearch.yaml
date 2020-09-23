@@ -154,9 +154,13 @@ get_searchable_attributes_1: |-
   client.Settings("movies").GetSearchableAttributes()
 update_searchable_attributes_1: |-
   searchableAttributes := []string{
-		"title",
-		"description",
-		"uid",
+    "uid",
+    "movie_id",
+    "title",
+    "description",
+    "poster",
+    "release_date",
+    "rank",
 	}
 	client.Settings("movies").UpdateSearchableAttributes(searchableAttributes)
 reset_searchable_attributes_1: |-
@@ -193,8 +197,27 @@ get_health_1: |-
 get_version_1: |-
   client.Version().Get()
 distinct_attribute_guide_1: |-
+  client.Settings("jackets").UpdateDistinctAttribute("product_id")
 field_properties_guide_searchable_1: |-
+  searchableAttributes := []string{
+		"uid",
+    "movie_id",
+    "title",
+    "description",
+    "poster",
+    "release_date",
+    "rank",
+	}
+	client.Settings("movies").UpdateSearchableAttributes(searchableAttributes)
 field_properties_guide_displayed_1: |-
+  displayedAttributes := []string{
+		"title",
+		"description",
+		"poster",
+		"release_date",
+		"rank",
+	}
+	client.Settings("movies").UpdateDisplayedAttributes(displayedAttributes)
 filtering_guide_1: |-
 filtering_guide_2: |-
 filtering_guide_3: |-
