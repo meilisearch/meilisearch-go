@@ -330,12 +330,12 @@ settings_guide_displayed_1: |-
   client.Settings("movies").UpdateDisplayedAttributes(displayedAttributes)
 documents_guide_add_movie_1: |-
   documents := []map[string]interface{}{
-		{
-			"movie_id": "123sq178",
-			"title":    "Amelie Poulain",
-		},
-	}
-	client.Documents("movies").AddOrUpdate(documents)
+    {
+      "movie_id": "123sq178",
+      "title":    "Amelie Poulain",
+    },
+  }
+  client.Documents("movies").AddOrUpdate(documents)
 search_guide_1: |-
   results, error := client.Search("movies").Search(meilisearch.SearchRequest{
     Query:  "shifu",
@@ -411,43 +411,43 @@ getting_started_search_md: |-
   [About this package](https://github.com/meilisearch/meilisearch-go/)
 faceted_search_update_settings_1: |-
   response, error := client.Settings("movies").UpdateAttributesForFaceting([]string{
-		"director",
-		"genres",
-	})
+    "director",
+    "genres",
+  })
 faceted_search_facet_filters_1: |-
   results, error := client.Search("movies").Search(meilisearch.SearchRequest{
-		Query: "thriller",
-		FacetFilters: [][]string{
-			[]string{"genres:Horror", "genres:Mystery"},
-			[]string{"director:Jordan Peele"},
-		},
-	})
+    Query: "thriller",
+    FacetFilters: [][]string{
+      []string{"genres:Horror", "genres:Mystery"},
+      []string{"director:Jordan Peele"},
+    },
+  })
 faceted_search_facets_distribution_1: |-
   results, error := client.Search("movies").Search(meilisearch.SearchRequest{
-		Query: "Batman",
-		FacetsDistribution: []string{
-			"genres",
-		},
-	})
+    Query: "Batman",
+    FacetsDistribution: []string{
+      "genres",
+    },
+  })
 faceted_search_walkthrough_attributes_for_faceting_1: |-
   response, error := client.Settings("movies").UpdateAttributesForFaceting([]string{
-		"director",
-		"producer",
-		"genres",
-		"production_companies",
-	})
+    "director",
+    "producer",
+    "genres",
+    "production_companies",
+  })
 faceted_search_walkthrough_facet_filters_1: |-
   results, error := client.Search("movies").Search(meilisearch.SearchRequest{
-		Query: "thriller",
-		FacetFilters: [][]string{
-			[]string{"genres:Horror", "genres:Mystery"},
-			[]string{"director:Jordan Peele"},
-		},
-	})
+    Query: "thriller",
+    FacetFilters: [][]string{
+      []string{"genres:Horror", "genres:Mystery"},
+      []string{"director:Jordan Peele"},
+    },
+  })
 faceted_search_walkthrough_facets_distribution_1: |-
   results, error := client.Search("movies").Search(meilisearch.SearchRequest{
-		Query: "Batman",
-		FacetsDistribution: []string{
-			"genres",
-		},
-	})
+    Query: "Batman",
+    FacetsDistribution: []string{
+      "genres",
+    },
+  })
