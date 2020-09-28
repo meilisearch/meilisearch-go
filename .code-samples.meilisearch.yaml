@@ -60,7 +60,7 @@ search_1: |-
     Query:        "American ninja",
   })
 get_update_1: |-
-  client.Updates("movies").Get(0),
+  client.Updates("movies").Get(0)
 get_all_updates_1: |-
   client.Updates("movies").List()
 get_keys_1: |-
