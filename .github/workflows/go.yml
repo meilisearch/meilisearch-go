@@ -27,14 +27,14 @@ jobs:
 
     - name: Docker setup
       run: docker run -d -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=masterKey --no-analytics=true
-
-    - name: Test
-      run: go test -v ./...
-
+  
     - name: Linter
       run: |
         go get -u golang.org/x/lint/golint
         /home/runner/go/bin/golint
+
+    - name: Test
+      run: go test -v ./...
 
     - name: Build
       run: go build -v .
