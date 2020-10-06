@@ -148,9 +148,7 @@ JSON output:
 
 ## 🤖 Compatibility with MeiliSearch
 
-This package is compatible with the following MeiliSearch versions:
-- `v0.14.0`
-- `v0.13.0`
+This package only guarantees the compatibility with the [version v0.15.0 of MeiliSearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.15.0).
 
 ## 🎬 Examples
 
