@@ -6,10 +6,10 @@
 
 <h4 align="center">
   <a href="https://github.com/meilisearch/MeiliSearch">MeiliSearch</a> |
+  <a href="https://docs.meilisearch.com">Documentation</a> |
   <a href="https://www.meilisearch.com">Website</a> |
   <a href="https://blog.meilisearch.com">Blog</a> |
   <a href="https://twitter.com/meilisearch">Twitter</a> |
-  <a href="https://docs.meilisearch.com">Documentation</a> |
   <a href="https://docs.meilisearch.com/faq">FAQ</a>
 </h4>
 
@@ -20,21 +20,22 @@
   <a href="https://slack.meilisearch.com"><img src="https://img.shields.io/badge/slack-MeiliSearch-blue.svg?logo=slack" alt="Slack"></a>
 </p>
 
-<p align="center">⚡ Lightning Fast, Ultra Relevant, and Typo-Tolerant Search Engine MeiliSearch client written in Go</p>
+<p align="center">⚡ The MeiliSearch API client written for Golang</p>
 
-**MeiliSearch Go** is a client for **MeiliSearch** written in Go. **MeiliSearch** is a powerful, fast, open-source, easy to use and deploy search engine. Both searching and indexing are highly customizable. Features such as typo-tolerance, filters, and synonyms are provided out-of-the-box.
+**MeiliSearch Go** is a client for **MeiliSearch** written in Go. **MeiliSearch** is a powerful, fast, open-source, easy to use and deploy search engine. Both searching and indexing are highly customizable. Features such as typo-tolerance, filters, facets and synonyms are provided out-of-the-box.
 
 ## Table of Contents <!-- omit in toc -->
 
+- [📖 Documentation](#-documentation)
 - [🔧 Installation](#-installation)
-- [🚀 Getting started](#-getting-started)
+- [🚀 Getting Started](#-getting-started)
 - [🤖 Compatibility with MeiliSearch](#-compatibility-with-meilisearch)
-- [🎬 Examples](#-examples)
-  - [Indexes](#indexes)
-  - [Documents](#documents)
-  - [Update status](#update-status)
-  - [Search](#search)
+- [💡 Learn More](#-learn-more)
 - [⚙️ Development Workflow and Contributing](#️-development-workflow-and-contributing)
+
+## 📖 Documentation
+
+See our [Documentation](https://docs.meilisearch.com/guides/introduction/quick_start_guide.html) or our [API References](https://docs.meilisearch.com/references/).
 
 ## 🔧 Installation
 
@@ -48,6 +49,7 @@ $ go get github.com/meilisearch/meilisearch-go
 There are many easy ways to [download and run a MeiliSearch instance](https://docs.meilisearch.com/guides/advanced_guides/installation.html#download-and-launch).
 
 For example, if you use Docker:
+
 ```bash
 $ docker pull getmeili/meilisearch:latest # Fetch the latest version of MeiliSearch image from Docker Hub
 $ docker run -it --rm -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=masterKey
@@ -55,7 +57,7 @@ $ docker run -it --rm -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --m
 
 NB: you can also download MeiliSearch from **Homebrew** or **APT**.
 
-## 🚀 Getting started
+## 🚀 Getting Started
 
 #### Add documents <!-- omit in toc -->
 
@@ -103,9 +105,9 @@ func main() {
 }
 ```
 
-With the `updateId`, you can check the status (`processed` or `failed`) of your documents addition thanks to this [method](#update-status).
+With the `updateId`, you can check the status (`enqueued`, `processed` or `failed`) of your documents addition thanks to this [method](https://docs.meilisearch.com/references/updates.html#get-an-update-status).
 
-#### Search in index <!-- omit in toc -->
+#### Basic Search <!-- omit in toc -->
 
 ```go
 package main
@@ -146,139 +148,27 @@ JSON output:
 }
 ```
 
-## 🤖 Compatibility with MeiliSearch
+#### Custom Search <!-- omit in toc -->
 
-This package only guarantees the compatibility with the [version v0.15.0 of MeiliSearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.15.0).
-
-## 🎬 Examples
-
-All HTTP routes of MeiliSearch are accessible via methods in this SDK.</br>
-You can check out [the API documentation](https://docs.meilisearch.com/references/).
-
-### Indexes
-
-#### Create an index <!-- omit in toc -->
+All the supported options are described in the [search parameters](https://docs.meilisearch.com/guides/advanced_guides/search_parameters.html) section of the documentation.
 
 ```go
-// Create an index with a specific uid (uid must be unique)
-resp, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
-    UID: "books",
-})
-// Create an index with a primary key
-resp, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
-    UID: "books",
-    PrimaryKey: "book_id",
-})
-```
+func main() {
+    resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
+        Query: "prince",
+        AttributesToHighlight: []string{"*"},
+        Filters: "book_id > 10"
+    })
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
 
-#### List all indexes <!-- omit in toc -->
-
-```go
-list, err := client.Indexes().List()
-```
-
-#### Get an index object <!-- omit in toc -->
-
-```go
-index, err := client.Indexes().Get("books")
-```
-
-### Documents
-
-#### Fetch documents <!-- omit in toc -->
-
-```go
-// Get one document
-var document map[int]interface{}
-err := client.Documents("books").Get("123", &doc)
-// Get documents by batch
-var list []map[int]interface{}
-err = client.Documents("books").List(ListDocumentsRequest{
-    Offset: 0,
-    Limit:  10,
-}, &list)
-```
-
-#### Add documents <!-- omit in toc -->
-
-```go
-documents := []map[string]interface{}{
-    {BookID: 90, Title: "Madame Bovary"},
-}
-
-upd_res, err := client.Documents("books").AddOrUpdate(documents)
-```
-
-Response:
-```json
-{
-    "updateId": 1
-}
-```
-With this `updateId` you can track your [operation update](#update-status).
-
-#### Delete documents <!-- omit in toc -->
-
-```go
-// Delete one document
-updateRes, err = client.Documents("books").Delete("123")
-// Delete several documents
-updateRes, err = client.Documents("books").Deletes([]string{"123", "456"})
-// Delete all documents /!\
-updateRes, err = client.Documents("books").DeleteAllDocuments()
-```
-
-### Update status
-
-```go
-// Get one update status
-// Parameter: the updateId got after an asynchronous request (e.g. documents addition)
-update, err := client.Updates("books").Get(1)
-// Get all update satus
-list, err := client.Updates("books").List()
-```
-
-### Search
-
-#### Basic search <!-- omit in toc -->
-
-```go
-resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
-    Query: "prince",
-    Limit: 10,
-})
-```
-
-```json
-{
-    "hits": [
-        {
-            "book_id": 456,
-            "title": "Le Petit Prince"
-        },
-        {
-            "book_id": 4,
-            "title": "Harry Potter and the Half-Blood Prince"
-        }
-    ],
-    "offset": 0,
-    "limit": 20,
-    "processingTimeMs": 13,
-    "query": "prince"
+    fmt.Println(searchRes.Hits)
 }
 ```
 
-#### Custom search <!-- omit in toc -->
-
-All the supported options are described in [this documentation section](https://docs.meilisearch.com/references/search.html#search-in-an-index).
-
-```go
-resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
-    Query: "harry pottre",
-    AttributesToHighlight: []string{"*"},
-})
-```
-
+JSON output:
 ```json
 {
     "hits": [
@@ -297,6 +187,19 @@ resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
     "query": "prince"
 }
 ```
+
+## 🤖 Compatibility with MeiliSearch
+
+This package only guarantees the compatibility with the [version v0.15.0 of MeiliSearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.15.0).
+
+## 💡 Learn More
+
+The following sections may interest you:
+
+- **Manipulate documents**: see the [API references](https://docs.meilisearch.com/references/documents.html) or read more about the [document concept](https://docs.meilisearch.com/guides/main_concepts/documents.html).
+- **Search**: see the [API references](https://docs.meilisearch.com/references/search.html) or follow our [guide on search parameters](https://docs.meilisearch.com/guides/advanced_guides/search_parameters.html).
+- **Manage the indexes**: see the [API references](https://docs.meilisearch.com/references/indexes.html) or read more about the [index concept](https://docs.meilisearch.com/guides/main_concepts/indexes.html).
+- **Configure the index settings**: see the [API references](https://docs.meilisearch.com/references/settings.html) or follow our [guide on settings parameters](https://docs.meilisearch.com/guides/advanced_guides/settings.html#synonyms).
 
 ## ⚙️ Development Workflow and Contributing
 
