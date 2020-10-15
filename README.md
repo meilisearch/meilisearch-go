@@ -29,11 +29,7 @@
 - [🔧 Installation](#-installation)
 - [🚀 Getting started](#-getting-started)
 - [🤖 Compatibility with MeiliSearch](#-compatibility-with-meilisearch)
-- [🎬 Examples](#-examples)
-  - [Indexes](#indexes)
-  - [Documents](#documents)
-  - [Update status](#update-status)
-  - [Search](#search)
+- [📖 Documentation and Examples](#-documentation-and-examples)
 - [⚙️ Development Workflow and Contributing](#️-development-workflow-and-contributing)
 
 ## 🔧 Installation
@@ -103,9 +99,9 @@ func main() {
 }
 ```
 
-With the `updateId`, you can check the status (`processed` or `failed`) of your documents addition thanks to this [method](#update-status).
+With the `updateId`, you can check the status (`processed` or `failed`) of your documents addition thanks to this [method](https://docs.meilisearch.com/references/updates.html#get-an-update-status).
 
-#### Search in index <!-- omit in toc -->
+#### Basic Search <!-- omit in toc -->
 
 ```go
 package main
@@ -146,139 +142,26 @@ JSON output:
 }
 ```
 
-## 🤖 Compatibility with MeiliSearch
+#### Custom Search <!-- omit in toc -->
 
-This package only guarantees the compatibility with the [version v0.15.0 of MeiliSearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.15.0).
-
-## 🎬 Examples
-
-All HTTP routes of MeiliSearch are accessible via methods in this SDK.</br>
-You can check out [the API documentation](https://docs.meilisearch.com/references/).
-
-### Indexes
-
-#### Create an index <!-- omit in toc -->
+All the supported options are described in [this documentation section](https://docs.meilisearch.com/guides/advanced_guides/search_parameters.html).
 
 ```go
-// Create an index with a specific uid (uid must be unique)
-resp, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
-    UID: "books",
-})
-// Create an index with a primary key
-resp, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
-    UID: "books",
-    PrimaryKey: "book_id",
-})
-```
+func main() {
+    resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
+        Query: "harry pottre",
+        AttributesToHighlight: []string{"*"},
+    })
+    if err != nil {
+        fmt.Println(err)
+        os.Exit(1)
+    }
 
-#### List all indexes <!-- omit in toc -->
-
-```go
-list, err := client.Indexes().List()
-```
-
-#### Get an index object <!-- omit in toc -->
-
-```go
-index, err := client.Indexes().Get("books")
-```
-
-### Documents
-
-#### Fetch documents <!-- omit in toc -->
-
-```go
-// Get one document
-var document map[int]interface{}
-err := client.Documents("books").Get("123", &doc)
-// Get documents by batch
-var list []map[int]interface{}
-err = client.Documents("books").List(ListDocumentsRequest{
-    Offset: 0,
-    Limit:  10,
-}, &list)
-```
-
-#### Add documents <!-- omit in toc -->
-
-```go
-documents := []map[string]interface{}{
-    {BookID: 90, Title: "Madame Bovary"},
-}
-
-upd_res, err := client.Documents("books").AddOrUpdate(documents)
-```
-
-Response:
-```json
-{
-    "updateId": 1
-}
-```
-With this `updateId` you can track your [operation update](#update-status).
-
-#### Delete documents <!-- omit in toc -->
-
-```go
-// Delete one document
-updateRes, err = client.Documents("books").Delete("123")
-// Delete several documents
-updateRes, err = client.Documents("books").Deletes([]string{"123", "456"})
-// Delete all documents /!\
-updateRes, err = client.Documents("books").DeleteAllDocuments()
-```
-
-### Update status
-
-```go
-// Get one update status
-// Parameter: the updateId got after an asynchronous request (e.g. documents addition)
-update, err := client.Updates("books").Get(1)
-// Get all update satus
-list, err := client.Updates("books").List()
-```
-
-### Search
-
-#### Basic search <!-- omit in toc -->
-
-```go
-resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
-    Query: "prince",
-    Limit: 10,
-})
-```
-
-```json
-{
-    "hits": [
-        {
-            "book_id": 456,
-            "title": "Le Petit Prince"
-        },
-        {
-            "book_id": 4,
-            "title": "Harry Potter and the Half-Blood Prince"
-        }
-    ],
-    "offset": 0,
-    "limit": 20,
-    "processingTimeMs": 13,
-    "query": "prince"
+    fmt.Println(searchRes.Hits)
 }
 ```
 
-#### Custom search <!-- omit in toc -->
-
-All the supported options are described in [this documentation section](https://docs.meilisearch.com/references/search.html#search-in-an-index).
-
-```go
-resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
-    Query: "harry pottre",
-    AttributesToHighlight: []string{"*"},
-})
-```
-
+JSON output:
 ```json
 {
     "hits": [
@@ -297,6 +180,23 @@ resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
     "query": "prince"
 }
 ```
+
+## 🤖 Compatibility with MeiliSearch
+
+This package only guarantees the compatibility with the [version v0.15.0 of MeiliSearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.15.0).
+
+## 📖 Documentation and Examples
+
+MeiliSearch documentation provides **examples** and a detailed explanation of every one of its features and functionalities, including examples on how to implement them **using this SDK**.
+
+Please read the [guides available in the documentation](https://docs.meilisearch.com/guides/) or check the [API references](https://docs.meilisearch.com/references/) to find the one that you need!
+
+The following sections may interest you:
+
+- [Manipulate documents](https://docs.meilisearch.com/references/documents.html)
+- [Search](https://docs.meilisearch.com/references/search.html)
+- [Manage the indexes](https://docs.meilisearch.com/references/indexes.html)
+- [Configure the index settings](https://docs.meilisearch.com/references/settings.html)
 
 ## ⚙️ Development Workflow and Contributing
 
