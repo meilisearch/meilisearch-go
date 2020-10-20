@@ -99,7 +99,7 @@ func main() {
 }
 ```
 
-With the `updateId`, you can check the status (`processed` or `failed`) of your documents addition thanks to this [method](https://docs.meilisearch.com/references/updates.html#get-an-update-status).
+With the `updateId`, you can check the status (`processed`, `enqueued` or `failed`) of your documents addition thanks to this [method](https://docs.meilisearch.com/references/updates.html#get-an-update-status).
 
 #### Basic Search <!-- omit in toc -->
 
