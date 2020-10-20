@@ -1,0 +1,3 @@
+status = ["go-tests"]
+# 1 hour timeout
+timeout-sec = 3600
