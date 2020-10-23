@@ -101,6 +101,6 @@ Some notes on GitHub PRs:
 - The branch related to the PR must be **up-to-date with `master`** before merging. [Bors](https://github.com/bors-ng/bors-ng) will rebase your branch if it is not. Ask a maintainer to run it.
 - All PRs must be reviewed and approved by at least one maintainer.
 - All PRs have to be **squashed and merged**.
-- The PR title should be accurate and descriptive of the changes. The title of the PR will be indeed automatically added to the next [release changlogs](https://github.com/meilisearch/meilisearch-go/releases/).
+- The PR title should be accurate and descriptive of the changes. The title of the PR will be indeed automatically added to the next [release changelogs](https://github.com/meilisearch/meilisearch-go/releases/).
 
 Thank you again for reading this through, we can not wait to begin to work with you if you made your way through this contributing guide ❤️
