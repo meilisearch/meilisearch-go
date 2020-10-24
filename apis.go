@@ -4,7 +4,7 @@ package meilisearch
 // Each apis that use an index internally implement this interface except APIUpdates.
 type APIWithIndexID interface {
 	IndexID() string
-	Client() *Client
+	Client() ClientInterface
 }
 
 // APIIndexes index is an entity, like a table in SQL, with a specific schema definition. It gathers a collection of
@@ -125,13 +125,13 @@ type APISettings interface {
 
 	GetRankingRules() (*[]string, error)
 
-	UpdateRankingRules([]string) (*AsyncUpdateID, error)
+	UpdateRankingRules(arr []string) (*AsyncUpdateID, error)
 
 	ResetRankingRules() (*AsyncUpdateID, error)
 
-	GetDistinctAttribute() (*string, error)
+	GetDistinctAttribute() (*Str, error)
 
-	UpdateDistinctAttribute(string) (*AsyncUpdateID, error)
+	UpdateDistinctAttribute(Str) (*AsyncUpdateID, error)
 
 	ResetDistinctAttribute() (*AsyncUpdateID, error)
 
@@ -155,7 +155,7 @@ type APISettings interface {
 
 	GetSynonyms() (*map[string][]string, error)
 
-	UpdateSynonyms(map[string][]string) (*AsyncUpdateID, error)
+	UpdateSynonyms(synonyms map[string][]string) (*AsyncUpdateID, error)
 
 	ResetSynonyms() (*AsyncUpdateID, error)
 

@@ -4,26 +4,26 @@ import (
 	"net/http"
 )
 
-type clientSettings struct {
-	client   *Client
+type fastClientSettings struct {
+	client   *FastHTTPClient
 	indexUID string
 }
 
-func newClientSettings(client *Client, indexUID string) clientSettings {
-	return clientSettings{client: client, indexUID: indexUID}
+func newFastClientSettings(client *FastHTTPClient, indexUID string) fastClientSettings {
+	return fastClientSettings{client: client, indexUID: indexUID}
 }
 
-func (c clientSettings) IndexID() string {
+func (c fastClientSettings) IndexID() string {
 	return c.indexUID
 }
 
-func (c clientSettings) Client() *Client {
+func (c fastClientSettings) Client() ClientInterface {
 	return c.client
 }
 
-func (c clientSettings) GetAll() (resp *Settings, err error) {
+func (c fastClientSettings) GetAll() (resp *Settings, err error) {
 	resp = &Settings{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -39,9 +39,9 @@ func (c clientSettings) GetAll() (resp *Settings, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) UpdateAll(request Settings) (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) UpdateAll(request Settings) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings",
 		method:              http.MethodPost,
 		withRequest:         &request,
@@ -58,9 +58,9 @@ func (c clientSettings) UpdateAll(request Settings) (resp *AsyncUpdateID, err er
 	return resp, nil
 }
 
-func (c clientSettings) ResetAll() (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) ResetAll() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings",
 		method:              http.MethodDelete,
 		withRequest:         nil,
@@ -77,9 +77,9 @@ func (c clientSettings) ResetAll() (resp *AsyncUpdateID, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) GetRankingRules() (resp *[]string, err error) {
+func (c fastClientSettings) GetRankingRules() (resp *[]string, err error) {
 	resp = &[]string{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/ranking-rules",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -95,9 +95,9 @@ func (c clientSettings) GetRankingRules() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) UpdateRankingRules(request []string) (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) UpdateRankingRules(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/ranking-rules",
 		method:              http.MethodPost,
 		withRequest:         &request,
@@ -114,9 +114,9 @@ func (c clientSettings) UpdateRankingRules(request []string) (resp *AsyncUpdateI
 	return resp, nil
 }
 
-func (c clientSettings) ResetRankingRules() (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) ResetRankingRules() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/ranking-rules",
 		method:              http.MethodDelete,
 		withRequest:         nil,
@@ -133,10 +133,10 @@ func (c clientSettings) ResetRankingRules() (resp *AsyncUpdateID, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) GetDistinctAttribute() (resp *string, err error) {
-	empty := ""
-	resp = &empty
-	req := internalRequest{
+func (c fastClientSettings) GetDistinctAttribute() (*Str, error) {
+	emp := Str("")
+	resp := &emp
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -152,12 +152,12 @@ func (c clientSettings) GetDistinctAttribute() (resp *string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) UpdateDistinctAttribute(request string) (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) UpdateDistinctAttribute(request Str) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
 		method:              http.MethodPost,
-		withRequest:         &request,
+		withRequest:         request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateDistinctAttribute",
@@ -171,9 +171,9 @@ func (c clientSettings) UpdateDistinctAttribute(request string) (resp *AsyncUpda
 	return resp, nil
 }
 
-func (c clientSettings) ResetDistinctAttribute() (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) ResetDistinctAttribute() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
 		method:              http.MethodDelete,
 		withRequest:         nil,
@@ -190,9 +190,9 @@ func (c clientSettings) ResetDistinctAttribute() (resp *AsyncUpdateID, err error
 	return resp, nil
 }
 
-func (c clientSettings) GetSearchableAttributes() (resp *[]string, err error) {
+func (c fastClientSettings) GetSearchableAttributes() (resp *[]string, err error) {
 	resp = &[]string{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/searchable-attributes",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -208,9 +208,9 @@ func (c clientSettings) GetSearchableAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) UpdateSearchableAttributes(request []string) (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) UpdateSearchableAttributes(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/searchable-attributes",
 		method:              http.MethodPost,
 		withRequest:         &request,
@@ -227,9 +227,9 @@ func (c clientSettings) UpdateSearchableAttributes(request []string) (resp *Asyn
 	return resp, nil
 }
 
-func (c clientSettings) ResetSearchableAttributes() (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) ResetSearchableAttributes() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/searchable-attributes",
 		method:              http.MethodDelete,
 		withRequest:         nil,
@@ -246,9 +246,9 @@ func (c clientSettings) ResetSearchableAttributes() (resp *AsyncUpdateID, err er
 	return resp, nil
 }
 
-func (c clientSettings) GetDisplayedAttributes() (resp *[]string, err error) {
+func (c fastClientSettings) GetDisplayedAttributes() (resp *[]string, err error) {
 	resp = &[]string{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/displayed-attributes",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -264,9 +264,9 @@ func (c clientSettings) GetDisplayedAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) UpdateDisplayedAttributes(request []string) (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) UpdateDisplayedAttributes(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/displayed-attributes",
 		method:              http.MethodPost,
 		withRequest:         &request,
@@ -283,9 +283,9 @@ func (c clientSettings) UpdateDisplayedAttributes(request []string) (resp *Async
 	return resp, nil
 }
 
-func (c clientSettings) ResetDisplayedAttributes() (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) ResetDisplayedAttributes() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/displayed-attributes",
 		method:              http.MethodDelete,
 		withRequest:         nil,
@@ -302,9 +302,9 @@ func (c clientSettings) ResetDisplayedAttributes() (resp *AsyncUpdateID, err err
 	return resp, nil
 }
 
-func (c clientSettings) GetStopWords() (resp *[]string, err error) {
+func (c fastClientSettings) GetStopWords() (resp *[]string, err error) {
 	resp = &[]string{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/stop-words",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -320,9 +320,9 @@ func (c clientSettings) GetStopWords() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) UpdateStopWords(request []string) (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) UpdateStopWords(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/stop-words",
 		method:              http.MethodPost,
 		withRequest:         &request,
@@ -339,9 +339,9 @@ func (c clientSettings) UpdateStopWords(request []string) (resp *AsyncUpdateID, 
 	return resp, nil
 }
 
-func (c clientSettings) ResetStopWords() (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) ResetStopWords() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/stop-words",
 		method:              http.MethodDelete,
 		withRequest:         nil,
@@ -358,9 +358,9 @@ func (c clientSettings) ResetStopWords() (resp *AsyncUpdateID, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) GetSynonyms() (resp *map[string][]string, err error) {
+func (c fastClientSettings) GetSynonyms() (resp *map[string][]string, err error) {
 	resp = &map[string][]string{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/synonyms",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -376,9 +376,9 @@ func (c clientSettings) GetSynonyms() (resp *map[string][]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) UpdateSynonyms(request map[string][]string) (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) UpdateSynonyms(request map[string][]string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/synonyms",
 		method:              http.MethodPost,
 		withRequest:         &request,
@@ -395,9 +395,9 @@ func (c clientSettings) UpdateSynonyms(request map[string][]string) (resp *Async
 	return resp, nil
 }
 
-func (c clientSettings) ResetSynonyms() (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) ResetSynonyms() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/synonyms",
 		method:              http.MethodDelete,
 		withRequest:         nil,
@@ -414,9 +414,9 @@ func (c clientSettings) ResetSynonyms() (resp *AsyncUpdateID, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) GetAttributesForFaceting() (resp *[]string, err error) {
+func (c fastClientSettings) GetAttributesForFaceting() (resp *[]string, err error) {
 	resp = &[]string{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/attributes-for-faceting",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -432,9 +432,9 @@ func (c clientSettings) GetAttributesForFaceting() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) UpdateAttributesForFaceting(request []string) (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) UpdateAttributesForFaceting(request []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/attributes-for-faceting",
 		method:              http.MethodPost,
 		withRequest:         &request,
@@ -451,9 +451,9 @@ func (c clientSettings) UpdateAttributesForFaceting(request []string) (resp *Asy
 	return resp, nil
 }
 
-func (c clientSettings) ResetAttributesForFaceting() (resp *AsyncUpdateID, err error) {
+func (c fastClientSettings) ResetAttributesForFaceting() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/attributes-for-faceting",
 		method:              http.MethodDelete,
 		withRequest:         nil,

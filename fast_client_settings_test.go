@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"fmt"
+	"github.com/stretchr/testify/assert"
 	"reflect"
 	"testing"
 )
@@ -29,13 +30,11 @@ func TestClientSettings_GetAll(t *testing.T) {
 		SearchableAttributes:  []string{"*"},
 		DisplayedAttributes:   []string{"*"},
 		StopWords:             []string{},
-		Synonyms:              map[string][]string{},
+		Synonyms:              map[string][]string(nil),
 		AttributesForFaceting: []string{},
 	}
 
-	if !reflect.DeepEqual(*settingsRes, expected) {
-		t.Fatalf("The response body is not good %v vs %v", settingsRes, expected)
-	}
+	assert.Equal(t, *settingsRes, expected)
 }
 
 func TestClientSettings_UpdateAll(t *testing.T) {
@@ -55,7 +54,7 @@ func TestClientSettings_UpdateAll(t *testing.T) {
 		DisplayedAttributes:  []string{"id", "title", "description"},
 		StopWords:            []string{"a", "the"},
 		Synonyms: map[string][]string{
-			"car": []string{"automobile"},
+			"car": {"automobile"},
 		},
 		AttributesForFaceting: []string{"title"},
 	}
@@ -66,7 +65,7 @@ func TestClientSettings_UpdateAll(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_ResetAll(t *testing.T) {
@@ -86,7 +85,7 @@ func TestClientSettings_ResetAll(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -109,9 +108,7 @@ func TestClientSettings_GetRankingRules(t *testing.T) {
 
 	expected := []string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"}
 
-	if !reflect.DeepEqual(*rankingRulesRes, expected) {
-		t.Fatal("The response body is not good")
-	}
+	assert.Equal(t, expected, *rankingRulesRes)
 }
 
 func TestClientSettings_UpdateRankingRules(t *testing.T) {
@@ -133,7 +130,7 @@ func TestClientSettings_UpdateRankingRules(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_ResetRankingRules(t *testing.T) {
@@ -153,7 +150,7 @@ func TestClientSettings_ResetRankingRules(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_GetDistinctAttribute(t *testing.T) {
@@ -173,9 +170,7 @@ func TestClientSettings_GetDistinctAttribute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if reflect.DeepEqual(*distinctAttributeRes, nil) {
-		t.Fatal("The response body is not good")
-	}
+	assert.Equal(t, EmptyStr(), *distinctAttributeRes)
 }
 
 func TestClientSettings_UpdateDistinctAttribute(t *testing.T) {
@@ -195,7 +190,7 @@ func TestClientSettings_UpdateDistinctAttribute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -216,7 +211,7 @@ func TestClientSettings_ResetDistinctAttribute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -272,7 +267,7 @@ func TestClientSettings_UpdateSearchableAttributes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_ResetSearchableAttributes(t *testing.T) {
@@ -292,7 +287,7 @@ func TestClientSettings_ResetSearchableAttributes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	searchableAttributesRes, err := client.Settings(indexUID).GetSearchableAttributes()
 
@@ -368,7 +363,7 @@ func TestClientSettings_UpdateDisplayedAttributes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_ResetDisplayedAttributes(t *testing.T) {
@@ -388,7 +383,7 @@ func TestClientSettings_ResetDisplayedAttributes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	displayedAttributesRes, err := client.Settings(indexUID).GetDisplayedAttributes()
 
@@ -454,7 +449,7 @@ func TestClientSettings_UpdateStopWords(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -475,7 +470,7 @@ func TestClientSettings_ResetStopWords(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -514,7 +509,7 @@ func TestClientSettings_UpdateSynonyms(t *testing.T) {
 	}
 
 	synonyms := map[string][]string{
-		"car": []string{"automobile"},
+		"car": {"automobile"},
 	}
 
 	updateIDRes, err := client.Settings(indexUID).UpdateSynonyms(synonyms)
@@ -523,7 +518,7 @@ func TestClientSettings_UpdateSynonyms(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 }
 
 func TestClientSettings_ResetSynonyms(t *testing.T) {
@@ -543,7 +538,7 @@ func TestClientSettings_ResetSynonyms(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 }
 
@@ -588,7 +583,7 @@ func TestClientSettings_UpdateAttributesForFaceting(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 	r, _ := client.Settings(indexUID).GetAttributesForFaceting()
 	if !reflect.DeepEqual(*r, attributesForFaceting) {
 		fmt.Println(*r)
@@ -615,7 +610,7 @@ func TestClientSettings_ResetAttributesForFaceting(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 	r, _ := client.Settings(indexUID).GetAttributesForFaceting()
 	if !reflect.DeepEqual(*r, attributesForFaceting) {
 		fmt.Println(*r)
@@ -628,7 +623,7 @@ func TestClientSettings_ResetAttributesForFaceting(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 	r, _ = client.Settings(indexUID).GetAttributesForFaceting()
 	if reflect.DeepEqual(*r, nil) {
 		t.Fatal("resetAttributesForFaceting: Error getting attributesForFaceting after reset")

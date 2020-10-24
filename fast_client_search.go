@@ -4,16 +4,16 @@ import (
 	"net/http"
 )
 
-type clientSearch struct {
-	client   *Client
+type fastClientSearch struct {
+	client   *FastHTTPClient
 	indexUID string
 }
 
-func newClientSearch(client *Client, indexUID string) clientSearch {
-	return clientSearch{client: client, indexUID: indexUID}
+func newFastClientSearch(client *FastHTTPClient, indexUID string) fastClientSearch {
+	return fastClientSearch{client: client, indexUID: indexUID}
 }
 
-func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
+func (c fastClientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 
 	resp := &SearchResponse{}
 
@@ -57,11 +57,11 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 		searchPostRequestParams["facetFilters"] = request.FacetFilters
 	}
 
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/search",
 		method:              http.MethodPost,
 		withRequest:         searchPostRequestParams,
-		withResponse:        &resp,
+		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Search",
 		apiName:             "Search",
@@ -74,10 +74,10 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 	return resp, nil
 }
 
-func (c clientSearch) IndexID() string {
+func (c fastClientSearch) IndexID() string {
 	return c.indexUID
 }
 
-func (c clientSearch) Client() *Client {
+func (c fastClientSearch) Client() ClientInterface {
 	return c.client
 }

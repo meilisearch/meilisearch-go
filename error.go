@@ -3,9 +3,8 @@ package meilisearch
 import (
 	"encoding/json"
 	"fmt"
-	"strings"
-
 	"github.com/pkg/errors"
+	"strings"
 )
 
 // ErrCode are all possible errors found during requests

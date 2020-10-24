@@ -6,17 +6,17 @@ import (
 	"strings"
 )
 
-type clientDocuments struct {
-	client   *Client
+type fastClientDocuments struct {
+	client   *FastHTTPClient
 	indexUID string
 }
 
-func newClientDocuments(client *Client, indexUID string) clientDocuments {
-	return clientDocuments{client: client, indexUID: indexUID}
+func newFastClientDocuments(client *FastHTTPClient, indexUID string) fastClientDocuments {
+	return fastClientDocuments{client: client, indexUID: indexUID}
 }
 
-func (c clientDocuments) Get(identifier string, documentPtr interface{}) error {
-	req := internalRequest{
+func (c fastClientDocuments) Get(identifier string, documentPtr interface{}) error {
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents/" + identifier,
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -29,13 +29,12 @@ func (c clientDocuments) Get(identifier string, documentPtr interface{}) error {
 	if err := c.client.executeRequest(req); err != nil {
 		return err
 	}
-
 	return nil
 }
 
-func (c clientDocuments) Delete(identifier string) (resp *AsyncUpdateID, err error) {
+func (c fastClientDocuments) Delete(identifier string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents/" + identifier,
 		method:              http.MethodDelete,
 		withRequest:         nil,
@@ -52,12 +51,12 @@ func (c clientDocuments) Delete(identifier string) (resp *AsyncUpdateID, err err
 	return resp, nil
 }
 
-func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateID, err error) {
+func (c fastClientDocuments) Deletes(identifier []string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents/delete-batch",
 		method:              http.MethodPost,
-		withRequest:         &identifier,
+		withRequest:         identifier,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "Deletes",
@@ -71,13 +70,12 @@ func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateID, err 
 	return resp, nil
 }
 
-func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interface{}) error {
-
-	req := internalRequest{
+func (c fastClientDocuments) List(request ListDocumentsRequest, response interface{}) error {
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents",
 		method:              http.MethodGet,
-		withRequest:         &request,
-		withResponse:        documentsPtr,
+		withRequest:         request,
+		withResponse:        response,
 		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "List",
@@ -101,9 +99,9 @@ func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interfa
 	return nil
 }
 
-func (c clientDocuments) AddOrReplace(documentsPtr interface{}) (resp *AsyncUpdateID, err error) {
+func (c fastClientDocuments) AddOrReplace(documentsPtr interface{}) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents",
 		method:              http.MethodPost,
 		withRequest:         documentsPtr,
@@ -120,9 +118,9 @@ func (c clientDocuments) AddOrReplace(documentsPtr interface{}) (resp *AsyncUpda
 	return resp, nil
 }
 
-func (c clientDocuments) AddOrReplaceWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
+func (c fastClientDocuments) AddOrReplaceWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents?primaryKey=" + primaryKey,
 		method:              http.MethodPost,
 		withRequest:         documentsPtr,
@@ -139,9 +137,10 @@ func (c clientDocuments) AddOrReplaceWithPrimaryKey(documentsPtr interface{}, pr
 	return resp, nil
 }
 
-func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
-	req := internalRequest{
+func (c fastClientDocuments) AddOrUpdate(documentsPtr interface{}) (*AsyncUpdateID, error) {
+	var err error
+	resp := &AsyncUpdateID{}
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents",
 		method:              http.MethodPut,
 		withRequest:         documentsPtr,
@@ -158,9 +157,9 @@ func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdat
 	return resp, nil
 }
 
-func (c clientDocuments) AddOrUpdateWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
+func (c fastClientDocuments) AddOrUpdateWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents?primaryKey=" + primaryKey,
 		method:              http.MethodPut,
 		withRequest:         documentsPtr,
@@ -173,13 +172,12 @@ func (c clientDocuments) AddOrUpdateWithPrimaryKey(documentsPtr interface{}, pri
 	if err = c.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientDocuments) DeleteAllDocuments() (resp *AsyncUpdateID, err error) {
+func (c fastClientDocuments) DeleteAllDocuments() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	req := internalRequest{
+	req := internalRawRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents",
 		method:              http.MethodDelete,
 		withRequest:         nil,
@@ -196,10 +194,10 @@ func (c clientDocuments) DeleteAllDocuments() (resp *AsyncUpdateID, err error) {
 	return resp, nil
 }
 
-func (c clientDocuments) IndexID() string {
+func (c fastClientDocuments) IndexID() string {
 	return c.indexUID
 }
 
-func (c clientDocuments) Client() *Client {
+func (c fastClientDocuments) Client() ClientInterface {
 	return c.client
 }
