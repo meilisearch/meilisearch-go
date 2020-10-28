@@ -2,18 +2,18 @@ package meilisearch
 
 import "net/http"
 
-type fastClientVersion struct {
-	client *FastHTTPClient
+type clientVersion struct {
+	client *Client
 }
 
-func newFastClientVersion(client *FastHTTPClient) fastClientVersion {
-	return fastClientVersion{client: client}
+func newClientVersion(client *Client) clientVersion {
+	return clientVersion{client: client}
 }
 
-func (c fastClientVersion) Get() (resp *Version, err error) {
+func (c clientVersion) Get() (resp *Version, err error) {
 	resp = &Version{}
 
-	req := internalRawRequest{
+	req := internalRequest{
 		endpoint:            "/version",
 		method:              http.MethodGet,
 		withRequest:         nil,

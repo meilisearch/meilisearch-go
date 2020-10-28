@@ -2,17 +2,17 @@ package meilisearch
 
 import "net/http"
 
-type fastClientKeys struct {
-	client *FastHTTPClient
+type clientKeys struct {
+	client *Client
 }
 
-func newFastClientKeys(client *FastHTTPClient) fastClientKeys {
-	return fastClientKeys{client: client}
+func newClientKeys(client *Client) clientKeys {
+	return clientKeys{client: client}
 }
 
-func (c fastClientKeys) Get() (resp *Keys, err error) {
+func (c clientKeys) Get() (resp *Keys, err error) {
 	resp = &Keys{}
-	req := internalRawRequest{
+	req := internalRequest{
 		endpoint:            "/keys",
 		method:              http.MethodGet,
 		withRequest:         nil,

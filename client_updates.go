@@ -5,19 +5,19 @@ import (
 	"strconv"
 )
 
-type fastClientUpdates struct {
-	client   *FastHTTPClient
+type clientUpdates struct {
+	client   *Client
 	indexUID string
 }
 
-func newFastClientUpdates(client *FastHTTPClient, indexUID string) fastClientUpdates {
-	return fastClientUpdates{client: client, indexUID: indexUID}
+func newClientUpdates(client *Client, indexUID string) clientUpdates {
+	return clientUpdates{client: client, indexUID: indexUID}
 }
 
-func (c fastClientUpdates) Get(id int64) (resp *Update, err error) {
+func (c clientUpdates) Get(id int64) (resp *Update, err error) {
 	resp = &Update{}
 
-	req := internalRawRequest{
+	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/updates/" + strconv.FormatInt(id, 10),
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -34,10 +34,10 @@ func (c fastClientUpdates) Get(id int64) (resp *Update, err error) {
 	return resp, nil
 }
 
-func (c fastClientUpdates) List() (resp []Update, err error) {
+func (c clientUpdates) List() (resp []Update, err error) {
 	resp = []Update{}
 
-	req := internalRawRequest{
+	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/updates",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -54,10 +54,10 @@ func (c fastClientUpdates) List() (resp []Update, err error) {
 	return resp, nil
 }
 
-func (c fastClientUpdates) IndexID() string {
+func (c clientUpdates) IndexID() string {
 	return c.indexUID
 }
 
-func (c fastClientUpdates) Client() ClientInterface {
+func (c clientUpdates) Client() ClientInterface {
 	return c.client
 }

@@ -2,17 +2,17 @@ package meilisearch
 
 import "net/http"
 
-type fastClientStats struct {
-	client *FastHTTPClient
+type clientStats struct {
+	client *Client
 }
 
-func newFastClientStats(client *FastHTTPClient) fastClientStats {
-	return fastClientStats{client: client}
+func newClientStats(client *Client) clientStats {
+	return clientStats{client: client}
 }
 
-func (c fastClientStats) Get(indexUID string) (resp *StatsIndex, err error) {
+func (c clientStats) Get(indexUID string) (resp *StatsIndex, err error) {
 	resp = &StatsIndex{}
-	req := internalRawRequest{
+	req := internalRequest{
 		endpoint:            "/indexes/" + indexUID + "/stats",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -29,9 +29,9 @@ func (c fastClientStats) Get(indexUID string) (resp *StatsIndex, err error) {
 	return resp, nil
 }
 
-func (c fastClientStats) GetAll() (resp *Stats, err error) {
+func (c clientStats) GetAll() (resp *Stats, err error) {
 	resp = &Stats{}
-	req := internalRawRequest{
+	req := internalRequest{
 		endpoint:            "/stats",
 		method:              http.MethodGet,
 		withRequest:         nil,

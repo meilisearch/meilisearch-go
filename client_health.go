@@ -5,17 +5,17 @@ import (
 	"net/http"
 )
 
-type fastClientHealth struct {
-	client *FastHTTPClient
+type clientHealth struct {
+	client *Client
 	arp    *fastjson.ArenaPool
 }
 
-func newFastClientHealth(client *FastHTTPClient) fastClientHealth {
-	return fastClientHealth{client: client}
+func newClientHealth(client *Client) clientHealth {
+	return clientHealth{client: client}
 }
 
-func (c fastClientHealth) Get() error {
-	req := internalRawRequest{
+func (c clientHealth) Get() error {
+	req := internalRequest{
 		endpoint:            "/health",
 		method:              http.MethodGet,
 		withRequest:         nil,
@@ -28,9 +28,9 @@ func (c fastClientHealth) Get() error {
 	return c.client.executeRequest(req)
 }
 
-func (c fastClientHealth) Update(health bool) error {
+func (c clientHealth) Update(health bool) error {
 
-	req := internalRawRequest{
+	req := internalRequest{
 		endpoint:            "/health",
 		method:              http.MethodPut,
 		withRequest:         Health{Health: health},
