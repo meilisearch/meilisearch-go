@@ -184,9 +184,6 @@ type APIHealth interface {
 
 	// Get health of MeiliSearch server.
 	Get() error
-
-	// Update health of MeiliSearch server.
-	Update(health bool) error
 }
 
 // APIVersion retrieve the version of MeiliSearch.

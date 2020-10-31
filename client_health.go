@@ -23,19 +23,3 @@ func (c clientHealth) Get() error {
 
 	return c.client.executeRequest(req)
 }
-
-func (c clientHealth) Update(health bool) error {
-	req := internalRequest{
-		endpoint: "/health",
-		method:   http.MethodPut,
-		withRequest: map[string]bool{
-			"health": health,
-		},
-		withResponse:        nil,
-		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "Set",
-		apiName:             "Health",
-	}
-
-	return c.client.executeRequest(req)
-}
