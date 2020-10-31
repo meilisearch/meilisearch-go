@@ -16,7 +16,7 @@ func (c clientHealth) Get() error {
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        nil,
-		acceptedStatusCodes: []int{http.StatusOK},
+		acceptedStatusCodes: []int{http.StatusNoContent},
 		functionName:        "Get",
 		apiName:             "Health",
 	}
