@@ -70,7 +70,7 @@ func TestClientSearch_Search(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	if len(resp.Hits) != 0 {
+	if len(resp.Hits) != len(booksTest) {
 		fmt.Println(resp)
 		t.Fatal("Basic search: empty search should return 0 results")
 	}
