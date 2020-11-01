@@ -133,9 +133,9 @@ func (c clientSettings) ResetRankingRules() (resp *AsyncUpdateID, err error) {
 	return resp, nil
 }
 
-func (c clientSettings) GetDistinctAttribute() (*Str, error) {
-	emp := Str("")
-	resp := &emp
+func (c clientSettings) GetDistinctAttribute() (resp *string, err error) {
+	empty := ""
+	resp = &empty
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
 		method:              http.MethodGet,
@@ -152,12 +152,12 @@ func (c clientSettings) GetDistinctAttribute() (*Str, error) {
 	return resp, nil
 }
 
-func (c clientSettings) UpdateDistinctAttribute(request Str) (resp *AsyncUpdateID, err error) {
+func (c clientSettings) UpdateDistinctAttribute(request string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
 		method:              http.MethodPost,
-		withRequest:         request,
+		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateDistinctAttribute",

@@ -160,9 +160,6 @@ type ListDocumentsRequest struct {
 // RawType is an alias for raw byte[]
 type RawType []byte
 
-// Str is an alias for string
-type Str string
-
 // Health is the request body for set Meilisearch health
 type Health struct {
 	Health bool `json:"health"`
@@ -190,20 +187,4 @@ func (b *RawType) UnmarshalJSON(data []byte) error {
 // MarshalJSON supports json.Marshaler interface
 func (b RawType) MarshalJSON() ([]byte, error) {
 	return b, nil
-}
-
-// EmptyStr returns empty object of Str
-func EmptyStr() Str {
-	return ""
-}
-
-// MarshalJSON supports json.Marshaler interface
-func (s Str) MarshalJSON() ([]byte, error) {
-	mu.Lock()
-	defer mu.Unlock()
-	defer bf.Reset()
-	bf.WriteString("\"")
-	bf.WriteString(string(s))
-	bf.WriteString("\"")
-	return bf.Bytes(), nil
 }

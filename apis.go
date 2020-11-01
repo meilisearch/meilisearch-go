@@ -129,9 +129,9 @@ type APISettings interface {
 
 	ResetRankingRules() (*AsyncUpdateID, error)
 
-	GetDistinctAttribute() (*Str, error)
+	GetDistinctAttribute() (*string, error)
 
-	UpdateDistinctAttribute(Str) (*AsyncUpdateID, error)
+	UpdateDistinctAttribute(string) (*AsyncUpdateID, error)
 
 	ResetDistinctAttribute() (*AsyncUpdateID, error)
 

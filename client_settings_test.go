@@ -170,7 +170,7 @@ func TestClientSettings_GetDistinctAttribute(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	assert.Equal(t, EmptyStr(), *distinctAttributeRes)
+	assert.Empty(t, *distinctAttributeRes)
 }
 
 func TestClientSettings_UpdateDistinctAttribute(t *testing.T) {
