@@ -1,15 +1,13 @@
 package meilisearch
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
-	"io/ioutil"
-	"net/http"
+	"github.com/pkg/errors"
+	"github.com/valyala/fasthttp"
 	"net/url"
 	"time"
 
-	"github.com/pkg/errors"
+	"encoding/json"
 )
 
 // Config configure the Client
@@ -23,10 +21,26 @@ type Config struct {
 	APIKey string
 }
 
+// ClientInterface is interface for all Meilisearch client
+type ClientInterface interface {
+	WaitForPendingUpdate(ctx context.Context, interval time.Duration, indexID string, updateID *AsyncUpdateID) (UpdateStatus, error)
+	DefaultWaitForPendingUpdate(indexUID string, updateID *AsyncUpdateID) (UpdateStatus, error)
+
+	Indexes() APIIndexes
+	Version() APIVersion
+	Documents(indexID string) APIDocuments
+	Search(indexID string) APISearch
+	Updates(indexID string) APIUpdates
+	Settings(indexID string) APISettings
+	Keys() APIKeys
+	Stats() APIStats
+	Health() APIHealth
+}
+
 // Client is a structure that give you the power for interacting with an high-level api with meilisearch.
 type Client struct {
 	config     Config
-	httpClient http.Client
+	httpClient *fasthttp.Client
 
 	// singleton clients which don't need index id
 	apiIndexes APIIndexes
@@ -34,29 +48,6 @@ type Client struct {
 	apiStats   APIStats
 	apiHealth  APIHealth
 	apiVersion APIVersion
-}
-
-// NewClient create a Client from a Config structure.
-func NewClient(config Config) *Client {
-	return NewClientWithCustomHTTPClient(config, http.Client{
-		Timeout: time.Second,
-	})
-}
-
-// NewClientWithCustomHTTPClient create a Client from a Config structure and a http.Client which you can customize.
-func NewClientWithCustomHTTPClient(config Config, client http.Client) *Client {
-	c := &Client{
-		config:     config,
-		httpClient: client,
-	}
-
-	c.apiIndexes = newClientIndexes(c)
-	c.apiKeys = newClientKeys(c)
-	c.apiHealth = newClientHealth(c)
-	c.apiStats = newClientStats(c)
-	c.apiVersion = newClientVersion(c)
-
-	return c
 }
 
 // Indexes return an APIIndexes client.
@@ -104,6 +95,42 @@ func (c *Client) Health() APIHealth {
 	return c.apiHealth
 }
 
+// NewFastHTTPCustomClient creates Meilisearch with custom fasthttp.Client
+func NewFastHTTPCustomClient(config Config, client *fasthttp.Client) ClientInterface {
+	c := &Client{
+		config:     config,
+		httpClient: client,
+	}
+
+	c.apiIndexes = newClientIndexes(c)
+	c.apiKeys = newClientKeys(c)
+	c.apiHealth = newClientHealth(c)
+	c.apiStats = newClientStats(c)
+	c.apiVersion = newClientVersion(c)
+
+	return c
+}
+
+// NewClient creates Meilisearch with default fasthttp.Client
+func NewClient(config Config) ClientInterface {
+	client := &fasthttp.Client{
+		Name: "meilsearch-client",
+	}
+
+	c := &Client{
+		config:     config,
+		httpClient: client,
+	}
+
+	c.apiIndexes = newClientIndexes(c)
+	c.apiKeys = newClientKeys(c)
+	c.apiHealth = newClientHealth(c)
+	c.apiStats = newClientStats(c)
+	c.apiVersion = newClientVersion(c)
+
+	return c
+}
+
 type internalRequest struct {
 	endpoint string
 	method   string
@@ -118,7 +145,7 @@ type internalRequest struct {
 	apiName      string
 }
 
-func (c Client) executeRequest(req internalRequest) error {
+func (c *Client) executeRequest(req internalRequest) error {
 	internalError := &Error{
 		Endpoint:           req.endpoint,
 		Method:             req.method,
@@ -130,12 +157,13 @@ func (c Client) executeRequest(req internalRequest) error {
 		StatusCodeExpected: req.acceptedStatusCodes,
 	}
 
-	response, err := c.sendRequest(&req, internalError)
+	response := fasthttp.AcquireResponse()
+	defer fasthttp.ReleaseResponse(response)
+	err := c.sendRequest(&req, internalError, response)
 	if err != nil {
 		return err
 	}
-
-	internalError.StatusCode = response.StatusCode
+	internalError.StatusCode = response.StatusCode()
 
 	err = c.handleStatusCode(&req, response, internalError)
 	if err != nil {
@@ -146,20 +174,20 @@ func (c Client) executeRequest(req internalRequest) error {
 	if err != nil {
 		return err
 	}
-
 	return nil
 }
 
-func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.Response, error) {
+func (c *Client) sendRequest(req *internalRequest, internalError *Error, response *fasthttp.Response) error {
 	var (
-		request *http.Request
-		err     error
+		request *fasthttp.Request
+
+		err error
 	)
 
 	// Setup URL
 	requestURL, err := url.Parse(c.config.Host + req.endpoint)
 	if err != nil {
-		return nil, errors.Wrap(err, "unable to parse url")
+		return errors.Wrap(err, "unable to parse url")
 	}
 
 	// Build query parameters
@@ -172,23 +200,28 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 		requestURL.RawQuery = query.Encode()
 	}
 
+	request = fasthttp.AcquireRequest()
+	defer fasthttp.ReleaseRequest(request)
+
+	request.SetRequestURI(requestURL.String())
+	request.Header.SetMethod(req.method)
+
 	if req.withRequest != nil {
 
 		// A json request is mandatory, so the request interface{} need to be passed as a raw json body.
-		rawJSONRequest, errJSONMarshalling := json.Marshal(req.withRequest)
-		if errJSONMarshalling != nil {
-			return nil, internalError.WithErrCode(ErrCodeMarshalRequest, errJSONMarshalling)
+		rawJSONRequest := req.withRequest
+		var data []byte
+		var err error
+		if raw, ok := rawJSONRequest.(json.Marshaler); ok {
+			data, err = raw.MarshalJSON()
+		} else {
+			data, err = json.Marshal(rawJSONRequest)
 		}
-
-		internalError.RequestToString = string(rawJSONRequest)
-
-		request, err = http.NewRequest(req.method, requestURL.String(), bytes.NewBuffer(rawJSONRequest))
-	} else {
-		request, err = http.NewRequest(req.method, requestURL.String(), nil)
-	}
-
-	if err != nil {
-		return nil, internalError.WithErrCode(ErrCodeRequestCreation, err)
+		internalError.RequestToString = string(data)
+		if err != nil {
+			return internalError.WithErrCode(ErrCodeMarshalRequest, err)
+		}
+		request.SetBody(data)
 	}
 
 	// adding request headers
@@ -198,34 +231,30 @@ func (c Client) sendRequest(req *internalRequest, internalError *Error) (*http.R
 	}
 
 	// request is sent
-	response, err := c.httpClient.Do(request)
+	err = c.httpClient.Do(request, response)
 
 	// request execution fail
 	if err != nil {
-		return nil, internalError.WithErrCode(ErrCodeRequestExecution, err)
+		return internalError.WithErrCode(ErrCodeRequestExecution, err)
 	}
 
-	return response, nil
+	return nil
 }
 
-func (c Client) handleStatusCode(req *internalRequest, response *http.Response, internalError *Error) error {
+func (c *Client) handleStatusCode(req *internalRequest, response *fasthttp.Response, internalError *Error) error {
 	if req.acceptedStatusCodes != nil {
 
 		// A successful status code is required so check if the response status code is in the
 		// expected status code list.
 		for _, acceptedCode := range req.acceptedStatusCodes {
-			if response.StatusCode == acceptedCode {
+			if response.StatusCode() == acceptedCode {
 				return nil
 			}
 		}
-
 		// At this point the response status code is a failure.
-		rawBody, err := ioutil.ReadAll(response.Body)
-		if err == nil {
-			internalError.ErrorBody(rawBody)
-		} else {
-			return internalError.WithErrCode(ErrCodeResponseStatusCode, err)
-		}
+		rawBody := response.Body()
+
+		internalError.ErrorBody(rawBody)
 
 		return internalError.WithErrCode(ErrCodeResponseStatusCode)
 	}
@@ -233,18 +262,21 @@ func (c Client) handleStatusCode(req *internalRequest, response *http.Response, 
 	return nil
 }
 
-func (c Client) handleResponse(req *internalRequest, response *http.Response, internalError *Error) error {
+func (c *Client) handleResponse(req *internalRequest, response *fasthttp.Response, internalError *Error) (err error) {
 	if req.withResponse != nil {
 
 		// A json response is mandatory, so the response interface{} need to be unmarshal from the response payload.
-		rawBody, err := ioutil.ReadAll(response.Body)
-		if err != nil {
-			return internalError.WithErrCode(ErrCodeResponseReadBody, err)
-		}
-
+		rawBody := response.Body()
 		internalError.ResponseToString = string(rawBody)
 
-		if err := json.Unmarshal(rawBody, req.withResponse); err != nil {
+		var err error
+		if resp, ok := req.withResponse.(json.Unmarshaler); ok {
+			err = resp.UnmarshalJSON(rawBody)
+			req.withResponse = resp
+		} else {
+			err = json.Unmarshal(rawBody, req.withResponse)
+		}
+		if err != nil {
 			return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
 		}
 	}

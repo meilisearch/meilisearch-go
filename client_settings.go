@@ -17,7 +17,7 @@ func (c clientSettings) IndexID() string {
 	return c.indexUID
 }
 
-func (c clientSettings) Client() *Client {
+func (c clientSettings) Client() ClientInterface {
 	return c.client
 }
 

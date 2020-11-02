@@ -61,7 +61,7 @@ func (c clientSearch) Search(request SearchRequest) (*SearchResponse, error) {
 		endpoint:            "/indexes/" + c.indexUID + "/search",
 		method:              http.MethodPost,
 		withRequest:         searchPostRequestParams,
-		withResponse:        &resp,
+		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Search",
 		apiName:             "Search",
@@ -78,6 +78,6 @@ func (c clientSearch) IndexID() string {
 	return c.indexUID
 }
 
-func (c clientSearch) Client() *Client {
+func (c clientSearch) Client() ClientInterface {
 	return c.client
 }

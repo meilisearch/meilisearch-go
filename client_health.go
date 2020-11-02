@@ -1,9 +1,13 @@
 package meilisearch
 
-import "net/http"
+import (
+	"github.com/valyala/fastjson"
+	"net/http"
+)
 
 type clientHealth struct {
 	client *Client
+	arp    *fastjson.ArenaPool
 }
 
 func newClientHealth(client *Client) clientHealth {
@@ -25,12 +29,11 @@ func (c clientHealth) Get() error {
 }
 
 func (c clientHealth) Update(health bool) error {
+
 	req := internalRequest{
-		endpoint: "/health",
-		method:   http.MethodPut,
-		withRequest: map[string]bool{
-			"health": health,
-		},
+		endpoint:            "/health",
+		method:              http.MethodPut,
+		withRequest:         Health{Health: health},
 		withResponse:        nil,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Set",

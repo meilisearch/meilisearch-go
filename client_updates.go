@@ -58,6 +58,6 @@ func (c clientUpdates) IndexID() string {
 	return c.indexUID
 }
 
-func (c clientUpdates) Client() *Client {
+func (c clientUpdates) Client() ClientInterface {
 	return c.client
 }

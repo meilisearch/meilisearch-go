@@ -29,7 +29,6 @@ func (c clientDocuments) Get(identifier string, documentPtr interface{}) error {
 	if err := c.client.executeRequest(req); err != nil {
 		return err
 	}
-
 	return nil
 }
 
@@ -57,7 +56,7 @@ func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateID, err 
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents/delete-batch",
 		method:              http.MethodPost,
-		withRequest:         &identifier,
+		withRequest:         identifier,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "Deletes",
@@ -71,13 +70,12 @@ func (c clientDocuments) Deletes(identifier []string) (resp *AsyncUpdateID, err 
 	return resp, nil
 }
 
-func (c clientDocuments) List(request ListDocumentsRequest, documentsPtr interface{}) error {
-
+func (c clientDocuments) List(request ListDocumentsRequest, response interface{}) error {
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents",
 		method:              http.MethodGet,
-		withRequest:         &request,
-		withResponse:        documentsPtr,
+		withRequest:         request,
+		withResponse:        response,
 		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "List",
@@ -139,8 +137,9 @@ func (c clientDocuments) AddOrReplaceWithPrimaryKey(documentsPtr interface{}, pr
 	return resp, nil
 }
 
-func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (c clientDocuments) AddOrUpdate(documentsPtr interface{}) (*AsyncUpdateID, error) {
+	var err error
+	resp := &AsyncUpdateID{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + c.indexUID + "/documents",
 		method:              http.MethodPut,
@@ -173,7 +172,6 @@ func (c clientDocuments) AddOrUpdateWithPrimaryKey(documentsPtr interface{}, pri
 	if err = c.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
@@ -200,6 +198,6 @@ func (c clientDocuments) IndexID() string {
 	return c.indexUID
 }
 
-func (c clientDocuments) Client() *Client {
+func (c clientDocuments) Client() ClientInterface {
 	return c.client
 }
