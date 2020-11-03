@@ -38,9 +38,9 @@ add_or_replace_documents_1: |-
 add_or_update_documents_1: |-
   documents := []map[string]interface{}{
     {
-      "id":           287947,
-      "title":        "Shazam",
-      "genre": "comedy",
+      "id":     287947,
+      "title":  "Shazam",
+      "genres": "comedy",
     },
   }
   client.Documents("movies").AddOrUpdate(documents)
@@ -169,7 +169,7 @@ get_attributes_for_faceting_1: |-
   client.Settings("movies").GetAttributesForFaceting()
 update_attributes_for_faceting_1: |-
   attributesForFaceting := []string{
-    "genre",
+    "genres",
     "director",
   }
   client.Settings("movies").UpdateAttributesForFaceting(attributesForFaceting)
