@@ -7,9 +7,3 @@ func TestClientHealth_Get(t *testing.T) {
 		t.Fatal(err)
 	}
 }
-
-func TestClientHealth_Set(t *testing.T) {
-	if err := client.Health().Update(true); err != nil {
-		t.Fatal(err)
-	}
-}
