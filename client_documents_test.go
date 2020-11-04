@@ -25,7 +25,7 @@ func TestClientDocuments_Get(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	var doc docTest
 	if err = client.
@@ -61,15 +61,14 @@ func TestClientDocuments_Delete(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	updateIDRes, err = client.Documents(indexUID).Delete("123")
-
 	if err != nil {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	var doc docTest
 	err = client.Documents(indexUID).Get("123", &doc)
@@ -101,7 +100,7 @@ func TestClientDocuments_Deletes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	updateIDRes, err = client.Documents(indexUID).Deletes([]string{"123", "456"})
 
@@ -109,7 +108,7 @@ func TestClientDocuments_Deletes(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	var doc docTest
 	err = client.Documents(indexUID).Get("123", &doc)
@@ -139,7 +138,7 @@ func TestClientDocuments_List(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	var list []docTest
 	err = client.Documents(indexUID).List(ListDocumentsRequest{
@@ -178,7 +177,7 @@ func TestClientDocuments_AddOrReplace(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	var list []docTest
 	err = client.Documents(indexUID).List(ListDocumentsRequest{
@@ -218,7 +217,7 @@ func TestClientDocuments_AddOrUpdate(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	var list []docTest
 	err = client.Documents(indexUID).List(ListDocumentsRequest{
@@ -258,7 +257,7 @@ func TestClientDocuments_DeleteAllDocuments(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
+	_, _ = client.DefaultWaitForPendingUpdate(indexUID, updateIDRes)
 
 	_, err = client.Documents(indexUID).DeleteAllDocuments()
 

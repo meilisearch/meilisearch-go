@@ -1,9 +1,13 @@
 package meilisearch
 
-import "net/http"
+import (
+	"github.com/valyala/fastjson"
+	"net/http"
+)
 
 type clientHealth struct {
 	client *Client
+	arp    *fastjson.ArenaPool
 }
 
 func newClientHealth(client *Client) clientHealth {

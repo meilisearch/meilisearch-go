@@ -1,9 +1,18 @@
 package meilisearch
 
-import "time"
+import (
+	"bytes"
+	"github.com/valyala/fastjson"
+	"sync"
+	"time"
+)
 
-// Unknown is unknown json type
-type Unknown map[string]interface{}
+var arp fastjson.ArenaPool
+
+var (
+	bf bytes.Buffer
+	mu sync.Mutex
+)
 
 //
 // Internal types to Meilisearch
@@ -67,7 +76,7 @@ const (
 // Update indicate information about an update
 type Update struct {
 	Status      UpdateStatus `json:"status"`
-	UpdateID    int64        `json:"updateID"`
+	UpdateID    int64        `json:"updateId"`
 	Type        Unknown      `json:"type"`
 	Error       string       `json:"error"`
 	EnqueuedAt  time.Time    `json:"enqueuedAt"`
@@ -78,7 +87,7 @@ type Update struct {
 //
 // Documentation: https://docs.meilisearch.com/guides/advanced_guides/asynchronous_updates.html
 type AsyncUpdateID struct {
-	UpdateID int64 `json:"updateID"`
+	UpdateID int64 `json:"updateId"`
 }
 
 // Keys allow the user to connect to the MeiliSearch instance
@@ -146,4 +155,36 @@ type ListDocumentsRequest struct {
 	Offset               int64    `json:"offset,omitempty"`
 	Limit                int64    `json:"limit,omitempty"`
 	AttributesToRetrieve []string `json:"attributesToRetrieve,omitempty"`
+}
+
+// RawType is an alias for raw byte[]
+type RawType []byte
+
+// Health is the request body for set Meilisearch health
+type Health struct {
+	Health bool `json:"health"`
+}
+
+// Name is the request body for set Index name
+type Name struct {
+	Name string `json:"name"`
+}
+
+// PrimaryKey is the request body for set Index primary key
+type PrimaryKey struct {
+	PrimaryKey string `json:"primaryKey"`
+}
+
+// Unknown is unknown json type
+type Unknown map[string]interface{}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (b *RawType) UnmarshalJSON(data []byte) error {
+	*b = data
+	return nil
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (b RawType) MarshalJSON() ([]byte, error) {
+	return b, nil
 }

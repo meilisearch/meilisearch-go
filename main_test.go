@@ -16,15 +16,14 @@ type docTestBooks struct {
 	Tag    string `json:"tag"`
 }
 
-func deleteAllIndexes(client *Client) (ok bool, err error) {
+func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
 	list, err := client.Indexes().List()
-
 	if err != nil {
 		return false, err
 	}
 
 	for _, index := range list {
-		client.Indexes().Delete(index.UID)
+		_, _ = client.Indexes().Delete(index.UID)
 	}
 
 	return true, nil
@@ -36,9 +35,9 @@ var client = NewClient(Config{
 })
 
 func TestMain(m *testing.M) {
-	deleteAllIndexes(client)
+	_, _ = deleteAllIndexes(client)
 	code := m.Run()
-	deleteAllIndexes(client)
+	_, _ = deleteAllIndexes(client)
 	os.Exit(code)
 }
 
@@ -48,6 +47,7 @@ func Test_deleteAllIndexes(t *testing.T) {
 		"Test_deleteAllIndexes2",
 		"Test_deleteAllIndexes3",
 	}
+	_, _ = deleteAllIndexes(client)
 
 	for _, uid := range indexUIDs {
 		_, err := client.Indexes().Create(CreateIndexRequest{
@@ -59,7 +59,7 @@ func Test_deleteAllIndexes(t *testing.T) {
 		}
 	}
 
-	deleteAllIndexes(client)
+	_, _ = deleteAllIndexes(client)
 
 	for _, uid := range indexUIDs {
 		resp, err := client.Indexes().Get(uid)
