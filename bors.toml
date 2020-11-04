@@ -1,3 +1,3 @@
-status = ["go-tests"]
+status = ['go-build', 'integration-tests', 'linter']
 # 1 hour timeout
 timeout-sec = 3600
