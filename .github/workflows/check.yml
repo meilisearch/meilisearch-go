@@ -14,10 +14,10 @@ jobs:
     name: linter
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Go 1.13
+    - name: Set up Go
       uses: actions/setup-go@v1
       with:
-        go-version: 1.13
+        go-version: 1.12
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
     - name: Get dependencies
@@ -35,10 +35,10 @@ jobs:
     name: integration-tests
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Go 1.13
+    - name: Set up Go
       uses: actions/setup-go@v1
       with:
-        go-version: 1.13
+        go-version: 1.12
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
     - name: Get dependencies
@@ -57,10 +57,10 @@ jobs:
     name: go-build
     runs-on: ubuntu-latest
     steps:
-    - name: Set up Go 1.13
+    - name: Set up Go
       uses: actions/setup-go@v1
       with:
-        go-version: 1.13
+        go-version: 1.12
     - name: Check out code into the Go module directory
       uses: actions/checkout@v1
     - name: Get dependencies
