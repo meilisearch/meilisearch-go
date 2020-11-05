@@ -30,12 +30,18 @@ jobs:
       run: /home/runner/go/bin/golint
 
   integration_tests:
-    name: integration-tests
     runs-on: ubuntu-latest
     strategy:
         matrix:
           # Current go.mod version and latest stable go version
-          go: [ '1.12', '1.15' ]
+          go: [1.12, 1.15]
+          include:
+            - go: 1.12
+              tag: current
+            - go: 1.15
+              tag: latest
+
+    name: integration-tests with go ${{ matrix.tag }} version
     steps:
     - name: Set up Go ${{ matrix.go }}
       uses: actions/setup-go@v2
