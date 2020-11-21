@@ -359,7 +359,7 @@ getting_started_create_index_md: |-
   ```
 
   ```go
-  var client = NewClient(meilisearch/Config{
+  var client = NewClient(meilisearch.Config{
       Host: "http://127.0.0.1:7700",
   })
 
