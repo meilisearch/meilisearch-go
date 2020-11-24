@@ -1,0 +1,45 @@
+# Testing the code base against the MeiliSearch pre-releases
+name: Pre-Release Tests
+
+# Will only run for PRs and pushes to bump-meilisearch-v*
+on:
+  push:
+    branches: bump-meilisearch-v*
+  pull_request:
+    branches: bump-meilisearch-v*
+
+jobs:
+
+  integration_tests:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          # Current go.mod version and latest stable go version
+          go: [1.12, 1.15]
+          include:
+            - go: 1.12
+              tag: current
+            - go: 1.15
+              tag: latest
+
+    name: integration-tests-against-rc (go ${{ matrix.tag }} version)
+    steps:
+    - name: Set up Go ${{ matrix.go }}
+      uses: actions/setup-go@v2
+      with:
+        go-version: ${{ matrix.go }}
+    - name: Check out code into the Go module directory
+      uses: actions/checkout@v2
+    - name: Get dependencies
+      run: |
+        go get -v -t -d ./...
+        if [ -f Gopkg.toml ]; then
+          curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+          dep ensure
+        fi
+    - name: Get the latest MeiliSearch RC
+      run: echo "MEILISEARCH_VERSION=$(curl https://raw.githubusercontent.com/meilisearch/integration-guides/master/scripts/get-latest-meilisearch-rc.sh | bash)" >> $GITHUB_ENV
+    - name: MeiliSearch (${{ env.MEILISEARCH_VERSION }}) setup with Docker
+      run: docker run -d -p 7700:7700 getmeili/meilisearch:{{ env. MEILISEARCH_VERSION }} ./meilisearch --master-key=masterKey --no-analytics=true
+    - name: Run integration tests
+      run: go test -v ./...

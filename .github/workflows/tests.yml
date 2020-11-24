@@ -31,6 +31,9 @@ jobs:
 
   integration_tests:
     runs-on: ubuntu-latest
+    # Will not run if the event is a PR to bump-meilisearch-v* (so a pre-release PR)
+    # Will still run for each push to bump-meilisearch-v*
+    if: github.event_name != 'pull_request' || startsWith(github.base_ref, 'bump-meilisearch-v') != true
     strategy:
         matrix:
           # Current go.mod version and latest stable go version
@@ -41,7 +44,7 @@ jobs:
             - go: 1.15
               tag: latest
 
-    name: integration-tests with go ${{ matrix.tag }} version
+    name: integration-tests (go ${{ matrix.tag }} version)
     steps:
     - name: Set up Go ${{ matrix.go }}
       uses: actions/setup-go@v2
