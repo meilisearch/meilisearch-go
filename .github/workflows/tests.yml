@@ -33,7 +33,7 @@ jobs:
     runs-on: ubuntu-latest
     # Will not run if the event is a PR to bump-meilisearch-v* (so a pre-release PR)
     # Will still run for each push to bump-meilisearch-v*
-    if: github.event_name != 'pull_request' || startsWith(github.base_ref, 'bump-meilisearch-v') != true
+    if: github.event_name != 'pull_request' || !startsWith(github.base_ref, 'bump-meilisearch-v')
     strategy:
         matrix:
           # Current go.mod version and latest stable go version
