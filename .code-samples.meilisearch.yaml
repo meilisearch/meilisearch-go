@@ -10,6 +10,7 @@ list_all_indexes_1: |-
 create_an_index_1: |-
   client.Indexes().Create(meilisearch.CreateIndexRequest{
     UID: "movies",
+    PrimaryKey: "movie_id",
   })
 update_an_index_1: |-
   response, error := client.Indexes().Get("movies")
