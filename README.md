@@ -79,15 +79,6 @@ func main() {
         APIKey: "masterKey",
     })
 
-    // Create an index if your index does not already exist
-    _, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
-        UID: "books",
-    })
-    if err != nil {
-        fmt.Println(err)
-        os.Exit(1)
-    }
-
     documents := []map[string]interface{}{
         {"book_id": 123,  "title": "Pride and Prejudice"},
         {"book_id": 456,  "title": "Le Petit Prince"},
@@ -97,6 +88,8 @@ func main() {
         {"book_id": 42,   "title": "The Hitchhiker's Guide to the Galaxy"},
     }
 
+    // If the index 'books' does not exist, MeiliSearch creates it when you first add the documents.
+    // An index is where the documents are stored.
     updateRes, err := client.Documents("books").AddOrUpdate(documents) // => { "updateId": 0 }
     if err != nil {
         fmt.Println(err)
