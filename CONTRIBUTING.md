@@ -98,7 +98,7 @@ Some notes on GitHub PRs:
   The draft PR can be very useful if you want to show that you are working on something and make your work visible.
 - The branch related to the PR must be **up-to-date with `master`** before merging. Fortunately, this project [integrates a bot](https://github.com/meilisearch/integration-guides/blob/master/guides/bors.md) to automatically enforce this requirement without the PR author having to do it manually..
 - All PRs must be reviewed and approved by at least one maintainer.
-- The PR title should be accurate and descriptive of the changes. The title of the PR will be indeed automatically added to the next [release changelogs](https://github.com/meilisearch/meilisearch-dotnet/releases/).
+- The PR title should be accurate and descriptive of the changes. The title of the PR will be indeed automatically added to the next [release changelogs](https://github.com/meilisearch/meilisearch-go/releases/).
 
 ## Release Process (for Admin only)
 
