@@ -83,20 +83,15 @@ update_settings_1: |-
     },
     DistinctAttribute: &distinctAttribute,
     SearchableAttributes: []string{
-      "uid",
-      "movie_id",
       "title",
       "description",
-      "poster",
-      "release_date",
-      "rank",
+      "genre",
     },
     DisplayedAttributes: []string{
       "title",
       "description",
-      "poster",
+      "genre",
       "release_date",
-      "rank",
     },
     StopWords: []string{
       "the",
@@ -155,13 +150,9 @@ get_searchable_attributes_1: |-
   client.Settings("movies").GetSearchableAttributes()
 update_searchable_attributes_1: |-
   searchableAttributes := []string{
-    "uid",
-    "movie_id",
     "title",
     "description",
-    "poster",
-    "release_date",
-    "rank",
+    "genre",
   }
   client.Settings("movies").UpdateSearchableAttributes(searchableAttributes)
 reset_searchable_attributes_1: |-
@@ -182,9 +173,8 @@ update_displayed_attributes_1: |-
   displayedAttributes := []string{
     "title",
     "description",
+    "genre",
     "release_date",
-    "rank",
-    "poster",
   }
   client.Settings("movies").UpdateDisplayedAttributes(displayedAttributes)
 reset_displayed_attributes_1: |-
@@ -201,22 +191,17 @@ distinct_attribute_guide_1: |-
   client.Settings("jackets").UpdateDistinctAttribute("product_id")
 field_properties_guide_searchable_1: |-
   searchableAttributes := []string{
-    "uid",
-    "movie_id",
     "title",
     "description",
-    "poster",
-    "release_date",
-    "rank",
+    "genre",
   }
   client.Settings("movies").UpdateSearchableAttributes(searchableAttributes)
 field_properties_guide_displayed_1: |-
   displayedAttributes := []string{
     "title",
     "description",
-    "poster",
+    "genre",
     "release_date",
-    "rank",
   }
   client.Settings("movies").UpdateDisplayedAttributes(displayedAttributes)
 filtering_guide_1: |-
@@ -311,22 +296,17 @@ settings_guide_distinct_1: |-
   client.Settings("jackets").UpdateDistinctAttribute("movie_id")
 settings_guide_searchable_1: |-
   searchableAttributes := []string{
-    "uid",
-    "movie_id",
     "title",
     "description",
-    "poster",
-    "release_date",
-    "rank",
+    "genre",
   }
   client.Settings("movies").UpdateSearchableAttributes(searchableAttributes)
 settings_guide_displayed_1: |-
   displayedAttributes := []string{
     "title",
     "description",
-    "poster",
+    "genre",
     "release_date",
-    "rank",
   }
   client.Settings("movies").UpdateDisplayedAttributes(displayedAttributes)
 documents_guide_add_movie_1: |-
@@ -348,55 +328,41 @@ search_guide_2: |-
     Query:   "Avengers",
     Filters: "release_date > \"795484800\"",
   })
-getting_started_create_index_md: |-
+getting_started_add_documents_md: |-
   ```bash
   go get -u github.com/meilisearch/meilisearch-go
   ```
 
   ```go
-  import (
-      "github.com/meilisearch/meilisearch-go"
-  )
-  ```
+  package main
 
-  ```go
-  var client = NewClient(meilisearch.Config{
-      Host: "http://127.0.0.1:7700",
-  })
-
-  createIndexResp, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
-      UID: "movies",
-  })
-
-  if err != nil {
-      panic(err)
-  }
-  ```
-
-  [About this package](https://github.com/meilisearch/meilisearch-go/)
-getting_started_add_documents_md: |-
-  ```go
   import (
       "os"
       "encoding/json"
       "io/ioutil"
+
       "github.com/meilisearch/meilisearch-go"
   )
-  ```
 
-  ```go
-  jsonFile, _ := os.Open("movies.json")
-  defer jsonFile.Close()
+  func main() {
+    var client = NewClient(meilisearch.Config{
+      Host: "http://127.0.0.1:7700",
+    })
 
-  byteValue, _ := ioutil.ReadAll(jsonFile)
-  var movies []map[string]interface{}
-  json.Unmarshal(byteValue, &movies)
+    jsonFile, _ := os.Open("movies.json")
+    defer jsonFile.Close()
 
-  updateDocumentsResp, err := client.Documents("movies").AddOrUpdate(movies)
+    byteValue, _ := ioutil.ReadAll(jsonFile)
+    var movies []map[string]interface{}
+    json.Unmarshal(byteValue, &movies)
 
-  if err != nil {
-      panic(err)
+    update, err := client.Documents("movies").AddOrReplace(movies) // => { "updateId": 0 }
+
+    if err != nil {
+        panic(err)
+    }
   }
+
   ```
   [About this package](https://github.com/meilisearch/meilisearch-go/)
 getting_started_search_md: |-
