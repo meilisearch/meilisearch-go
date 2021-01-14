@@ -333,31 +333,34 @@ getting_started_add_documents_md: |-
   ```
 
   ```go
+  package main
+
   import (
       "os"
       "encoding/json"
       "io/ioutil"
       "github.com/meilisearch/meilisearch-go"
   )
-  ```
 
-  ```go
-  var client = NewClient(meilisearch.Config{
+  func main() {
+    var client = NewClient(meilisearch.Config{
       Host: "http://127.0.0.1:7700",
-  })
+    })
 
-  jsonFile, _ := os.Open("movies.json")
-  defer jsonFile.Close()
+    jsonFile, _ := os.Open("movies.json")
+    defer jsonFile.Close()
 
-  byteValue, _ := ioutil.ReadAll(jsonFile)
-  var movies []map[string]interface{}
-  json.Unmarshal(byteValue, &movies)
+    byteValue, _ := ioutil.ReadAll(jsonFile)
+    var movies []map[string]interface{}
+    json.Unmarshal(byteValue, &movies)
 
-  update, err := client.Documents("movies").AddOrReplace(movies)
+    update, err := client.Documents("movies").AddOrReplace(movies) // => { "updateId": 0 }
 
-  if err != nil {
-      panic(err)
+    if err != nil {
+        panic(err)
+    }
   }
+
   ```
   [About this package](https://github.com/meilisearch/meilisearch-go/)
 getting_started_search_md: |-
