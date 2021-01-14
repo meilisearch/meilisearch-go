@@ -340,6 +340,7 @@ getting_started_add_documents_md: |-
       "os"
       "encoding/json"
       "io/ioutil"
+
       "github.com/meilisearch/meilisearch-go"
   )
 
