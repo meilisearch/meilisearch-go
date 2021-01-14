@@ -37,9 +37,9 @@ jobs:
     strategy:
         matrix:
           # Current go.mod version and latest stable go version
-          go: [1.12, 1.15]
+          go: [1.14, 1.15]
           include:
-            - go: 1.12
+            - go: 1.14
               tag: current
             - go: 1.15
               tag: latest
