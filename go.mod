@@ -1,6 +1,6 @@
 module github.com/meilisearch/meilisearch-go
 
-go 1.12
+go 1.14
 
 require (
 	github.com/mailru/easyjson v0.7.6
