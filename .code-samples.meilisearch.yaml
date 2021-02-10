@@ -356,7 +356,7 @@ getting_started_add_documents_md: |-
     var movies []map[string]interface{}
     json.Unmarshal(byteValue, &movies)
 
-    update, err := client.Documents("movies").AddOrReplace(movies) // => { "updateId": 0 }
+    update, err := client.Documents("movies").AddOrReplace(movies)
 
     if err != nil {
         panic(err)
