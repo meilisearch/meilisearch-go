@@ -2,9 +2,10 @@ package meilisearch
 
 import (
 	"bytes"
-	"github.com/valyala/fastjson"
 	"sync"
 	"time"
+
+	"github.com/valyala/fastjson"
 )
 
 var arp fastjson.ArenaPool
@@ -85,14 +86,14 @@ type Update struct {
 
 // AsyncUpdateID is returned for asynchronous method
 //
-// Documentation: https://docs.meilisearch.com/guides/advanced_guides/asynchronous_updates.html
+// Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_updates.html
 type AsyncUpdateID struct {
 	UpdateID int64 `json:"updateId"`
 }
 
 // Keys allow the user to connect to the MeiliSearch instance
 //
-// Documentation: https://docs.meilisearch.com/guides/advanced_guides/asynchronous_updates.html
+// Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_updates.html
 type Keys struct {
 	Public  string `json:"public,omitempty"`
 	Private string `json:"private,omitempty"`
@@ -122,7 +123,7 @@ type CreateIndexResponse struct {
 // SearchRequest is the request url param needed for a search query.
 // This struct will be converted to url param before sent.
 //
-// Documentation: https://docs.meilisearch.com/guides/advanced_guides/search_parameters.html
+// Documentation: https://docs.meilisearch.com/reference/features/search_parameters.html
 type SearchRequest struct {
 	Query                 string
 	Offset                int64
