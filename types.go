@@ -99,6 +99,14 @@ type Keys struct {
 	Private string `json:"private,omitempty"`
 }
 
+// Dump indicate information about an dump
+//
+// Documentation: https://docs.meilisearch.com/reference/api/dump.html
+type Dump struct {
+	UID    string `json:"uid"`
+	Status string `json:"status"`
+}
+
 //
 // Request/Response
 //

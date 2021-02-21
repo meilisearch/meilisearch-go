@@ -186,6 +186,16 @@ type APIHealth interface {
 	Get() error
 }
 
+// APIDumps handle the creation of database dumps from MeiliSearch server.
+//
+// Documentation: https://docs.meilisearch.com/reference/api/dump.html
+type APIDumps interface {
+	// Create a Dump.
+	Create() (*Dump, error)
+	// Get Dump status.
+	GetStatus(dumpUID string) (*Dump, error)
+}
+
 // APIVersion retrieve the version of MeiliSearch.
 //
 // Documentation: https://docs.meilisearch.com/reference/api/version.html
