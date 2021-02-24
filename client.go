@@ -35,6 +35,7 @@ type ClientInterface interface {
 	Keys() APIKeys
 	Stats() APIStats
 	Health() APIHealth
+	Dumps() APIDumps
 }
 
 // Client is a structure that give you the power for interacting with an high-level api with meilisearch.
@@ -48,6 +49,7 @@ type Client struct {
 	apiStats   APIStats
 	apiHealth  APIHealth
 	apiVersion APIVersion
+	apiDumps   APIDumps
 }
 
 // Indexes return an APIIndexes client.
@@ -95,6 +97,11 @@ func (c *Client) Health() APIHealth {
 	return c.apiHealth
 }
 
+// Dumps return an APIDumps client.
+func (c *Client) Dumps() APIDumps {
+	return c.apiDumps
+}
+
 // NewFastHTTPCustomClient creates Meilisearch with custom fasthttp.Client
 func NewFastHTTPCustomClient(config Config, client *fasthttp.Client) ClientInterface {
 	c := &Client{
@@ -107,6 +114,7 @@ func NewFastHTTPCustomClient(config Config, client *fasthttp.Client) ClientInter
 	c.apiHealth = newClientHealth(c)
 	c.apiStats = newClientStats(c)
 	c.apiVersion = newClientVersion(c)
+	c.apiDumps = newClientDumps(c)
 
 	return c
 }
@@ -127,6 +135,7 @@ func NewClient(config Config) ClientInterface {
 	c.apiHealth = newClientHealth(c)
 	c.apiStats = newClientStats(c)
 	c.apiVersion = newClientVersion(c)
+	c.apiDumps = newClientDumps(c)
 
 	return c
 }
