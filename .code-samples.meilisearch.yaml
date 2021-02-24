@@ -418,3 +418,7 @@ faceted_search_walkthrough_facets_distribution_1: |-
       "genres",
     },
   })
+post_dump_1: |-
+  results, error := client.Dumps().Create()
+get_dump_status_1: |-
+  results, error := client.Dumps().GetStatus("dump-uid")
