@@ -364,7 +364,7 @@ getting_started_add_documents_md: |-
   }
 
   ```
-  [About this package](https://github.com/meilisearch/meilisearch-go/)
+  [About this SDK](https://github.com/meilisearch/meilisearch-go/)
 getting_started_search_md: |-
   ```go
   results, err := client.Search("movies").Search(meilisearch.SearchRequest{
@@ -375,7 +375,7 @@ getting_started_search_md: |-
   }
   ```
 
-  [About this package](https://github.com/meilisearch/meilisearch-go/)
+  [About this SDK](https://github.com/meilisearch/meilisearch-go/)
 faceted_search_update_settings_1: |-
   response, error := client.Settings("movies").UpdateAttributesForFaceting([]string{
     "director",
