@@ -29,7 +29,7 @@ First of all, thank you for contributing to MeiliSearch! The goal of this docume
 ### Install Dependencies <!-- omit in TOC -->
 
 ```bash
-$ go get -v -t -d ./...
+go get -v -t -d ./...
 ```
 
 ### Tests and Linter <!-- omit in TOC -->
@@ -38,15 +38,15 @@ Each PR should pass the tests and the linter to be accepted.
 
 ```bash
 # Tests
-$ docker pull getmeili/meilisearch:latest # Fetch the latest version of MeiliSearch image from Docker Hub
-$ docker run -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=masterKey --no-analytics=true
-$ go test -v ./...
+docker pull getmeili/meilisearch:latest # Fetch the latest version of MeiliSearch image from Docker Hub
+docker run -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=masterKey --no-analytics=true
+go test -v ./...
 # Install golint if needed (see comment below)
-$ go get -u golang.org/x/lint/golint
+go get -u golang.org/x/lint/golint
 # Use golint
-$ golint
+golint
 # Use gofmt
-$ gofmt -w ./..
+gofmt -w ./..
 ```
 
 > To find out where golint was installed you can run `go list -f {{.Target}} golang.org/x/lint/golint`. For golint to be used globally add that directory to the $PATH environment setting (taken from golint docs).

@@ -43,7 +43,7 @@ See our [Documentation](https://docs.meilisearch.com/learn/tutorials/getting_sta
 
 With `go get` in command line:
 ```bash
-$ go get github.com/meilisearch/meilisearch-go
+go get github.com/meilisearch/meilisearch-go
 ```
 
 ### Run MeiliSearch <!-- omit in toc -->
@@ -53,8 +53,8 @@ There are many easy ways to [download and run a MeiliSearch instance](https://do
 For example, if you use Docker:
 
 ```bash
-$ docker pull getmeili/meilisearch:latest # Fetch the latest version of MeiliSearch image from Docker Hub
-$ docker run -it --rm -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=masterKey
+docker pull getmeili/meilisearch:latest # Fetch the latest version of MeiliSearch image from Docker Hub
+docker run -it --rm -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=masterKey
 ```
 
 NB: you can also download MeiliSearch from **Homebrew** or **APT**.
