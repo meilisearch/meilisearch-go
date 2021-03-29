@@ -1,8 +1,9 @@
 package meilisearch
 
 import (
-	"github.com/valyala/fastjson"
 	"net/http"
+
+	"github.com/valyala/fastjson"
 )
 
 type clientHealth struct {
@@ -20,7 +21,7 @@ func (c clientHealth) Get() error {
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        nil,
-		acceptedStatusCodes: []int{http.StatusNoContent},
+		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Get",
 		apiName:             "Health",
 	}
