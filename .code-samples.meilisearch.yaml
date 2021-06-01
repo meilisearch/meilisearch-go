@@ -56,7 +56,7 @@ delete_documents_1: |-
     "437035",
     "363869",
   })
-search_1: |-
+search_post_1: |-
   client.Search("movies").Search(SearchRequest{
     Query: "American ninja",
   })
