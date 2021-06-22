@@ -116,10 +116,10 @@ import (
 
 func main() {
     // MeiliSearch is typo-tolerant:
-    searchRes, err := client.Index("books").Search(meilisearch.SearchRequest{
-        Query: "harry pottre",
-        Limit: 10,
-    })
+    searchRes, err := client.Index("books").Search("harry pottre",
+        &meilisearch.SearchRequest{
+            Limit: 10,
+        })
     if err != nil {
         fmt.Println(err)
         os.Exit(1)
@@ -149,11 +149,11 @@ All the supported options are described in the [search parameters](https://docs.
 
 ```go
 func main() {
-    resp, err := client.Index("books").Search(meilisearch.SearchRequest{
-        Query: "prince",
-        AttributesToHighlight: []string{"*"},
-        Filters: "book_id > 10"
-    })
+    searchRes, err := client.Index("books").Search("prince",
+        &meilisearch.SearchRequest{
+            AttributesToHighlight: []string{"*"},
+            Filters: "book_id > 10",
+        })
     if err != nil {
         fmt.Println(err)
         os.Exit(1)
