@@ -4,468 +4,387 @@ import (
 	"net/http"
 )
 
-type clientSettings struct {
-	client   *Client
-	indexUID string
-}
-
-func newClientSettings(client *Client, indexUID string) clientSettings {
-	return clientSettings{client: client, indexUID: indexUID}
-}
-
-func (c clientSettings) IndexID() string {
-	return c.indexUID
-}
-
-func (c clientSettings) Client() ClientInterface {
-	return c.client
-}
-
-func (c clientSettings) GetAll() (resp *Settings, err error) {
+func (i Index) GetSettings() (resp *Settings, err error) {
 	resp = &Settings{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings",
+		endpoint:            "/indexes/" + i.UID + "/settings",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetAll",
-		apiName:             "Settings",
+		functionName:        "GetSettings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c clientSettings) UpdateAll(request Settings) (resp *AsyncUpdateID, err error) {
+func (i Index) UpdateSettings(request *Settings) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings",
+		endpoint:            "/indexes/" + i.UID + "/settings",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "UpdateAll",
-		apiName:             "Documents",
+		functionName:        "UpdateSettings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) ResetAll() (resp *AsyncUpdateID, err error) {
+func (i Index) ResetSettings() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings",
+		endpoint:            "/indexes/" + i.UID + "/settings",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "ResetAll",
-		apiName:             "Documents",
+		functionName:        "ResetSettings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) GetRankingRules() (resp *[]string, err error) {
+func (i Index) GetRankingRules() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/ranking-rules",
+		endpoint:            "/indexes/" + i.UID + "/settings/ranking-rules",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetRankingRules",
-		apiName:             "Settings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c clientSettings) UpdateRankingRules(request []string) (resp *AsyncUpdateID, err error) {
+func (i Index) UpdateRankingRules(request *[]string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/ranking-rules",
+		endpoint:            "/indexes/" + i.UID + "/settings/ranking-rules",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateRankingRules",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) ResetRankingRules() (resp *AsyncUpdateID, err error) {
+func (i Index) ResetRankingRules() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/ranking-rules",
+		endpoint:            "/indexes/" + i.UID + "/settings/ranking-rules",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "ResetRankingRules",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) GetDistinctAttribute() (resp *string, err error) {
+func (i Index) GetDistinctAttribute() (resp *string, err error) {
 	empty := ""
 	resp = &empty
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
+		endpoint:            "/indexes/" + i.UID + "/settings/distinct-attribute",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDistinctAttribute",
-		apiName:             "Settings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c clientSettings) UpdateDistinctAttribute(request string) (resp *AsyncUpdateID, err error) {
+func (i Index) UpdateDistinctAttribute(request string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
+		endpoint:            "/indexes/" + i.UID + "/settings/distinct-attribute",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateDistinctAttribute",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) ResetDistinctAttribute() (resp *AsyncUpdateID, err error) {
+func (i Index) ResetDistinctAttribute() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/distinct-attribute",
+		endpoint:            "/indexes/" + i.UID + "/settings/distinct-attribute",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "ResetDistinctAttribute",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) GetSearchableAttributes() (resp *[]string, err error) {
+func (i Index) GetSearchableAttributes() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/searchable-attributes",
+		endpoint:            "/indexes/" + i.UID + "/settings/searchable-attributes",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetSearchableAttributes",
-		apiName:             "Settings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c clientSettings) UpdateSearchableAttributes(request []string) (resp *AsyncUpdateID, err error) {
+func (i Index) UpdateSearchableAttributes(request *[]string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/searchable-attributes",
+		endpoint:            "/indexes/" + i.UID + "/settings/searchable-attributes",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateSearchableAttributes",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) ResetSearchableAttributes() (resp *AsyncUpdateID, err error) {
+func (i Index) ResetSearchableAttributes() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/searchable-attributes",
+		endpoint:            "/indexes/" + i.UID + "/settings/searchable-attributes",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "ResetSearchableAttributes",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) GetDisplayedAttributes() (resp *[]string, err error) {
+func (i Index) GetDisplayedAttributes() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/displayed-attributes",
+		endpoint:            "/indexes/" + i.UID + "/settings/displayed-attributes",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDisplayedAttributes",
-		apiName:             "Settings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c clientSettings) UpdateDisplayedAttributes(request []string) (resp *AsyncUpdateID, err error) {
+func (i Index) UpdateDisplayedAttributes(request *[]string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/displayed-attributes",
+		endpoint:            "/indexes/" + i.UID + "/settings/displayed-attributes",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateDisplayedAttributes",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) ResetDisplayedAttributes() (resp *AsyncUpdateID, err error) {
+func (i Index) ResetDisplayedAttributes() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/displayed-attributes",
+		endpoint:            "/indexes/" + i.UID + "/settings/displayed-attributes",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "ResetDisplayedAttributes",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) GetStopWords() (resp *[]string, err error) {
+func (i Index) GetStopWords() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/stop-words",
+		endpoint:            "/indexes/" + i.UID + "/settings/stop-words",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetStopWords",
-		apiName:             "Settings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c clientSettings) UpdateStopWords(request []string) (resp *AsyncUpdateID, err error) {
+func (i Index) UpdateStopWords(request *[]string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/stop-words",
+		endpoint:            "/indexes/" + i.UID + "/settings/stop-words",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateStopWords",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) ResetStopWords() (resp *AsyncUpdateID, err error) {
+func (i Index) ResetStopWords() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/stop-words",
+		endpoint:            "/indexes/" + i.UID + "/settings/stop-words",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "ResetStopWords",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) GetSynonyms() (resp *map[string][]string, err error) {
+func (i Index) GetSynonyms() (resp *map[string][]string, err error) {
 	resp = &map[string][]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/synonyms",
+		endpoint:            "/indexes/" + i.UID + "/settings/synonyms",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetSynonyms",
-		apiName:             "Settings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c clientSettings) UpdateSynonyms(request map[string][]string) (resp *AsyncUpdateID, err error) {
+func (i Index) UpdateSynonyms(request *map[string][]string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/synonyms",
+		endpoint:            "/indexes/" + i.UID + "/settings/synonyms",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateSynonyms",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) ResetSynonyms() (resp *AsyncUpdateID, err error) {
+func (i Index) ResetSynonyms() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/synonyms",
+		endpoint:            "/indexes/" + i.UID + "/settings/synonyms",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "ResetSynonyms",
-		apiName:             "Documents",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) GetAttributesForFaceting() (resp *[]string, err error) {
+func (i Index) GetAttributesForFaceting() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/attributes-for-faceting",
+		endpoint:            "/indexes/" + i.UID + "/settings/attributes-for-faceting",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetAttributesForFaceting",
-		apiName:             "Settings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
 
-func (c clientSettings) UpdateAttributesForFaceting(request []string) (resp *AsyncUpdateID, err error) {
+func (i Index) UpdateAttributesForFaceting(request *[]string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/attributes-for-faceting",
+		endpoint:            "/indexes/" + i.UID + "/settings/attributes-for-faceting",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateAttributesForFaceting",
-		apiName:             "Settings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }
 
-func (c clientSettings) ResetAttributesForFaceting() (resp *AsyncUpdateID, err error) {
+func (i Index) ResetAttributesForFaceting() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + c.indexUID + "/settings/attributes-for-faceting",
+		endpoint:            "/indexes/" + i.UID + "/settings/attributes-for-faceting",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "ResetAttributesForFaceting",
-		apiName:             "Settings",
 	}
-
-	if err := c.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-
 	return resp, nil
 }

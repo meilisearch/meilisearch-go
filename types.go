@@ -5,6 +5,7 @@ import (
 	"sync"
 	"time"
 
+	"github.com/valyala/fasthttp"
 	"github.com/valyala/fastjson"
 )
 
@@ -19,13 +20,19 @@ var (
 // Internal types to Meilisearch
 //
 
+// Client is a structure that give you the power for interacting with an high-level api with meilisearch.
+type Client struct {
+	config     ClientConfig
+	httpClient *fasthttp.Client
+}
+
 // Index is the type that represent an index in MeiliSearch
 type Index struct {
-	Name       string    `json:"name"`
 	UID        string    `json:"uid"`
 	CreatedAt  time.Time `json:"createdAt"`
 	UpdatedAt  time.Time `json:"updatedAt"`
 	PrimaryKey string    `json:"primaryKey,omitempty"`
+	client     *Client
 }
 
 // Settings is the type that represents the settings in MeiliSearch
@@ -113,19 +120,8 @@ type Dump struct {
 
 // CreateIndexRequest is the request body for create index method
 type CreateIndexRequest struct {
-	Name       string `json:"name,omitempty"`
 	UID        string `json:"uid,omitempty"`
 	PrimaryKey string `json:"primaryKey,omitempty"`
-}
-
-// CreateIndexResponse is the response body for create index method
-type CreateIndexResponse struct {
-	Name       string    `json:"name"`
-	UID        string    `json:"uid"`
-	UpdateID   int64     `json:"updateID,omitempty"`
-	CreatedAt  time.Time `json:"createdAt"`
-	UpdatedAt  time.Time `json:"updatedAt"`
-	PrimaryKey string    `json:"primaryKey,omitempty"`
 }
 
 // SearchRequest is the request url param needed for a search query.
@@ -133,7 +129,6 @@ type CreateIndexResponse struct {
 //
 // Documentation: https://docs.meilisearch.com/reference/features/search_parameters.html
 type SearchRequest struct {
-	Query                 string
 	Offset                int64
 	Limit                 int64
 	AttributesToRetrieve  []string
@@ -153,14 +148,15 @@ type SearchResponse struct {
 	NbHits                int64         `json:"nbHits"`
 	Offset                int64         `json:"offset"`
 	Limit                 int64         `json:"limit"`
+	ExhaustiveNbHits      bool          `json:"exhaustiveNbHits"`
 	ProcessingTimeMs      int64         `json:"processingTimeMs"`
 	Query                 string        `json:"query"`
 	FacetsDistribution    interface{}   `json:"facetsDistribution,omitempty"`
 	ExhaustiveFacetsCount interface{}   `json:"exhaustiveFacetsCount,omitempty"`
 }
 
-// ListDocumentsRequest is the request body for list documents method
-type ListDocumentsRequest struct {
+// DocumentsRequest is the request body for list documents method
+type DocumentsRequest struct {
 	Offset               int64    `json:"offset,omitempty"`
 	Limit                int64    `json:"limit,omitempty"`
 	AttributesToRetrieve []string `json:"attributesToRetrieve,omitempty"`
@@ -171,16 +167,11 @@ type RawType []byte
 
 // Health is the request body for set Meilisearch health
 type Health struct {
-	Health bool `json:"health"`
+	Status string `json:"status"`
 }
 
-// Name is the request body for set Index name
-type Name struct {
-	Name string `json:"name"`
-}
-
-// PrimaryKey is the request body for set Index primary key
-type PrimaryKey struct {
+// UpdateIndexRequest is the request body for update Index primary key
+type UpdateIndexRequest struct {
 	PrimaryKey string `json:"primaryKey"`
 }
 

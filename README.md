@@ -67,43 +67,36 @@ NB: you can also download MeiliSearch from **Homebrew** or **APT**.
 package main
 
 import (
-    "fmt"
-    "os"
+	"fmt"
+	"os"
 
-    "github.com/meilisearch/meilisearch-go"
+	"github.com/meilisearch/meilisearch-go"
 )
 
 func main() {
-    var client = meilisearch.NewClient(meilisearch.Config{
-        Host: "http://127.0.0.1:7700",
-        APIKey: "masterKey",
-    })
+	client := meilisearch.NewClient(meilisearch.ClientConfig{
+                Host: "http://127.0.0.1:7700",
+                MasterKey: "masterKey",
+        })
+	// An index is where the documents are stored.
+	index := client.Index("indexUID")
 
-    // Create an index if your index does not already exist
-    _, err := client.Indexes().Create(meilisearch.CreateIndexRequest{
-        UID: "books",
-    })
-    if err != nil {
-        fmt.Println(err)
-        os.Exit(1)
-    }
+	// If the index 'books' does not exist, MeiliSearch creates it when you first add the documents.
+	documents := []map[string]interface{}{
+		{"book_id": 123,  "title": "Pride and Prejudice"},
+		{"book_id": 456,  "title": "Le Petit Prince"},
+		{"book_id": 1,    "title": "Alice In Wonderland"},
+		{"book_id": 1344, "title": "The Hobbit"},
+		{"book_id": 4,    "title": "Harry Potter and the Half-Blood Prince"},
+		{"book_id": 42,   "title": "The Hitchhiker's Guide to the Galaxy"},
+	}
+	update, err := index.AddDocuments(documents)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
 
-    documents := []map[string]interface{}{
-        {"book_id": 123,  "title": "Pride and Prejudice"},
-        {"book_id": 456,  "title": "Le Petit Prince"},
-        {"book_id": 1,    "title": "Alice In Wonderland"},
-        {"book_id": 1344, "title": "The Hobbit"},
-        {"book_id": 4,    "title": "Harry Potter and the Half-Blood Prince"},
-        {"book_id": 42,   "title": "The Hitchhiker's Guide to the Galaxy"},
-    }
-
-    updateRes, err := client.Documents("books").AddOrUpdate(documents) // => { "updateId": 0 }
-    if err != nil {
-        fmt.Println(err)
-        os.Exit(1)
-    }
-
-    fmt.Println(updateRes.UpdateID)
+	fmt.Println(update.UpdateID)
 }
 ```
 
@@ -123,7 +116,7 @@ import (
 
 func main() {
     // MeiliSearch is typo-tolerant:
-    searchRes, err := client.Search("books").Search(meilisearch.SearchRequest{
+    searchRes, err := client.Index("books").Search(meilisearch.SearchRequest{
         Query: "harry pottre",
         Limit: 10,
     })
@@ -156,7 +149,7 @@ All the supported options are described in the [search parameters](https://docs.
 
 ```go
 func main() {
-    resp, err := client.Search(indexUID).Search(meilisearch.SearchRequest{
+    resp, err := client.Index("books").Search(meilisearch.SearchRequest{
         Query: "prince",
         AttributesToHighlight: []string{"*"},
         Filters: "book_id > 10"
@@ -201,7 +194,7 @@ The following sections may interest you:
 - **Manipulate documents**: see the [API references](https://docs.meilisearch.com/reference/api/documents.html) or read more about [documents](https://docs.meilisearch.com/learn/core_concepts/documents.html).
 - **Search**: see the [API references](https://docs.meilisearch.com/reference/api/search.html) or follow our guide on [search parameters](https://docs.meilisearch.com/reference/features/search_parameters.html).
 - **Manage the indexes**: see the [API references](https://docs.meilisearch.com/reference/api/indexes.html) or read more about [indexes](https://docs.meilisearch.com/learn/core_concepts/indexes.html).
-- **Configure the index settings**: see the [API references](https://docs.meilisearch.com/reference/api/settings.html) or follow our guide on [settings parameters](https://docs.meilisearch.com/reference/features/settings.html).
+- **ClientConfigure the index settings**: see the [API references](https://docs.meilisearch.com/reference/api/settings.html) or follow our guide on [settings parameters](https://docs.meilisearch.com/reference/features/settings.html).
 
 ## ⚙️ Development Workflow and Contributing
 
