@@ -115,6 +115,12 @@ var customClient = NewFastHTTPCustomClient(ClientConfig{
 		Name:      "custom-client",
 	})
 
+var timeoutClient = NewClient(ClientConfig{
+	Host:      "http://localhost:7700",
+	MasterKey: masterKey,
+	Timeout:   1,
+})
+
 func TestMain(m *testing.M) {
 	_, _ = deleteAllIndexes(defaultClient)
 	code := m.Run()

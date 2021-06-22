@@ -24,12 +24,14 @@ type internalRequest struct {
 
 func (c *Client) executeRequest(req internalRequest) error {
 	internalError := &Error{
-		Endpoint:           req.endpoint,
-		Method:             req.method,
-		Function:           req.functionName,
-		RequestToString:    "empty request",
-		ResponseToString:   "empty response",
-		MeilisearchMessage: "empty meilisearch message",
+		Endpoint:         req.endpoint,
+		Method:           req.method,
+		Function:         req.functionName,
+		RequestToString:  "empty request",
+		ResponseToString: "empty response",
+		MeilisearchApiMessage: meilisearchApiMessage{
+			Message: "empty meilisearch message",
+		},
 		StatusCodeExpected: req.acceptedStatusCodes,
 	}
 
@@ -107,11 +109,19 @@ func (c *Client) sendRequest(req *internalRequest, internalError *Error, respons
 	}
 
 	// request is sent
-	err = c.httpClient.Do(request, response)
+	if c.config.Timeout != 0 {
+		err = c.httpClient.DoTimeout(request, response, c.config.Timeout)
+	} else {
+		err = c.httpClient.Do(request, response)
+	}
 
+	// request execution timeout
+	if err == fasthttp.ErrTimeout {
+		return internalError.WithErrCode(MeilisearchTimeoutError, err)
+	}
 	// request execution fail
 	if err != nil {
-		return internalError.WithErrCode(ErrCodeRequestExecution, err)
+		return internalError.WithErrCode(MeilisearchCommunicationError, err)
 	}
 
 	return nil
@@ -132,7 +142,10 @@ func (c *Client) handleStatusCode(req *internalRequest, response *fasthttp.Respo
 
 		internalError.ErrorBody(rawBody)
 
-		return internalError.WithErrCode(ErrCodeResponseStatusCode)
+		if internalError.MeilisearchApiMessage.ErrorCode == "" {
+			return internalError.WithErrCode(MeilisearchApiErrorWithoutMessage)
+		}
+		return internalError.WithErrCode(MeilisearchApiError)
 	}
 
 	return nil

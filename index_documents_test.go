@@ -14,9 +14,11 @@ func TestIndex_AddDocuments(t *testing.T) {
 		documentsPtr interface{}
 	}
 	tests := []struct {
-		name     string
-		args     args
-		wantResp *AsyncUpdateID
+		name          string
+		args          args
+		wantResp      *AsyncUpdateID
+		wantErr       bool
+		expectedError Error
 	}{
 		{
 			name: "TestIndexBasicAddDocuments",
@@ -34,7 +36,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 		{
 			name: "TestIndexAddDocumentsWithCustomClient",
 			args: args{
-				UID:    "1",
+				UID:    "2",
 				client: customClient,
 				documentsPtr: []map[string]interface{}{
 					{"ID": "123", "Name": "Pride and Prejudice"},
@@ -62,7 +64,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 		{
 			name: "TestIndexBasicAddDocumentsWithIntID",
 			args: args{
-				UID:    "1",
+				UID:    "3",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"BookID": float64(123), "Title": "Pride and Prejudice"},
@@ -75,7 +77,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 		{
 			name: "TestIndexAddDocumentsWithIntIDWithCustomClient",
 			args: args{
-				UID:    "1",
+				UID:    "4",
 				client: customClient,
 				documentsPtr: []map[string]interface{}{
 					{"BookID": float64(123), "Title": "Pride and Prejudice"},
@@ -88,7 +90,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 		{
 			name: "TestIndexMultipleAddDocumentsWithIntID",
 			args: args{
-				UID:    "2",
+				UID:    "5",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"BookID": float64(123), "Title": "Pride and Prejudice"},
@@ -100,6 +102,40 @@ func TestIndex_AddDocuments(t *testing.T) {
 				UpdateID: 0,
 			},
 		},
+		{
+			name: "TestIndexAddDocumentsMissingPrimaryKey",
+			args: args{
+				UID:    "6",
+				client: defaultClient,
+				documentsPtr: []map[string]interface{}{
+					{"Key": float64(123), "Title": "Pride and Prejudice"},
+					{"Key": float64(456), "Title": "Le Petit Prince", "Tag": "Conte"},
+					{"Key": float64(1), "Title": "Alice In Wonderland"},
+				},
+			},
+			wantResp: &AsyncUpdateID{
+				UpdateID: 0,
+			},
+			wantErr: true,
+			expectedError: Error(Error{
+				Endpoint:         "/indexes/6/documents",
+				Method:           "POST",
+				Function:         "AddDocuments",
+				RequestToString:  "[{\"Key\":123,\"Title\":\"Pride and Prejudice\"},{\"Key\":456,\"Tag\":\"Conte\",\"Title\":\"Le Petit Prince\"},{\"Key\":1,\"Title\":\"Alice In Wonderland\"}]",
+				ResponseToString: "{\"message\":\"schema cannot be built without a primary key\",\"errorCode\":\"missing_primary_key\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#missing_primary_key\"}",
+				MeilisearchApiMessage: meilisearchApiMessage{
+					Message:   "schema cannot be built without a primary key",
+					ErrorCode: "missing_primary_key",
+					ErrorType: "invalid_request_error",
+					ErrorLink: "https://docs.meilisearch.com/errors#missing_primary_key",
+				},
+				StatusCode:         400,
+				StatusCodeExpected: []int{202},
+				rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
+				OriginError:        error(nil),
+				ErrCode:            4,
+			}),
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -107,16 +143,20 @@ func TestIndex_AddDocuments(t *testing.T) {
 			i := c.Index(tt.args.UID)
 
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr)
-			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
-			require.NoError(t, err)
-			i.DefaultWaitForPendingUpdate(gotResp)
+			if tt.wantErr {
+				require.Error(t, err)
+				require.Equal(t, &tt.expectedError, err)
+			} else {
+				require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
+				require.NoError(t, err)
+				i.DefaultWaitForPendingUpdate(gotResp)
 
-			var documents []map[string]interface{}
-			i.GetDocuments(&DocumentsRequest{
-				Limit: 3,
-			}, &documents)
-			require.Equal(t, tt.args.documentsPtr, documents)
-
+				var documents []map[string]interface{}
+				i.GetDocuments(&DocumentsRequest{
+					Limit: 3,
+				}, &documents)
+				require.Equal(t, tt.args.documentsPtr, documents)
+			}
 			deleteAllIndexes(c)
 		})
 	}
@@ -151,7 +191,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 		{
 			name: "TestIndexAddDocumentsWithPrimaryKeyWithCustomClient",
 			args: args{
-				UID:    "1",
+				UID:    "2",
 				client: customClient,
 				documentsPtr: []map[string]interface{}{
 					{"key": "123", "Name": "Pride and Prejudice"},
@@ -165,7 +205,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 		{
 			name: "TestIndexMultipleAddDocumentsWithPrimaryKey",
 			args: args{
-				UID:    "2",
+				UID:    "3",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"key": "123", "Name": "Pride and Prejudice"},
@@ -181,7 +221,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 		{
 			name: "TestIndexAddDocumentsWithPrimaryKeyWithIntID",
 			args: args{
-				UID:    "1",
+				UID:    "4",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"key": float64(123), "Name": "Pride and Prejudice"},
@@ -195,7 +235,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 		{
 			name: "TestIndexMultipleAddDocumentsWithPrimaryKeyWithIntID",
 			args: args{
-				UID:    "2",
+				UID:    "5",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"key": float64(123), "Name": "Pride and Prejudice"},
@@ -313,7 +353,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 		{
 			name: "TestIndexDeleteOneDocumentWithCustomClient",
 			args: args{
-				UID:        "1",
+				UID:        "2",
 				client:     customClient,
 				identifier: "123",
 				documentsPtr: []map[string]interface{}{
@@ -327,7 +367,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 		{
 			name: "TestIndexDeleteOneDocumentinMultiple",
 			args: args{
-				UID:        "2",
+				UID:        "3",
 				client:     defaultClient,
 				identifier: "456",
 				documentsPtr: []map[string]interface{}{
@@ -343,7 +383,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 		{
 			name: "TestIndexBasicDeleteOneDocumentWithIntID",
 			args: args{
-				UID:        "1",
+				UID:        "4",
 				client:     defaultClient,
 				identifier: "123",
 				documentsPtr: []map[string]interface{}{
@@ -357,7 +397,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 		{
 			name: "TestIndexDeleteOneDocumentWithIntIDWithCustomClient",
 			args: args{
-				UID:        "1",
+				UID:        "5",
 				client:     customClient,
 				identifier: "123",
 				documentsPtr: []map[string]interface{}{
@@ -371,7 +411,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 		{
 			name: "TestIndexDeleteOneDocumentWithIntIDinMultiple",
 			args: args{
-				UID:        "2",
+				UID:        "6",
 				client:     defaultClient,
 				identifier: "456",
 				documentsPtr: []map[string]interface{}{
@@ -437,7 +477,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 		{
 			name: "TestIndexDeleteDocumentWithCustomClient",
 			args: args{
-				UID:        "1",
+				UID:        "2",
 				client:     customClient,
 				identifier: []string{"123"},
 				documentsPtr: []docTest{
@@ -451,7 +491,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 		{
 			name: "TestIndexBasicDeleteDocument",
 			args: args{
-				UID:        "1",
+				UID:        "3",
 				client:     defaultClient,
 				identifier: []string{"123"},
 				documentsPtr: []docTest{
@@ -467,7 +507,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 		{
 			name: "TestIndexBasicDeleteDocument",
 			args: args{
-				UID:        "1",
+				UID:        "4",
 				client:     defaultClient,
 				identifier: []string{"123", "456", "1"},
 				documentsPtr: []docTest{
