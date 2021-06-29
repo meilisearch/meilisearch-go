@@ -146,7 +146,7 @@ func TestClient_Health(t *testing.T) {
 			client: &Client{
 				config: ClientConfig{
 					Host:   "http://wrongurl:1234",
-					ApiKey: masterKey,
+					APIKey: masterKey,
 				},
 				httpClient: &fasthttp.Client{
 					Name: "meilsearch-client",
@@ -213,7 +213,7 @@ func TestClient_IsHealthy(t *testing.T) {
 			client: &Client{
 				config: ClientConfig{
 					Host:   "http://wrongurl:1234",
-					ApiKey: masterKey,
+					APIKey: masterKey,
 				},
 				httpClient: &fasthttp.Client{
 					Name: "meilsearch-client",
