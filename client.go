@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/valyala/fasthttp"
 )
@@ -15,6 +16,9 @@ type ClientConfig struct {
 
 	// MasterKey is optional
 	MasterKey string
+
+	// Timeout is optional
+	Timeout time.Duration
 }
 
 // ClientInterface is interface for all Meilisearch client

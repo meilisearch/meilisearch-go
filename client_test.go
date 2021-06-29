@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"net"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -27,6 +28,45 @@ func TestClient_Version(t *testing.T) {
 			gotResp, err := tt.client.GetVersion()
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "Version() should not return nil value")
+		})
+	}
+}
+
+func TestClient_TimeoutError(t *testing.T) {
+	tests := []struct {
+		name          string
+		client        *Client
+		expectedError Error
+	}{
+		{
+			name:   "TestTimeoutError",
+			client: timeoutClient,
+			expectedError: Error(Error{
+				Endpoint:         "/version",
+				Method:           "GET",
+				Function:         "Version",
+				RequestToString:  "empty request",
+				ResponseToString: "empty response",
+				MeilisearchApiMessage: meilisearchApiMessage{
+					Message:   "empty meilisearch message",
+					ErrorCode: "",
+					ErrorType: "",
+					ErrorLink: "",
+				},
+				StatusCode:         0,
+				StatusCodeExpected: []int{200},
+				rawMessage:         "MeilisearchTimeoutError (path \"${method} ${endpoint}\" with method \"${function}\")",
+				OriginError:        fasthttp.ErrTimeout,
+				ErrCode:            6,
+			}),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotResp, err := tt.client.GetVersion()
+			require.Error(t, err)
+			require.Nil(t, gotResp)
+			require.Equal(t, &tt.expectedError, err)
 		})
 	}
 }
@@ -79,10 +119,11 @@ func TestClient_GetKeys(t *testing.T) {
 
 func TestClient_Health(t *testing.T) {
 	tests := []struct {
-		name     string
-		client   *Client
-		wantResp *Health
-		wantErr  bool
+		name          string
+		client        *Client
+		wantResp      *Health
+		wantErr       bool
+		expectedError Error
 	}{
 		{
 			name:   "TestHealth",
@@ -111,8 +152,30 @@ func TestClient_Health(t *testing.T) {
 					Name: "meilsearch-client",
 				},
 			},
-			wantResp: nil,
-			wantErr:  true,
+			wantErr: true,
+			expectedError: Error(Error{
+				Endpoint:         "/health",
+				Method:           "GET",
+				Function:         "Health",
+				RequestToString:  "empty request",
+				ResponseToString: "empty response",
+				MeilisearchApiMessage: meilisearchApiMessage{
+					Message:   "empty meilisearch message",
+					ErrorCode: "",
+					ErrorType: "",
+					ErrorLink: "",
+				},
+				StatusCode:         0,
+				StatusCodeExpected: []int{200},
+				rawMessage:         "MeilisearchCommunicationError unable to execute request (path \"${method} ${endpoint}\" with method \"${function}\")",
+				OriginError: &net.DNSError{Err: "Temporary failure in name resolution",
+					Name:        "wrongurl",
+					Server:      "",
+					IsTimeout:   false,
+					IsTemporary: true,
+					IsNotFound:  false},
+				ErrCode: 7,
+			}),
 		},
 	}
 	for _, tt := range tests {
@@ -120,6 +183,7 @@ func TestClient_Health(t *testing.T) {
 			gotResp, err := tt.client.Health()
 			if tt.wantErr {
 				require.Error(t, err)
+				require.Equal(t, &tt.expectedError, err)
 			} else {
 				require.NoError(t, err)
 				require.Equal(t, tt.wantResp, gotResp, "Health() got response %v, want %v", gotResp, tt.wantResp)

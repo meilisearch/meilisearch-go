@@ -5,6 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+	"github.com/valyala/fasthttp"
 )
 
 func TestClient_CreateIndex(t *testing.T) {
@@ -12,10 +13,12 @@ func TestClient_CreateIndex(t *testing.T) {
 		config IndexConfig
 	}
 	tests := []struct {
-		name     string
-		client   *Client
-		args     args
-		wantResp *Index
+		name          string
+		client        *Client
+		args          args
+		wantResp      *Index
+		wantErr       bool
+		expectedError Error
 	}{
 		{
 			name:   "TestBasicCreateIndex",
@@ -28,6 +31,7 @@ func TestClient_CreateIndex(t *testing.T) {
 			wantResp: &Index{
 				UID: "TestBasicCreateIndex",
 			},
+			wantErr: false,
 		},
 		{
 			name:   "TestCreateIndexWithCustomClient",
@@ -40,6 +44,7 @@ func TestClient_CreateIndex(t *testing.T) {
 			wantResp: &Index{
 				UID: "TestBasicCreateIndex",
 			},
+			wantErr: false,
 		},
 		{
 			name:   "TestCreateIndexWithCustomClient",
@@ -52,6 +57,7 @@ func TestClient_CreateIndex(t *testing.T) {
 			wantResp: &Index{
 				UID: "TestBasicCreateIndex",
 			},
+			wantErr: false,
 		},
 		{
 			name:   "TestCreateIndexWithPrimaryKey",
@@ -66,17 +72,108 @@ func TestClient_CreateIndex(t *testing.T) {
 				UID:        "TestCreateIndexWithPrimaryKey",
 				PrimaryKey: "PrimaryKey",
 			},
+			wantErr: false,
+		},
+		{
+			name:   "TestCreateIndexInvalidUid",
+			client: defaultClient,
+			args: args{
+				config: IndexConfig{
+					Uid: "TestCreateIndexInvalidUid*",
+				},
+			},
+			wantErr: true,
+			expectedError: Error(Error{
+				Endpoint:         "/indexes",
+				Method:           "POST",
+				Function:         "CreateIndex",
+				RequestToString:  "{\"uid\":\"TestCreateIndexInvalidUid*\"}",
+				ResponseToString: "{\"message\":\"Index must have a valid uid; Index uid can be of type integer or string only composed of alphanumeric characters, hyphens (-) and underscores (_).\",\"errorCode\":\"invalid_index_uid\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#invalid_index_uid\"}",
+				MeilisearchApiMessage: meilisearchApiMessage{
+					Message:   "Index must have a valid uid; Index uid can be of type integer or string only composed of alphanumeric characters, hyphens (-) and underscores (_).",
+					ErrorCode: "invalid_index_uid",
+					ErrorType: "invalid_request_error",
+					ErrorLink: "https://docs.meilisearch.com/errors#invalid_index_uid",
+				},
+				StatusCode:         400,
+				StatusCodeExpected: []int{201},
+				rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
+				OriginError:        error(nil),
+				ErrCode:            4,
+			}),
+		},
+		{
+			name:   "TestCreateIndexAlreadyExist",
+			client: defaultClient,
+			args: args{
+				config: IndexConfig{
+					Uid: "indexUID",
+				},
+			},
+			wantErr: true,
+			expectedError: Error(Error{
+				Endpoint:         "/indexes",
+				Method:           "POST",
+				Function:         "CreateIndex",
+				RequestToString:  "{\"uid\":\"indexUID\"}",
+				ResponseToString: "{\"message\":\"Index indexUID already exists\",\"errorCode\":\"index_already_exists\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_already_exists\"}",
+				MeilisearchApiMessage: meilisearchApiMessage{
+					Message:   "Index indexUID already exists",
+					ErrorCode: "index_already_exists",
+					ErrorType: "invalid_request_error",
+					ErrorLink: "https://docs.meilisearch.com/errors#index_already_exists",
+				},
+				StatusCode:         400,
+				StatusCodeExpected: []int{201},
+				rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
+				OriginError:        error(nil),
+				ErrCode:            4,
+			}),
+		},
+		{
+			name:   "TestCreateIndexTimeout",
+			client: timeoutClient,
+			args: args{
+				config: IndexConfig{
+					Uid: "indexUID",
+				},
+			},
+			wantErr: true,
+			expectedError: Error(Error{
+				Endpoint:         "/indexes",
+				Method:           "POST",
+				Function:         "CreateIndex",
+				RequestToString:  "{\"uid\":\"indexUID\"}",
+				ResponseToString: "empty response",
+				MeilisearchApiMessage: meilisearchApiMessage{
+					Message:   "empty meilisearch message",
+					ErrorCode: "",
+					ErrorType: "",
+					ErrorLink: "",
+				},
+				StatusCode:         0,
+				StatusCodeExpected: []int{201},
+				rawMessage:         "MeilisearchTimeoutError (path \"${method} ${endpoint}\" with method \"${function}\")",
+				OriginError:        fasthttp.ErrTimeout,
+				ErrCode:            6,
+			}),
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
+			SetUpBasicIndex()
 
 			gotResp, err := c.CreateIndex(&tt.args.config)
-			require.NoError(t, err)
-			if assert.NotNil(t, gotResp) {
-				require.Equal(t, tt.wantResp.UID, gotResp.UID)
-				require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
+			if tt.wantErr {
+				require.Error(t, err)
+				require.Equal(t, &tt.expectedError, err)
+			} else {
+				require.NoError(t, err)
+				if assert.NotNil(t, gotResp) {
+					require.Equal(t, tt.wantResp.UID, gotResp.UID)
+					require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
+				}
 			}
 
 			deleteAllIndexes(c)
@@ -90,11 +187,11 @@ func TestClient_DeleteIndex(t *testing.T) {
 		deleteUid []string
 	}
 	tests := []struct {
-		name    string
-		client  *Client
-		args    args
-		wantOk  bool
-		wantErr bool
+		name          string
+		client        *Client
+		args          args
+		wantErr       bool
+		expectedError []Error
 	}{
 		{
 			name:   "TestBasicDeleteIndex",
@@ -103,7 +200,6 @@ func TestClient_DeleteIndex(t *testing.T) {
 				createUid: []string{"1"},
 				deleteUid: []string{"1"},
 			},
-			wantOk:  true,
 			wantErr: false,
 		},
 		{
@@ -113,7 +209,6 @@ func TestClient_DeleteIndex(t *testing.T) {
 				createUid: []string{"1"},
 				deleteUid: []string{"1"},
 			},
-			wantOk:  true,
 			wantErr: false,
 		},
 		{
@@ -123,7 +218,6 @@ func TestClient_DeleteIndex(t *testing.T) {
 				createUid: []string{"2", "3", "4", "5"},
 				deleteUid: []string{"2", "3", "4", "5"},
 			},
-			wantOk:  true,
 			wantErr: false,
 		},
 		{
@@ -132,8 +226,26 @@ func TestClient_DeleteIndex(t *testing.T) {
 			args: args{
 				deleteUid: []string{"1"},
 			},
-			wantOk:  false,
 			wantErr: true,
+			expectedError: []Error{
+				Error(Error{
+					Endpoint:         "/indexes/1",
+					Method:           "DELETE",
+					Function:         "DeleteIndex",
+					RequestToString:  "empty request",
+					ResponseToString: "{\"message\":\"Index 1 not found\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+					MeilisearchApiMessage: meilisearchApiMessage{
+						Message:   "Index 1 not found",
+						ErrorCode: "index_not_found",
+						ErrorType: "invalid_request_error",
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
+					},
+					StatusCode:         404,
+					StatusCodeExpected: []int{204},
+					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
+					OriginError:        error(nil),
+					ErrCode:            4,
+				})},
 		},
 		{
 			name:   "TestMultipleNotExistingDeleteIndex",
@@ -141,8 +253,101 @@ func TestClient_DeleteIndex(t *testing.T) {
 			args: args{
 				deleteUid: []string{"2", "3", "4", "5"},
 			},
-			wantOk:  false,
 			wantErr: true,
+			expectedError: []Error{
+				Error(Error{
+					Endpoint:         "/indexes/2",
+					Method:           "DELETE",
+					Function:         "DeleteIndex",
+					RequestToString:  "empty request",
+					ResponseToString: "{\"message\":\"Index 2 not found\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+					MeilisearchApiMessage: meilisearchApiMessage{
+						Message:   "Index 2 not found",
+						ErrorCode: "index_not_found",
+						ErrorType: "invalid_request_error",
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
+					StatusCode:         404,
+					StatusCodeExpected: []int{204},
+					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
+					OriginError:        error(nil),
+					ErrCode:            4,
+				}),
+				Error(Error{
+					Endpoint:         "/indexes/3",
+					Method:           "DELETE",
+					Function:         "DeleteIndex",
+					RequestToString:  "empty request",
+					ResponseToString: "{\"message\":\"Index 3 not found\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+					MeilisearchApiMessage: meilisearchApiMessage{
+						Message:   "Index 3 not found",
+						ErrorCode: "index_not_found",
+						ErrorType: "invalid_request_error",
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
+					StatusCode:         404,
+					StatusCodeExpected: []int{204},
+					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")", OriginError: error(nil), ErrCode: 4}),
+				Error(Error{
+					Endpoint:         "/indexes/4",
+					Method:           "DELETE",
+					Function:         "DeleteIndex",
+					RequestToString:  "empty request",
+					ResponseToString: "{\"message\":\"Index 4 not found\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+					MeilisearchApiMessage: meilisearchApiMessage{
+						Message:   "Index 4 not found",
+						ErrorCode: "index_not_found",
+						ErrorType: "invalid_request_error",
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
+					StatusCode:         404,
+					StatusCodeExpected: []int{204},
+					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
+					OriginError:        error(nil),
+					ErrCode:            4,
+				}),
+				Error(Error{
+					Endpoint:         "/indexes/5",
+					Method:           "DELETE",
+					Function:         "DeleteIndex",
+					RequestToString:  "empty request",
+					ResponseToString: "{\"message\":\"Index 5 not found\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+					MeilisearchApiMessage: meilisearchApiMessage{
+						Message:   "Index 5 not found",
+						ErrorCode: "index_not_found",
+						ErrorType: "invalid_request_error",
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
+					StatusCode:         404,
+					StatusCodeExpected: []int{204},
+					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
+					OriginError:        error(nil),
+					ErrCode:            4,
+				}),
+			},
+		},
+		{
+			name:   "TestDeleteIndexTimeout",
+			client: timeoutClient,
+			args: args{
+				deleteUid: []string{"1"},
+			},
+			wantErr: true,
+			expectedError: []Error{
+				Error(Error{
+					Endpoint:         "/indexes/1",
+					Method:           "DELETE",
+					Function:         "DeleteIndex",
+					RequestToString:  "empty request",
+					ResponseToString: "empty response",
+					MeilisearchApiMessage: meilisearchApiMessage{
+						Message:   "empty meilisearch message",
+						ErrorCode: "",
+						ErrorType: "",
+						ErrorLink: "",
+					},
+					StatusCode:         0,
+					StatusCodeExpected: []int{204},
+					rawMessage:         "MeilisearchTimeoutError (path \"${method} ${endpoint}\" with method \"${function}\")",
+					OriginError:        fasthttp.ErrTimeout,
+					ErrCode:            6,
+				})},
 		},
 	}
 	for _, tt := range tests {
@@ -153,13 +358,14 @@ func TestClient_DeleteIndex(t *testing.T) {
 				_, err := c.CreateIndex(&IndexConfig{Uid: uid})
 				require.NoError(t, err, "CreateIndex() in TestDeleteIndex error should be nil")
 			}
-			for _, uid := range tt.args.deleteUid {
-				gotOk, err := c.DeleteIndex(uid)
+			for k := range tt.args.deleteUid {
+				gotOk, err := c.DeleteIndex(tt.args.deleteUid[k])
 				if tt.wantErr {
 					require.Error(t, err)
+					require.Equal(t, &tt.expectedError[k], err)
 				} else {
 					require.NoError(t, err)
-					require.Equal(t, tt.wantOk, gotOk)
+					require.True(t, gotOk)
 				}
 			}
 
@@ -177,7 +383,6 @@ func TestClient_GetAllIndexes(t *testing.T) {
 		client   *Client
 		args     args
 		wantResp []Index
-		wantErr  bool
 	}{
 		{
 			name:   "TestGelAllIndexesOnNoIndexes",
@@ -186,7 +391,6 @@ func TestClient_GetAllIndexes(t *testing.T) {
 				uid: []string{},
 			},
 			wantResp: []Index{},
-			wantErr:  false,
 		},
 		{
 			name:   "TestBasicGelAllIndexes",
@@ -199,7 +403,6 @@ func TestClient_GetAllIndexes(t *testing.T) {
 					UID: "1",
 				},
 			},
-			wantErr: false,
 		},
 		{
 			name:   "TestGelAllIndexesWithCustomClient",
@@ -212,7 +415,6 @@ func TestClient_GetAllIndexes(t *testing.T) {
 					UID: "1",
 				},
 			},
-			wantErr: false,
 		},
 		{
 			name:   "TestGelAllIndexesOnMultipleIndex",
@@ -231,7 +433,6 @@ func TestClient_GetAllIndexes(t *testing.T) {
 					UID: "3",
 				},
 			},
-			wantErr: false,
 		},
 		{
 			name:   "TestGelAllIndexesOnMultipleIndexWithPrimaryKey",
@@ -253,7 +454,6 @@ func TestClient_GetAllIndexes(t *testing.T) {
 					PrimaryKey: "PrimaryKey3",
 				},
 			},
-			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
