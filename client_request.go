@@ -104,8 +104,8 @@ func (c *Client) sendRequest(req *internalRequest, internalError *Error, respons
 
 	// adding request headers
 	request.Header.Set("Content-Type", "application/json")
-	if c.config.MasterKey != "" {
-		request.Header.Set("X-Meili-API-Key", c.config.MasterKey)
+	if c.config.ApiKey != "" {
+		request.Header.Set("X-Meili-API-Key", c.config.ApiKey)
 	}
 
 	// request is sent
