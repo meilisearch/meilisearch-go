@@ -35,8 +35,8 @@ func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
 
 func SetUpBasicIndex() {
 	client := NewClient(ClientConfig{
-		Host:      "http://localhost:7700",
-		MasterKey: masterKey,
+		Host:   "http://localhost:7700",
+		ApiKey: masterKey,
 	})
 	index := client.Index("indexUID")
 
@@ -61,8 +61,8 @@ func SetUpBasicIndex() {
 
 func SetUpIndexForFaceting() {
 	client := NewClient(ClientConfig{
-		Host:      "http://localhost:7700",
-		MasterKey: masterKey,
+		Host:   "http://localhost:7700",
+		ApiKey: masterKey,
 	})
 	index := client.Index("indexUID")
 
@@ -102,13 +102,13 @@ func SetUpIndexForFaceting() {
 var masterKey = "masterKey"
 var primaryKey = "primaryKey"
 var defaultClient = NewClient(ClientConfig{
-	Host:      "http://localhost:7700",
-	MasterKey: masterKey,
+	Host:   "http://localhost:7700",
+	ApiKey: masterKey,
 })
 
 var customClient = NewFastHTTPCustomClient(ClientConfig{
-	Host:      "http://localhost:7700",
-	MasterKey: masterKey,
+	Host:   "http://localhost:7700",
+	ApiKey: masterKey,
 },
 	&fasthttp.Client{
 		TLSConfig: &tls.Config{InsecureSkipVerify: true},
@@ -116,9 +116,9 @@ var customClient = NewFastHTTPCustomClient(ClientConfig{
 	})
 
 var timeoutClient = NewClient(ClientConfig{
-	Host:      "http://localhost:7700",
-	MasterKey: masterKey,
-	Timeout:   1,
+	Host:    "http://localhost:7700",
+	ApiKey:  masterKey,
+	Timeout: 1,
 })
 
 func TestMain(m *testing.M) {

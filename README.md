@@ -76,7 +76,7 @@ import (
 func main() {
 	client := meilisearch.NewClient(meilisearch.ClientConfig{
                 Host: "http://127.0.0.1:7700",
-                MasterKey: "masterKey",
+                ApiKey: "masterKey",
         })
 	// An index is where the documents are stored.
 	index := client.Index("indexUID")
