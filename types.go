@@ -137,10 +137,9 @@ type SearchRequest struct {
 	AttributesToCrop      []string
 	CropLength            int64
 	AttributesToHighlight []string
-	Filters               string
+	Filter                string
 	Matches               bool
 	FacetsDistribution    []string
-	FacetFilters          interface{}
 	PlaceholderSearch     bool
 }
 
