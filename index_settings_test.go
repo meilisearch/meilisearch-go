@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestIndex_GetAttributesForFaceting(t *testing.T) {
+func TestIndex_GetFilterableAttributes(t *testing.T) {
 	type args struct {
 		UID    string
 		client *Client
@@ -16,14 +16,14 @@ func TestIndex_GetAttributesForFaceting(t *testing.T) {
 		args args
 	}{
 		{
-			name: "TestIndexBasicGetAttributesForFaceting",
+			name: "TestIndexBasicGetFilterableAttributes",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
 			},
 		},
 		{
-			name: "TestIndexGetAttributesForFacetingWithCustomClient",
+			name: "TestIndexGetFilterableAttributesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
 				client: customClient,
@@ -36,7 +36,7 @@ func TestIndex_GetAttributesForFaceting(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 
-			gotResp, err := i.GetAttributesForFaceting()
+			gotResp, err := i.GetFilterableAttributes()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -138,7 +138,7 @@ func TestIndex_GetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantResp: &[]string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"},
+			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
 		},
 		{
 			name: "TestIndexGetRankingRulesWithCustomClient",
@@ -146,7 +146,7 @@ func TestIndex_GetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantResp: &[]string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"},
+			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
 		},
 	}
 	for _, tt := range tests {
@@ -222,14 +222,14 @@ func TestIndex_GetSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 		{
@@ -240,14 +240,14 @@ func TestIndex_GetSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 	}
@@ -341,7 +341,7 @@ func TestIndex_GetSynonyms(t *testing.T) {
 	}
 }
 
-func TestIndex_ResetAttributesForFaceting(t *testing.T) {
+func TestIndex_ResetFilterableAttributes(t *testing.T) {
 	type args struct {
 		UID    string
 		client *Client
@@ -352,7 +352,7 @@ func TestIndex_ResetAttributesForFaceting(t *testing.T) {
 		wantUpdate *AsyncUpdateID
 	}{
 		{
-			name: "TestIndexBasicResetAttributesForFaceting",
+			name: "TestIndexBasicResetFilterableAttributes",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
@@ -362,7 +362,7 @@ func TestIndex_ResetAttributesForFaceting(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexResetAttributesForFacetingCustomClient",
+			name: "TestIndexResetFilterableAttributesCustomClient",
 			args: args{
 				UID:    "indexUID",
 				client: customClient,
@@ -378,12 +378,12 @@ func TestIndex_ResetAttributesForFaceting(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 
-			gotUpdate, err := i.ResetAttributesForFaceting()
+			gotUpdate, err := i.ResetFilterableAttributes()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantUpdate, gotUpdate)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
-			gotResp, err := i.GetAttributesForFaceting()
+			gotResp, err := i.GetFilterableAttributes()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
@@ -434,7 +434,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 
 			gotUpdate, err := i.ResetDisplayedAttributes()
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err := i.GetDisplayedAttributes()
@@ -485,7 +485,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 
 			gotUpdate, err := i.ResetDistinctAttribute()
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err := i.GetDistinctAttribute()
@@ -516,7 +516,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
 			},
-			wantResp: &[]string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"},
+			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
 		},
 		{
 			name: "TestIndexResetRankingRulesWithCustomClient",
@@ -527,7 +527,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
 			},
-			wantResp: &[]string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"},
+			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
 		},
 	}
 	for _, tt := range tests {
@@ -538,7 +538,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 
 			gotUpdate, err := i.ResetRankingRules()
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err := i.GetRankingRules()
@@ -591,7 +591,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 
 			gotUpdate, err := i.ResetSearchableAttributes()
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err := i.GetSearchableAttributes()
@@ -624,14 +624,14 @@ func TestIndex_ResetSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 		{
@@ -645,14 +645,14 @@ func TestIndex_ResetSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 	}
@@ -664,7 +664,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 
 			gotUpdate, err := i.ResetSettings()
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err := i.GetSettings()
@@ -714,7 +714,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 
 			gotUpdate, err := i.ResetStopWords()
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err := i.GetStopWords()
@@ -764,7 +764,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 
 			gotUpdate, err := i.ResetSynonyms()
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err := i.GetSynonyms()
@@ -775,7 +775,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 	}
 }
 
-func TestIndex_UpdateAttributesForFaceting(t *testing.T) {
+func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 	type args struct {
 		UID     string
 		client  *Client
@@ -787,12 +787,12 @@ func TestIndex_UpdateAttributesForFaceting(t *testing.T) {
 		wantUpdate *AsyncUpdateID
 	}{
 		{
-			name: "TestIndexBasicUpdateAttributesForFaceting",
+			name: "TestIndexBasicUpdateFilterableAttributes",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
 				request: []string{
-					"title", "tag",
+					"title",
 				},
 			},
 			wantUpdate: &AsyncUpdateID{
@@ -800,12 +800,12 @@ func TestIndex_UpdateAttributesForFaceting(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexUpdateAttributesForFacetingWithCustomClient",
+			name: "TestIndexUpdateFilterableAttributesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
 				client: customClient,
 				request: []string{
-					"title", "tag",
+					"title",
 				},
 			},
 			wantUpdate: &AsyncUpdateID{
@@ -819,16 +819,16 @@ func TestIndex_UpdateAttributesForFaceting(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 
-			gotResp, err := i.GetAttributesForFaceting()
+			gotResp, err := i.GetFilterableAttributes()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotUpdate, err := i.UpdateAttributesForFaceting(&tt.args.request)
+			gotUpdate, err := i.UpdateFilterableAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.Equal(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
-			gotResp, err = i.GetAttributesForFaceting()
+			gotResp, err = i.GetFilterableAttributes()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 			deleteAllIndexes(c)
@@ -889,7 +889,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 
 			gotUpdate, err := i.UpdateDisplayedAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err = i.GetDisplayedAttributes()
@@ -916,7 +916,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 			args: args{
 				UID:     "indexUID",
 				client:  defaultClient,
-				request: "",
+				request: "movie_id",
 			},
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
@@ -927,7 +927,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 			args: args{
 				UID:     "indexUID",
 				client:  customClient,
-				request: "",
+				request: "movie_id",
 			},
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
@@ -946,7 +946,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 
 			gotUpdate, err := i.UpdateDistinctAttribute(tt.args.request)
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err = i.GetDistinctAttribute()
@@ -981,7 +981,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
 			},
-			wantResp: &[]string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"},
+			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
 		},
 		{
 			name: "TestIndexUpdateRankingRulesWithCustomClient",
@@ -995,7 +995,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
 			},
-			wantResp: &[]string{"typo", "words", "proximity", "attribute", "wordsPosition", "exactness"},
+			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
 		},
 	}
 	for _, tt := range tests {
@@ -1010,7 +1010,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 
 			gotUpdate, err := i.UpdateRankingRules(&tt.args.request)
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err = i.GetRankingRules()
@@ -1074,7 +1074,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 
 			gotUpdate, err := i.UpdateSearchableAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err = i.GetSearchableAttributes()
@@ -1119,7 +1119,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					Synonyms: map[string][]string{
 						"hp": {"harry potter"},
 					},
-					AttributesForFaceting: []string{
+					FilterableAttributes: []string{
 						"title",
 					},
 				},
@@ -1129,14 +1129,14 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 		{
@@ -1161,7 +1161,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					Synonyms: map[string][]string{
 						"hp": {"harry potter"},
 					},
-					AttributesForFaceting: []string{
+					FilterableAttributes: []string{
 						"title",
 					},
 				},
@@ -1171,14 +1171,14 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 	}
@@ -1194,7 +1194,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 
 			gotUpdate, err := i.UpdateSettings(&tt.args.request)
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err = i.GetSettings()
@@ -1221,7 +1221,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 		wantResp   *Settings
 	}{
 		{
-			name: "TestIndexUpdateSynonyms",
+			name: "TestIndexUpdateJustSynonyms",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
@@ -1244,7 +1244,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms: map[string][]string{
 						"hp": {"harry potter"},
 					},
-					AttributesForFaceting: []string{},
+					FilterableAttributes: []string{},
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1262,7 +1262,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms: map[string][]string{
 						"al": {"alice"},
 					},
-					AttributesForFaceting: []string{},
+					FilterableAttributes: []string{},
 				},
 			},
 			wantUpdate: &AsyncUpdateID{
@@ -1270,18 +1270,18 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 		{
-			name: "TestIndexUpdateSynonymsWithCustomClient",
+			name: "TestIndexUpdateJustSynonymsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
 				client: customClient,
@@ -1304,7 +1304,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms: map[string][]string{
 						"hp": {"harry potter"},
 					},
-					AttributesForFaceting: []string{},
+					FilterableAttributes: []string{},
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1322,7 +1322,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms: map[string][]string{
 						"al": {"alice"},
 					},
-					AttributesForFaceting: []string{},
+					FilterableAttributes: []string{},
 				},
 			},
 			wantUpdate: &AsyncUpdateID{
@@ -1330,14 +1330,14 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 		{
@@ -1350,7 +1350,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"typo", "words",
 					},
 					SearchableAttributes: []string{
-						"title", "tag",
+						"tag",
 					},
 				},
 				firstResponse: Settings{
@@ -1359,12 +1359,12 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					DistinctAttribute: (*string)(nil),
 					SearchableAttributes: []string{
-						"title", "tag",
+						"tag",
 					},
-					DisplayedAttributes:   []string{"*"},
-					StopWords:             []string{},
-					Synonyms:              map[string][]string(nil),
-					AttributesForFaceting: []string{},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
 				},
 				secondRequest: Settings{
 					SearchableAttributes: []string{
@@ -1379,10 +1379,10 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{
 						"title",
 					},
-					DisplayedAttributes:   []string{"*"},
-					StopWords:             []string{},
-					Synonyms:              map[string][]string(nil),
-					AttributesForFaceting: []string{},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
 				},
 			},
 			wantUpdate: &AsyncUpdateID{
@@ -1390,14 +1390,14 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 		{
@@ -1422,9 +1422,9 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					DisplayedAttributes: []string{
 						"book_id", "tag", "title",
 					},
-					StopWords:             []string{},
-					Synonyms:              map[string][]string(nil),
-					AttributesForFaceting: []string{},
+					StopWords:            []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
 				},
 				secondRequest: Settings{
 					DisplayedAttributes: []string{
@@ -1440,9 +1440,9 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					DisplayedAttributes: []string{
 						"book_id", "tag",
 					},
-					StopWords:             []string{},
-					Synonyms:              map[string][]string(nil),
-					AttributesForFaceting: []string{},
+					StopWords:            []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
 				},
 			},
 			wantUpdate: &AsyncUpdateID{
@@ -1450,14 +1450,14 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 		{
@@ -1483,8 +1483,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					StopWords: []string{
 						"of", "the",
 					},
-					Synonyms:              map[string][]string(nil),
-					AttributesForFaceting: []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
 				},
 				secondRequest: Settings{
 					StopWords: []string{
@@ -1501,8 +1501,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					StopWords: []string{
 						"of", "the",
 					},
-					Synonyms:              map[string][]string(nil),
-					AttributesForFaceting: []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
 				},
 			},
 			wantUpdate: &AsyncUpdateID{
@@ -1510,18 +1510,18 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 		{
-			name: "TestIndexUpdateJustAttributesForFaceting",
+			name: "TestIndexUpdateJustFilterableAttributes",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
@@ -1529,7 +1529,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					AttributesForFaceting: []string{
+					FilterableAttributes: []string{
 						"title",
 					},
 				},
@@ -1542,13 +1542,13 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
 					Synonyms:             map[string][]string(nil),
-					AttributesForFaceting: []string{
+					FilterableAttributes: []string{
 						"title",
 					},
 				},
 				secondRequest: Settings{
-					AttributesForFaceting: []string{
-						"title", "tag",
+					FilterableAttributes: []string{
+						"title",
 					},
 				},
 				secondResponse: Settings{
@@ -1560,8 +1560,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
 					Synonyms:             map[string][]string(nil),
-					AttributesForFaceting: []string{
-						"title", "tag",
+					FilterableAttributes: []string{
+						"title",
 					},
 				},
 			},
@@ -1570,74 +1570,14 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
+					"words", "typo", "proximity", "attribute", "exactness",
 				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
-			},
-		},
-		{
-			name: "TestIndexUpdateJustAttributesForFaceting",
-			args: args{
-				UID:    "indexUID",
-				client: defaultClient,
-				firstRequest: Settings{
-					RankingRules: []string{
-						"typo", "words",
-					},
-					AttributesForFaceting: []string{
-						"title",
-					},
-				},
-				firstResponse: Settings{
-					RankingRules: []string{
-						"typo", "words",
-					},
-					DistinctAttribute:    (*string)(nil),
-					SearchableAttributes: []string{"*"},
-					DisplayedAttributes:  []string{"*"},
-					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
-					AttributesForFaceting: []string{
-						"title",
-					},
-				},
-				secondRequest: Settings{
-					AttributesForFaceting: []string{
-						"title", "tag",
-					},
-				},
-				secondResponse: Settings{
-					RankingRules: []string{
-						"typo", "words",
-					},
-					DistinctAttribute:    (*string)(nil),
-					SearchableAttributes: []string{"*"},
-					DisplayedAttributes:  []string{"*"},
-					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
-					AttributesForFaceting: []string{
-						"title", "tag",
-					},
-				},
-			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
-			},
-			wantResp: &Settings{
-				RankingRules: []string{
-					"typo", "words", "proximity", "attribute", "wordsPosition", "exactness",
-				},
-				DistinctAttribute:     (*string)(nil),
-				SearchableAttributes:  []string{"*"},
-				DisplayedAttributes:   []string{"*"},
-				StopWords:             []string{},
-				Synonyms:              map[string][]string(nil),
-				AttributesForFaceting: []string{},
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
 			},
 		},
 	}
@@ -1653,7 +1593,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 
 			gotUpdate, err := i.UpdateSettings(&tt.args.firstRequest)
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err = i.GetSettings()
@@ -1687,9 +1627,11 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 		{
 			name: "TestIndexBasicUpdateStopWords",
 			args: args{
-				UID:     "indexUID",
-				client:  defaultClient,
-				request: []string{},
+				UID:    "indexUID",
+				client: defaultClient,
+				request: []string{
+					"of", "the", "to",
+				},
 			},
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
@@ -1698,9 +1640,11 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 		{
 			name: "TestIndexUpdateStopWordsWithCustomClient",
 			args: args{
-				UID:     "indexUID",
-				client:  customClient,
-				request: []string{},
+				UID:    "indexUID",
+				client: customClient,
+				request: []string{
+					"of", "the", "to",
+				},
 			},
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
@@ -1719,7 +1663,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 
 			gotUpdate, err := i.UpdateStopWords(&tt.args.request)
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err = i.GetStopWords()
@@ -1744,9 +1688,11 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 		{
 			name: "TestIndexBasicUpdateSynonyms",
 			args: args{
-				UID:     "indexUID",
-				client:  defaultClient,
-				request: map[string][]string{},
+				UID:    "indexUID",
+				client: defaultClient,
+				request: map[string][]string{
+					"wolverine": []string{"logan", "xmen"},
+				},
 			},
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
@@ -1755,9 +1701,11 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 		{
 			name: "TestIndexUpdateSynonymsWithCustomClient",
 			args: args{
-				UID:     "indexUID",
-				client:  customClient,
-				request: map[string][]string{},
+				UID:    "indexUID",
+				client: customClient,
+				request: map[string][]string{
+					"wolverine": []string{"logan", "xmen"},
+				},
 			},
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
@@ -1776,7 +1724,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 
 			gotUpdate, err := i.UpdateSynonyms(&tt.args.request)
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			i.DefaultWaitForPendingUpdate(gotUpdate)
 
 			gotResp, err = i.GetSynonyms()

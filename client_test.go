@@ -28,6 +28,7 @@ func TestClient_Version(t *testing.T) {
 			gotResp, err := tt.client.GetVersion()
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "Version() should not return nil value")
+			require.Equal(t, "0.21.0", gotResp.PkgVersion)
 		})
 	}
 }

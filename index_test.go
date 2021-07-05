@@ -60,9 +60,9 @@ func TestIndex_Delete(t *testing.T) {
 					Method:           "DELETE",
 					Function:         "Delete",
 					RequestToString:  "empty request",
-					ResponseToString: "{\"message\":\"Index 1 not found\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+					ResponseToString: "{\"message\":\"Index \\\"1\\\" not found.\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
 					MeilisearchApiMessage: meilisearchApiMessage{
-						Message:   "Index 1 not found",
+						Message:   "Index \"1\" not found.",
 						ErrorCode: "index_not_found",
 						ErrorType: "invalid_request_error",
 						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
@@ -88,9 +88,9 @@ func TestIndex_Delete(t *testing.T) {
 					Method:           "DELETE",
 					Function:         "Delete",
 					RequestToString:  "empty request",
-					ResponseToString: "{\"message\":\"Index 1 not found\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+					ResponseToString: "{\"message\":\"Index \\\"1\\\" not found.\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
 					MeilisearchApiMessage: meilisearchApiMessage{
-						Message:   "Index 1 not found",
+						Message:   "Index \"1\" not found.",
 						ErrorCode: "index_not_found",
 						ErrorType: "invalid_request_error",
 						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
@@ -106,9 +106,9 @@ func TestIndex_Delete(t *testing.T) {
 					Method:           "DELETE",
 					Function:         "Delete",
 					RequestToString:  "empty request",
-					ResponseToString: "{\"message\":\"Index 2 not found\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+					ResponseToString: "{\"message\":\"Index \\\"2\\\" not found.\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
 					MeilisearchApiMessage: meilisearchApiMessage{
-						Message:   "Index 2 not found",
+						Message:   "Index \"2\" not found.",
 						ErrorCode: "index_not_found",
 						ErrorType: "invalid_request_error",
 						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
@@ -123,9 +123,9 @@ func TestIndex_Delete(t *testing.T) {
 					Method:           "DELETE",
 					Function:         "Delete",
 					RequestToString:  "empty request",
-					ResponseToString: "{\"message\":\"Index 3 not found\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+					ResponseToString: "{\"message\":\"Index \\\"3\\\" not found.\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
 					MeilisearchApiMessage: meilisearchApiMessage{
-						Message:   "Index 3 not found",
+						Message:   "Index \"3\" not found.",
 						ErrorCode: "index_not_found",
 						ErrorType: "invalid_request_error",
 						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
@@ -179,6 +179,7 @@ func TestIndex_GetStats(t *testing.T) {
 			wantResp: &StatsIndex{
 				NumberOfDocuments: 6,
 				IsIndexing:        false,
+				FieldDistribution: map[string]int64{"book_id": 6, "title": 6},
 			},
 		},
 		{
@@ -190,6 +191,7 @@ func TestIndex_GetStats(t *testing.T) {
 			wantResp: &StatsIndex{
 				NumberOfDocuments: 6,
 				IsIndexing:        false,
+				FieldDistribution: map[string]int64{"book_id": 6, "title": 6},
 			},
 		},
 	}

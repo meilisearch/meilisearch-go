@@ -17,7 +17,6 @@ func TestIndex_AddDocuments(t *testing.T) {
 		name          string
 		args          args
 		wantResp      *AsyncUpdateID
-		wantErr       bool
 		expectedError Error
 	}{
 		{
@@ -52,9 +51,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 				UID:    "2",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
+					{"ID": "1", "Name": "Alice In Wonderland"},
 					{"ID": "123", "Name": "Pride and Prejudice"},
 					{"ID": "456", "Name": "Le Petit Prince"},
-					{"ID": "1", "Name": "Alice In Wonderland"},
 				},
 			},
 			wantResp: &AsyncUpdateID{
@@ -93,48 +92,14 @@ func TestIndex_AddDocuments(t *testing.T) {
 				UID:    "5",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
+					{"BookID": float64(1), "Title": "Alice In Wonderland"},
 					{"BookID": float64(123), "Title": "Pride and Prejudice"},
 					{"BookID": float64(456), "Title": "Le Petit Prince", "Tag": "Conte"},
-					{"BookID": float64(1), "Title": "Alice In Wonderland"},
 				},
 			},
 			wantResp: &AsyncUpdateID{
 				UpdateID: 0,
 			},
-		},
-		{
-			name: "TestIndexAddDocumentsMissingPrimaryKey",
-			args: args{
-				UID:    "6",
-				client: defaultClient,
-				documentsPtr: []map[string]interface{}{
-					{"Key": float64(123), "Title": "Pride and Prejudice"},
-					{"Key": float64(456), "Title": "Le Petit Prince", "Tag": "Conte"},
-					{"Key": float64(1), "Title": "Alice In Wonderland"},
-				},
-			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
-			},
-			wantErr: true,
-			expectedError: Error(Error{
-				Endpoint:         "/indexes/6/documents",
-				Method:           "POST",
-				Function:         "AddDocuments",
-				RequestToString:  "[{\"Key\":123,\"Title\":\"Pride and Prejudice\"},{\"Key\":456,\"Tag\":\"Conte\",\"Title\":\"Le Petit Prince\"},{\"Key\":1,\"Title\":\"Alice In Wonderland\"}]",
-				ResponseToString: "{\"message\":\"schema cannot be built without a primary key\",\"errorCode\":\"missing_primary_key\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#missing_primary_key\"}",
-				MeilisearchApiMessage: meilisearchApiMessage{
-					Message:   "schema cannot be built without a primary key",
-					ErrorCode: "missing_primary_key",
-					ErrorType: "invalid_request_error",
-					ErrorLink: "https://docs.meilisearch.com/errors#missing_primary_key",
-				},
-				StatusCode:         400,
-				StatusCodeExpected: []int{202},
-				rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
-				OriginError:        error(nil),
-				ErrCode:            4,
-			}),
 		},
 	}
 	for _, tt := range tests {
@@ -143,20 +108,15 @@ func TestIndex_AddDocuments(t *testing.T) {
 			i := c.Index(tt.args.UID)
 
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr)
-			if tt.wantErr {
-				require.Error(t, err)
-				require.Equal(t, &tt.expectedError, err)
-			} else {
-				require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
-				require.NoError(t, err)
-				i.DefaultWaitForPendingUpdate(gotResp)
+			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
+			require.NoError(t, err)
+			i.DefaultWaitForPendingUpdate(gotResp)
+			var documents []map[string]interface{}
+			i.GetDocuments(&DocumentsRequest{
+				Limit: 3,
+			}, &documents)
+			require.Equal(t, tt.args.documentsPtr, documents)
 
-				var documents []map[string]interface{}
-				i.GetDocuments(&DocumentsRequest{
-					Limit: 3,
-				}, &documents)
-				require.Equal(t, tt.args.documentsPtr, documents)
-			}
 			deleteAllIndexes(c)
 		})
 	}
@@ -208,9 +168,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				UID:    "3",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
+					{"key": "1", "Name": "Alice In Wonderland"},
 					{"key": "123", "Name": "Pride and Prejudice"},
 					{"key": "456", "Name": "Le Petit Prince"},
-					{"key": "1", "Name": "Alice In Wonderland"},
 				},
 				primaryKey: "key",
 			},
@@ -238,9 +198,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				UID:    "5",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
+					{"key": float64(1), "Name": "Alice In Wonderland"},
 					{"key": float64(123), "Name": "Pride and Prejudice"},
 					{"key": float64(456), "Name": "Le Petit Prince"},
-					{"key": float64(1), "Name": "Alice In Wonderland"},
 				},
 				primaryKey: "key",
 			},
