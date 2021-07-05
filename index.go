@@ -212,7 +212,7 @@ func (i Index) WaitForPendingUpdate(
 		if err != nil {
 			return UpdateStatusUnknown, nil
 		}
-		if update.Status != UpdateStatusEnqueued {
+		if update.Status != UpdateStatusEnqueued && update.Status != UpdateStatusProcessing {
 			return update.Status, nil
 		}
 		time.Sleep(interval)

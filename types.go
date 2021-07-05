@@ -75,6 +75,8 @@ const (
 	UpdateStatusUnknown UpdateStatus = "unknown"
 	// UpdateStatusEnqueued means the server know the update but didn't handle it yet
 	UpdateStatusEnqueued UpdateStatus = "enqueued"
+	// UpdateStatusProcessing means the server is processing the update and all went well
+	UpdateStatusProcessing UpdateStatus = "processing"
 	// UpdateStatusProcessed means the server has processed the update and all went well
 	UpdateStatusProcessed UpdateStatus = "processed"
 	// UpdateStatusFailed means the server has processed the update and an error has been reported
