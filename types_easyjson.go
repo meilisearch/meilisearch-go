@@ -1601,6 +1601,14 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo11(in *jlexer.Lexer,
 			out.UID = string(in.String())
 		case "status":
 			out.Status = string(in.String())
+		case "startedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.StartedAt).UnmarshalJSON(data))
+			}
+		case "finishedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.FinishedAt).UnmarshalJSON(data))
+			}
 		default:
 			in.SkipRecursive()
 		}

@@ -112,8 +112,10 @@ type Keys struct {
 //
 // Documentation: https://docs.meilisearch.com/reference/api/dump.html
 type Dump struct {
-	UID    string `json:"uid"`
-	Status string `json:"status"`
+	UID        string    `json:"uid"`
+	Status     string    `json:"status"`
+	StartedAt  time.Time `json:"startedAt"`
+	FinishedAt time.Time `json:"finishedAt"`
 }
 
 //
