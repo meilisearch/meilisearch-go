@@ -48,9 +48,9 @@ type Settings struct {
 
 // Version is the type that represents the versions in MeiliSearch
 type Version struct {
-	CommitSha  string    `json:"commitSha"`
-	BuildDate  time.Time `json:"buildDate"`
-	PkgVersion string    `json:"pkgVersion"`
+	CommitSha  string `json:"commitSha"`
+	CommitDate string `json:"commitDate"`
+	PkgVersion string `json:"pkgVersion"`
 }
 
 // StatsIndex is the type that represent the stats of an index in MeiliSearch

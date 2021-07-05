@@ -38,10 +38,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo(in *jlexer.Lexer, o
 		switch key {
 		case "commitSha":
 			out.CommitSha = string(in.String())
-		case "buildDate":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.BuildDate).UnmarshalJSON(data))
-			}
+		case "commitDate":
+			out.CommitDate = string(in.String())
 		case "pkgVersion":
 			out.PkgVersion = string(in.String())
 		default:
@@ -64,9 +62,9 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo(out *jwriter.Writer
 		out.String(string(in.CommitSha))
 	}
 	{
-		const prefix string = ",\"buildDate\":"
+		const prefix string = ",\"commitDate\":"
 		out.RawString(prefix)
-		out.Raw((in.BuildDate).MarshalJSON())
+		out.String(string(in.CommitDate))
 	}
 	{
 		const prefix string = ",\"pkgVersion\":"
@@ -1632,6 +1630,16 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo11(out *jwriter.Writ
 		const prefix string = ",\"status\":"
 		out.RawString(prefix)
 		out.String(string(in.Status))
+	}
+	{
+		const prefix string = ",\"startedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.StartedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"finishedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.FinishedAt).MarshalJSON())
 	}
 	out.RawByte('}')
 }
