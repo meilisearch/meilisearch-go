@@ -14,8 +14,8 @@ type ClientConfig struct {
 	// Example: 'http://localhost:7700'
 	Host string
 
-	// ApiKey is optional
-	ApiKey string
+	// APIKey is optional
+	APIKey string
 
 	// Timeout is optional
 	Timeout time.Duration

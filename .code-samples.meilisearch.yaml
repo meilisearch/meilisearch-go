@@ -9,7 +9,7 @@ list_all_indexes_1: |-
   client.GetAllIndexes()
 create_an_index_1: |-
   client.CreateIndex(&meilisearch.IndexConfig{
-    UID: "movies",
+    Uid: "movies",
     PrimaryKey: "movie_id",
   })
 update_an_index_1: |-
@@ -104,7 +104,7 @@ update_settings_1: |-
       "logan":     []string{"wolverine"},
     },
   }
-  client.Index("movies").UpdateSettings(settings)
+  client.Index("movies").UpdateSettings(&settings)
 reset_settings_1: |-
   client.Index("movies").ResetSettings()
 get_synonyms_1: |-
@@ -115,7 +115,7 @@ update_synonyms_1: |-
     "logan":     []string{"wolverine", "xmen"},
     "wow":       []string{"world of warcraft"},
   }
-  client.Index("movies").UpdateSynonyms(synonyms)
+  client.Index("movies").UpdateSynonyms(&synonyms)
 reset_synonyms_1: |-
   client.Index("movies").ResetSynonyms()
 get_stop_words_1: |-
@@ -138,7 +138,7 @@ update_ranking_rules_1: |-
     "asc(release_date)",
     "desc(rank)",
   }
-  client.Index("movies").UpdateRankingRules(rankingRules)
+  client.Index("movies").UpdateRankingRules(&rankingRules)
 reset_ranking_rules_1: |-
   client.Index("movies").ResetRankingRules()
 get_distinct_attribute_1: |-
@@ -155,19 +155,19 @@ update_searchable_attributes_1: |-
     "description",
     "genre",
   }
-  client.Index("movies").UpdateSearchableAttributes(searchableAttributes)
+  client.Index("movies").UpdateSearchableAttributes(&searchableAttributes)
 reset_searchable_attributes_1: |-
   client.Index("movies").ResetSearchableAttributes()
 get_attributes_for_faceting_1: |-
-  client.Index("movies").GetAttributesForFaceting()
+  client.Index("movies").GetFilterableAttributes()
 update_attributes_for_faceting_1: |-
-  attributesForFaceting := []string{
+  filterableAttributes := []string{
     "genres",
     "director",
   }
-  client.Index("movies").UpdateAttributesForFaceting(attributesForFaceting)
+  client.Index("movies").UpdateFilterableAttributes(&filterableAttributes)
 reset_attributes_for_faceting_1: |-
-  client.Index("movies").ResetAttributesForFaceting()
+  client.Index("movies").ResetFilterableAttributes()
 get_displayed_attributes_1: |-
   client.Index("movies").GetDisplayedAttributes()
 update_displayed_attributes_1: |-
@@ -177,7 +177,7 @@ update_displayed_attributes_1: |-
     "genre",
     "release_date",
   }
-  client.Index("movies").UpdateDisplayedAttributes(displayedAttributes)
+  client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
 reset_displayed_attributes_1: |-
   client.Index("movies").ResetDisplayedAttributes()
 get_index_stats_1: |-
@@ -208,22 +208,22 @@ field_properties_guide_displayed_1: |-
 filtering_guide_1: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
     Query:   "Avengers",
-    Filters: "release_date > \"795484800\"",
+    Filter: "release_date > \"795484800\"",
   })
 filtering_guide_2: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
     Query:   "Batman",
-    Filters: "release_date > 795484800 AND (director = \"Tim Burton\" OR director = \"Christopher Nolan\")",
+    Filter: "release_date > 795484800 AND (director = \"Tim Burton\" OR director = \"Christopher Nolan\")",
   })
 filtering_guide_3: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
     Query:   "horror",
-    Filters: "director = \"Jordan Peele\"",
+    Filter: "director = \"Jordan Peele\"",
   })
 filtering_guide_4: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
     Query:   "Planet of the Apes",
-    Filters: "rating >= 3 AND (NOT director = \"Tim Burton\"",
+    Filter: "rating >= 3 AND (NOT director = \"Tim Burton\"",
   })
 search_parameter_guide_query_1: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
@@ -258,17 +258,17 @@ search_parameter_guide_highlight_1: |-
 search_parameter_guide_filter_1: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
     Query:   "n",
-    Filters: "title = Nightshift",
+    Filter: "title = Nightshift",
   })
 search_parameter_guide_filter_2: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
     Query:   "n",
-    Filters: "title=\"Kung Fu Panda\"",
+    Filter: "title=\"Kung Fu Panda\"",
   })
 search_parameter_guide_matches_1: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
     Query:                 "n",
-    Filters:               "title=\"Kung Fu Panda\"",
+    Filter:               "title=\"Kung Fu Panda\"",
     AttributesToHighlight: []string{"overview"},
     Matches:               true,
   })
@@ -327,7 +327,7 @@ search_guide_1: |-
 search_guide_2: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
     Query:   "Avengers",
-    Filters: "release_date > \"795484800\"",
+    Filter: "release_date > \"795484800\"",
   })
 getting_started_add_documents_md: |-
   ```bash
@@ -381,14 +381,14 @@ faceted_search_update_settings_1: |-
     "director",
     "genres",
   })
-faceted_search_facet_filters_1: |-
-  results, error := client.Index("movies").Search(meilisearch.SearchRequest{
-    Query: "thriller",
-    FacetFilters: [][]string{
-      []string{"genres:Horror", "genres:Mystery"},
-      []string{"director:Jordan Peele"},
-    },
-  })
+# faceted_search_facet_filters_1: |-
+#   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
+#     Query: "thriller",
+#     FacetFilter: [][]string{
+#       []string{"genres:Horror", "genres:Mystery"},
+#       []string{"director:Jordan Peele"},
+#     },
+#   })
 faceted_search_facets_distribution_1: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
     Query: "Batman",
@@ -403,14 +403,14 @@ faceted_search_walkthrough_attributes_for_faceting_1: |-
     "genres",
     "production_companies",
   })
-faceted_search_walkthrough_facet_filters_1: |-
-  results, error := client.Index("movies").Search(meilisearch.SearchRequest{
-    Query: "thriller",
-    FacetFilters: [][]string{
-      []string{"genres:Horror", "genres:Mystery"},
-      []string{"director:Jordan Peele"},
-    },
-  })
+# faceted_search_walkthrough_facet_filters_1: |-
+#   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
+#     Query: "thriller",
+#     FacetFilter: [][]string{
+#       []string{"genres:Horror", "genres:Mystery"},
+#       []string{"director:Jordan Peele"},
+#     },
+#   })
 faceted_search_walkthrough_facets_distribution_1: |-
   results, error := client.Index("movies").Search(meilisearch.SearchRequest{
     Query: "Batman",
