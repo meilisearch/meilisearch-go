@@ -37,13 +37,13 @@ type Index struct {
 
 // Settings is the type that represents the settings in MeiliSearch
 type Settings struct {
-	RankingRules          []string            `json:"rankingRules,omitempty"`
-	DistinctAttribute     *string             `json:"distinctAttribute,omitempty"`
-	SearchableAttributes  []string            `json:"searchableAttributes,omitempty"`
-	DisplayedAttributes   []string            `json:"displayedAttributes,omitempty"`
-	StopWords             []string            `json:"stopWords,omitempty"`
-	Synonyms              map[string][]string `json:"synonyms,omitempty"`
-	AttributesForFaceting []string            `json:"attributesForFaceting,omitempty"`
+	RankingRules         []string            `json:"rankingRules,omitempty"`
+	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
+	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
+	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
+	StopWords            []string            `json:"stopWords,omitempty"`
+	Synonyms             map[string][]string `json:"synonyms,omitempty"`
+	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
 }
 
 // Version is the type that represents the versions in MeiliSearch

@@ -341,15 +341,15 @@ func (i Index) ResetSynonyms() (resp *AsyncUpdateID, err error) {
 	return resp, nil
 }
 
-func (i Index) GetAttributesForFaceting() (resp *[]string, err error) {
+func (i Index) GetFilterableAttributes() (resp *[]string, err error) {
 	resp = &[]string{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/settings/attributes-for-faceting",
+		endpoint:            "/indexes/" + i.UID + "/settings/filterable-attributes",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetAttributesForFaceting",
+		functionName:        "GetFilterableAttributes",
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
@@ -357,15 +357,15 @@ func (i Index) GetAttributesForFaceting() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateAttributesForFaceting(request *[]string) (resp *AsyncUpdateID, err error) {
+func (i Index) UpdateFilterableAttributes(request *[]string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/settings/attributes-for-faceting",
+		endpoint:            "/indexes/" + i.UID + "/settings/filterable-attributes",
 		method:              http.MethodPost,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "UpdateAttributesForFaceting",
+		functionName:        "UpdateFilterableAttributes",
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
@@ -373,15 +373,15 @@ func (i Index) UpdateAttributesForFaceting(request *[]string) (resp *AsyncUpdate
 	return resp, nil
 }
 
-func (i Index) ResetAttributesForFaceting() (resp *AsyncUpdateID, err error) {
+func (i Index) ResetFilterableAttributes() (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/settings/attributes-for-faceting",
+		endpoint:            "/indexes/" + i.UID + "/settings/filterable-attributes",
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "ResetAttributesForFaceting",
+		functionName:        "ResetFilterableAttributes",
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
