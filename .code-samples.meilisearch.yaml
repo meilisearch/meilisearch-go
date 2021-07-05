@@ -342,7 +342,7 @@ getting_started_add_documents_md: |-
     "encoding/json"
     "io/ioutil"
 
-	  "github.com/meilisearch/meilisearch-go"
+    "github.com/meilisearch/meilisearch-go"
   )
 
   func main() {
@@ -423,12 +423,12 @@ post_dump_1: |-
 get_dump_status_1: |-
   results, error := client.GetDumpStatus("dump-uid")
 add_movies_json_1: |-
-import (
-	"encoding/json"
-	"io/ioutil"
-)
+  import (
+    "encoding/json"
+    "io/ioutil"
+  )
 
-	file, _ := ioutil.ReadFile("movies.json")
+  file, _ := ioutil.ReadFile("movies.json")
 
   var movies interface{}
   json.Unmarshal([]byte(file), &movies)
