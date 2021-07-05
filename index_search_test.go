@@ -256,6 +256,119 @@ func TestIndex_Search(t *testing.T) {
 	}
 }
 
+func TestIndex_SearchFacets(t *testing.T) {
+	type args struct {
+		UID                  string
+		PrimaryKey           string
+		client               *Client
+		query                string
+		request              SearchRequest
+		filterableAttributes []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want *SearchResponse
+	}{
+		{
+			name: "TestIndexSearchWithFacetsDistribution",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "prince",
+				request: SearchRequest{
+					FacetsDistribution: []string{"*"},
+				},
+				filterableAttributes: []string{"tag"},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				NbHits:           2,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+				FacetsDistribution: map[string]interface{}(
+					map[string]interface{}{
+						"tag": map[string]interface{}{
+							"epic fantasy": float64(1),
+							"tale":         float64(1),
+						},
+					}),
+				ExhaustiveFacetsCount: interface{}(false),
+			},
+		},
+		{
+			name: "TestIndexSearchWithFacetsDistributionWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customClient,
+				query:  "prince",
+				request: SearchRequest{
+					FacetsDistribution: []string{"*"},
+				},
+				filterableAttributes: []string{"tag"},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				NbHits:           2,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+				FacetsDistribution: map[string]interface{}(
+					map[string]interface{}{
+						"tag": map[string]interface{}{
+							"epic fantasy": float64(1),
+							"tale":         float64(1),
+						},
+					}),
+				ExhaustiveFacetsCount: interface{}(false),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexForFaceting()
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+
+			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
+			require.NoError(t, err)
+			i.DefaultWaitForPendingUpdate(updateFilter)
+
+			got, err := i.Search(tt.args.query, &tt.args.request)
+			require.NoError(t, err)
+			require.Equal(t, len(tt.want.Hits), len(got.Hits))
+			for len := range got.Hits {
+				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
+				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+			}
+			require.Equal(t, tt.want.NbHits, got.NbHits)
+			require.Equal(t, tt.want.Offset, got.Offset)
+			require.Equal(t, tt.want.Limit, got.Limit)
+			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
+
+			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
+			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
+
+			deleteAllIndexes(c)
+		})
+	}
+}
+
 func TestIndex_SearchWithFilters(t *testing.T) {
 	type args struct {
 		UID                  string
@@ -438,32 +551,6 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				ExhaustiveNbHits: false,
 			},
 		},
-		// {
-		// 	name: "TestIndexSearchWithArrayFilter",
-		// 	args: args{
-		// 		UID:    "indexUID",
-		// 		client: defaultClient,
-		// 		query:  "",
-		// 		filterableAttributes: []string{
-		// 			"tag",
-		// 			"year",
-		// 		},
-		// 		request: SearchRequest{
-		// 			Filter: "tag = fantasy, year = 2005",
-		// 		},
-		// 	},
-		// 	want: &SearchResponse{
-		// 		Hits: []interface{}{
-		// 			map[string]interface{}{
-		// 				"book_id": float64(1), "title": "Alice In Wonderland",
-		// 			},
-		// 		},
-		// 		NbHits:           1,
-		// 		Offset:           0,
-		// 		Limit:            20,
-		// 		ExhaustiveNbHits: false,
-		// 	},
-		// },
 		{
 			name: "TestIndexSearchWithAttributeToHighlight",
 			args: args{
