@@ -335,18 +335,18 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo3(in *jlexer.Lexer, 
 			out.NumberOfDocuments = int64(in.Int64())
 		case "isIndexing":
 			out.IsIndexing = bool(in.Bool())
-		case "fieldsFrequency":
+		case "fieldDistribution":
 			if in.IsNull() {
 				in.Skip()
 			} else {
 				in.Delim('{')
-				out.FieldsFrequency = make(map[string]int64)
+				out.FieldDistribution = make(map[string]int64)
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
 					var v3 int64
 					v3 = int64(in.Int64())
-					(out.FieldsFrequency)[key] = v3
+					(out.FieldDistribution)[key] = v3
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -376,14 +376,14 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo3(out *jwriter.Write
 		out.Bool(bool(in.IsIndexing))
 	}
 	{
-		const prefix string = ",\"fieldsFrequency\":"
+		const prefix string = ",\"fieldDistribution\":"
 		out.RawString(prefix)
-		if in.FieldsFrequency == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
+		if in.FieldDistribution == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
 			out.RawString(`null`)
 		} else {
 			out.RawByte('{')
 			v4First := true
-			for v4Name, v4Value := range in.FieldsFrequency {
+			for v4Name, v4Value := range in.FieldDistribution {
 				if v4First {
 					v4First = false
 				} else {

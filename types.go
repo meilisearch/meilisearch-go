@@ -57,7 +57,7 @@ type Version struct {
 type StatsIndex struct {
 	NumberOfDocuments int64            `json:"numberOfDocuments"`
 	IsIndexing        bool             `json:"isIndexing"`
-	FieldsFrequency   map[string]int64 `json:"fieldsFrequency"`
+	FieldDistribution map[string]int64 `json:"fieldDistribution"`
 }
 
 // Stats is the type that represent all stats
