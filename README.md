@@ -79,7 +79,7 @@ func main() {
                 APIKey: "masterKey",
         })
 	// An index is where the documents are stored.
-	index := client.Index("indexUID")
+	index := client.Index("books")
 
 	// If the index 'books' does not exist, MeiliSearch creates it when you first add the documents.
 	documents := []map[string]interface{}{
