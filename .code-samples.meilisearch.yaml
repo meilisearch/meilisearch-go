@@ -58,7 +58,7 @@ delete_documents_1: |-
     "363869",
   })
 search_post_1: |-
-  client.Index("movies").Search("american ninja", nil)
+  client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
 search_get_1: |-
 
 get_update_1: |-
