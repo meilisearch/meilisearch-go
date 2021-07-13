@@ -60,7 +60,7 @@ delete_documents_1: |-
 search_post_1: |-
   client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
 search_get_1: |-
-
+  client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
 get_update_1: |-
   client.Index("movies").GetUpdateStatus(1)
 get_all_updates_1: |-
@@ -259,7 +259,7 @@ settings_guide_synonyms_1: |-
     "sweater": []string{"jumper"},
     "jumper":  []string{"sweater"},
   }
-  client.Index("movies").UpdateSynonyms(&synonyms)
+  client.Index("tops").UpdateSynonyms(&synonyms)
 settings_guide_stop_words_1: |-
   stopWords := []string{"the", "a", "an"}
   client.Index("movies").UpdateStopWords(&stopWords)
