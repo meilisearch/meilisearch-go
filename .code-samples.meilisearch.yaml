@@ -302,7 +302,7 @@ add_movies_json_1: |-
   var movies interface{}
   json.Unmarshal([]byte(file), &movies)
 
-  index.AddDocuments(&movies)
+  client.Index("movies").AddDocuments(&movies)
 documents_guide_add_movie_1: |-
   documents := []map[string]interface{}{
     {
@@ -355,6 +355,7 @@ getting_started_add_documents_md: |-
   }
 
   ```
+
   [About this SDK](https://github.com/meilisearch/meilisearch-go/)
 getting_started_search_md: |-
   ```go
@@ -408,4 +409,4 @@ post_dump_1: |-
 get_dump_status_1: |-
   results, err := client.GetDumpStatus("dump-uid")
 phrase_search_1: |-
-results, err := client.Index("movies").Search("\"neo\"", &meilisearch.SearchRequest{})
+  results, err := client.Index("movies").Search("\"neo\"", &meilisearch.SearchRequest{})
