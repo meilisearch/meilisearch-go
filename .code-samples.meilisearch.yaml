@@ -433,4 +433,4 @@ add_movies_json_1: |-
   var movies interface{}
   json.Unmarshal([]byte(file), &movies)
 
-  index.AddDocuments(&movies)
+  client.Index("movies").AddDocuments(&movies)
