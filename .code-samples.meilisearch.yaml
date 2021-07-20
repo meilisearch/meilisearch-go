@@ -275,7 +275,7 @@ settings_guide_ranking_rules_1: |-
   }
   client.Index("movies").UpdateRankingRules(&rankingRules)
 settings_guide_distinct_1: |-
-  client.Index("movies").UpdateDistinctAttribute("movie_id")
+  client.Index("jackets").UpdateDistinctAttribute("product_id")
 settings_guide_searchable_1: |-
   searchableAttributes := []string{
     "title",
