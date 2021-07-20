@@ -29,7 +29,7 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	if request.Matches {
 		searchPostRequestParams["matches"] = request.Matches
 	}
-	if request.Filter != "" {
+	if request.Filter != nil {
 		searchPostRequestParams["filter"] = request.Filter
 	}
 	if request.Offset != 0 {

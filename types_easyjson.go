@@ -1178,7 +1178,13 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo7(in *jlexer.Lexer, 
 				in.Delim(']')
 			}
 		case "Filter":
-			out.Filter = string(in.String())
+			if m, ok := out.Filter.(easyjson.Unmarshaler); ok {
+				m.UnmarshalEasyJSON(in)
+			} else if m, ok := out.Filter.(json.Unmarshaler); ok {
+				_ = m.UnmarshalJSON(in.Raw())
+			} else {
+				out.Filter = in.Interface()
+			}
 		case "Matches":
 			out.Matches = bool(in.Bool())
 		case "FacetsDistribution":
@@ -1286,7 +1292,13 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo7(out *jwriter.Write
 	{
 		const prefix string = ",\"Filter\":"
 		out.RawString(prefix)
-		out.String(string(in.Filter))
+		if m, ok := in.Filter.(easyjson.Marshaler); ok {
+			m.MarshalEasyJSON(out)
+		} else if m, ok := in.Filter.(json.Marshaler); ok {
+			out.Raw(m.MarshalJSON())
+		} else {
+			out.Raw(json.Marshal(in.Filter))
+		}
 	}
 	{
 		const prefix string = ",\"Matches\":"

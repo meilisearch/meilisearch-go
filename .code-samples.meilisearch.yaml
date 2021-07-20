@@ -187,7 +187,7 @@ get_health_1: |-
 get_version_1: |-
   client.GetVersion()
 distinct_attribute_guide_1: |-
-  client.Index("movies").UpdateDistinctAttribute("product_id")
+  client.Index("jackets").UpdateDistinctAttribute("product_id")
 field_properties_guide_searchable_1: |-
   searchableAttributes := []string{
     "title",
@@ -409,4 +409,4 @@ post_dump_1: |-
 get_dump_status_1: |-
   results, err := client.GetDumpStatus("dump-uid")
 phrase_search_1: |-
-  results, err := client.Index("movies").Search("\"neo\"", &meilisearch.SearchRequest{})
+  results, err := client.Index("movies").Search("\"african american\" horror", &meilisearch.SearchRequest{})
