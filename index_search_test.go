@@ -434,6 +434,62 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			},
 		},
 		{
+			name: "TestIndexSearchWithFilterArray",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "and",
+				filterableAttributes: []string{
+					"year",
+				},
+				request: SearchRequest{
+					Filter: []string{
+						"year = 2005",
+					},
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchWithFilterMultipleArray",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "and",
+				filterableAttributes: []string{
+					"year",
+					"tag",
+				},
+				request: SearchRequest{
+					Filter: [][]string{
+						[]string{"year < 1850"},
+						[]string{"tag = romance"},
+					},
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(123), "title": "Pride and Prejudice",
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
 			name: "TestIndexSearchWithMultipleFilter",
 			args: args{
 				UID:    "indexUID",
