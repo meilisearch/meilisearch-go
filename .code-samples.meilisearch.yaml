@@ -59,8 +59,6 @@ delete_documents_1: |-
   })
 search_post_1: |-
   client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
-search_get_1: |-
-  client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
 get_update_1: |-
   client.Index("movies").GetUpdateStatus(1)
 get_all_updates_1: |-
