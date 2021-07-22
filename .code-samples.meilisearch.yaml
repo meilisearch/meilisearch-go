@@ -204,54 +204,54 @@ field_properties_guide_displayed_1: |-
   }
   client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
 filtering_guide_1: |-
-  results, err := client.Index("movies").Search("Avengers", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("Avengers", &meilisearch.SearchRequest{
     Filters: "release_date > \"795484800\"",
   })
 filtering_guide_2: |-
-  results, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
     Filters: "release_date > 795484800 AND (director = \"Tim Burton\" OR director = \"Christopher Nolan\")",
   })
 filtering_guide_3: |-
-  results, err := client.Index("movies").Search("horror", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("horror", &meilisearch.SearchRequest{
     Filters: "director = \"Jordan Peele\"",
   })
 filtering_guide_4: |-
-  results, err := client.Index("movies").Search("Planet of the Apes", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("Planet of the Apes", &meilisearch.SearchRequest{
     Filters: "rating >= 3 AND (NOT director = \"Tim Burton\"",
   })
 search_parameter_guide_query_1: |-
-  results, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{})
+  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{})
 search_parameter_guide_offset_1: |-
-  results, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
     Offset: 1,
   })
 search_parameter_guide_limit_1: |-
-  results, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
     Limit: 2,
   })
 search_parameter_guide_retrieve_1: |-
-  results, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
     AttributesToRetrieve: []string{"overview", "title"},
   })
 search_parameter_guide_crop_1: |-
-  results, err := client.Index("movies").Search("shifu" &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("shifu" &meilisearch.SearchRequest{
     AttributesToCrop: []string{"overview"},
     CropLength:       10,
   })
 search_parameter_guide_highlight_1: |-
-  results, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
     AttributesToHighlight: []string{"overview"},
   })
 search_parameter_guide_filter_1: |-
-  results, err := client.Index("movies").Search("n", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("n", &meilisearch.SearchRequest{
     Filters: "title = Nightshift",
   })
 search_parameter_guide_filter_2: |-
-  results, err := client.Index("movies").Search("n", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("n", &meilisearch.SearchRequest{
     Filters: "title = \"Kung Fu Panda\"",
   })
 search_parameter_guide_matches_1: |-
-  results, error := client.Index("movies").Search("n", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("n", &meilisearch.SearchRequest{
     Filters:               "title=\"Kung Fu Panda\"",
     AttributesToHighlight: []string{"overview"},
     Matches:               true,
@@ -315,12 +315,12 @@ documents_guide_add_movie_1: |-
   }
   client.Index("movies").AddDocuments(documents)
 search_guide_1: |-
-  results, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
     Limit:  5,
     Offset: 10,
   })
 search_guide_2: |-
-  results, err := client.Index("movies").Search("Avengers", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("Avengers", &meilisearch.SearchRequest{
     Filters: "release_date > \"795484800\"",
   })
 getting_started_add_documents_md: |-
@@ -361,7 +361,7 @@ getting_started_add_documents_md: |-
   [About this SDK](https://github.com/meilisearch/meilisearch-go/)
 getting_started_search_md: |-
   ```go
-  results, err := client.Index("movies").Search("botman", &meilisearch.SearchRequest{})
+  resp, err := client.Index("movies").Search("botman", &meilisearch.SearchRequest{})
   if err != nil {
       panic(err)
   }
@@ -369,44 +369,44 @@ getting_started_search_md: |-
 
   [About this SDK](https://github.com/meilisearch/meilisearch-go/)
 faceted_search_update_settings_1: |-
-  response, err := client.Index("movies").UpdateAttributesForFaceting(&[]string{
+  resp, err := client.Index("movies").UpdateAttributesForFaceting(&[]string{
     "director",
     "genres",
   })
 faceted_search_facet_filters_1: |-
-  results, err := client.Index("movies").Search("thriller", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("thriller", &meilisearch.SearchRequest{
     FacetFilters: [][]string{
       []string{"genres:Horror", "genres:Mystery"},
       []string{"director:Jordan Peele"},
     },
   })
 faceted_search_facets_distribution_1: |-
-  results, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
     FacetsDistribution: []string{
       "genres",
     },
   })
 faceted_search_walkthrough_attributes_for_faceting_1: |-
-  response, err := client.Index("movies").UpdateAttributesForFaceting(&[]string{
+  resp, err := client.Index("movies").UpdateAttributesForFaceting(&[]string{
     "director",
     "producer",
     "genres",
     "production_companies",
   })
 faceted_search_walkthrough_facet_filters_1: |-
-  results, err := client.Index("movies").Search("thriller", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("thriller", &meilisearch.SearchRequest{
     FacetFilters: [][]string{
       []string{"genres:Horror", "genres:Mystery"},
       []string{"director:Jordan Peele"},
     },
   })
 faceted_search_walkthrough_facets_distribution_1: |-
-  results, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
     FacetsDistribution: []string{
       "genres",
     },
   })
 post_dump_1: |-
-  results, err := client.CreateDump()
+  resp, err := client.CreateDump()
 get_dump_status_1: |-
-  results, err := client.GetDumpStatus("dump-uid")
+  resp, err := client.GetDumpStatus("dump-uid")
