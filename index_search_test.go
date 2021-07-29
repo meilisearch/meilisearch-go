@@ -297,8 +297,8 @@ func TestIndex_SearchFacets(t *testing.T) {
 				FacetsDistribution: map[string]interface{}(
 					map[string]interface{}{
 						"tag": map[string]interface{}{
-							"epic fantasy": float64(1),
-							"tale":         float64(1),
+							"Epic fantasy": float64(1),
+							"Tale":         float64(1),
 						},
 					}),
 				ExhaustiveFacetsCount: interface{}(false),
@@ -331,8 +331,8 @@ func TestIndex_SearchFacets(t *testing.T) {
 				FacetsDistribution: map[string]interface{}(
 					map[string]interface{}{
 						"tag": map[string]interface{}{
-							"epic fantasy": float64(1),
-							"tale":         float64(1),
+							"Epic fantasy": float64(1),
+							"Tale":         float64(1),
 						},
 					}),
 				ExhaustiveFacetsCount: interface{}(false),
