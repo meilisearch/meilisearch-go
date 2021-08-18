@@ -162,6 +162,7 @@ func TestClient_CreateIndex(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
+			t.Cleanup(cleanup(c))
 			SetUpBasicIndex()
 
 			gotResp, err := c.CreateIndex(&tt.args.config)
@@ -175,8 +176,6 @@ func TestClient_CreateIndex(t *testing.T) {
 					require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
 				}
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -245,7 +244,8 @@ func TestClient_DeleteIndex(t *testing.T) {
 					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
 					OriginError:        error(nil),
 					ErrCode:            4,
-				})},
+				}),
+			},
 		},
 		{
 			name:   "TestMultipleNotExistingDeleteIndex",
@@ -265,7 +265,8 @@ func TestClient_DeleteIndex(t *testing.T) {
 						Message:   "Index \"2\" not found.",
 						ErrorCode: "index_not_found",
 						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
+					},
 					StatusCode:         404,
 					StatusCodeExpected: []int{204},
 					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
@@ -282,10 +283,12 @@ func TestClient_DeleteIndex(t *testing.T) {
 						Message:   "Index \"3\" not found.",
 						ErrorCode: "index_not_found",
 						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
+					},
 					StatusCode:         404,
 					StatusCodeExpected: []int{204},
-					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")", OriginError: error(nil), ErrCode: 4}),
+					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")", OriginError: error(nil), ErrCode: 4,
+				}),
 				Error(Error{
 					Endpoint:         "/indexes/4",
 					Method:           "DELETE",
@@ -296,7 +299,8 @@ func TestClient_DeleteIndex(t *testing.T) {
 						Message:   "Index \"4\" not found.",
 						ErrorCode: "index_not_found",
 						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
+					},
 					StatusCode:         404,
 					StatusCodeExpected: []int{204},
 					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
@@ -313,7 +317,8 @@ func TestClient_DeleteIndex(t *testing.T) {
 						Message:   "Index \"5\" not found.",
 						ErrorCode: "index_not_found",
 						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
+					},
 					StatusCode:         404,
 					StatusCodeExpected: []int{204},
 					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
@@ -347,12 +352,14 @@ func TestClient_DeleteIndex(t *testing.T) {
 					rawMessage:         "MeilisearchTimeoutError (path \"${method} ${endpoint}\" with method \"${function}\")",
 					OriginError:        fasthttp.ErrTimeout,
 					ErrCode:            6,
-				})},
+				}),
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
+			t.Cleanup(cleanup(c))
 
 			for _, uid := range tt.args.createUid {
 				_, err := c.CreateIndex(&IndexConfig{Uid: uid})
@@ -368,8 +375,6 @@ func TestClient_DeleteIndex(t *testing.T) {
 					require.True(t, gotOk)
 				}
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -459,6 +464,7 @@ func TestClient_GetAllIndexes(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
+			t.Cleanup(cleanup(c))
 
 			for _, uid := range tt.args.uid {
 				_, err := c.CreateIndex(&IndexConfig{Uid: uid})
@@ -467,8 +473,6 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			gotResp, err := c.GetAllIndexes()
 			require.NoError(t, err)
 			require.Equal(t, len(tt.wantResp), len(gotResp))
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -549,6 +553,7 @@ func TestClient_GetIndex(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
+			t.Cleanup(cleanup(c))
 
 			gotCreatedResp, err := c.CreateIndex(&tt.args.config)
 			gotResp, err := c.GetIndex(tt.args.uid)
@@ -565,8 +570,6 @@ func TestClient_GetIndex(t *testing.T) {
 				require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
 				require.Equal(t, gotCreatedResp.PrimaryKey, gotResp.PrimaryKey)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -623,6 +626,7 @@ func TestClient_GetOrCreateIndex(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := c.GetOrCreateIndex(&tt.args.config)
 			require.NoError(t, err)
@@ -630,8 +634,6 @@ func TestClient_GetOrCreateIndex(t *testing.T) {
 				require.Equal(t, tt.wantResp.UID, gotResp.UID)
 				require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }

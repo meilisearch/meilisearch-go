@@ -75,11 +75,11 @@ func TestIndex_GetDisplayedAttributes(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetDisplayedAttributes()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -113,11 +113,11 @@ func TestIndex_GetDistinctAttribute(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetDistinctAttribute()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -154,11 +154,11 @@ func TestIndex_GetRankingRules(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetRankingRules()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -195,11 +195,11 @@ func TestIndex_GetSearchableAttributes(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetSearchableAttributes()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -256,11 +256,11 @@ func TestIndex_GetSettings(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -294,11 +294,11 @@ func TestIndex_GetStopWords(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetStopWords()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -332,11 +332,11 @@ func TestIndex_GetSynonyms(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetSynonyms()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -377,6 +377,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotUpdate, err := i.ResetFilterableAttributes()
 			require.NoError(t, err)
@@ -386,8 +387,6 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 			gotResp, err := i.GetFilterableAttributes()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -431,6 +430,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotUpdate, err := i.ResetDisplayedAttributes()
 			require.NoError(t, err)
@@ -440,8 +440,6 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 			gotResp, err := i.GetDisplayedAttributes()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -482,6 +480,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotUpdate, err := i.ResetDistinctAttribute()
 			require.NoError(t, err)
@@ -491,7 +490,6 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 			gotResp, err := i.GetDistinctAttribute()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -535,6 +533,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotUpdate, err := i.ResetRankingRules()
 			require.NoError(t, err)
@@ -544,7 +543,6 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			gotResp, err := i.GetRankingRules()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -588,6 +586,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotUpdate, err := i.ResetSearchableAttributes()
 			require.NoError(t, err)
@@ -597,7 +596,6 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 			gotResp, err := i.GetSearchableAttributes()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -661,6 +659,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotUpdate, err := i.ResetSettings()
 			require.NoError(t, err)
@@ -670,7 +669,6 @@ func TestIndex_ResetSettings(t *testing.T) {
 			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -711,6 +709,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotUpdate, err := i.ResetStopWords()
 			require.NoError(t, err)
@@ -720,7 +719,6 @@ func TestIndex_ResetStopWords(t *testing.T) {
 			gotResp, err := i.GetStopWords()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -761,6 +759,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotUpdate, err := i.ResetSynonyms()
 			require.NoError(t, err)
@@ -770,7 +769,6 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 			gotResp, err := i.GetSynonyms()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -818,6 +816,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetFilterableAttributes()
 			require.NoError(t, err)
@@ -831,7 +830,6 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			gotResp, err = i.GetFilterableAttributes()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -882,6 +880,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetDisplayedAttributes()
 			require.NoError(t, err)
@@ -895,7 +894,6 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 			gotResp, err = i.GetDisplayedAttributes()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -939,6 +937,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetDistinctAttribute()
 			require.NoError(t, err)
@@ -952,7 +951,6 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 			gotResp, err = i.GetDistinctAttribute()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -1003,6 +1001,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetRankingRules()
 			require.NoError(t, err)
@@ -1016,7 +1015,6 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			gotResp, err = i.GetRankingRules()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -1067,6 +1065,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetSearchableAttributes()
 			require.NoError(t, err)
@@ -1080,7 +1079,6 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 			gotResp, err = i.GetSearchableAttributes()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -1187,6 +1185,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
@@ -1200,7 +1199,6 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			gotResp, err = i.GetSettings()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -1586,6 +1584,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
@@ -1608,7 +1607,6 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			gotResp, err = i.GetSettings()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.secondResponse, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -1656,6 +1654,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetStopWords()
 			require.NoError(t, err)
@@ -1669,7 +1668,6 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 			gotResp, err = i.GetStopWords()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -1717,6 +1715,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetSynonyms()
 			require.NoError(t, err)
@@ -1730,7 +1729,6 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 			gotResp, err = i.GetSynonyms()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
-			deleteAllIndexes(c)
 		})
 	}
 }

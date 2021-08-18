@@ -106,6 +106,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
@@ -116,8 +117,6 @@ func TestIndex_AddDocuments(t *testing.T) {
 				Limit: 3,
 			}, &documents)
 			require.Equal(t, tt.args.documentsPtr, documents)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -213,6 +212,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.AddDocumentsWithPrimaryKey(tt.args.documentsPtr, tt.args.primaryKey)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
@@ -224,8 +224,6 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				Limit: 3,
 			}, &documents)
 			require.Equal(t, tt.args.documentsPtr, documents)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -265,6 +263,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			SetUpBasicIndex()
 			gotResp, err := i.DeleteAllDocuments()
@@ -277,8 +276,6 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 				Limit: 5,
 			}, &documents)
 			require.Empty(t, documents)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -389,6 +386,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.GreaterOrEqual(t, gotAddResp.UpdateID, tt.wantResp.UpdateID)
@@ -403,7 +401,6 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			var document []map[string]interface{}
 			err = i.GetDocument(tt.args.identifier, &document)
 			require.Empty(t, document)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -485,6 +482,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
@@ -500,8 +498,6 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 				err = i.GetDocument(identifier, &document)
 				require.Empty(t, document)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -553,6 +549,7 @@ func TestIndex_GetDocument(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 			SetUpBasicIndex()
 
 			require.Empty(t, tt.args.documentPtr)
@@ -565,8 +562,6 @@ func TestIndex_GetDocument(t *testing.T) {
 				require.NotEmpty(t, tt.args.documentPtr)
 				require.Equal(t, strconv.Itoa(tt.args.documentPtr.BookID), tt.args.identifier)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -658,6 +653,7 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 			SetUpBasicIndex()
 
 			got, err := i.UpdateDocuments(tt.args.documentsPtr)
@@ -671,8 +667,6 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				require.Equal(t, identifier.BookID, document.BookID)
 				require.Equal(t, identifier.Title, document.Title)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -770,6 +764,7 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 			SetUpBasicIndex()
 
 			got, err := i.UpdateDocumentsWithPrimaryKey(tt.args.documentsPtr, tt.args.primaryKey)
@@ -783,8 +778,6 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				require.Equal(t, identifier.BookID, document.BookID)
 				require.Equal(t, identifier.Title, document.Title)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }

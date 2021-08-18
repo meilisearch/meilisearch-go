@@ -236,6 +236,7 @@ func TestIndex_Search(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			got, err := i.Search(tt.args.query, &tt.args.request)
 			require.NoError(t, err)
@@ -250,8 +251,6 @@ func TestIndex_Search(t *testing.T) {
 			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
 			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
 			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -639,6 +638,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
 			require.NoError(t, err)
@@ -658,8 +658,6 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
 			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
 			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
