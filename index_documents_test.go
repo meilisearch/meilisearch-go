@@ -113,9 +113,10 @@ func TestIndex_AddDocuments(t *testing.T) {
 			require.NoError(t, err)
 			waitForPendingUpdate(t, i, gotResp)
 			var documents []map[string]interface{}
-			i.GetDocuments(&DocumentsRequest{
+			err = i.GetDocuments(&DocumentsRequest{
 				Limit: 3,
 			}, &documents)
+			require.NoError(t, err)
 			require.Equal(t, tt.args.documentsPtr, documents)
 		})
 	}
@@ -221,9 +222,8 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			waitForPendingUpdate(t, i, gotResp)
 
 			var documents []map[string]interface{}
-			i.GetDocuments(&DocumentsRequest{
-				Limit: 3,
-			}, &documents)
+			err = i.GetDocuments(&DocumentsRequest{Limit: 3}, &documents)
+			require.NoError(t, err)
 			require.Equal(t, tt.args.documentsPtr, documents)
 		})
 	}
@@ -274,9 +274,8 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			waitForPendingUpdate(t, i, gotResp)
 
 			var documents interface{}
-			i.GetDocuments(&DocumentsRequest{
-				Limit: 5,
-			}, &documents)
+			err = i.GetDocuments(&DocumentsRequest{Limit: 5}, &documents)
+			require.NoError(t, err)
 			require.Empty(t, documents)
 		})
 	}
@@ -404,6 +403,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 
 			var document []map[string]interface{}
 			err = i.GetDocument(tt.args.identifier, &document)
+			require.Error(t, err)
 			require.Empty(t, document)
 		})
 	}
@@ -502,6 +502,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 			var document docTest
 			for _, identifier := range tt.args.identifier {
 				err = i.GetDocument(identifier, &document)
+				require.Error(t, err)
 				require.Empty(t, document)
 			}
 		})
@@ -671,6 +672,7 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
 				err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
+				require.NoError(t, err)
 				require.Equal(t, identifier.BookID, document.BookID)
 				require.Equal(t, identifier.Title, document.Title)
 			}
@@ -783,6 +785,7 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
 				err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
+				require.NoError(t, err)
 				require.Equal(t, identifier.BookID, document.BookID)
 				require.Equal(t, identifier.Title, document.Title)
 			}

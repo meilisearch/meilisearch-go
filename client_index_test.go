@@ -556,6 +556,12 @@ func TestClient_GetIndex(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotCreatedResp, err := c.CreateIndex(&tt.args.config)
+			if tt.args.config.Uid != "" {
+				require.NoError(t, err)
+			} else {
+				require.Error(t, err)
+			}
+
 			gotResp, err := c.GetIndex(tt.args.uid)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetIndex() error = %v, wantErr %v", err, tt.wantErr)
