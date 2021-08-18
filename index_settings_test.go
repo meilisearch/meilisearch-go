@@ -382,7 +382,8 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 			gotUpdate, err := i.ResetFilterableAttributes()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantUpdate, gotUpdate)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err := i.GetFilterableAttributes()
 			require.NoError(t, err)
@@ -435,7 +436,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 			gotUpdate, err := i.ResetDisplayedAttributes()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err := i.GetDisplayedAttributes()
 			require.NoError(t, err)
@@ -485,7 +486,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 			gotUpdate, err := i.ResetDistinctAttribute()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err := i.GetDistinctAttribute()
 			require.NoError(t, err)
@@ -538,7 +539,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			gotUpdate, err := i.ResetRankingRules()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err := i.GetRankingRules()
 			require.NoError(t, err)
@@ -591,7 +592,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 			gotUpdate, err := i.ResetSearchableAttributes()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err := i.GetSearchableAttributes()
 			require.NoError(t, err)
@@ -664,7 +665,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 			gotUpdate, err := i.ResetSettings()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
@@ -714,7 +715,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 			gotUpdate, err := i.ResetStopWords()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err := i.GetStopWords()
 			require.NoError(t, err)
@@ -764,7 +765,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 			gotUpdate, err := i.ResetSynonyms()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err := i.GetSynonyms()
 			require.NoError(t, err)
@@ -825,7 +826,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			gotUpdate, err := i.UpdateFilterableAttributes(&tt.args.request)
 			require.NoError(t, err)
 			require.Equal(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetFilterableAttributes()
 			require.NoError(t, err)
@@ -889,7 +890,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 			gotUpdate, err := i.UpdateDisplayedAttributes(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetDisplayedAttributes()
 			require.NoError(t, err)
@@ -946,7 +947,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 			gotUpdate, err := i.UpdateDistinctAttribute(tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetDistinctAttribute()
 			require.NoError(t, err)
@@ -1010,7 +1011,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			gotUpdate, err := i.UpdateRankingRules(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetRankingRules()
 			require.NoError(t, err)
@@ -1074,7 +1075,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 			gotUpdate, err := i.UpdateSearchableAttributes(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetSearchableAttributes()
 			require.NoError(t, err)
@@ -1194,7 +1195,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			gotUpdate, err := i.UpdateSettings(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetSettings()
 			require.NoError(t, err)
@@ -1593,7 +1594,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			gotUpdate, err := i.UpdateSettings(&tt.args.firstRequest)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetSettings()
 			require.NoError(t, err)
@@ -1602,7 +1603,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			gotUpdate, err = i.UpdateSettings(&tt.args.secondRequest)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetSettings()
 			require.NoError(t, err)
@@ -1663,7 +1665,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 			gotUpdate, err := i.UpdateStopWords(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetStopWords()
 			require.NoError(t, err)
@@ -1724,7 +1726,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 			gotUpdate, err := i.UpdateSynonyms(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotUpdate)
+			waitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetSynonyms()
 			require.NoError(t, err)

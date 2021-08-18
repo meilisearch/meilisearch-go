@@ -111,7 +111,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
 			require.NoError(t, err)
-			i.DefaultWaitForPendingUpdate(gotResp)
+			waitForPendingUpdate(t, i, gotResp)
 			var documents []map[string]interface{}
 			i.GetDocuments(&DocumentsRequest{
 				Limit: 3,
@@ -217,7 +217,8 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			gotResp, err := i.AddDocumentsWithPrimaryKey(tt.args.documentsPtr, tt.args.primaryKey)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
 			require.NoError(t, err)
-			i.DefaultWaitForPendingUpdate(gotResp)
+
+			waitForPendingUpdate(t, i, gotResp)
 
 			var documents []map[string]interface{}
 			i.GetDocuments(&DocumentsRequest{
@@ -269,7 +270,8 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			gotResp, err := i.DeleteAllDocuments()
 			require.NoError(t, err)
 			require.Equal(t, gotResp, tt.wantResp)
-			i.DefaultWaitForPendingUpdate(gotResp)
+
+			waitForPendingUpdate(t, i, gotResp)
 
 			var documents interface{}
 			i.GetDocuments(&DocumentsRequest{
@@ -391,12 +393,14 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.GreaterOrEqual(t, gotAddResp.UpdateID, tt.wantResp.UpdateID)
 			require.NoError(t, err)
-			i.DefaultWaitForPendingUpdate(gotAddResp)
+
+			waitForPendingUpdate(t, i, gotAddResp)
 
 			gotResp, err := i.DeleteDocument(tt.args.identifier)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotResp)
+
+			waitForPendingUpdate(t, i, gotResp)
 
 			var document []map[string]interface{}
 			err = i.GetDocument(tt.args.identifier, &document)
@@ -486,12 +490,14 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 
 			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
-			i.DefaultWaitForPendingUpdate(gotAddResp)
+
+			waitForPendingUpdate(t, i, gotAddResp)
 
 			gotResp, err := i.DeleteDocuments(tt.args.identifier)
 			require.NoError(t, err)
 			require.Equal(t, gotResp, tt.wantResp)
-			i.DefaultWaitForPendingUpdate(gotResp)
+
+			waitForPendingUpdate(t, i, gotResp)
 
 			var document docTest
 			for _, identifier := range tt.args.identifier {
@@ -659,7 +665,8 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 			got, err := i.UpdateDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
 			require.Equal(t, got, tt.want)
-			i.DefaultWaitForPendingUpdate(got)
+
+			waitForPendingUpdate(t, i, got)
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
@@ -770,7 +777,8 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 			got, err := i.UpdateDocumentsWithPrimaryKey(tt.args.documentsPtr, tt.args.primaryKey)
 			require.NoError(t, err)
 			require.Equal(t, got, tt.want)
-			i.DefaultWaitForPendingUpdate(got)
+
+			waitForPendingUpdate(t, i, got)
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {

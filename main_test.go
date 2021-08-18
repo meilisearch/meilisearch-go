@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/valyala/fasthttp"
 )
 
@@ -38,6 +39,11 @@ func cleanup(c ClientInterface) func() {
 	return func() {
 		_, _ = deleteAllIndexes(c)
 	}
+}
+
+func waitForPendingUpdate(t *testing.T, i *Index, u *AsyncUpdateID) {
+	_, err := i.DefaultWaitForPendingUpdate(u)
+	require.NoError(t, err)
 }
 
 func SetUpBasicIndex() {
