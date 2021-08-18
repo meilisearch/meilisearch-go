@@ -327,9 +327,8 @@ func TestIndex_GetUpdateStatus(t *testing.T) {
 
 func TestIndex_GetAllUpdateStatus(t *testing.T) {
 	type args struct {
-		UID      string
-		client   *Client
-		document []docTest
+		UID    string
+		client *Client
 	}
 	tests := []struct {
 		name     string

@@ -479,9 +479,8 @@ func TestClient_GetAllIndexes(t *testing.T) {
 
 func TestClient_GetIndex(t *testing.T) {
 	type args struct {
-		config     IndexConfig
-		createdUid string
-		uid        string
+		config IndexConfig
+		uid    string
 	}
 	tests := []struct {
 		name     string
