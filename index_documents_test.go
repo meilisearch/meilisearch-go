@@ -111,7 +111,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
 			require.NoError(t, err)
-			waitForPendingUpdate(t, i, gotResp)
+			testWaitForPendingUpdate(t, i, gotResp)
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{
 				Limit: 3,
@@ -219,7 +219,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
 			require.NoError(t, err)
 
-			waitForPendingUpdate(t, i, gotResp)
+			testWaitForPendingUpdate(t, i, gotResp)
 
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{Limit: 3}, &documents)
@@ -271,7 +271,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, gotResp, tt.wantResp)
 
-			waitForPendingUpdate(t, i, gotResp)
+			testWaitForPendingUpdate(t, i, gotResp)
 
 			var documents interface{}
 			err = i.GetDocuments(&DocumentsRequest{Limit: 5}, &documents)
@@ -393,13 +393,13 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			require.GreaterOrEqual(t, gotAddResp.UpdateID, tt.wantResp.UpdateID)
 			require.NoError(t, err)
 
-			waitForPendingUpdate(t, i, gotAddResp)
+			testWaitForPendingUpdate(t, i, gotAddResp)
 
 			gotResp, err := i.DeleteDocument(tt.args.identifier)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
 
-			waitForPendingUpdate(t, i, gotResp)
+			testWaitForPendingUpdate(t, i, gotResp)
 
 			var document []map[string]interface{}
 			err = i.GetDocument(tt.args.identifier, &document)
@@ -491,13 +491,13 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
 
-			waitForPendingUpdate(t, i, gotAddResp)
+			testWaitForPendingUpdate(t, i, gotAddResp)
 
 			gotResp, err := i.DeleteDocuments(tt.args.identifier)
 			require.NoError(t, err)
 			require.Equal(t, gotResp, tt.wantResp)
 
-			waitForPendingUpdate(t, i, gotResp)
+			testWaitForPendingUpdate(t, i, gotResp)
 
 			var document docTest
 			for _, identifier := range tt.args.identifier {
@@ -667,7 +667,7 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, got, tt.want)
 
-			waitForPendingUpdate(t, i, got)
+			testWaitForPendingUpdate(t, i, got)
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
@@ -780,7 +780,7 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, got, tt.want)
 
-			waitForPendingUpdate(t, i, got)
+			testWaitForPendingUpdate(t, i, got)
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {

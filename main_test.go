@@ -41,7 +41,7 @@ func cleanup(c ClientInterface) func() {
 	}
 }
 
-func waitForPendingUpdate(t *testing.T, i *Index, u *AsyncUpdateID) {
+func testWaitForPendingUpdate(t *testing.T, i *Index, u *AsyncUpdateID) {
 	_, err := i.DefaultWaitForPendingUpdate(u)
 	require.NoError(t, err)
 }

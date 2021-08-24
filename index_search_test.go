@@ -642,7 +642,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 
 			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
 			require.NoError(t, err)
-			waitForPendingUpdate(t, i, updateFilter)
+			testWaitForPendingUpdate(t, i, updateFilter)
 
 			got, err := i.Search(tt.args.query, &tt.args.request)
 			require.NoError(t, err)
