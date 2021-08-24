@@ -62,9 +62,9 @@ type IndexInterface interface {
 	GetSynonyms() (resp *map[string][]string, err error)
 	UpdateSynonyms(request *map[string][]string) (resp *AsyncUpdateID, err error)
 	ResetSynonyms() (resp *AsyncUpdateID, err error)
-	GetAttributesForFaceting() (resp *[]string, err error)
-	UpdateAttributesForFaceting(request *[]string) (resp *AsyncUpdateID, err error)
-	ResetAttributesForFaceting() (resp *AsyncUpdateID, err error)
+	GetFilterableAttributes() (resp *[]string, err error)
+	UpdateFilterableAttributes(request *[]string) (resp *AsyncUpdateID, err error)
+	ResetFilterableAttributes() (resp *AsyncUpdateID, err error)
 
 	WaitForPendingUpdate(ctx context.Context, interval time.Duration, updateID *AsyncUpdateID) (UpdateStatus, error)
 	DefaultWaitForPendingUpdate(updateID *AsyncUpdateID) (UpdateStatus, error)
@@ -212,7 +212,7 @@ func (i Index) WaitForPendingUpdate(
 		if err != nil {
 			return UpdateStatusUnknown, nil
 		}
-		if update.Status != UpdateStatusEnqueued {
+		if update.Status != UpdateStatusEnqueued && update.Status != UpdateStatusProcessing {
 			return update.Status, nil
 		}
 		time.Sleep(interval)

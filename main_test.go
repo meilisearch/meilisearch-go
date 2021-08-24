@@ -18,6 +18,7 @@ type docTestBooks struct {
 	BookID int    `json:"book_id"`
 	Title  string `json:"title"`
 	Tag    string `json:"tag"`
+	Year   int    `json:"year"`
 }
 
 func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
@@ -67,26 +68,26 @@ func SetUpIndexForFaceting() {
 	index := client.Index("indexUID")
 
 	booksTest := []docTestBooks{
-		{BookID: 123, Title: "Pride and Prejudice", Tag: "Romance"},
-		{BookID: 456, Title: "Le Petit Prince", Tag: "Tale"},
-		{BookID: 1, Title: "Alice In Wonderland", Tag: "Tale"},
-		{BookID: 1344, Title: "The Hobbit", Tag: "Epic fantasy"},
-		{BookID: 4, Title: "Harry Potter and the Half-Blood Prince", Tag: "Epic fantasy"},
-		{BookID: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Epic fantasy"},
-		{BookID: 742, Title: "The Great Gatsby", Tag: "Tragedy"},
-		{BookID: 834, Title: "One Hundred Years of Solitude", Tag: "Tragedy"},
-		{BookID: 17, Title: "In Search of Lost Time", Tag: "Modernist literature"},
-		{BookID: 204, Title: "Ulysses", Tag: "Novel"},
-		{BookID: 7, Title: "Don Quixote", Tag: "Satiric"},
-		{BookID: 10, Title: "Moby Dick", Tag: "Novel"},
-		{BookID: 730, Title: "War and Peace", Tag: "Historical fiction"},
-		{BookID: 69, Title: "Hamlet", Tag: "Tragedy"},
-		{BookID: 32, Title: "The Odyssey", Tag: "Epic"},
-		{BookID: 71, Title: "Madame Bovary", Tag: "Novel"},
-		{BookID: 56, Title: "The Divine Comedy", Tag: "Epic"},
-		{BookID: 254, Title: "Lolita", Tag: "Novel"},
-		{BookID: 921, Title: "The Brothers Karamazov", Tag: "Novel"},
-		{BookID: 1032, Title: "Crime and Punishment", Tag: "Crime fiction"},
+		{BookID: 123, Title: "Pride and Prejudice", Tag: "Romance", Year: 1813},
+		{BookID: 456, Title: "Le Petit Prince", Tag: "Tale", Year: 1943},
+		{BookID: 1, Title: "Alice In Wonderland", Tag: "Tale", Year: 1865},
+		{BookID: 1344, Title: "The Hobbit", Tag: "Epic fantasy", Year: 1937},
+		{BookID: 4, Title: "Harry Potter and the Half-Blood Prince", Tag: "Epic fantasy", Year: 2005},
+		{BookID: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Epic fantasy", Year: 1978},
+		{BookID: 742, Title: "The Great Gatsby", Tag: "Tragedy", Year: 1925},
+		{BookID: 834, Title: "One Hundred Years of Solitude", Tag: "Tragedy", Year: 1967},
+		{BookID: 17, Title: "In Search of Lost Time", Tag: "Modernist literature", Year: 1913},
+		{BookID: 204, Title: "Ulysses", Tag: "Novel", Year: 1922},
+		{BookID: 7, Title: "Don Quixote", Tag: "Satiric", Year: 1605},
+		{BookID: 10, Title: "Moby Dick", Tag: "Novel", Year: 1851},
+		{BookID: 730, Title: "War and Peace", Tag: "Historical fiction", Year: 1865},
+		{BookID: 69, Title: "Hamlet", Tag: "Tragedy", Year: 1598},
+		{BookID: 32, Title: "The Odyssey", Tag: "Epic", Year: 1571},
+		{BookID: 71, Title: "Madame Bovary", Tag: "Novel", Year: 1857},
+		{BookID: 56, Title: "The Divine Comedy", Tag: "Epic", Year: 1303},
+		{BookID: 254, Title: "Lolita", Tag: "Novel", Year: 1955},
+		{BookID: 921, Title: "The Brothers Karamazov", Tag: "Novel", Year: 1879},
+		{BookID: 1032, Title: "Crime and Punishment", Tag: "Crime fiction", Year: 1866},
 	}
 	update, err := index.AddDocuments(booksTest)
 	if err != nil {

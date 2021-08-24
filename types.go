@@ -37,27 +37,27 @@ type Index struct {
 
 // Settings is the type that represents the settings in MeiliSearch
 type Settings struct {
-	RankingRules          []string            `json:"rankingRules,omitempty"`
-	DistinctAttribute     *string             `json:"distinctAttribute,omitempty"`
-	SearchableAttributes  []string            `json:"searchableAttributes,omitempty"`
-	DisplayedAttributes   []string            `json:"displayedAttributes,omitempty"`
-	StopWords             []string            `json:"stopWords,omitempty"`
-	Synonyms              map[string][]string `json:"synonyms,omitempty"`
-	AttributesForFaceting []string            `json:"attributesForFaceting,omitempty"`
+	RankingRules         []string            `json:"rankingRules,omitempty"`
+	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
+	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
+	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
+	StopWords            []string            `json:"stopWords,omitempty"`
+	Synonyms             map[string][]string `json:"synonyms,omitempty"`
+	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
 }
 
 // Version is the type that represents the versions in MeiliSearch
 type Version struct {
-	CommitSha  string    `json:"commitSha"`
-	BuildDate  time.Time `json:"buildDate"`
-	PkgVersion string    `json:"pkgVersion"`
+	CommitSha  string `json:"commitSha"`
+	CommitDate string `json:"commitDate"`
+	PkgVersion string `json:"pkgVersion"`
 }
 
 // StatsIndex is the type that represent the stats of an index in MeiliSearch
 type StatsIndex struct {
 	NumberOfDocuments int64            `json:"numberOfDocuments"`
 	IsIndexing        bool             `json:"isIndexing"`
-	FieldsFrequency   map[string]int64 `json:"fieldsFrequency"`
+	FieldDistribution map[string]int64 `json:"fieldDistribution"`
 }
 
 // Stats is the type that represent all stats
@@ -75,6 +75,8 @@ const (
 	UpdateStatusUnknown UpdateStatus = "unknown"
 	// UpdateStatusEnqueued means the server know the update but didn't handle it yet
 	UpdateStatusEnqueued UpdateStatus = "enqueued"
+	// UpdateStatusProcessing means the server is processing the update and all went well
+	UpdateStatusProcessing UpdateStatus = "processing"
 	// UpdateStatusProcessed means the server has processed the update and all went well
 	UpdateStatusProcessed UpdateStatus = "processed"
 	// UpdateStatusFailed means the server has processed the update and an error has been reported
@@ -110,8 +112,10 @@ type Keys struct {
 //
 // Documentation: https://docs.meilisearch.com/reference/api/dump.html
 type Dump struct {
-	UID    string `json:"uid"`
-	Status string `json:"status"`
+	UID        string    `json:"uid"`
+	Status     string    `json:"status"`
+	StartedAt  time.Time `json:"startedAt"`
+	FinishedAt time.Time `json:"finishedAt"`
 }
 
 //
@@ -135,10 +139,9 @@ type SearchRequest struct {
 	AttributesToCrop      []string
 	CropLength            int64
 	AttributesToHighlight []string
-	Filters               string
+	Filter                interface{}
 	Matches               bool
 	FacetsDistribution    []string
-	FacetFilters          interface{}
 	PlaceholderSearch     bool
 }
 

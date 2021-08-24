@@ -38,10 +38,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo(in *jlexer.Lexer, o
 		switch key {
 		case "commitSha":
 			out.CommitSha = string(in.String())
-		case "buildDate":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.BuildDate).UnmarshalJSON(data))
-			}
+		case "commitDate":
+			out.CommitDate = string(in.String())
 		case "pkgVersion":
 			out.PkgVersion = string(in.String())
 		default:
@@ -64,9 +62,9 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo(out *jwriter.Writer
 		out.String(string(in.CommitSha))
 	}
 	{
-		const prefix string = ",\"buildDate\":"
+		const prefix string = ",\"commitDate\":"
 		out.RawString(prefix)
-		out.Raw((in.BuildDate).MarshalJSON())
+		out.String(string(in.CommitDate))
 	}
 	{
 		const prefix string = ",\"pkgVersion\":"
@@ -335,18 +333,18 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo3(in *jlexer.Lexer, 
 			out.NumberOfDocuments = int64(in.Int64())
 		case "isIndexing":
 			out.IsIndexing = bool(in.Bool())
-		case "fieldsFrequency":
+		case "fieldDistribution":
 			if in.IsNull() {
 				in.Skip()
 			} else {
 				in.Delim('{')
-				out.FieldsFrequency = make(map[string]int64)
+				out.FieldDistribution = make(map[string]int64)
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
 					var v3 int64
 					v3 = int64(in.Int64())
-					(out.FieldsFrequency)[key] = v3
+					(out.FieldDistribution)[key] = v3
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -376,14 +374,14 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo3(out *jwriter.Write
 		out.Bool(bool(in.IsIndexing))
 	}
 	{
-		const prefix string = ",\"fieldsFrequency\":"
+		const prefix string = ",\"fieldDistribution\":"
 		out.RawString(prefix)
-		if in.FieldsFrequency == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
+		if in.FieldDistribution == nil && (out.Flags&jwriter.NilMapAsEmpty) == 0 {
 			out.RawString(`null`)
 		} else {
 			out.RawByte('{')
 			v4First := true
-			for v4Name, v4Value := range in.FieldsFrequency {
+			for v4Name, v4Value := range in.FieldDistribution {
 				if v4First {
 					v4First = false
 				} else {
@@ -696,25 +694,25 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo5(in *jlexer.Lexer, 
 				}
 				in.Delim('}')
 			}
-		case "attributesForFaceting":
+		case "filterableAttributes":
 			if in.IsNull() {
 				in.Skip()
-				out.AttributesForFaceting = nil
+				out.FilterableAttributes = nil
 			} else {
 				in.Delim('[')
-				if out.AttributesForFaceting == nil {
+				if out.FilterableAttributes == nil {
 					if !in.IsDelim(']') {
-						out.AttributesForFaceting = make([]string, 0, 4)
+						out.FilterableAttributes = make([]string, 0, 4)
 					} else {
-						out.AttributesForFaceting = []string{}
+						out.FilterableAttributes = []string{}
 					}
 				} else {
-					out.AttributesForFaceting = (out.AttributesForFaceting)[:0]
+					out.FilterableAttributes = (out.FilterableAttributes)[:0]
 				}
 				for !in.IsDelim(']') {
 					var v13 string
 					v13 = string(in.String())
-					out.AttributesForFaceting = append(out.AttributesForFaceting, v13)
+					out.FilterableAttributes = append(out.FilterableAttributes, v13)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -850,8 +848,8 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo5(out *jwriter.Write
 			out.RawByte('}')
 		}
 	}
-	if len(in.AttributesForFaceting) != 0 {
-		const prefix string = ",\"attributesForFaceting\":"
+	if len(in.FilterableAttributes) != 0 {
+		const prefix string = ",\"filterableAttributes\":"
 		if first {
 			first = false
 			out.RawString(prefix[1:])
@@ -860,7 +858,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo5(out *jwriter.Write
 		}
 		{
 			out.RawByte('[')
-			for v25, v26 := range in.AttributesForFaceting {
+			for v25, v26 := range in.FilterableAttributes {
 				if v25 > 0 {
 					out.RawByte(',')
 				}
@@ -1179,8 +1177,14 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo7(in *jlexer.Lexer, 
 				}
 				in.Delim(']')
 			}
-		case "Filters":
-			out.Filters = string(in.String())
+		case "Filter":
+			if m, ok := out.Filter.(easyjson.Unmarshaler); ok {
+				m.UnmarshalEasyJSON(in)
+			} else if m, ok := out.Filter.(json.Unmarshaler); ok {
+				_ = m.UnmarshalJSON(in.Raw())
+			} else {
+				out.Filter = in.Interface()
+			}
 		case "Matches":
 			out.Matches = bool(in.Bool())
 		case "FacetsDistribution":
@@ -1205,14 +1209,6 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo7(in *jlexer.Lexer, 
 					in.WantComma()
 				}
 				in.Delim(']')
-			}
-		case "FacetFilters":
-			if m, ok := out.FacetFilters.(easyjson.Unmarshaler); ok {
-				m.UnmarshalEasyJSON(in)
-			} else if m, ok := out.FacetFilters.(json.Unmarshaler); ok {
-				_ = m.UnmarshalJSON(in.Raw())
-			} else {
-				out.FacetFilters = in.Interface()
 			}
 		case "PlaceholderSearch":
 			out.PlaceholderSearch = bool(in.Bool())
@@ -1294,9 +1290,15 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo7(out *jwriter.Write
 		}
 	}
 	{
-		const prefix string = ",\"Filters\":"
+		const prefix string = ",\"Filter\":"
 		out.RawString(prefix)
-		out.String(string(in.Filters))
+		if m, ok := in.Filter.(easyjson.Marshaler); ok {
+			m.MarshalEasyJSON(out)
+		} else if m, ok := in.Filter.(json.Marshaler); ok {
+			out.Raw(m.MarshalJSON())
+		} else {
+			out.Raw(json.Marshal(in.Filter))
+		}
 	}
 	{
 		const prefix string = ",\"Matches\":"
@@ -1317,17 +1319,6 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo7(out *jwriter.Write
 				out.String(string(v41))
 			}
 			out.RawByte(']')
-		}
-	}
-	{
-		const prefix string = ",\"FacetFilters\":"
-		out.RawString(prefix)
-		if m, ok := in.FacetFilters.(easyjson.Marshaler); ok {
-			m.MarshalEasyJSON(out)
-		} else if m, ok := in.FacetFilters.(json.Marshaler); ok {
-			out.Raw(m.MarshalJSON())
-		} else {
-			out.Raw(json.Marshal(in.FacetFilters))
 		}
 	}
 	{
@@ -1620,6 +1611,14 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo11(in *jlexer.Lexer,
 			out.UID = string(in.String())
 		case "status":
 			out.Status = string(in.String())
+		case "startedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.StartedAt).UnmarshalJSON(data))
+			}
+		case "finishedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.FinishedAt).UnmarshalJSON(data))
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -1643,6 +1642,16 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo11(out *jwriter.Writ
 		const prefix string = ",\"status\":"
 		out.RawString(prefix)
 		out.String(string(in.Status))
+	}
+	{
+		const prefix string = ",\"startedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.StartedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"finishedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.FinishedAt).MarshalJSON())
 	}
 	out.RawByte('}')
 }
