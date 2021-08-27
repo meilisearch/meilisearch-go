@@ -56,7 +56,8 @@ func TestIndex_Delete(t *testing.T) {
 			},
 			wantErr: true,
 			expectedError: []Error{
-				Error(Error{Endpoint: "/indexes/1",
+				Error(Error{
+					Endpoint:         "/indexes/1",
 					Method:           "DELETE",
 					Function:         "Delete",
 					RequestToString:  "empty request",
@@ -72,7 +73,8 @@ func TestIndex_Delete(t *testing.T) {
 					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
 					OriginError:        error(nil),
 					ErrCode:            4,
-				})},
+				}),
+			},
 		},
 		{
 			name:   "TestIndexDeleteMultipleNotExistingIndex",
@@ -111,7 +113,8 @@ func TestIndex_Delete(t *testing.T) {
 						Message:   "Index \"2\" not found.",
 						ErrorCode: "index_not_found",
 						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
+					},
 					StatusCode:         404,
 					StatusCodeExpected: []int{204},
 					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
@@ -128,12 +131,14 @@ func TestIndex_Delete(t *testing.T) {
 						Message:   "Index \"3\" not found.",
 						ErrorCode: "index_not_found",
 						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found"},
+						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
+					},
 					StatusCode:         404,
 					StatusCodeExpected: []int{204},
 					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
 					OriginError:        error(nil),
-					ErrCode:            4},
+					ErrCode:            4,
+				},
 				),
 			},
 		},
@@ -200,12 +205,11 @@ func TestIndex_GetStats(t *testing.T) {
 			SetUpBasicIndex()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetStats()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -246,12 +250,11 @@ func Test_newIndex(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
+			t.Cleanup(cleanup(c))
 
 			got := newIndex(c, tt.args.uid)
 			require.Equal(t, tt.want.UID, got.UID)
 			require.Equal(t, tt.want.client, got.client)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -302,6 +305,9 @@ func TestIndex_GetUpdateStatus(t *testing.T) {
 			},
 		},
 	}
+
+	t.Cleanup(cleanup(defaultClient))
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
@@ -317,14 +323,12 @@ func TestIndex_GetUpdateStatus(t *testing.T) {
 			require.NotNil(t, gotResp.UpdateID)
 		})
 	}
-	_, _ = deleteAllIndexes(defaultClient)
 }
 
 func TestIndex_GetAllUpdateStatus(t *testing.T) {
 	type args struct {
-		UID      string
-		client   *Client
-		document []docTest
+		UID    string
+		client *Client
 	}
 	tests := []struct {
 		name     string
@@ -421,6 +425,7 @@ func TestIndex_DefaultWaitForPendingUpdate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			update, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
@@ -428,8 +433,6 @@ func TestIndex_DefaultWaitForPendingUpdate(t *testing.T) {
 			got, err := i.DefaultWaitForPendingUpdate(update)
 			require.NoError(t, err)
 			require.Equal(t, tt.want, got)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -525,6 +528,7 @@ func TestIndex_WaitForPendingUpdate(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			update, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
@@ -539,8 +543,6 @@ func TestIndex_WaitForPendingUpdate(t *testing.T) {
 				require.NoError(t, err)
 				require.Equal(t, tt.want, got)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -583,13 +585,12 @@ func TestIndex_FetchInfo(t *testing.T) {
 			SetUpBasicIndex()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.FetchInfo()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp.UID, gotResp.UID)
 			require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -626,12 +627,11 @@ func TestIndex_FetchPrimaryKey(t *testing.T) {
 			SetUpBasicIndex()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotPrimaryKey, err := i.FetchPrimaryKey()
 			require.NoError(t, err)
 			require.Equal(t, &tt.wantPrimaryKey, gotPrimaryKey)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -679,6 +679,7 @@ func TestIndex_UpdateIndex(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
+			t.Cleanup(cleanup(c))
 			i, err := c.CreateIndex(&tt.args.config)
 			require.NoError(t, err)
 			require.Equal(t, tt.args.config.Uid, i.UID)
@@ -689,8 +690,6 @@ func TestIndex_UpdateIndex(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp.UID, gotResp.UID)
 			require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
-
-			deleteAllIndexes(c)
 		})
 	}
 }

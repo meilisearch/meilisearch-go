@@ -6,6 +6,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/stretchr/testify/require"
 	"github.com/valyala/fasthttp"
 )
 
@@ -32,6 +33,17 @@ func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
 	}
 
 	return true, nil
+}
+
+func cleanup(c ClientInterface) func() {
+	return func() {
+		_, _ = deleteAllIndexes(c)
+	}
+}
+
+func testWaitForPendingUpdate(t *testing.T, i *Index, u *AsyncUpdateID) {
+	_, err := i.DefaultWaitForPendingUpdate(u)
+	require.NoError(t, err)
 }
 
 func SetUpBasicIndex() {
@@ -100,12 +112,13 @@ func SetUpIndexForFaceting() {
 	}
 }
 
-var masterKey = "masterKey"
-var primaryKey = "primaryKey"
-var defaultClient = NewClient(ClientConfig{
-	Host:   "http://localhost:7700",
-	APIKey: masterKey,
-})
+var (
+	masterKey     = "masterKey"
+	defaultClient = NewClient(ClientConfig{
+		Host:   "http://localhost:7700",
+		APIKey: masterKey,
+	})
+)
 
 var customClient = NewFastHTTPCustomClient(ClientConfig{
 	Host:   "http://localhost:7700",
@@ -130,7 +143,7 @@ func TestMain(m *testing.M) {
 }
 
 func Test_deleteAllIndexes(t *testing.T) {
-	var indexUIDs = []string{
+	indexUIDs := []string{
 		"Test_deleteAllIndexes",
 		"Test_deleteAllIndexes2",
 		"Test_deleteAllIndexes3",
@@ -141,7 +154,6 @@ func Test_deleteAllIndexes(t *testing.T) {
 		_, err := defaultClient.CreateIndex(&IndexConfig{
 			Uid: uid,
 		})
-
 		if err != nil {
 			t.Fatal(err)
 		}

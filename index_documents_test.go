@@ -106,18 +106,18 @@ func TestIndex_AddDocuments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
 			require.NoError(t, err)
-			i.DefaultWaitForPendingUpdate(gotResp)
+			testWaitForPendingUpdate(t, i, gotResp)
 			var documents []map[string]interface{}
-			i.GetDocuments(&DocumentsRequest{
+			err = i.GetDocuments(&DocumentsRequest{
 				Limit: 3,
 			}, &documents)
+			require.NoError(t, err)
 			require.Equal(t, tt.args.documentsPtr, documents)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -213,19 +213,18 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.AddDocumentsWithPrimaryKey(tt.args.documentsPtr, tt.args.primaryKey)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
 			require.NoError(t, err)
-			i.DefaultWaitForPendingUpdate(gotResp)
+
+			testWaitForPendingUpdate(t, i, gotResp)
 
 			var documents []map[string]interface{}
-			i.GetDocuments(&DocumentsRequest{
-				Limit: 3,
-			}, &documents)
+			err = i.GetDocuments(&DocumentsRequest{Limit: 3}, &documents)
+			require.NoError(t, err)
 			require.Equal(t, tt.args.documentsPtr, documents)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -265,20 +264,19 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			SetUpBasicIndex()
 			gotResp, err := i.DeleteAllDocuments()
 			require.NoError(t, err)
 			require.Equal(t, gotResp, tt.wantResp)
-			i.DefaultWaitForPendingUpdate(gotResp)
+
+			testWaitForPendingUpdate(t, i, gotResp)
 
 			var documents interface{}
-			i.GetDocuments(&DocumentsRequest{
-				Limit: 5,
-			}, &documents)
+			err = i.GetDocuments(&DocumentsRequest{Limit: 5}, &documents)
+			require.NoError(t, err)
 			require.Empty(t, documents)
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -389,21 +387,24 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.GreaterOrEqual(t, gotAddResp.UpdateID, tt.wantResp.UpdateID)
 			require.NoError(t, err)
-			i.DefaultWaitForPendingUpdate(gotAddResp)
+
+			testWaitForPendingUpdate(t, i, gotAddResp)
 
 			gotResp, err := i.DeleteDocument(tt.args.identifier)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
-			i.DefaultWaitForPendingUpdate(gotResp)
+
+			testWaitForPendingUpdate(t, i, gotResp)
 
 			var document []map[string]interface{}
 			err = i.GetDocument(tt.args.identifier, &document)
+			require.Error(t, err)
 			require.Empty(t, document)
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -485,23 +486,25 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
-			i.DefaultWaitForPendingUpdate(gotAddResp)
+
+			testWaitForPendingUpdate(t, i, gotAddResp)
 
 			gotResp, err := i.DeleteDocuments(tt.args.identifier)
 			require.NoError(t, err)
 			require.Equal(t, gotResp, tt.wantResp)
-			i.DefaultWaitForPendingUpdate(gotResp)
+
+			testWaitForPendingUpdate(t, i, gotResp)
 
 			var document docTest
 			for _, identifier := range tt.args.identifier {
 				err = i.GetDocument(identifier, &document)
+				require.Error(t, err)
 				require.Empty(t, document)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -553,6 +556,7 @@ func TestIndex_GetDocument(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 			SetUpBasicIndex()
 
 			require.Empty(t, tt.args.documentPtr)
@@ -565,8 +569,6 @@ func TestIndex_GetDocument(t *testing.T) {
 				require.NotEmpty(t, tt.args.documentPtr)
 				require.Equal(t, strconv.Itoa(tt.args.documentPtr.BookID), tt.args.identifier)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -658,21 +660,22 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 			SetUpBasicIndex()
 
 			got, err := i.UpdateDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
 			require.Equal(t, got, tt.want)
-			i.DefaultWaitForPendingUpdate(got)
+
+			testWaitForPendingUpdate(t, i, got)
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
 				err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
+				require.NoError(t, err)
 				require.Equal(t, identifier.BookID, document.BookID)
 				require.Equal(t, identifier.Title, document.Title)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
@@ -770,21 +773,22 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 			SetUpBasicIndex()
 
 			got, err := i.UpdateDocumentsWithPrimaryKey(tt.args.documentsPtr, tt.args.primaryKey)
 			require.NoError(t, err)
 			require.Equal(t, got, tt.want)
-			i.DefaultWaitForPendingUpdate(got)
+
+			testWaitForPendingUpdate(t, i, got)
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
 				err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
+				require.NoError(t, err)
 				require.Equal(t, identifier.BookID, document.BookID)
 				require.Equal(t, identifier.Title, document.Title)
 			}
-
-			deleteAllIndexes(c)
 		})
 	}
 }
