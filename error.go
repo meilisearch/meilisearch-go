@@ -46,6 +46,8 @@ func (e ErrCode) rawMessage() string {
 		return rawStringResponseUnmarshalBody + " " + rawStringCtx
 	case MeilisearchApiError:
 		return rawStringMeilisearchApiError + " " + rawStringCtx
+	case MeilisearchApiErrorWithoutMessage:
+		return rawStringMeilisearchApiErrorWithoutMessage + " " + rawStringCtx
 	case MeilisearchTimeoutError:
 		return rawStringMeilisearchTimeoutError + " " + rawStringCtx
 	case MeilisearchCommunicationError:

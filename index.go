@@ -17,7 +17,7 @@ type IndexConfig struct {
 	// PrimaryKey is optional
 	PrimaryKey string
 
-	client *Client
+	client *Client //nolint:golint,unused,structcheck
 }
 
 type IndexInterface interface {
@@ -92,7 +92,7 @@ func (i Index) FetchInfo() (resp *Index, err error) {
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-	i.PrimaryKey = resp.PrimaryKey
+	i.PrimaryKey = resp.PrimaryKey //nolint:golint,staticcheck
 	return resp, nil
 }
 

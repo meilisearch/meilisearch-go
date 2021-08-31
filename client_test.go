@@ -143,7 +143,7 @@ func TestClient_Health(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "TestHealthWIthBadUrl",
+			name: "TestHealthWithBadUrl",
 			client: &Client{
 				config: ClientConfig{
 					Host:   "http://wrongurl:1234",

@@ -64,7 +64,7 @@ func (i Index) AddDocuments(documentsPtr interface{}) (resp *AsyncUpdateID, err 
 
 func (i Index) AddDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	i.PrimaryKey = primaryKey
+	i.PrimaryKey = primaryKey //nolint:golint,staticcheck
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey,
 		method:              http.MethodPost,
@@ -98,7 +98,7 @@ func (i Index) UpdateDocuments(documentsPtr interface{}) (*AsyncUpdateID, error)
 
 func (i Index) UpdateDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
-	i.PrimaryKey = primaryKey
+	i.PrimaryKey = primaryKey //nolint:golint,staticcheck
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey,
 		method:              http.MethodPut,
