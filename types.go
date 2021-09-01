@@ -1,9 +1,9 @@
 package meilisearch
 
 import (
-		"time"
+	"time"
 
-		"github.com/valyala/fasthttp"
+	"github.com/valyala/fasthttp"
 )
 
 //

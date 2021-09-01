@@ -41,15 +41,11 @@ Each PR should pass the tests and the linter to be accepted.
 docker pull getmeili/meilisearch:latest # Fetch the latest version of MeiliSearch image from Docker Hub
 docker run -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=masterKey --no-analytics=true
 go test -v ./...
-# Install golint if needed (see comment below)
-go get -u golang.org/x/lint/golint
-# Use golint
-golint
+# Use golangci-lint
+docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.42.0 golangci-lint run -v
 # Use gofmt
 gofmt -w ./..
 ```
-
-> To find out where golint was installed you can run `go list -f {{.Target}} golang.org/x/lint/golint`. For golint to be used globally add that directory to the $PATH environment setting (taken from golint docs).
 
 ### EasyJson <!-- omit in TOC -->
 
