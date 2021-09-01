@@ -15,11 +15,11 @@ jobs:
     strategy:
         matrix:
           # Current go.mod version and latest stable go version
-          go: [1.14, 1.15]
+          go: [1.16, 1.17]
           include:
-            - go: 1.14
+            - go: 1.16
               tag: current
-            - go: 1.15
+            - go: 1.17
               tag: latest
 
     name: integration-tests-against-rc (go ${{ matrix.tag }} version)

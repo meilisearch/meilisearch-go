@@ -1,19 +1,9 @@
 package meilisearch
 
 import (
-	"bytes"
-	"sync"
 	"time"
 
 	"github.com/valyala/fasthttp"
-	"github.com/valyala/fastjson"
-)
-
-var arp fastjson.ArenaPool
-
-var (
-	bf bytes.Buffer
-	mu sync.Mutex
 )
 
 //

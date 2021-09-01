@@ -14,20 +14,19 @@ jobs:
     name: linter
     runs-on: ubuntu-latest
     steps:
+    - uses: actions/checkout@v2
     - name: Set up Go
       uses: actions/setup-go@v2
-    - name: Check out code into the Go module directory
-      uses: actions/checkout@v2
-    - name: Get dependencies
-      run: |
-        go get -v -t -d ./...
-        if [ -f Gopkg.toml ]; then
-          curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-          dep ensure
-        fi
-        go get -u golang.org/x/lint/golint
+      with:
+        go-version: 1.17
     - name: Run linter
-      run: /home/runner/go/bin/golint
+      uses: golangci/golangci-lint-action@v2
+      with:
+        version: v1.42
+        # Optional: show only new issues if it's a pull request. The default value is `false`.
+        # only-new-issues: true
+    - name: Run go vet
+      run: go vet
 
   integration_tests:
     runs-on: ubuntu-latest
@@ -37,11 +36,11 @@ jobs:
     strategy:
         matrix:
           # Current go.mod version and latest stable go version
-          go: [1.14, 1.15]
+          go: [1.16, 1.17]
           include:
-            - go: 1.14
+            - go: 1.16
               tag: current
-            - go: 1.15
+            - go: 1.17
               tag: latest
 
     name: integration-tests (go ${{ matrix.tag }} version)
