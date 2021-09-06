@@ -133,6 +133,7 @@ type SearchRequest struct {
 	Matches               bool
 	FacetsDistribution    []string
 	PlaceholderSearch     bool
+	Sort                  []string
 }
 
 // SearchResponse is the response body for search method

@@ -1269,9 +1269,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
