@@ -138,7 +138,7 @@ func TestIndex_GetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
+			wantResp: &defaultRankingRules,
 		},
 		{
 			name: "TestIndexGetRankingRulesWithCustomClient",
@@ -146,7 +146,7 @@ func TestIndex_GetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
+			wantResp: &defaultRankingRules,
 		},
 	}
 	for _, tt := range tests {
@@ -221,9 +221,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				client: defaultClient,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -239,9 +237,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				client: customClient,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -381,8 +377,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 
 			gotUpdate, err := i.ResetFilterableAttributes()
 			require.NoError(t, err)
-			require.Equal(t, tt.wantUpdate, gotUpdate)
-
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			testWaitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err := i.GetFilterableAttributes()
@@ -515,7 +510,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
 			},
-			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
+			wantResp: &defaultRankingRules,
 		},
 		{
 			name: "TestIndexResetRankingRulesWithCustomClient",
@@ -526,7 +521,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
 			},
-			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
+			wantResp: &defaultRankingRules,
 		},
 	}
 	for _, tt := range tests {
@@ -622,9 +617,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -643,9 +636,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -825,7 +816,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 
 			gotUpdate, err := i.UpdateFilterableAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.Equal(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
+			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
 			testWaitForPendingUpdate(t, i, gotUpdate)
 
 			gotResp, err = i.GetFilterableAttributes()
@@ -980,7 +971,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
 			},
-			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
+			wantResp: &defaultRankingRules,
 		},
 		{
 			name: "TestIndexUpdateRankingRulesWithCustomClient",
@@ -994,7 +985,21 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
 			},
-			wantResp: &[]string{"words", "typo", "proximity", "attribute", "exactness"},
+			wantResp: &defaultRankingRules,
+		},
+		{
+			name: "TestIndexUpdateRankingRulesAscending",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: []string{
+					"BookID:asc",
+				},
+			},
+			wantUpdate: &AsyncUpdateID{
+				UpdateID: 1,
+			},
+			wantResp: &defaultRankingRules,
 		},
 	}
 	for _, tt := range tests {
@@ -1127,9 +1132,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1169,9 +1172,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1328,9 +1329,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1388,9 +1387,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1448,9 +1445,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1508,9 +1503,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: []string{
-					"words", "typo", "proximity", "attribute", "exactness",
-				},
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1568,9 +1561,12 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
+				RankingRules: defaultRankingRules,
 				RankingRules: []string{
 					"words", "typo", "proximity", "attribute", "exactness",
 				},
+			wantResp: &Settings{
+				RankingRules: defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},

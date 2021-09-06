@@ -118,6 +118,9 @@ var (
 		Host:   "http://localhost:7700",
 		APIKey: masterKey,
 	})
+	defaultRankingRules = []string{
+		"words", "typo", "sort", "proximity", "attribute", "exactness",
+	}
 )
 
 var customClient = NewFastHTTPCustomClient(ClientConfig{
