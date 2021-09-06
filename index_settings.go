@@ -388,3 +388,51 @@ func (i Index) ResetFilterableAttributes() (resp *AsyncUpdateID, err error) {
 	}
 	return resp, nil
 }
+
+func (i Index) GetSortableAttributes() (resp *[]string, err error) {
+	resp = &[]string{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/sortable-attributes",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetSortableAttributes",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) UpdateSortableAttributes(request *[]string) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/sortable-attributes",
+		method:              http.MethodPost,
+		withRequest:         &request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateSortableAttributes",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) ResetSortableAttributes() (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/sortable-attributes",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetSortableAttributes",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
