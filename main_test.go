@@ -119,7 +119,7 @@ var (
 		APIKey: masterKey,
 	})
 	defaultRankingRules = []string{
-		"words", "typo", "sort", "proximity", "attribute", "exactness",
+		"words", "typo", "proximity", "attribute", "sort", "exactness",
 	}
 )
 
