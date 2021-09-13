@@ -733,13 +733,13 @@ func TestIndex_SearchWithSort(t *testing.T) {
 						"book_id": float64(1032), "title": "Crime and Punishment",
 					},
 					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
-					},
-					map[string]interface{}{
 						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 					map[string]interface{}{
 						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
 				NbHits:           4,
@@ -771,13 +771,13 @@ func TestIndex_SearchWithSort(t *testing.T) {
 						"book_id": float64(1032), "title": "Crime and Punishment",
 					},
 					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
-					},
-					map[string]interface{}{
 						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 					map[string]interface{}{
 						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
 				NbHits:           4,
