@@ -92,14 +92,14 @@ update_settings_1: |-
       "genre",
       "release_date",
     },
-    SortableAttributes: []string{
-      "title",
-      "release_date",
-    },
     StopWords: []string{
       "the",
       "a",
       "an",
+    },
+    SortableAttributes: []string{
+      "title",
+      "release_date",
     },
     Synonyms: map[string][]string{
       "wolverine": []string{"xmen", "logan"},
