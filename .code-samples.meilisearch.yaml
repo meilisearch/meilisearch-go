@@ -75,9 +75,10 @@ update_settings_1: |-
       "typo",
       "proximity",
       "attribute",
+      "sort",
       "exactness",
-      "desc(release_date)",
-      "desc(rank)",
+      "release_date:desc",
+      "rank:desc",
     },
     DistinctAttribute: &distinctAttribute,
     SearchableAttributes: []string{
@@ -95,6 +96,10 @@ update_settings_1: |-
       "the",
       "a",
       "an",
+    },
+    SortableAttributes: []string{
+      "title",
+      "release_date",
     },
     Synonyms: map[string][]string{
       "wolverine": []string{"xmen", "logan"},
@@ -130,9 +135,10 @@ update_ranking_rules_1: |-
     "typo",
     "proximity",
     "attribute",
+    "sort",
     "exactness",
-    "asc(release_date)",
-    "desc(rank)",
+    "release_date:asc",
+    "rank:desc",
   }
   client.Index("movies").UpdateRankingRules(&rankingRules)
 reset_ranking_rules_1: |-
@@ -176,6 +182,16 @@ update_displayed_attributes_1: |-
   client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
 reset_displayed_attributes_1: |-
   client.Index("movies").ResetDisplayedAttributes()
+get_sortable_attributes_1: |-
+  client.Index("books").GetSortableAttributes()
+update_sortable_attributes_1: |-
+  sortableAttributes := []string{
+    "price",
+    "author",
+  }
+  client.Index("books").UpdateSortableAttributes(&sortableAttributes)
+reset_sortable_attributes_1: |-
+  client.Index("books").ResetSortableAttributes()
 get_index_stats_1: |-
   client.Index("movies").GetStats()
 get_indexes_stats_1: |-
@@ -267,9 +283,10 @@ settings_guide_ranking_rules_1: |-
     "typo",
     "proximity",
     "attribute",
+    "sort",
     "exactness",
-    "asc(release_date)",
-    "desc(rank)",
+    "release_date:asc",
+    "rank:desc",
   }
   client.Index("movies").UpdateRankingRules(&rankingRules)
 settings_guide_distinct_1: |-
@@ -408,3 +425,37 @@ get_dump_status_1: |-
   resp, err := client.GetDumpStatus("dump-uid")
 phrase_search_1: |-
   resp, err := client.Index("movies").Search("\"african american\" horror", &meilisearch.SearchRequest{})
+sorting_guide_update_sortable_attributes_1: |-
+  sortableAttributes := []string{
+    "author",
+    "price",
+  }
+  client.Index("books").UpdateSortableAttributes(&sortableAttributes)
+sorting_guide_update_ranking_rules_1: |-
+  rankingRules := []string{
+    "words",
+    "sort",
+    "typo",
+    "proximity",
+    "attribute",
+    "exactness",
+  }
+  client.Index("books").UpdateRankingRules(&rankingRules)
+sorting_guide_sort_parameter_1: |-
+  resp, err := client.Index("books").Search("science fiction", &meilisearch.SearchRequest{
+    Sort: []string{
+      "price:asc",
+    },
+  })
+sorting_guide_sort_parameter_2: |-
+  resp, err := client.Index("books").Search("butler", &meilisearch.SearchRequest{
+    Sort: []string{
+      "author:desc",
+    },
+  })
+search_parameter_guide_sort_1: |-
+  resp, err := client.Index("books").Search("science fiction", &meilisearch.SearchRequest{
+    Sort: []string{
+      "price:asc",
+    },
+  })

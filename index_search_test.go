@@ -352,6 +352,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 			got, err := i.Search(tt.args.query, &tt.args.request)
 			require.NoError(t, err)
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
+
 			for len := range got.Hits {
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
@@ -360,7 +361,6 @@ func TestIndex_SearchFacets(t *testing.T) {
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
 			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
-
 			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
 			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
 		})
@@ -640,6 +640,238 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
+			require.NoError(t, err)
+			testWaitForPendingUpdate(t, i, updateFilter)
+
+			got, err := i.Search(tt.args.query, &tt.args.request)
+			require.NoError(t, err)
+			require.Equal(t, len(tt.want.Hits), len(got.Hits))
+
+			for len := range got.Hits {
+				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
+				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+			}
+			require.Equal(t, tt.want.NbHits, got.NbHits)
+			require.Equal(t, tt.want.Offset, got.Offset)
+			require.Equal(t, tt.want.Limit, got.Limit)
+			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
+			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
+			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
+		})
+	}
+}
+
+
+func TestIndex_SearchWithSort(t *testing.T) {
+	type args struct {
+		UID                  string
+		PrimaryKey           string
+		client               *Client
+		query                string
+		sortableAttributes   []string
+		request              SearchRequest
+	}
+	tests := []struct {
+		name string
+		args args
+		want *SearchResponse
+	}{
+		{
+			name: "TestIndexBasicSearchWithSortIntParameter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "and",
+				sortableAttributes: []string{
+					"year",
+				},
+				request: SearchRequest{
+					Sort: []string{
+						"year:asc",
+					},
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(123), "title": "Pride and Prejudice",
+					},
+					map[string]interface{}{
+						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(1032), "title": "Crime and Punishment",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				NbHits:           4,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexBasicSearchWithSortStringParameter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "and",
+				sortableAttributes: []string{
+					"title",
+				},
+				request: SearchRequest{
+					Sort: []string{
+						"title:asc",
+					},
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(1032), "title": "Crime and Punishment",
+					},
+					map[string]interface{}{
+						"book_id": float64(123), "title": "Pride and Prejudice",
+					},
+					map[string]interface{}{
+						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				NbHits:           4,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexBasicSearchWithSortMultipleParameter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "and",
+				sortableAttributes: []string{
+					"title",
+					"year",
+				},
+				request: SearchRequest{
+					Sort: []string{
+						"title:asc",
+						"year:asc",
+					},
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(1032), "title": "Crime and Punishment",
+					},
+					map[string]interface{}{
+						"book_id": float64(123), "title": "Pride and Prejudice",
+					},
+					map[string]interface{}{
+						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				NbHits:           4,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexBasicSearchWithSortMultipleParameterReverse",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "and",
+				sortableAttributes: []string{
+					"title",
+					"year",
+				},
+				request: SearchRequest{
+					Sort: []string{
+						"year:asc",
+						"title:asc",
+					},
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(123), "title": "Pride and Prejudice",
+					},
+					map[string]interface{}{
+						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(1032), "title": "Crime and Punishment",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				NbHits:           4,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexBasicSearchWithSortMultipleParameterPlaceHolder",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "",
+				sortableAttributes: []string{
+					"title",
+					"year",
+				},
+				request: SearchRequest{
+					Sort: []string{
+						"year:asc",
+						"title:asc",
+					},
+					Limit: 4,
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(56), "title": "The Divine Comedy",
+					},
+					map[string]interface{}{
+						"book_id": float64(32), "title": "The Odyssey",
+					},
+					map[string]interface{}{
+						"book_id": float64(69), "title": "Hamlet",
+					},
+					map[string]interface{}{
+						"book_id": float64(7), "title": "Don Quixote",
+					},
+				},
+				NbHits:           20,
+				Offset:           0,
+				Limit:            4,
+				ExhaustiveNbHits: false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexForFaceting()
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			updateFilter, err := i.UpdateSortableAttributes(&tt.args.sortableAttributes)
 			require.NoError(t, err)
 			testWaitForPendingUpdate(t, i, updateFilter)
 

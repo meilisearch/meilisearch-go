@@ -34,6 +34,7 @@ type Settings struct {
 	StopWords            []string            `json:"stopWords,omitempty"`
 	Synonyms             map[string][]string `json:"synonyms,omitempty"`
 	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
+	SortableAttributes	 []string			 `json:"sortableAttributes,omitempty"`
 }
 
 // Version is the type that represents the versions in MeiliSearch
@@ -133,6 +134,7 @@ type SearchRequest struct {
 	Matches               bool
 	FacetsDistribution    []string
 	PlaceholderSearch     bool
+	Sort                  []string
 }
 
 // SearchResponse is the response body for search method

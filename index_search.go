@@ -50,6 +50,9 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	if len(request.FacetsDistribution) != 0 {
 		searchPostRequestParams["facetsDistribution"] = request.FacetsDistribution
 	}
+	if len(request.Sort) != 0 {
+		searchPostRequestParams["sort"] = request.Sort
+	}
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/search",
