@@ -1,7 +1,6 @@
 package meilisearch
 
 import (
-	"net"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -153,29 +152,6 @@ func TestClient_Health(t *testing.T) {
 				},
 			},
 			wantErr: true,
-			expectedError: Error(Error{
-				Endpoint:         "/health",
-				Method:           "GET",
-				Function:         "Health",
-				RequestToString:  "empty request",
-				ResponseToString: "empty response",
-				MeilisearchApiMessage: meilisearchApiMessage{
-					Message:   "empty meilisearch message",
-					ErrorCode: "",
-					ErrorType: "",
-					ErrorLink: "",
-				},
-				StatusCode:         0,
-				StatusCodeExpected: []int{200},
-				rawMessage:         "MeilisearchCommunicationError unable to execute request (path \"${method} ${endpoint}\" with method \"${function}\")",
-				OriginError: &net.DNSError{Err: "Temporary failure in name resolution",
-					Name:        "wrongurl",
-					Server:      "",
-					IsTimeout:   false,
-					IsTemporary: true,
-					IsNotFound:  false},
-				ErrCode: 7,
-			}),
 		},
 	}
 	for _, tt := range tests {
@@ -183,7 +159,6 @@ func TestClient_Health(t *testing.T) {
 			gotResp, err := tt.client.Health()
 			if tt.wantErr {
 				require.Error(t, err)
-				require.Equal(t, &tt.expectedError, err)
 			} else {
 				require.NoError(t, err)
 				require.Equal(t, tt.wantResp, gotResp, "Health() got response %v, want %v", gotResp, tt.wantResp)
