@@ -116,7 +116,7 @@ import (
 
 func main() {
     // MeiliSearch is typo-tolerant:
-    searchRes, err := client.Index("movies").Search("carol",
+    searchRes, err := client.Index("movies").Search("philoudelphia",
         &meilisearch.SearchRequest{
             Limit: 10,
         })
