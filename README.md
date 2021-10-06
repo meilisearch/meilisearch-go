@@ -133,7 +133,7 @@ JSON output:
 ```json
 {
   "hits": [{
-    "id": 1,
+    "id": 6,
     "title": "Philadelphia",
     "genres": ["Drama"]
   }],
