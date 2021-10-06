@@ -25,6 +25,7 @@ type IndexInterface interface {
 	FetchPrimaryKey() (resp *string, err error)
 	UpdateIndex(primaryKey string) (resp *Index, err error)
 	Delete(uid string) (ok bool, err error)
+	DeleteIfExists(uid string) (ok bool, err error)
 	GetStats() (resp *StatsIndex, err error)
 
 	AddDocuments(documentsPtr interface{}) (resp *AsyncUpdateID, err error)
@@ -136,6 +137,25 @@ func (i Index) Delete(uid string) (ok bool, err error) {
 	// err is not nil if status code is not 204 StatusNoContent
 	if err := i.client.executeRequest(req); err != nil {
 		return false, err
+	}
+	return true, nil
+}
+
+func (i Index) DeleteIfExists(uid string) (ok bool, err error) {
+	req := internalRequest{
+		endpoint:            "/indexes/" + uid,
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        nil,
+		acceptedStatusCodes: []int{http.StatusNoContent},
+		functionName:        "Delete",
+	}
+	// err is not nil if status code is not 204 StatusNoContent
+	if err := i.client.executeRequest(req); err != nil {
+		if err.(*Error).MeilisearchApiMessage.ErrorCode != "index_not_found" {
+			return false, err
+		}
+		return false, nil
 	}
 	return true, nil
 }
