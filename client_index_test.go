@@ -5,7 +5,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/valyala/fasthttp"
 )
 
 func TestClient_CreateIndex(t *testing.T) {
@@ -83,24 +82,11 @@ func TestClient_CreateIndex(t *testing.T) {
 				},
 			},
 			wantErr: true,
-			expectedError: Error(Error{
-				Endpoint:         "/indexes",
-				Method:           "POST",
-				Function:         "CreateIndex",
-				RequestToString:  "{\"uid\":\"TestCreateIndexInvalidUid*\"}",
-				ResponseToString: "{\"message\":\"Index must have a valid uid; Index uid can be of type integer or string only composed of alphanumeric characters, hyphens (-) and underscores (_).\",\"errorCode\":\"invalid_index_uid\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#invalid_index_uid\"}",
+			expectedError: Error{
 				MeilisearchApiMessage: meilisearchApiMessage{
-					Message:   "Index must have a valid uid; Index uid can be of type integer or string only composed of alphanumeric characters, hyphens (-) and underscores (_).",
 					ErrorCode: "invalid_index_uid",
-					ErrorType: "invalid_request_error",
-					ErrorLink: "https://docs.meilisearch.com/errors#invalid_index_uid",
 				},
-				StatusCode:         400,
-				StatusCodeExpected: []int{201},
-				rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
-				OriginError:        error(nil),
-				ErrCode:            4,
-			}),
+			},
 		},
 		{
 			name:   "TestCreateIndexAlreadyExist",
@@ -111,24 +97,11 @@ func TestClient_CreateIndex(t *testing.T) {
 				},
 			},
 			wantErr: true,
-			expectedError: Error(Error{
-				Endpoint:         "/indexes",
-				Method:           "POST",
-				Function:         "CreateIndex",
-				RequestToString:  "{\"uid\":\"indexUID\"}",
-				ResponseToString: "{\"message\":\"Index already exists.\",\"errorCode\":\"index_already_exists\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_already_exists\"}",
+			expectedError: Error{
 				MeilisearchApiMessage: meilisearchApiMessage{
-					Message:   "Index already exists.",
 					ErrorCode: "index_already_exists",
-					ErrorType: "invalid_request_error",
-					ErrorLink: "https://docs.meilisearch.com/errors#index_already_exists",
 				},
-				StatusCode:         400,
-				StatusCodeExpected: []int{201},
-				rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
-				OriginError:        error(nil),
-				ErrCode:            4,
-			}),
+			},
 		},
 		{
 			name:   "TestCreateIndexTimeout",
@@ -139,24 +112,9 @@ func TestClient_CreateIndex(t *testing.T) {
 				},
 			},
 			wantErr: true,
-			expectedError: Error(Error{
-				Endpoint:         "/indexes",
-				Method:           "POST",
-				Function:         "CreateIndex",
-				RequestToString:  "{\"uid\":\"indexUID\"}",
-				ResponseToString: "empty response",
-				MeilisearchApiMessage: meilisearchApiMessage{
-					Message:   "empty meilisearch message",
-					ErrorCode: "",
-					ErrorType: "",
-					ErrorLink: "",
-				},
-				StatusCode:         0,
-				StatusCodeExpected: []int{201},
-				rawMessage:         "MeilisearchTimeoutError (path \"${method} ${endpoint}\" with method \"${function}\")",
-				OriginError:        fasthttp.ErrTimeout,
-				ErrCode:            6,
-			}),
+			expectedError: Error{
+				MeilisearchApiMessage: meilisearchApiMessage{},
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -168,7 +126,8 @@ func TestClient_CreateIndex(t *testing.T) {
 			gotResp, err := c.CreateIndex(&tt.args.config)
 			if tt.wantErr {
 				require.Error(t, err)
-				require.Equal(t, &tt.expectedError, err)
+				require.Equal(t, tt.expectedError.MeilisearchApiMessage.ErrorCode,
+					err.(*Error).MeilisearchApiMessage.ErrorCode)
 			} else {
 				require.NoError(t, err)
 				if assert.NotNil(t, gotResp) {
@@ -227,24 +186,11 @@ func TestClient_DeleteIndex(t *testing.T) {
 			},
 			wantErr: true,
 			expectedError: []Error{
-				Error(Error{
-					Endpoint:         "/indexes/1",
-					Method:           "DELETE",
-					Function:         "DeleteIndex",
-					RequestToString:  "empty request",
-					ResponseToString: "{\"message\":\"Index \\\"1\\\" not found.\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						Message:   "Index \"1\" not found.",
 						ErrorCode: "index_not_found",
-						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
 					},
-					StatusCode:         404,
-					StatusCodeExpected: []int{204},
-					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
-					OriginError:        error(nil),
-					ErrCode:            4,
-				}),
+				},
 			},
 		},
 		{
@@ -255,76 +201,26 @@ func TestClient_DeleteIndex(t *testing.T) {
 			},
 			wantErr: true,
 			expectedError: []Error{
-				Error(Error{
-					Endpoint:         "/indexes/2",
-					Method:           "DELETE",
-					Function:         "DeleteIndex",
-					RequestToString:  "empty request",
-					ResponseToString: "{\"message\":\"Index \\\"2\\\" not found.\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						Message:   "Index \"2\" not found.",
 						ErrorCode: "index_not_found",
-						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
 					},
-					StatusCode:         404,
-					StatusCodeExpected: []int{204},
-					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
-					OriginError:        error(nil),
-					ErrCode:            4,
-				}),
-				Error(Error{
-					Endpoint:         "/indexes/3",
-					Method:           "DELETE",
-					Function:         "DeleteIndex",
-					RequestToString:  "empty request",
-					ResponseToString: "{\"message\":\"Index \\\"3\\\" not found.\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+				},
+				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						Message:   "Index \"3\" not found.",
 						ErrorCode: "index_not_found",
-						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
 					},
-					StatusCode:         404,
-					StatusCodeExpected: []int{204},
-					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")", OriginError: error(nil), ErrCode: 4,
-				}),
-				Error(Error{
-					Endpoint:         "/indexes/4",
-					Method:           "DELETE",
-					Function:         "DeleteIndex",
-					RequestToString:  "empty request",
-					ResponseToString: "{\"message\":\"Index \\\"4\\\" not found.\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+				},
+				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						Message:   "Index \"4\" not found.",
 						ErrorCode: "index_not_found",
-						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
 					},
-					StatusCode:         404,
-					StatusCodeExpected: []int{204},
-					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
-					OriginError:        error(nil),
-					ErrCode:            4,
-				}),
-				Error(Error{
-					Endpoint:         "/indexes/5",
-					Method:           "DELETE",
-					Function:         "DeleteIndex",
-					RequestToString:  "empty request",
-					ResponseToString: "{\"message\":\"Index \\\"5\\\" not found.\",\"errorCode\":\"index_not_found\",\"errorType\":\"invalid_request_error\",\"errorLink\":\"https://docs.meilisearch.com/errors#index_not_found\"}",
+				},
+				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						Message:   "Index \"5\" not found.",
 						ErrorCode: "index_not_found",
-						ErrorType: "invalid_request_error",
-						ErrorLink: "https://docs.meilisearch.com/errors#index_not_found",
 					},
-					StatusCode:         404,
-					StatusCodeExpected: []int{204},
-					rawMessage:         "unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink} (path \"${method} ${endpoint}\" with method \"${function}\")",
-					OriginError:        error(nil),
-					ErrCode:            4,
-				}),
+				},
 			},
 		},
 		{
@@ -335,24 +231,9 @@ func TestClient_DeleteIndex(t *testing.T) {
 			},
 			wantErr: true,
 			expectedError: []Error{
-				Error(Error{
-					Endpoint:         "/indexes/1",
-					Method:           "DELETE",
-					Function:         "DeleteIndex",
-					RequestToString:  "empty request",
-					ResponseToString: "empty response",
-					MeilisearchApiMessage: meilisearchApiMessage{
-						Message:   "empty meilisearch message",
-						ErrorCode: "",
-						ErrorType: "",
-						ErrorLink: "",
-					},
-					StatusCode:         0,
-					StatusCodeExpected: []int{204},
-					rawMessage:         "MeilisearchTimeoutError (path \"${method} ${endpoint}\" with method \"${function}\")",
-					OriginError:        fasthttp.ErrTimeout,
-					ErrCode:            6,
-				}),
+				{
+					MeilisearchApiMessage: meilisearchApiMessage{},
+				},
 			},
 		},
 	}
@@ -369,7 +250,8 @@ func TestClient_DeleteIndex(t *testing.T) {
 				gotOk, err := c.DeleteIndex(tt.args.deleteUid[k])
 				if tt.wantErr {
 					require.Error(t, err)
-					require.Equal(t, &tt.expectedError[k], err)
+					require.Equal(t, tt.expectedError[k].MeilisearchApiMessage.ErrorCode,
+						err.(*Error).MeilisearchApiMessage.ErrorCode)
 				} else {
 					require.NoError(t, err)
 					require.True(t, gotOk)
