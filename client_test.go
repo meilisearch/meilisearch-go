@@ -40,24 +40,9 @@ func TestClient_TimeoutError(t *testing.T) {
 		{
 			name:   "TestTimeoutError",
 			client: timeoutClient,
-			expectedError: Error(Error{
-				Endpoint:         "/version",
-				Method:           "GET",
-				Function:         "Version",
-				RequestToString:  "empty request",
-				ResponseToString: "empty response",
-				MeilisearchApiMessage: meilisearchApiMessage{
-					Message:   "empty meilisearch message",
-					ErrorCode: "",
-					ErrorType: "",
-					ErrorLink: "",
-				},
-				StatusCode:         0,
-				StatusCodeExpected: []int{200},
-				rawMessage:         "MeilisearchTimeoutError (path \"${method} ${endpoint}\" with method \"${function}\")",
-				OriginError:        fasthttp.ErrTimeout,
-				ErrCode:            6,
-			}),
+			expectedError: Error{
+				MeilisearchApiMessage: meilisearchApiMessage{},
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -65,7 +50,8 @@ func TestClient_TimeoutError(t *testing.T) {
 			gotResp, err := tt.client.GetVersion()
 			require.Error(t, err)
 			require.Nil(t, gotResp)
-			require.Equal(t, &tt.expectedError, err)
+			require.Equal(t, tt.expectedError.MeilisearchApiMessage.ErrorCode,
+				err.(*Error).MeilisearchApiMessage.ErrorCode)
 		})
 	}
 }
