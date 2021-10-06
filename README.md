@@ -134,7 +134,8 @@ JSON output:
 {
   "hits": [{
     "id": 1,
-    "title": "Carol"
+    "title": "Philadelphia",
+    "genres": ["Drama"]
   }],
   "offset": 0,
   "limit": 10,
