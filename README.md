@@ -116,7 +116,7 @@ import (
 
 func main() {
     // MeiliSearch is typo-tolerant:
-    searchRes, err := client.Index("movies").Search("harry pottre",
+    searchRes, err := client.Index("movies").Search("carol",
         &meilisearch.SearchRequest{
             Limit: 10,
         })
@@ -133,13 +133,13 @@ JSON output:
 ```json
 {
   "hits": [{
-    "book_id": 4,
-    "title": "Harry Potter and the Half-Blood Prince"
+    "id": 1,
+    "title": "Carol"
   }],
   "offset": 0,
   "limit": 10,
   "processingTimeMs": 1,
-  "query": "harry pottre"
+  "query": "carol"
 }
 ```
 
@@ -149,7 +149,7 @@ All the supported options are described in the [search parameters](https://docs.
 
 ```go
 func main() {
-    searchRes, err := client.Index("movies").Search("hob",
+    searchRes, err := client.Index("movies").Search("wonder",
         &meilisearch.SearchRequest{
             AttributesToHighlight: []string{"*"},
         })
@@ -167,18 +167,18 @@ JSON output:
 {
     "hits": [
         {
-            "book_id": 1344,
-            "title": "The Hobbit",
+            "id": 2,
+            "title": "Wonder Woman",
             "_formatted": {
-                "book_id": 1344,
-                "title": "The <em>Hob</em>bit"
+                "id": 2,
+                "title": "<em>Wonder</em> Woman"
             }
         }
     ],
     "offset": 0,
     "limit": 20,
     "processingTimeMs": 0,
-    "query": "hob"
+    "query": "wonder"
 }
 ```
 
