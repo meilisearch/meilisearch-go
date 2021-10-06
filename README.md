@@ -170,6 +170,7 @@ JSON output:
         {
             "id": 2,
             "title": "Wonder Woman",
+            "genres": ["Action", "Adventure"],
             "_formatted": {
                 "id": 2,
                 "title": "<em>Wonder</em> Woman"
