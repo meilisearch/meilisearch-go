@@ -79,16 +79,16 @@ func main() {
                 APIKey: "masterKey",
         })
 	// An index is where the documents are stored.
-	index := client.Index("books")
+	index := client.Index("movies")
 
-	// If the index 'books' does not exist, MeiliSearch creates it when you first add the documents.
+	// If the index 'movies' does not exist, MeiliSearch creates it when you first add the documents.
 	documents := []map[string]interface{}{
-		{"book_id": 123,  "title": "Pride and Prejudice"},
-		{"book_id": 456,  "title": "Le Petit Prince"},
-		{"book_id": 1,    "title": "Alice In Wonderland"},
-		{"book_id": 1344, "title": "The Hobbit"},
-		{"book_id": 4,    "title": "Harry Potter and the Half-Blood Prince"},
-		{"book_id": 42,   "title": "The Hitchhiker's Guide to the Galaxy"},
+        { "id": 1, "title": "Carol", "genres": ["Romance", "Drama"] },
+        { "id": 2, "title": "Wonder Woman", "genres": ["Action", "Adventure"] },
+        { "id": 3, "title": "Life of Pi", "genres": ["Adventure", "Drama"] },
+        { "id": 4, "title": "Mad Max: Fury Road", "genres": ["Adventure", "Science Fiction"] },
+        { "id": 5, "title": "Moana", "genres": ["Fantasy", "Action"]},
+        { "id": 6, "title": "Philadelphia", "genres": ["Drama"] },
 	}
 	update, err := index.AddDocuments(documents)
 	if err != nil {
@@ -116,7 +116,7 @@ import (
 
 func main() {
     // MeiliSearch is typo-tolerant:
-    searchRes, err := client.Index("books").Search("harry pottre",
+    searchRes, err := client.Index("movies").Search("philoudelphia",
         &meilisearch.SearchRequest{
             Limit: 10,
         })
@@ -133,13 +133,14 @@ JSON output:
 ```json
 {
   "hits": [{
-    "book_id": 4,
-    "title": "Harry Potter and the Half-Blood Prince"
+    "id": 6,
+    "title": "Philadelphia",
+    "genres": ["Drama"]
   }],
   "offset": 0,
   "limit": 10,
   "processingTimeMs": 1,
-  "query": "harry pottre"
+  "query": "philoudelphia"
 }
 ```
 
@@ -149,7 +150,7 @@ All the supported options are described in the [search parameters](https://docs.
 
 ```go
 func main() {
-    searchRes, err := client.Index("books").Search("hob",
+    searchRes, err := client.Index("movies").Search("wonder",
         &meilisearch.SearchRequest{
             AttributesToHighlight: []string{"*"},
         })
@@ -167,18 +168,19 @@ JSON output:
 {
     "hits": [
         {
-            "book_id": 1344,
-            "title": "The Hobbit",
+            "id": 2,
+            "title": "Wonder Woman",
+            "genres": ["Action", "Adventure"],
             "_formatted": {
-                "book_id": 1344,
-                "title": "The <em>Hob</em>bit"
+                "id": 2,
+                "title": "<em>Wonder</em> Woman"
             }
         }
     ],
     "offset": 0,
     "limit": 20,
     "processingTimeMs": 0,
-    "query": "hob"
+    "query": "wonder"
 }
 ```
 
