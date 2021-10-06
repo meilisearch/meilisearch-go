@@ -69,3 +69,22 @@ func (c *Client) DeleteIndex(uid string) (ok bool, err error) {
 	}
 	return true, nil
 }
+
+func (c *Client) DeleteIndexIfExists(uid string) (ok bool, err error) {
+	req := internalRequest{
+		endpoint:            "/indexes/" + uid,
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        nil,
+		acceptedStatusCodes: []int{http.StatusNoContent},
+		functionName:        "DeleteIndex",
+	}
+	// err is not nil if status code is not 204 StatusNoContent
+	if err := c.executeRequest(req); err != nil {
+		if err.(*Error).MeilisearchApiMessage.ErrorCode != "index_not_found" {
+			return false, err
+		}
+		return false, nil
+	}
+	return true, nil
+}
