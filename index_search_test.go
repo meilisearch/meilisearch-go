@@ -631,6 +631,31 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				ExhaustiveNbHits: false,
 			},
 		},
+		{
+			name: "TestIndexSearchWithFilterContainingSpaces",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "and",
+				filterableAttributes: []string{
+					"tag",
+				},
+				request: SearchRequest{
+					Filter: "tag = 'Crime fiction'",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(1032), "title": "Crime and Punishment",
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -661,15 +686,14 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 	}
 }
 
-
 func TestIndex_SearchWithSort(t *testing.T) {
 	type args struct {
-		UID                  string
-		PrimaryKey           string
-		client               *Client
-		query                string
-		sortableAttributes   []string
-		request              SearchRequest
+		UID                string
+		PrimaryKey         string
+		client             *Client
+		query              string
+		sortableAttributes []string
+		request            SearchRequest
 	}
 	tests := []struct {
 		name string
