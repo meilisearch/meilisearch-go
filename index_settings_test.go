@@ -221,7 +221,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				client: defaultClient,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -238,7 +238,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				client: customClient,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -656,7 +656,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -676,7 +676,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1217,7 +1217,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					FilterableAttributes: []string{
 						"title",
 					},
-					SortableAttributes:   []string{
+					SortableAttributes: []string{
 						"title",
 					},
 				},
@@ -1226,7 +1226,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1261,7 +1261,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					FilterableAttributes: []string{
 						"title",
 					},
-					SortableAttributes:   []string{
+					SortableAttributes: []string{
 						"title",
 					},
 				},
@@ -1270,7 +1270,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1370,7 +1370,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1431,7 +1431,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1492,7 +1492,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1553,7 +1553,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1614,7 +1614,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1649,7 +1649,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{
 						"title",
 					},
-					SortableAttributes:   []string{},
+					SortableAttributes: []string{},
 				},
 				secondRequest: Settings{
 					FilterableAttributes: []string{
@@ -1668,14 +1668,14 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{
 						"title",
 					},
-					SortableAttributes:   []string{},
+					SortableAttributes: []string{},
 				},
 			},
 			wantUpdate: &AsyncUpdateID{
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1708,7 +1708,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					StopWords:            []string{},
 					Synonyms:             map[string][]string(nil),
 					FilterableAttributes: []string{},
-					SortableAttributes:   []string{
+					SortableAttributes: []string{
 						"title",
 					},
 				},
@@ -1727,7 +1727,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					StopWords:            []string{},
 					Synonyms:             map[string][]string(nil),
 					FilterableAttributes: []string{},
-					SortableAttributes:   []string{
+					SortableAttributes: []string{
 						"title",
 					},
 				},
@@ -1736,7 +1736,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				UpdateID: 1,
 			},
 			wantResp: &Settings{
-				RankingRules: defaultRankingRules,
+				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
@@ -1858,7 +1858,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				request: map[string][]string{
-					"wolverine": []string{"logan", "xmen"},
+					"wolverine": {"logan", "xmen"},
 				},
 			},
 			wantUpdate: &AsyncUpdateID{
@@ -1871,7 +1871,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 				request: map[string][]string{
-					"wolverine": []string{"logan", "xmen"},
+					"wolverine": {"logan", "xmen"},
 				},
 			},
 			wantUpdate: &AsyncUpdateID{

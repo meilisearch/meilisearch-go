@@ -46,6 +46,22 @@ func (c *Client) GetAllIndexes() (resp []*Index, err error) {
 	return resp, nil
 }
 
+func (c *Client) GetAllRawIndexes() (resp []map[string]interface{}, err error) {
+	resp = []map[string]interface{}{}
+	req := internalRequest{
+		endpoint:            "/indexes",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetAllRawIndexes",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (c *Client) GetOrCreateIndex(config *IndexConfig) (resp *Index, err error) {
 	resp, err = c.GetIndex(config.Uid)
 	if err == nil {
