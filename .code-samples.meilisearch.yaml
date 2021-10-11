@@ -13,7 +13,7 @@ create_an_index_1: |-
     PrimaryKey: "movie_id",
   })
 update_an_index_1: |-
-  client.Index("movies").UpdateIndex("movie_review_id")
+  client.Index("movie_review").UpdateIndex("movie_review_id")
 delete_an_index_1: |-
   client.DeleteIndex("movies")
   // OR
@@ -231,7 +231,7 @@ filtering_guide_3: |-
   })
 filtering_guide_4: |-
   resp, err := client.Index("movies").Search("Planet of the Apes", &meilisearch.SearchRequest{
-    Filter: "rating >= 3 AND (NOT director = \"Tim Burton\"",
+    Filter: "rating >= 3 AND (NOT director = \"Tim Burton\")",
   })
 search_parameter_guide_query_1: |-
   resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{})
