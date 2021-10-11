@@ -463,6 +463,104 @@ func TestClient_GetAllIndexes(t *testing.T) {
 	}
 }
 
+func TestClient_GetAllRawIndexes(t *testing.T) {
+	type args struct {
+		uid []string
+	}
+	tests := []struct {
+		name     string
+		client   *Client
+		args     args
+		wantResp []map[string]interface{}
+	}{
+		{
+			name:   "TestGelAllIndexesOnNoIndexes",
+			client: defaultClient,
+			args: args{
+				uid: []string{},
+			},
+			wantResp: []map[string]interface{}{},
+		},
+		{
+			name:   "TestBasicGelAllIndexes",
+			client: defaultClient,
+			args: args{
+				uid: []string{"1"},
+			},
+			wantResp: []map[string]interface{}{
+				{
+					"uid": "1",
+				},
+			},
+		},
+		{
+			name:   "TestGelAllIndexesWithCustomClient",
+			client: customClient,
+			args: args{
+				uid: []string{"1"},
+			},
+			wantResp: []map[string]interface{}{
+				{
+					"uid": "1",
+				},
+			},
+		},
+		{
+			name:   "TestGelAllIndexesOnMultipleIndex",
+			client: defaultClient,
+			args: args{
+				uid: []string{"1", "2", "3"},
+			},
+			wantResp: []map[string]interface{}{
+				{
+					"uid": "1",
+				},
+				{
+					"uid": "2",
+				},
+				{
+					"uid": "3",
+				},
+			},
+		},
+		{
+			name:   "TestGelAllIndexesOnMultipleIndexWithPrimaryKey",
+			client: defaultClient,
+			args: args{
+				uid: []string{"1", "2", "3"},
+			},
+			wantResp: []map[string]interface{}{
+				{
+					"uid":        "1",
+					"primaryKey": "PrimaryKey1",
+				},
+				{
+					"uid":        "2",
+					"primaryKey": "PrimaryKey2",
+				},
+				{
+					"uid":        "3",
+					"primaryKey": "PrimaryKey3",
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.client
+			t.Cleanup(cleanup(c))
+
+			for _, uid := range tt.args.uid {
+				_, err := c.CreateIndex(&IndexConfig{Uid: uid})
+				require.NoError(t, err, "CreateIndex() in TestGetAllIndexes error should be nil")
+			}
+			gotResp, err := c.GetAllRawIndexes()
+			require.NoError(t, err)
+			require.Equal(t, len(tt.wantResp), len(gotResp))
+		})
+	}
+}
+
 func TestClient_GetIndex(t *testing.T) {
 	type args struct {
 		config IndexConfig

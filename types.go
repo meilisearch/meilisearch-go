@@ -34,7 +34,7 @@ type Settings struct {
 	StopWords            []string            `json:"stopWords,omitempty"`
 	Synonyms             map[string][]string `json:"synonyms,omitempty"`
 	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
-	SortableAttributes	 []string			 `json:"sortableAttributes,omitempty"`
+	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
 }
 
 // Version is the type that represents the versions in MeiliSearch
