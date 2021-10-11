@@ -459,3 +459,34 @@ search_parameter_guide_sort_1: |-
       "price:asc",
     },
   })
+geosearch_guide_filter_settings_1: |-
+  filterableAttributes := []string{
+    "_geo",
+  }
+  client.Index("restaurants").UpdateFilterableAttributes(&filterableAttributes)
+geosearch_guide_filter_usage_1: |-
+  resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Filter: "_geoRadius(45.4628328, 9.1076931, 2000)",
+  })
+geosearch_guide_filter_usage_2: |-
+  resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Filter: "_geoRadius(45.4628328, 9.1076931, 2000) AND type = pizza",
+  })
+geosearch_guide_sort_settings_1: |-
+  sortableAttributes := []string{
+    "_geo",
+  }
+  client.Index("restaurants").UpdateSortableAttributes(&sortableAttributes)
+geosearch_guide_sort_usage_1: |-
+  resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Sort: []string{
+      "_geoPoint(48.8583701,2.2922926):asc",
+    },
+  })
+geosearch_guide_sort_usage_2: |-
+  resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Sort: []string{
+      "_geoPoint(48.8583701,2.2922926):asc",
+      "rating:desc",
+    },
+  })
