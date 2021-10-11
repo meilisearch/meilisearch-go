@@ -470,8 +470,8 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 				request: SearchRequest{
 					Filter: [][]string{
-						[]string{"year < 1850"},
-						[]string{"tag = romance"},
+						{"year < 1850"},
+						{"tag = romance"},
 					},
 				},
 			},
