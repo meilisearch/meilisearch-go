@@ -83,12 +83,12 @@ func main() {
 
 	// If the index 'movies' does not exist, MeiliSearch creates it when you first add the documents.
 	documents := []map[string]interface{}{
-        { "id": 1, "title": "Carol", "genres": ["Romance", "Drama"] },
-        { "id": 2, "title": "Wonder Woman", "genres": ["Action", "Adventure"] },
-        { "id": 3, "title": "Life of Pi", "genres": ["Adventure", "Drama"] },
-        { "id": 4, "title": "Mad Max: Fury Road", "genres": ["Adventure", "Science Fiction"] },
-        { "id": 5, "title": "Moana", "genres": ["Fantasy", "Action"]},
-        { "id": 6, "title": "Philadelphia", "genres": ["Drama"] },
+        { "id": 1, "title": "Carol", "genres": []string{"Romance", "Drama"} },
+        { "id": 2, "title": "Wonder Woman", "genres": []string{"Action", "Adventure"} },
+        { "id": 3, "title": "Life of Pi", "genres": []string{"Adventure", "Drama"} },
+        { "id": 4, "title": "Mad Max: Fury Road", "genres": []string{"Adventure", "Science Fiction"} },
+        { "id": 5, "title": "Moana", "genres": []string{"Fantasy", "Action"} },
+        { "id": 6, "title": "Philadelphia", "genres": []string{"Drama"} },
 	}
 	update, err := index.AddDocuments(documents)
 	if err != nil {
