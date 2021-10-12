@@ -13,7 +13,7 @@ create_an_index_1: |-
     PrimaryKey: "movie_id",
   })
 update_an_index_1: |-
-  client.Index("movies").UpdateIndex("movie_review_id")
+  client.Index("movie_review").UpdateIndex("movie_review_id")
 delete_an_index_1: |-
   client.DeleteIndex("movies")
   // OR
@@ -231,7 +231,7 @@ filtering_guide_3: |-
   })
 filtering_guide_4: |-
   resp, err := client.Index("movies").Search("Planet of the Apes", &meilisearch.SearchRequest{
-    Filter: "rating >= 3 AND (NOT director = \"Tim Burton\"",
+    Filter: "rating >= 3 AND (NOT director = \"Tim Burton\")",
   })
 search_parameter_guide_query_1: |-
   resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{})
@@ -457,5 +457,36 @@ search_parameter_guide_sort_1: |-
   resp, err := client.Index("books").Search("science fiction", &meilisearch.SearchRequest{
     Sort: []string{
       "price:asc",
+    },
+  })
+geosearch_guide_filter_settings_1: |-
+  filterableAttributes := []string{
+    "_geo",
+  }
+  client.Index("restaurants").UpdateFilterableAttributes(&filterableAttributes)
+geosearch_guide_filter_usage_1: |-
+  resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Filter: "_geoRadius(45.4628328, 9.1076931, 2000)",
+  })
+geosearch_guide_filter_usage_2: |-
+  resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Filter: "_geoRadius(45.4628328, 9.1076931, 2000) AND type = pizza",
+  })
+geosearch_guide_sort_settings_1: |-
+  sortableAttributes := []string{
+    "_geo",
+  }
+  client.Index("restaurants").UpdateSortableAttributes(&sortableAttributes)
+geosearch_guide_sort_usage_1: |-
+  resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Sort: []string{
+      "_geoPoint(48.8583701,2.2922926):asc",
+    },
+  })
+geosearch_guide_sort_usage_2: |-
+  resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Sort: []string{
+      "_geoPoint(48.8583701,2.2922926):asc",
+      "rating:desc",
     },
   })
