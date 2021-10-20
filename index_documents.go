@@ -1,10 +1,11 @@
 package meilisearch
 
 import (
+	"math"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
-	"math"
 )
 
 func (i Index) GetDocument(identifier string, documentPtr interface{}) error {
@@ -80,29 +81,34 @@ func (i Index) AddDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKey s
 	return resp, nil
 }
 
-func (i Index) AddDocumentsInBatches(documentsPtr []interface{}, batchSize int, primaryKey string) (resp []*AsyncUpdateID, err error){
-	lenDocs := len(documentsPtr)
-	numBatches := math.Ceil(float64(lenDocs)/float64(batchSize))
-	resp = make([]*AsyncUpdateID, numBatches)
-	for j := 0; j < lenDocs; j += batchSize{
-		end := j + batchSize
+func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error){
+	arr := reflect.ValueOf(documentsPtr)
+	lenDocs := arr.Len()
+	numBatches := int(math.Ceil(float64(lenDocs)/float64(batchSize)))
+	resp = make([]AsyncUpdateID, numBatches)
+
+	for j := 0; j < numBatches; j++{
+		end := (j+1)*batchSize
 		if end > lenDocs{
 			end = lenDocs
 		}
 
-		batch := documentsPtr[i:end]
+		batch := arr.Slice(j*batchSize, end).Interface()
+
 		if primaryKey != nil {
-			respID, err := i.AddDocumentsWithPrimaryKey(batch, primaryKey)
+			respID, err := i.AddDocumentsWithPrimaryKey(batch, primaryKey[0])
 			if err != nil{
 				return nil, err
 			}
-			resp[j] = respID
+
+			resp[j] = *respID
 		}else{
 			respID, err := i.AddDocuments(batch)
 			if err != nil{
 				return nil, err
 			}
-			resp[j] = respID
+
+			resp[j] = *respID
 		}
 	}
 
@@ -143,34 +149,34 @@ func (i Index) UpdateDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKe
 	return resp, nil
 }
 
-func (i Index) UpdateDocumentsInBatches(documentsPtr []interface{}, batchSize int, primaryKey string) (resp []*AsyncUpdateID, err error){
-	lenDocs := len(documentsPtr)
-	numBatches := math.Ceil(float64(lenDocs)/float64(batchSize))
-	resp = make([]*AsyncUpdateID, numBatches)
+func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error){
+	arr := reflect.ValueOf(documentsPtr)
+	lenDocs := arr.Len()
+	numBatches := int(math.Ceil(float64(lenDocs)/float64(batchSize)))
+	resp = make([]AsyncUpdateID, numBatches)
 
-	for j := 0; j < lenDocs; j += batchSize{
-		end := j + batchSize
+	for j := 0; j < numBatches; j++ {
+		end := (j+1)*batchSize
 		if end > lenDocs{
 			end = lenDocs
 		}
 
-		batch := documentsPtr[i:end]
+		batch := arr.Slice(j*batchSize, end).Interface()
 		if primaryKey != nil {
-			respID, err := i.UpdateDocumentsWithPrimaryKey(batch, primaryKey)
+			respID, err := i.UpdateDocumentsWithPrimaryKey(batch, primaryKey[0])
 			if err != nil{
 				return nil, err
 			}
 			
-			resp[j] = respID
+			resp[j] = *respID
 		}else{
 			respID, err := i.UpdateDocuments(batch)
 			if err != nil{
 				return nil, err
 			}
 			
-			resp[j] = respID
+			resp[j] = *respID
 		}
-		
 	}
 
 	return resp, nil
