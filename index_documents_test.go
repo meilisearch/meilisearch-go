@@ -262,11 +262,11 @@ func TestIndex_AddDocumentsInBatches(t *testing.T){
 					{"ID": "124", "Name": "Pride and Prejudicb"},
 					{"ID": "125", "Name": "Pride and Prejudicc"},
 				},
-				batchSize: 1,
+				batchSize: 2,
 			},
 			wantResp: []AsyncUpdateID{
-				{UpdateID: -1},
 				{UpdateID: 0},
+				{UpdateID: 1},
 			},
 		},
 	}
@@ -288,12 +288,12 @@ func TestIndex_AddDocumentsInBatches(t *testing.T){
 					{"ID": "124", "Name": "Pride and Prejudicb"},
 					{"ID": "125", "Name": "Pride and Prejudicc"},
 				},
-				batchSize: 1,
+				batchSize: 2,
 				primaryKey: "ID",
 			},
 			wantResp: []AsyncUpdateID{
-				{UpdateID: -1},
 				{UpdateID: 0},
+				{UpdateID: 1},
 			},
 		},
 	}
@@ -312,7 +312,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T){
 
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{
-				Limit: 3,
+				Limit: 4,
 			}, &documents)
 
 			require.NoError(t, err)
@@ -334,7 +334,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T){
 
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{
-				Limit: 3,
+				Limit: 4,
 			}, &documents)
 
 			require.NoError(t, err)
