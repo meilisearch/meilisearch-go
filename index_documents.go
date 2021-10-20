@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"math"
 )
 
 func (i Index) GetDocument(identifier string, documentPtr interface{}) error {
@@ -79,6 +80,35 @@ func (i Index) AddDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKey s
 	return resp, nil
 }
 
+func (i Index) AddDocumentsInBatches(documentsPtr []interface{}, batchSize int, primaryKey string) (resp []*AsyncUpdateID, err error){
+	lenDocs := len(documentsPtr)
+	numBatches := math.Ceil(float64(lenDocs)/float64(batchSize))
+	resp = make([]*AsyncUpdateID, numBatches)
+	for j := 0; j < lenDocs; j += batchSize{
+		end := j + batchSize
+		if end > lenDocs{
+			end = lenDocs
+		}
+
+		batch := documentsPtr[i:end]
+		if primaryKey != nil {
+			respID, err := i.AddDocumentsWithPrimaryKey(batch, primaryKey)
+			if err != nil{
+				return nil, err
+			}
+			resp[j] = respID
+		}else{
+			respID, err := i.AddDocuments(batch)
+			if err != nil{
+				return nil, err
+			}
+			resp[j] = respID
+		}
+	}
+
+	return resp, nil
+}
+
 func (i Index) UpdateDocuments(documentsPtr interface{}) (*AsyncUpdateID, error) {
 	var err error
 	resp := &AsyncUpdateID{}
@@ -110,6 +140,39 @@ func (i Index) UpdateDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKe
 	if err = i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
+	return resp, nil
+}
+
+func (i Index) UpdateDocumentsInBatches(documentsPtr []interface{}, batchSize int, primaryKey string) (resp []*AsyncUpdateID, err error){
+	lenDocs := len(documentsPtr)
+	numBatches := math.Ceil(float64(lenDocs)/float64(batchSize))
+	resp = make([]*AsyncUpdateID, numBatches)
+
+	for j := 0; j < lenDocs; j += batchSize{
+		end := j + batchSize
+		if end > lenDocs{
+			end = lenDocs
+		}
+
+		batch := documentsPtr[i:end]
+		if primaryKey != nil {
+			respID, err := i.UpdateDocumentsWithPrimaryKey(batch, primaryKey)
+			if err != nil{
+				return nil, err
+			}
+			
+			resp[j] = respID
+		}else{
+			respID, err := i.UpdateDocuments(batch)
+			if err != nil{
+				return nil, err
+			}
+			
+			resp[j] = respID
+		}
+		
+	}
+
 	return resp, nil
 }
 
