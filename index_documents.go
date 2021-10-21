@@ -1,7 +1,9 @@
 package meilisearch
 
 import (
+	"math"
 	"net/http"
+	"reflect"
 	"strconv"
 	"strings"
 )
@@ -79,6 +81,40 @@ func (i Index) AddDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKey s
 	return resp, nil
 }
 
+func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error){
+	arr := reflect.ValueOf(documentsPtr)
+	lenDocs := arr.Len()
+	numBatches := int(math.Ceil(float64(lenDocs)/float64(batchSize)))
+	resp = make([]AsyncUpdateID, numBatches)
+
+	for j := 0; j < numBatches; j++{
+		end := (j+1)*batchSize
+		if end > lenDocs{
+			end = lenDocs
+		}
+
+		batch := arr.Slice(j*batchSize, end).Interface()
+
+		if primaryKey != nil {
+			respID, err := i.AddDocumentsWithPrimaryKey(batch, primaryKey[0])
+			if err != nil{
+				return nil, err
+			}
+
+			resp[j] = *respID
+		}else{
+			respID, err := i.AddDocuments(batch)
+			if err != nil{
+				return nil, err
+			}
+
+			resp[j] = *respID
+		}
+	}
+
+	return resp, nil
+}
+
 func (i Index) UpdateDocuments(documentsPtr interface{}) (*AsyncUpdateID, error) {
 	var err error
 	resp := &AsyncUpdateID{}
@@ -110,6 +146,39 @@ func (i Index) UpdateDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKe
 	if err = i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
+	return resp, nil
+}
+
+func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error){
+	arr := reflect.ValueOf(documentsPtr)
+	lenDocs := arr.Len()
+	numBatches := int(math.Ceil(float64(lenDocs)/float64(batchSize)))
+	resp = make([]AsyncUpdateID, numBatches)
+
+	for j := 0; j < numBatches; j++ {
+		end := (j+1)*batchSize
+		if end > lenDocs{
+			end = lenDocs
+		}
+
+		batch := arr.Slice(j*batchSize, end).Interface()
+		if primaryKey != nil {
+			respID, err := i.UpdateDocumentsWithPrimaryKey(batch, primaryKey[0])
+			if err != nil{
+				return nil, err
+			}
+			
+			resp[j] = *respID
+		}else{
+			respID, err := i.UpdateDocuments(batch)
+			if err != nil{
+				return nil, err
+			}
+			
+			resp[j] = *respID
+		}
+	}
+
 	return resp, nil
 }
 
