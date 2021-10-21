@@ -28,10 +28,8 @@ type IndexInterface interface {
 	DeleteIfExists(uid string) (ok bool, err error)
 	GetStats() (resp *StatsIndex, err error)
 
-	AddDocuments(documentsPtr interface{}) (resp *AsyncUpdateID, err error)
-	UpdateDocuments(documentsPtr interface{}) (resp *AsyncUpdateID, err error)
-	AddDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error)
-	UpdateDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error)
+	AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error)
+	UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error)
 	GetDocument(uid string, documentPtr interface{}) error
 	GetDocuments(request *DocumentsRequest, resp interface{}) error
 	DeleteDocument(uid string) (resp *AsyncUpdateID, err error)

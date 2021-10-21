@@ -46,8 +46,8 @@ func testWaitForPendingUpdate(t *testing.T, i *Index, u *AsyncUpdateID) {
 	require.NoError(t, err)
 }
 
-func testWaitForPendingBatchUpdate(t *testing.T, i *Index, u []AsyncUpdateID){
-	for _, id := range u{
+func testWaitForPendingBatchUpdate(t *testing.T, i *Index, u []AsyncUpdateID) {
+	for _, id := range u {
 		_, err := i.DefaultWaitForPendingUpdate(&id)
 		require.NoError(t, err)
 	}
