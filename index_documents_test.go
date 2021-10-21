@@ -215,7 +215,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocumentsWithPrimaryKey(tt.args.documentsPtr, tt.args.primaryKey)
+			gotResp, err := i.AddDocuments(tt.args.documentsPtr, tt.args.primaryKey)
 			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
 			require.NoError(t, err)
 
@@ -229,32 +229,32 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 	}
 }
 
-func TestIndex_AddDocumentsInBatches(t *testing.T){
+func TestIndex_AddDocumentsInBatches(t *testing.T) {
 	type argsNoKey struct {
-		UID string
-		client *Client
+		UID          string
+		client       *Client
 		documentsPtr interface{}
-		batchSize int
+		batchSize    int
 	}
 
 	type argsWithKey struct {
-		UID string
-		client *Client
+		UID          string
+		client       *Client
 		documentsPtr interface{}
-		batchSize int
-		primaryKey string
+		batchSize    int
+		primaryKey   string
 	}
 
 	testsNoKey := []struct {
-		name string
-		args argsNoKey
-		wantResp []AsyncUpdateID
+		name          string
+		args          argsNoKey
+		wantResp      []AsyncUpdateID
 		expectedError Error
 	}{
 		{
 			name: "TestIndexBasicAddDocumentsInBatches",
 			args: argsNoKey{
-				UID: "0",
+				UID:    "0",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"ID": "122", "Name": "Pride and Prejudice"},
@@ -271,16 +271,16 @@ func TestIndex_AddDocumentsInBatches(t *testing.T){
 		},
 	}
 
-	testsWithKey := []struct{
-		name string
-		args argsWithKey
-		wantResp []AsyncUpdateID
+	testsWithKey := []struct {
+		name          string
+		args          argsWithKey
+		wantResp      []AsyncUpdateID
 		expectedError Error
 	}{
 		{
 			name: "TestIndexBasicAddDocumentsInBatches",
 			args: argsWithKey{
-				UID: "0",
+				UID:    "0",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"ID": "122", "Name": "Pride and Prejudice"},
@@ -288,7 +288,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T){
 					{"ID": "124", "Name": "Pride and Prejudicb"},
 					{"ID": "125", "Name": "Pride and Prejudicc"},
 				},
-				batchSize: 2,
+				batchSize:  2,
 				primaryKey: "ID",
 			},
 			wantResp: []AsyncUpdateID{
@@ -321,7 +321,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T){
 	}
 
 	for _, tt := range testsWithKey {
-		t.Run(tt.name, func(t *testing.T){
+		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -890,7 +890,7 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 			t.Cleanup(cleanup(c))
 			SetUpBasicIndex()
 
-			got, err := i.UpdateDocumentsWithPrimaryKey(tt.args.documentsPtr, tt.args.primaryKey)
+			got, err := i.UpdateDocuments(tt.args.documentsPtr, tt.args.primaryKey)
 			require.NoError(t, err)
 			require.Equal(t, got, tt.want)
 
@@ -907,23 +907,23 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 	}
 }
 
-func TestIndex_UpdateDocumentsInBatches(t *testing.T){
+func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 	type argsNoKey struct {
-		UID	string
-		client *Client
+		UID          string
+		client       *Client
 		documentsPtr []docTestBooks
-		batchSize	int
+		batchSize    int
 	}
 
-	type argsWithKey struct{
-		UID string
-		client *Client
+	type argsWithKey struct {
+		UID          string
+		client       *Client
 		documentsPtr []docTestBooks
-		batchSize int
-		primaryKey string
+		batchSize    int
+		primaryKey   string
 	}
 
-	testsNoKey := []struct{
+	testsNoKey := []struct {
 		name string
 		args argsNoKey
 		want []AsyncUpdateID
@@ -931,7 +931,7 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T){
 		{
 			name: "TestIndexBatchUpdateDocuments",
 			args: argsNoKey{
-				UID: "indexUID",
+				UID:    "indexUID",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "One Hundred Years of Solitude"},
@@ -946,7 +946,7 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T){
 		},
 	}
 
-	testsWithKey := []struct{
+	testsWithKey := []struct {
 		name string
 		args argsWithKey
 		want []AsyncUpdateID
@@ -954,13 +954,13 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T){
 		{
 			name: "TestIndexBatchUpdateDocuments",
 			args: argsWithKey{
-				UID: "indexUID",
+				UID:    "indexUID",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "One Hundred Years of Solitude"},
 					{BookID: 124, Title: "One Hundred Years of Solitude 2"},
 				},
-				batchSize: 1,
+				batchSize:  1,
 				primaryKey: "book_id",
 			},
 			want: []AsyncUpdateID{
@@ -971,48 +971,48 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T){
 	}
 
 	for _, tt := range testsNoKey {
-			t.Run(tt.name, func(t *testing.T) {
-				c := tt.args.client
-				i := c.Index(tt.args.UID)
-				t.Cleanup(cleanup(c))
-				SetUpBasicIndex()
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+			SetUpBasicIndex()
 
-				got, err := i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize)
+			got, err := i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize)
+			require.NoError(t, err)
+			require.Equal(t, got, tt.want)
+
+			testWaitForPendingBatchUpdate(t, i, got)
+
+			var document docTestBooks
+			for _, identifier := range tt.args.documentsPtr {
+				err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
 				require.NoError(t, err)
-				require.Equal(t, got, tt.want)
+				require.Equal(t, identifier.BookID, document.BookID)
+				require.Equal(t, identifier.Title, document.Title)
+			}
+		})
+	}
 
-				testWaitForPendingBatchUpdate(t, i, got)
+	for _, tt := range testsWithKey {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+			SetUpBasicIndex()
 
-				var document docTestBooks
-				for _, identifier := range tt.args.documentsPtr {
-					err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
-					require.NoError(t, err)
-					require.Equal(t, identifier.BookID, document.BookID)
-					require.Equal(t, identifier.Title, document.Title)
-				}
-			})
-		}
+			got, err := i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, tt.args.primaryKey)
+			require.NoError(t, err)
+			require.Equal(t, got, tt.want)
 
-		for _, tt := range testsWithKey {
-			t.Run(tt.name, func(t *testing.T){
-				c := tt.args.client
-				i := c.Index(tt.args.UID)
-				t.Cleanup(cleanup(c))
-				SetUpBasicIndex()
+			testWaitForPendingBatchUpdate(t, i, got)
 
-				got, err := i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, tt.args.primaryKey)
+			var document docTestBooks
+			for _, identifier := range tt.args.documentsPtr {
+				err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
 				require.NoError(t, err)
-				require.Equal(t, got, tt.want)
-
-				testWaitForPendingBatchUpdate(t, i, got)
-
-				var document docTestBooks
-				for _, identifier := range tt.args.documentsPtr {
-					err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
-					require.NoError(t, err)
-					require.Equal(t, identifier.BookID, document.BookID)
-					require.Equal(t, identifier.Title, document.Title)
-				}
-			})
-		}
+				require.Equal(t, identifier.BookID, document.BookID)
+				require.Equal(t, identifier.Title, document.Title)
+			}
+		})
+	}
 }

@@ -48,15 +48,25 @@ func (i Index) GetDocuments(request *DocumentsRequest, resp interface{}) error {
 	return nil
 }
 
-func (i Index) AddDocuments(documentsPtr interface{}) (resp *AsyncUpdateID, err error) {
+func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
+	endpoint := ""
+	functionName := ""
+	if primaryKey == nil {
+		endpoint = "/indexes/" + i.UID + "/documents"
+		functionName = "AddDocuments"
+	} else {
+		i.PrimaryKey = primaryKey[0] //nolint:golint,staticcheck
+		endpoint = "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey[0]
+		functionName = "AddDocumentsWithPrimaryKey"
+	}
 	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/documents",
+		endpoint:            endpoint,
 		method:              http.MethodPost,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "AddDocuments",
+		functionName:        functionName,
 	}
 	if err = i.client.executeRequest(req); err != nil {
 		return nil, err
@@ -64,117 +74,92 @@ func (i Index) AddDocuments(documentsPtr interface{}) (resp *AsyncUpdateID, err 
 	return resp, nil
 }
 
-func (i Index) AddDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
-	i.PrimaryKey = primaryKey //nolint:golint,staticcheck
-	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey,
-		method:              http.MethodPost,
-		withRequest:         documentsPtr,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "AddDocumentsWithPrimaryKey",
-	}
-	if err = i.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error){
+func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
 	arr := reflect.ValueOf(documentsPtr)
 	lenDocs := arr.Len()
-	numBatches := int(math.Ceil(float64(lenDocs)/float64(batchSize)))
-	resp = make([]AsyncUpdateID, numBatches)
-
-	for j := 0; j < numBatches; j++{
-		end := (j+1)*batchSize
-		if end > lenDocs{
-			end = lenDocs
-		}
-
-		batch := arr.Slice(j*batchSize, end).Interface()
-
-		if primaryKey != nil {
-			respID, err := i.AddDocumentsWithPrimaryKey(batch, primaryKey[0])
-			if err != nil{
-				return nil, err
-			}
-
-			resp[j] = *respID
-		}else{
-			respID, err := i.AddDocuments(batch)
-			if err != nil{
-				return nil, err
-			}
-
-			resp[j] = *respID
-		}
-	}
-
-	return resp, nil
-}
-
-func (i Index) UpdateDocuments(documentsPtr interface{}) (*AsyncUpdateID, error) {
-	var err error
-	resp := &AsyncUpdateID{}
-	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/documents",
-		method:              http.MethodPut,
-		withRequest:         documentsPtr,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "UpdateDocuments",
-	}
-	if err = i.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-func (i Index) UpdateDocumentsWithPrimaryKey(documentsPtr interface{}, primaryKey string) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
-	i.PrimaryKey = primaryKey //nolint:golint,staticcheck
-	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey,
-		method:              http.MethodPut,
-		withRequest:         documentsPtr,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "UpdateDocumentsWithPrimaryKey",
-	}
-	if err = i.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
-func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error){
-	arr := reflect.ValueOf(documentsPtr)
-	lenDocs := arr.Len()
-	numBatches := int(math.Ceil(float64(lenDocs)/float64(batchSize)))
+	numBatches := int(math.Ceil(float64(lenDocs) / float64(batchSize)))
 	resp = make([]AsyncUpdateID, numBatches)
 
 	for j := 0; j < numBatches; j++ {
-		end := (j+1)*batchSize
-		if end > lenDocs{
+		end := (j + 1) * batchSize
+		if end > lenDocs {
+			end = lenDocs
+		}
+
+		batch := arr.Slice(j*batchSize, end).Interface()
+
+		if primaryKey != nil {
+			respID, err := i.AddDocuments(batch, primaryKey[0])
+			if err != nil {
+				return nil, err
+			}
+
+			resp[j] = *respID
+		} else {
+			respID, err := i.AddDocuments(batch)
+			if err != nil {
+				return nil, err
+			}
+
+			resp[j] = *respID
+		}
+	}
+
+	return resp, nil
+}
+
+func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error) {
+	resp = &AsyncUpdateID{}
+	endpoint := ""
+	functionName := ""
+	if primaryKey == nil {
+		endpoint = "/indexes/" + i.UID + "/documents"
+		functionName = "UpdateDocuments"
+	} else {
+		i.PrimaryKey = primaryKey[0] //nolint:golint,staticcheck
+		endpoint = "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey[0]
+		functionName = "UpdateDocumentsWithPrimaryKey"
+	}
+	req := internalRequest{
+		endpoint:            endpoint,
+		method:              http.MethodPut,
+		withRequest:         documentsPtr,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        functionName,
+	}
+	if err = i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
+	arr := reflect.ValueOf(documentsPtr)
+	lenDocs := arr.Len()
+	numBatches := int(math.Ceil(float64(lenDocs) / float64(batchSize)))
+	resp = make([]AsyncUpdateID, numBatches)
+
+	for j := 0; j < numBatches; j++ {
+		end := (j + 1) * batchSize
+		if end > lenDocs {
 			end = lenDocs
 		}
 
 		batch := arr.Slice(j*batchSize, end).Interface()
 		if primaryKey != nil {
-			respID, err := i.UpdateDocumentsWithPrimaryKey(batch, primaryKey[0])
-			if err != nil{
+			respID, err := i.UpdateDocuments(batch, primaryKey[0])
+			if err != nil {
 				return nil, err
 			}
-			
+
 			resp[j] = *respID
-		}else{
+		} else {
 			respID, err := i.UpdateDocuments(batch)
-			if err != nil{
+			if err != nil {
 				return nil, err
 			}
-			
+
 			resp[j] = *respID
 		}
 	}
