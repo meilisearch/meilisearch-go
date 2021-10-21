@@ -51,14 +51,11 @@ func (i Index) GetDocuments(request *DocumentsRequest, resp interface{}) error {
 func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	endpoint := ""
-	functionName := ""
 	if primaryKey == nil {
 		endpoint = "/indexes/" + i.UID + "/documents"
-		functionName = "AddDocuments"
 	} else {
 		i.PrimaryKey = primaryKey[0] //nolint:golint,staticcheck
 		endpoint = "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey[0]
-		functionName = "AddDocumentsWithPrimaryKey"
 	}
 	req := internalRequest{
 		endpoint:            endpoint,
@@ -66,7 +63,7 @@ func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (res
 		withRequest:         documentsPtr,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        functionName,
+		functionName:        "AddDocuments",
 	}
 	if err = i.client.executeRequest(req); err != nil {
 		return nil, err
@@ -111,14 +108,11 @@ func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, pr
 func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	endpoint := ""
-	functionName := ""
 	if primaryKey == nil {
 		endpoint = "/indexes/" + i.UID + "/documents"
-		functionName = "UpdateDocuments"
 	} else {
 		i.PrimaryKey = primaryKey[0] //nolint:golint,staticcheck
 		endpoint = "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey[0]
-		functionName = "UpdateDocumentsWithPrimaryKey"
 	}
 	req := internalRequest{
 		endpoint:            endpoint,
@@ -126,7 +120,7 @@ func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (
 		withRequest:         documentsPtr,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        functionName,
+		functionName:        "UpdateDocuments",
 	}
 	if err = i.client.executeRequest(req); err != nil {
 		return nil, err
