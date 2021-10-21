@@ -663,6 +663,101 @@ func TestClient_GetIndex(t *testing.T) {
 	}
 }
 
+func TestClient_GetRawIndex(t *testing.T) {
+	type args struct {
+		config IndexConfig
+		uid    string
+	}
+	tests := []struct {
+		name     string
+		client   *Client
+		args     args
+		wantResp map[string]interface{}
+		wantErr  bool
+	}{
+		{
+			name:   "TestGetRawIndexOnNotExistingIndex",
+			client: defaultClient,
+			args: args{
+				config: IndexConfig{},
+				uid:    "1",
+			},
+			wantResp: nil,
+			wantErr:  true,
+		},
+		{
+			name:   "TestBasicGetRawIndex",
+			client: defaultClient,
+			args: args{
+				config: IndexConfig{
+					Uid: "1",
+				},
+				uid: "1",
+			},
+			wantResp: map[string]interface{}{
+				"uid": string("1"),
+			},
+			wantErr: false,
+		},
+		{
+			name:   "TestGetRawIndexWithCustomClient",
+			client: customClient,
+			args: args{
+				config: IndexConfig{
+					Uid: "1",
+				},
+				uid: "1",
+			},
+			wantResp: map[string]interface{}{
+				"uid": string("1"),
+			},
+			wantErr: false,
+		},
+		{
+			name:   "TestGetRawIndexWithPrimaryKey",
+			client: defaultClient,
+			args: args{
+				config: IndexConfig{
+					Uid:        "1",
+					PrimaryKey: "PrimaryKey",
+				},
+				uid: "1",
+			},
+			wantResp: map[string]interface{}{
+				"uid":        string("1"),
+				"primaryKey": "PrimaryKey",
+			},
+			wantErr: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.client
+			t.Cleanup(cleanup(c))
+
+			_, err := c.CreateIndex(&tt.args.config)
+			if tt.args.config.Uid != "" {
+				require.NoError(t, err, "CreateIndex() in TestGetRawIndex error should be nil")
+			} else {
+				require.Error(t, err)
+			}
+			gotResp, err := c.GetRawIndex(tt.args.uid)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetIndex() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if tt.args.uid != gotResp["uid"] {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tt.wantResp["uid"], gotResp["uid"])
+				require.Equal(t, tt.wantResp["primaryKey"], gotResp["primaryKey"])
+			}
+		})
+	}
+}
+
 func TestClient_GetOrCreateIndex(t *testing.T) {
 	type args struct {
 		config IndexConfig
