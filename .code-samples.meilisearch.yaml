@@ -144,11 +144,11 @@ update_ranking_rules_1: |-
 reset_ranking_rules_1: |-
   client.Index("movies").ResetRankingRules()
 get_distinct_attribute_1: |-
-  client.Index("movies").GetDistinctAttribute()
+  client.Index("shoes").GetDistinctAttribute()
 update_distinct_attribute_1: |-
-  client.Index("movies").UpdateDistinctAttribute("movie_id")
+  client.Index("shoes").UpdateDistinctAttribute("skuid")
 reset_distinct_attribute_1: |-
-  client.Index("movies").ResetDistinctAttribute()
+  client.Index("shoes").ResetDistinctAttribute()
 get_filterable_attributes_1: |-
   client.Index("movies").GetFilterableAttributes()
 update_filterable_attributes_1: |-
