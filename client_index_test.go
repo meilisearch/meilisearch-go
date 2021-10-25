@@ -741,6 +741,7 @@ func TestClient_GetRawIndex(t *testing.T) {
 			} else {
 				require.Error(t, err)
 			}
+
 			gotResp, err := c.GetRawIndex(tt.args.uid)
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GetRawIndex() error = %v, wantErr %v", err, tt.wantErr)
