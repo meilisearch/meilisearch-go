@@ -746,7 +746,6 @@ func TestClient_GetRawIndex(t *testing.T) {
 				t.Errorf("GetRawIndex() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-
 			if tt.args.uid != gotResp["uid"] {
 				require.Error(t, err)
 			} else {
