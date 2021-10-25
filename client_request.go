@@ -11,8 +11,8 @@ import (
 
 const (
 	contentTypeJSON   string = "application/json"
-	contentTypeNDJSON string = "application/x-dnjson"
-	contentTypeCSV    string = "text/csv"
+	contentTypeNDJSON string = "application/x-dnjson" //nolint
+	contentTypeCSV    string = "text/csv"             //nolint
 )
 
 type internalRequest struct {
