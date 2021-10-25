@@ -9,9 +9,16 @@ import (
 	"encoding/json"
 )
 
+const (
+	contentTypeJSON   string = "application/json"
+	contentTypeNDJSON string = "application/x-dnjson"
+	contentTypeCSV    string = "text/csv"
+)
+
 type internalRequest struct {
-	endpoint string
-	method   string
+	endpoint    string
+	method      string
+	contentType string
 
 	withRequest     interface{}
 	withResponse    interface{}
@@ -103,7 +110,9 @@ func (c *Client) sendRequest(req *internalRequest, internalError *Error, respons
 	}
 
 	// adding request headers
-	request.Header.Set("Content-Type", "application/json")
+	if req.contentType != "" {
+		request.Header.Set("Content-Type", req.contentType)
+	}
 	if c.config.APIKey != "" {
 		request.Header.Set("X-Meili-API-Key", c.config.APIKey)
 	}
