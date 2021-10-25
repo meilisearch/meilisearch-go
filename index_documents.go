@@ -60,6 +60,7 @@ func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (res
 	req := internalRequest{
 		endpoint:            endpoint,
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -117,6 +118,7 @@ func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (
 	req := internalRequest{
 		endpoint:            endpoint,
 		method:              http.MethodPut,
+		contentType:         contentTypeJSON,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -182,6 +184,7 @@ func (i Index) DeleteDocuments(identifier []string) (resp *AsyncUpdateID, err er
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents/delete-batch",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         identifier,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},

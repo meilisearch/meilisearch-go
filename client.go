@@ -144,6 +144,7 @@ func (c *Client) CreateDump() (resp *Dump, err error) {
 	req := internalRequest{
 		endpoint:            "/dumps",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},

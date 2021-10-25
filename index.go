@@ -112,6 +112,7 @@ func (i Index) UpdateIndex(primaryKey string) (resp *Index, err error) {
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID,
 		method:              http.MethodPut,
+		contentType:         contentTypeJSON,
 		withRequest:         request,
 		withResponse:        &i,
 		acceptedStatusCodes: []int{http.StatusOK},
