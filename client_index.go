@@ -10,6 +10,22 @@ func (c *Client) GetIndex(uid string) (resp *Index, err error) {
 	return newIndex(c, uid).FetchInfo()
 }
 
+func (c *Client) GetRawIndex(uid string) (resp map[string]interface{}, err error) {
+	resp = map[string]interface{}{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + uid,
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetRawIndex",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (c *Client) CreateIndex(config *IndexConfig) (resp *Index, err error) {
 	request := &CreateIndexRequest{
 		UID:        config.Uid,
