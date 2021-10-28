@@ -25,6 +25,7 @@ type ClientConfig struct {
 type ClientInterface interface {
 	Index(uid string) *Index
 	GetIndex(indexID string) (resp *Index, err error)
+	GetRawIndex(uid string) (resp map[string]interface{}, err error)
 	GetAllIndexes() (resp []*Index, err error)
 	GetAllRawIndexes() (resp []map[string]interface{}, err error)
 	CreateIndex(config *IndexConfig) (resp *Index, err error)
