@@ -10,7 +10,9 @@ import (
 )
 
 const (
-	contentTypeJSON   string = "application/json"
+	contentTypeJSON string = "application/json"
+	// These two types are defined in advance of the resolution of this issue
+	// https://github.com/meilisearch/meilisearch-go/issues/215. Don't forget to remove the no lint comment when it's done.
 	contentTypeNDJSON string = "application/x-dnjson" //nolint
 	contentTypeCSV    string = "text/csv"             //nolint
 )
