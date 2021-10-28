@@ -57,6 +57,7 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/search",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         searchPostRequestParams,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},

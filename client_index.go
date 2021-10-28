@@ -35,6 +35,7 @@ func (c *Client) CreateIndex(config *IndexConfig) (resp *Index, err error) {
 	req := internalRequest{
 		endpoint:            "/indexes",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusCreated},

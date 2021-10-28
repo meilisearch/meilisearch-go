@@ -25,6 +25,7 @@ func (i Index) UpdateSettings(request *Settings) (resp *AsyncUpdateID, err error
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -73,6 +74,7 @@ func (i Index) UpdateRankingRules(request *[]string) (resp *AsyncUpdateID, err e
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/ranking-rules",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -122,6 +124,7 @@ func (i Index) UpdateDistinctAttribute(request string) (resp *AsyncUpdateID, err
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/distinct-attribute",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -170,6 +173,7 @@ func (i Index) UpdateSearchableAttributes(request *[]string) (resp *AsyncUpdateI
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/searchable-attributes",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -218,6 +222,7 @@ func (i Index) UpdateDisplayedAttributes(request *[]string) (resp *AsyncUpdateID
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/displayed-attributes",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -266,6 +271,7 @@ func (i Index) UpdateStopWords(request *[]string) (resp *AsyncUpdateID, err erro
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/stop-words",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -314,6 +320,7 @@ func (i Index) UpdateSynonyms(request *map[string][]string) (resp *AsyncUpdateID
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/synonyms",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -362,6 +369,7 @@ func (i Index) UpdateFilterableAttributes(request *[]string) (resp *AsyncUpdateI
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/filterable-attributes",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -410,6 +418,7 @@ func (i Index) UpdateSortableAttributes(request *[]string) (resp *AsyncUpdateID,
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/sortable-attributes",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},

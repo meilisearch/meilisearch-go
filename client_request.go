@@ -9,9 +9,18 @@ import (
 	"encoding/json"
 )
 
+const (
+	contentTypeJSON string = "application/json"
+	// These two types are defined in advance of the resolution of this issue
+	// https://github.com/meilisearch/meilisearch-go/issues/215. Don't forget to remove the no lint comment when it's done.
+	contentTypeNDJSON string = "application/x-dnjson" //nolint
+	contentTypeCSV    string = "text/csv"             //nolint
+)
+
 type internalRequest struct {
-	endpoint string
-	method   string
+	endpoint    string
+	method      string
+	contentType string
 
 	withRequest     interface{}
 	withResponse    interface{}
@@ -103,7 +112,9 @@ func (c *Client) sendRequest(req *internalRequest, internalError *Error, respons
 	}
 
 	// adding request headers
-	request.Header.Set("Content-Type", "application/json")
+	if req.contentType != "" {
+		request.Header.Set("Content-Type", req.contentType)
+	}
 	if c.config.APIKey != "" {
 		request.Header.Set("X-Meili-API-Key", c.config.APIKey)
 	}
