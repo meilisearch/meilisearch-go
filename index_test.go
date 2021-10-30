@@ -58,7 +58,7 @@ func TestIndex_Delete(t *testing.T) {
 			expectedError: []Error{
 				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						ErrorCode: "index_not_found",
+						Code: "index_not_found",
 					},
 				},
 			},
@@ -74,17 +74,17 @@ func TestIndex_Delete(t *testing.T) {
 			expectedError: []Error{
 				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						ErrorCode: "index_not_found",
+						Code: "index_not_found",
 					},
 				},
 				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						ErrorCode: "index_not_found",
+						Code: "index_not_found",
 					},
 				},
 				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						ErrorCode: "index_not_found",
+						Code: "index_not_found",
 					},
 				},
 			},
@@ -102,8 +102,8 @@ func TestIndex_Delete(t *testing.T) {
 				gotOk, err := i.Delete(tt.args.deleteUid[k])
 				if tt.wantErr {
 					require.Error(t, err)
-					require.Equal(t, tt.expectedError[k].MeilisearchApiMessage.ErrorCode,
-						err.(*Error).MeilisearchApiMessage.ErrorCode)
+					require.Equal(t, tt.expectedError[k].MeilisearchApiMessage.Code,
+						err.(*Error).MeilisearchApiMessage.Code)
 				} else {
 					require.NoError(t, err)
 					require.True(t, gotOk)
