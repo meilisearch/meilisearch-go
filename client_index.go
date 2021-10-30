@@ -114,7 +114,7 @@ func (c *Client) DeleteIndexIfExists(uid string) (ok bool, err error) {
 	}
 	// err is not nil if status code is not 204 StatusNoContent
 	if err := c.executeRequest(req); err != nil {
-		if err.(*Error).MeilisearchApiMessage.ErrorCode != "index_not_found" {
+		if err.(*Error).MeilisearchApiMessage.Code != "index_not_found" {
 			return false, err
 		}
 		return false, nil
