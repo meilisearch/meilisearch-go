@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 	"net/url"
 
@@ -103,20 +104,30 @@ func (c *Client) sendRequest(req *internalRequest, internalError *Error, respons
 			return fmt.Errorf("sendRequest: request body without Content-Type is not allowed")
 		}
 
-		// A json request is mandatory, so the request interface{} need to be passed as a raw json body.
-		rawJSONRequest := req.withRequest
-		var data []byte
-		var err error
-		if raw, ok := rawJSONRequest.(json.Marshaler); ok {
-			data, err = raw.MarshalJSON()
+		rawRequest := req.withRequest
+		if bytes, ok := rawRequest.([]byte); ok {
+			// If the request body is already a []byte then use it directly
+			request.SetBody(bytes)
+		} else if reader, ok := rawRequest.(io.Reader); ok {
+			// If the request body is an io.Reader then stream it directly until io.EOF
+			request.SetBodyStream(reader, -1)
 		} else {
-			data, err = json.Marshal(rawJSONRequest)
+			// Otherwise convert it to JSON
+			var (
+				data []byte
+				err  error
+			)
+			if marshaler, ok := rawRequest.(json.Marshaler); ok {
+				data, err = marshaler.MarshalJSON()
+			} else {
+				data, err = json.Marshal(rawRequest)
+			}
+			internalError.RequestToString = string(data)
+			if err != nil {
+				return internalError.WithErrCode(ErrCodeMarshalRequest, err)
+			}
+			request.SetBody(data)
 		}
-		internalError.RequestToString = string(data)
-		if err != nil {
-			return internalError.WithErrCode(ErrCodeMarshalRequest, err)
-		}
-		request.SetBody(data)
 	}
 
 	// adding request headers

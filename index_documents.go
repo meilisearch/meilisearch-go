@@ -1,6 +1,11 @@
 package meilisearch
 
 import (
+	"bufio"
+	"bytes"
+	"encoding/csv"
+	"fmt"
+	"io"
 	"math"
 	"net/http"
 	"reflect"
@@ -48,7 +53,7 @@ func (i Index) GetDocuments(request *DocumentsRequest, resp interface{}) error {
 	return nil
 }
 
-func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error) {
+func (i Index) addDocuments(documentsPtr interface{}, contentType string, primaryKey ...string) (resp *AsyncUpdateID, err error) {
 	resp = &AsyncUpdateID{}
 	endpoint := ""
 	if primaryKey == nil {
@@ -60,7 +65,7 @@ func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (res
 	req := internalRequest{
 		endpoint:            endpoint,
 		method:              http.MethodPost,
-		contentType:         contentTypeJSON,
+		contentType:         contentType,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
@@ -70,6 +75,10 @@ func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (res
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error) {
+	return i.addDocuments(documentsPtr, contentTypeJSON, primaryKey...)
 }
 
 func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
@@ -104,6 +113,182 @@ func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, pr
 	}
 
 	return resp, nil
+}
+
+func (i Index) AddDocumentsCsv(documents string, primaryKey ...string) (resp *AsyncUpdateID, err error) {
+	// []byte avoids JSON conversion in Client.sendRequest()
+	return i.addDocuments([]byte(documents), contentTypeCSV, primaryKey...)
+}
+
+func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...string) (resp *AsyncUpdateID, err error) {
+	// io.Reader avoids JSON conversion in Client.sendRequest()
+	return i.addDocuments(documents, contentTypeCSV, primaryKey...)
+}
+
+func (i Index) AddDocumentsCsvInBatches(documents string, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
+	// Reuse io.Reader implementation
+	return i.AddDocumentsCsvFromReaderInBatches(strings.NewReader(documents), batchSize, primaryKey...)
+}
+
+func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
+	// Because of the possibility of multiline fields it's not safe to split
+	// into batches by lines, we'll have to parse the file and reassemble it
+	// into smaller parts. RFC 4180 compliant input with a header row is
+	// expected.
+	// Records are read and sent continuously to avoid reading all content
+	// into memory. However this means that only part of the documents might
+	// be added successfully.
+
+	var (
+		resps   []AsyncUpdateID
+		header  []string
+		records [][]string
+	)
+
+	sendCsvRecords := func(records [][]string) (*AsyncUpdateID, error) {
+		b := new(bytes.Buffer)
+		w := csv.NewWriter(b)
+		w.UseCRLF = true // Keep output RFC 4180 compliant
+		err := w.WriteAll(records)
+		if err != nil {
+			return nil, fmt.Errorf("could not write CSV records: %w", err)
+		}
+
+		resp, err := i.AddDocumentsCsvFromReader(b)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	}
+
+	r := csv.NewReader(documents)
+	for {
+		// Read CSV record (empty lines and comments are already skipped by csv.Reader)
+		record, err := r.Read()
+		if err != io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("could not read CSV record: %w", err)
+		}
+
+		// Store first record as header
+		if header == nil {
+			header = record
+			continue
+		}
+
+		// Add header record to every batch
+		if len(records) == 0 {
+			records = append(records, header)
+		}
+
+		records = append(records, record)
+
+		// After reaching batchSize (not counting the header record) assemble a CSV file and send records
+		if len(records) == batchSize+1 {
+			resp, err := sendCsvRecords(records)
+			if err != nil {
+				return nil, err
+			}
+			resps = append(resps, *resp)
+			records = nil
+		}
+	}
+
+	// Send remaining records as the last batch if there is any
+	if len(records) > 0 {
+		resp, err := sendCsvRecords(records)
+		if err != nil {
+			return nil, err
+		}
+		resps = append(resps, *resp)
+	}
+
+	return resps, nil
+}
+
+func (i Index) AddDocumentsNdjson(documents string, primaryKey ...string) (resp *AsyncUpdateID, err error) {
+	// []byte avoids JSON conversion in Client.sendRequest()
+	return i.addDocuments([]byte(documents), contentTypeNDJSON, primaryKey...)
+}
+
+func (i Index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...string) (resp *AsyncUpdateID, err error) {
+	// io.Reader avoids JSON conversion in Client.sendRequest()
+	return i.addDocuments(documents, contentTypeNDJSON, primaryKey...)
+}
+
+func (i Index) AddDocumentsNdjsonInBatches(documents string, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
+	// Reuse io.Reader implementation
+	return i.AddDocumentsNdjsonFromReaderInBatches(strings.NewReader(documents), batchSize, primaryKey...)
+}
+
+func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
+	// NDJSON files supposed to contain a valid JSON document in each line, so
+	// it's safe to split by lines.
+	// Lines are read and sent continuously to avoid reading all content into
+	// memory. However this means that only part of the documents might be
+	// added successfully.
+
+	sendNdjsonLines := func(lines []string) (*AsyncUpdateID, error) {
+		b := new(bytes.Buffer)
+		for _, line := range lines {
+			_, err := b.WriteString(line)
+			if err != nil {
+				return nil, fmt.Errorf("could not write NDJSON line: %w", err)
+			}
+			err = b.WriteByte('\n')
+			if err != nil {
+				return nil, fmt.Errorf("could not write NDJSON line: %w", err)
+			}
+		}
+
+		resp, err := i.AddDocumentsNdjsonFromReader(b)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	}
+
+	var (
+		resps []AsyncUpdateID
+		lines []string
+	)
+
+	scanner := bufio.NewScanner(documents)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		// Skip empty lines (NDJSON might not allow this, but just to be sure)
+		if line == "" {
+			continue
+		}
+
+		lines = append(lines, line)
+		// After reaching batchSize send NDJSON lines
+		if len(lines) == batchSize {
+			resp, err := sendNdjsonLines(lines)
+			if err != nil {
+				return nil, err
+			}
+			resps = append(resps, *resp)
+			lines = nil
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("could not read NDJSON: %w", err)
+	}
+
+	// Send remaining records as the last batch if there is any
+	if len(lines) > 0 {
+		resp, err := sendNdjsonLines(lines)
+		if err != nil {
+			return nil, err
+		}
+		resps = append(resps, *resp)
+	}
+
+	return resps, nil
 }
 
 func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error) {
