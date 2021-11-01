@@ -28,6 +28,11 @@ type IndexInterface interface {
 	GetStats() (resp *StatsIndex, err error)
 
 	AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error)
+	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error)
+	AddDocumentsCsv(documents string, primaryKey ...string) (resp *AsyncUpdateID, err error)
+	AddDocumentsCsvInBatches(documents string, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error)
+	AddDocumentsNdjson(documents string, primaryKey ...string) (resp *AsyncUpdateID, err error)
+	AddDocumentsNdjsonInBatches(documents string, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error)
 	UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error)
 	GetDocument(uid string, documentPtr interface{}) error
 	GetDocuments(request *DocumentsRequest, resp interface{}) error
