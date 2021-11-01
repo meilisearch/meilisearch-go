@@ -13,11 +13,9 @@ import (
 )
 
 const (
-	contentTypeJSON string = "application/json"
-	// These two types are defined in advance of the resolution of this issue
-	// https://github.com/meilisearch/meilisearch-go/issues/215. Don't forget to remove the no lint comment when it's done.
-	contentTypeNDJSON string = "application/x-ndjson" //nolint
-	contentTypeCSV    string = "text/csv"             //nolint
+	contentTypeJSON   string = "application/json"
+	contentTypeNDJSON string = "application/x-ndjson"
+	contentTypeCSV    string = "text/csv"
 )
 
 type internalRequest struct {
