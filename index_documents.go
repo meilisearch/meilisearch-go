@@ -6,6 +6,7 @@ import (
 	"encoding/csv"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"math"
 	"net/http"
 	"reflect"
@@ -121,8 +122,13 @@ func (i Index) AddDocumentsCsv(documents string, primaryKey ...string) (resp *As
 }
 
 func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...string) (resp *AsyncUpdateID, err error) {
-	// io.Reader avoids JSON conversion in Client.sendRequest()
-	return i.addDocuments(documents, contentTypeCSV, primaryKey...)
+	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
+	// read content to memory anyway because of problems with streamed bodies
+	data, err := ioutil.ReadAll(documents)
+	if err != nil {
+		return nil, fmt.Errorf("could not read documents: %w", err)
+	}
+	return i.addDocuments(data, contentTypeCSV, primaryKey...)
 }
 
 func (i Index) AddDocumentsCsvInBatches(documents string, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
@@ -136,13 +142,13 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 	// into smaller parts. RFC 4180 compliant input with a header row is
 	// expected.
 	// Records are read and sent continuously to avoid reading all content
-	// into memory. However this means that only part of the documents might
+	// into memory. However, this means that only part of the documents might
 	// be added successfully.
 
 	var (
-		resps   []AsyncUpdateID
-		header  []string
-		records [][]string
+		responses []AsyncUpdateID
+		header    []string
+		records   [][]string
 	)
 
 	sendCsvRecords := func(records [][]string) (*AsyncUpdateID, error) {
@@ -154,7 +160,7 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 			return nil, fmt.Errorf("could not write CSV records: %w", err)
 		}
 
-		resp, err := i.AddDocumentsCsvFromReader(b)
+		resp, err := i.AddDocumentsCsv(b.String(), primaryKey...)
 		if err != nil {
 			return nil, err
 		}
@@ -165,7 +171,7 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 	for {
 		// Read CSV record (empty lines and comments are already skipped by csv.Reader)
 		record, err := r.Read()
-		if err != io.EOF {
+		if err == io.EOF {
 			break
 		}
 		if err != nil {
@@ -191,7 +197,7 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 			if err != nil {
 				return nil, err
 			}
-			resps = append(resps, *resp)
+			responses = append(responses, *resp)
 			records = nil
 		}
 	}
@@ -202,10 +208,10 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 		if err != nil {
 			return nil, err
 		}
-		resps = append(resps, *resp)
+		responses = append(responses, *resp)
 	}
 
-	return resps, nil
+	return responses, nil
 }
 
 func (i Index) AddDocumentsNdjson(documents string, primaryKey ...string) (resp *AsyncUpdateID, err error) {
@@ -214,8 +220,13 @@ func (i Index) AddDocumentsNdjson(documents string, primaryKey ...string) (resp 
 }
 
 func (i Index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...string) (resp *AsyncUpdateID, err error) {
-	// io.Reader avoids JSON conversion in Client.sendRequest()
-	return i.addDocuments(documents, contentTypeNDJSON, primaryKey...)
+	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
+	// read content to memory anyway because of problems with streamed bodies
+	data, err := ioutil.ReadAll(documents)
+	if err != nil {
+		return nil, fmt.Errorf("could not read documents: %w", err)
+	}
+	return i.addDocuments(data, contentTypeNDJSON, primaryKey...)
 }
 
 func (i Index) AddDocumentsNdjsonInBatches(documents string, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
@@ -227,7 +238,7 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 	// NDJSON files supposed to contain a valid JSON document in each line, so
 	// it's safe to split by lines.
 	// Lines are read and sent continuously to avoid reading all content into
-	// memory. However this means that only part of the documents might be
+	// memory. However, this means that only part of the documents might be
 	// added successfully.
 
 	sendNdjsonLines := func(lines []string) (*AsyncUpdateID, error) {
@@ -243,7 +254,7 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 			}
 		}
 
-		resp, err := i.AddDocumentsNdjsonFromReader(b)
+		resp, err := i.AddDocumentsNdjson(b.String(), primaryKey...)
 		if err != nil {
 			return nil, err
 		}
@@ -251,8 +262,8 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 	}
 
 	var (
-		resps []AsyncUpdateID
-		lines []string
+		responses []AsyncUpdateID
+		lines     []string
 	)
 
 	scanner := bufio.NewScanner(documents)
@@ -271,7 +282,7 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 			if err != nil {
 				return nil, err
 			}
-			resps = append(resps, *resp)
+			responses = append(responses, *resp)
 			lines = nil
 		}
 	}
@@ -285,10 +296,10 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 		if err != nil {
 			return nil, err
 		}
-		resps = append(resps, *resp)
+		responses = append(responses, *resp)
 	}
 
-	return resps, nil
+	return responses, nil
 }
 
 func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error) {

@@ -110,6 +110,7 @@ func (c *Client) sendRequest(req *internalRequest, internalError *Error, respons
 			request.SetBody(bytes)
 		} else if reader, ok := rawRequest.(io.Reader); ok {
 			// If the request body is an io.Reader then stream it directly until io.EOF
+			// NOTE: Avoid using this, due to problems with streamed request bodies
 			request.SetBodyStream(reader, -1)
 		} else {
 			// Otherwise convert it to JSON
