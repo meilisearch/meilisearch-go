@@ -2,22 +2,11 @@
 
 First of all, thank you for contributing to MeiliSearch! The goal of this document is to provide everything you need to know in order to contribute to MeiliSearch and its different integrations.
 
-- [Hacktoberfest](#hacktoberfest)
 - [Assumptions](#assumptions)
 - [How to Contribute](#how-to-contribute)
 - [Development Workflow](#development-workflow)
 - [Git Guidelines](#git-guidelines)
 - [Release Process (for internal team only)](#release-process-for-internal-team-only)
-
-## Hacktoberfest
-
-It's [Hacktoberfest month](https://blog.meilisearch.com/contribute-hacktoberfest-2021/)! 🥳
-
-🚀 If your PR gets accepted it will count into your participation to Hacktoberfest!
-
-✅ To be accepted it has either to have been merged, approved or tagged with the `hacktoberfest-accepted` label.
-
-🧐 Don't forget to check the [quality standards](https://hacktoberfest.digitalocean.com/resources/qualitystandards)! Low-quality PRs might get marked as `spam` or `invalid`, and will not count toward your participation in Hacktoberfest.
 
 ## Assumptions
 
