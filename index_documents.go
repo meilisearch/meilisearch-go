@@ -27,7 +27,7 @@ func (i Index) GetDocuments(request *DocumentsRequest, resp interface{}) error {
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents",
 		method:              http.MethodGet,
-		withRequest:         request,
+		withRequest:         nil,
 		withResponse:        resp,
 		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
