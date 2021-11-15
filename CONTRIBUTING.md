@@ -40,7 +40,7 @@ Each PR should pass the tests and the linter to be accepted.
 # Tests
 curl -L https://install.meilisearch.com | sh # download MeiliSearch
 ./meilisearch --master-key=masterKey --no-analytics=true # run MeiliSearch
-go test -v ./...
+go clean -cache ; go test -v ./...
 # Use golangci-lint
 docker run --rm -v $(pwd):/app -w /app golangci/golangci-lint:v1.42.0 golangci-lint run -v
 # Use gofmt
