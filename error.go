@@ -59,9 +59,9 @@ func (e ErrCode) rawMessage() string {
 
 type meilisearchApiMessage struct {
 	Message   string `json:"message"`
-	ErrorCode string `json:"errorCode"`
-	ErrorType string `json:"errorType"`
-	ErrorLink string `json:"errorLink"`
+	ErrorCode string `json:"code"`
+	ErrorType string `json:"type"`
+	ErrorLink string `json:"link"`
 }
 
 // Error is the internal error structure that all exposed method use.
