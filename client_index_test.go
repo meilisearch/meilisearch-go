@@ -84,7 +84,7 @@ func TestClient_CreateIndex(t *testing.T) {
 			wantErr: true,
 			expectedError: Error{
 				MeilisearchApiMessage: meilisearchApiMessage{
-					ErrorCode: "invalid_index_uid",
+					Code: "invalid_index_uid",
 				},
 			},
 		},
@@ -99,7 +99,7 @@ func TestClient_CreateIndex(t *testing.T) {
 			wantErr: true,
 			expectedError: Error{
 				MeilisearchApiMessage: meilisearchApiMessage{
-					ErrorCode: "index_already_exists",
+					Code: "index_already_exists",
 				},
 			},
 		},
@@ -126,8 +126,8 @@ func TestClient_CreateIndex(t *testing.T) {
 			gotResp, err := c.CreateIndex(&tt.args.config)
 			if tt.wantErr {
 				require.Error(t, err)
-				require.Equal(t, tt.expectedError.MeilisearchApiMessage.ErrorCode,
-					err.(*Error).MeilisearchApiMessage.ErrorCode)
+				require.Equal(t, tt.expectedError.MeilisearchApiMessage.Code,
+					err.(*Error).MeilisearchApiMessage.Code)
 			} else {
 				require.NoError(t, err)
 				if assert.NotNil(t, gotResp) {
@@ -191,7 +191,7 @@ func TestClient_DeleteIndex(t *testing.T) {
 			expectedError: []Error{
 				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						ErrorCode: "index_not_found",
+						Code: "index_not_found",
 					},
 				},
 			},
@@ -206,22 +206,22 @@ func TestClient_DeleteIndex(t *testing.T) {
 			expectedError: []Error{
 				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						ErrorCode: "index_not_found",
+						Code: "index_not_found",
 					},
 				},
 				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						ErrorCode: "index_not_found",
+						Code: "index_not_found",
 					},
 				},
 				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						ErrorCode: "index_not_found",
+						Code: "index_not_found",
 					},
 				},
 				{
 					MeilisearchApiMessage: meilisearchApiMessage{
-						ErrorCode: "index_not_found",
+						Code: "index_not_found",
 					},
 				},
 			},
@@ -253,8 +253,8 @@ func TestClient_DeleteIndex(t *testing.T) {
 				gotOk, err := c.DeleteIndex(tt.args.deleteUid[k])
 				if tt.wantErr {
 					require.Error(t, err)
-					require.Equal(t, tt.expectedError[k].MeilisearchApiMessage.ErrorCode,
-						err.(*Error).MeilisearchApiMessage.ErrorCode)
+					require.Equal(t, tt.expectedError[k].MeilisearchApiMessage.Code,
+						err.(*Error).MeilisearchApiMessage.Code)
 				} else {
 					require.NoError(t, err)
 					require.True(t, gotOk)
@@ -353,8 +353,8 @@ func TestClient_DeleteIndexIfExists(t *testing.T) {
 				gotOk, err := c.DeleteIndexIfExists(tt.args.deleteUid[k])
 				if tt.wantErr {
 					require.Error(t, err)
-					require.Equal(t, tt.expectedError[k].MeilisearchApiMessage.ErrorCode,
-						err.(*Error).MeilisearchApiMessage.ErrorCode)
+					require.Equal(t, tt.expectedError[k].MeilisearchApiMessage.Code,
+						err.(*Error).MeilisearchApiMessage.Code)
 				} else {
 					require.NoError(t, err)
 					if tt.wantOk {

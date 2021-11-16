@@ -32,7 +32,7 @@ const (
 	rawStringCtx                               = `(path "${method} ${endpoint}" with method "${function}")`
 	rawStringMarshalRequest                    = `unable to marshal body from request: '${request}'`
 	rawStringResponseUnmarshalBody             = `unable to unmarshal body from response: '${response}' status code: ${statusCode}`
-	rawStringMeilisearchApiError               = `unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, ErrorCode: ${errorCode}, ErrorType: ${errorType}, ErrorLink: ${errorLink}`
+	rawStringMeilisearchApiError               = `unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}, Code: ${code}, Type: ${type}, Link: ${link}`
 	rawStringMeilisearchApiErrorWithoutMessage = `unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}`
 	rawStringMeilisearchTimeoutError           = `MeilisearchTimeoutError`
 	rawStringMeilisearchCommunicationError     = `MeilisearchCommunicationError unable to execute request`
@@ -58,10 +58,10 @@ func (e ErrCode) rawMessage() string {
 }
 
 type meilisearchApiMessage struct {
-	Message   string `json:"message"`
-	ErrorCode string `json:"errorCode"`
-	ErrorType string `json:"errorType"`
-	ErrorLink string `json:"errorLink"`
+	Message string `json:"message"`
+	Code    string `json:"code"`
+	Type    string `json:"type"`
+	Link    string `json:"link"`
 }
 
 // Error is the internal error structure that all exposed method use.
@@ -113,9 +113,9 @@ func (e Error) Error() string {
 		"statusCodeExpected": e.StatusCodeExpected,
 		"statusCode":         e.StatusCode,
 		"message":            e.MeilisearchApiMessage.Message,
-		"errorCode":          e.MeilisearchApiMessage.ErrorCode,
-		"errorType":          e.MeilisearchApiMessage.ErrorType,
-		"errorLink":          e.MeilisearchApiMessage.ErrorLink,
+		"code":               e.MeilisearchApiMessage.Code,
+		"type":               e.MeilisearchApiMessage.Type,
+		"link":               e.MeilisearchApiMessage.Link,
 	})
 	if e.OriginError != nil {
 		return errors.Wrap(e.OriginError, message).Error()
@@ -142,9 +142,9 @@ func (e *Error) ErrorBody(body []byte) {
 	err := json.Unmarshal(body, &msg)
 	if err == nil {
 		e.MeilisearchApiMessage.Message = msg.Message
-		e.MeilisearchApiMessage.ErrorCode = msg.ErrorCode
-		e.MeilisearchApiMessage.ErrorType = msg.ErrorType
-		e.MeilisearchApiMessage.ErrorLink = msg.ErrorLink
+		e.MeilisearchApiMessage.Code = msg.Code
+		e.MeilisearchApiMessage.Type = msg.Type
+		e.MeilisearchApiMessage.Link = msg.Link
 	}
 }
 

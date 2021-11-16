@@ -161,7 +161,7 @@ func (c *Client) handleStatusCode(req *internalRequest, response *fasthttp.Respo
 
 		internalError.ErrorBody(rawBody)
 
-		if internalError.MeilisearchApiMessage.ErrorCode == "" {
+		if internalError.MeilisearchApiMessage.Code == "" {
 			return internalError.WithErrCode(MeilisearchApiErrorWithoutMessage)
 		}
 		return internalError.WithErrCode(MeilisearchApiError)
