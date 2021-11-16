@@ -10,8 +10,7 @@ import (
 // IndexConfig configure the Index
 type IndexConfig struct {
 
-	// Host is the host of your meilisearch database
-	// Example: 'http://localhost:7700'
+	// Uid is the unique identifier of a given index.
 	Uid string
 
 	// PrimaryKey is optional

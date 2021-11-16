@@ -281,6 +281,9 @@ func Test_newIndex(t *testing.T) {
 			got := newIndex(c, tt.args.uid)
 			require.Equal(t, tt.want.UID, got.UID)
 			require.Equal(t, tt.want.client, got.client)
+			// Timestamps should be empty unless fetched
+			require.Zero(t, got.CreatedAt)
+			require.Zero(t, got.UpdatedAt)
 		})
 	}
 }
@@ -617,6 +620,9 @@ func TestIndex_FetchInfo(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp.UID, gotResp.UID)
 			require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
+			// Make sure that timestamps are also fetched
+			require.NotZero(t, gotResp.CreatedAt)
+			require.NotZero(t, gotResp.UpdatedAt)
 		})
 	}
 }
@@ -710,12 +716,18 @@ func TestIndex_UpdateIndex(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.args.config.Uid, i.UID)
 			require.Equal(t, tt.args.config.PrimaryKey, i.PrimaryKey)
+			// Store original timestamps
+			createdAt := i.CreatedAt
+			updatedAt := i.UpdatedAt
 
 			gotResp, err := i.UpdateIndex(tt.args.primaryKey)
 
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp.UID, gotResp.UID)
 			require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
+			// Make sure that timestamps were correctly updated as well
+			require.Equal(t, createdAt, gotResp.CreatedAt)
+			require.NotEqual(t, updatedAt, gotResp.UpdatedAt)
 		})
 	}
 }

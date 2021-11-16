@@ -1,6 +1,8 @@
 package meilisearch
 
 import (
+	"fmt"
+	"net/http"
 	"net/url"
 
 	"github.com/pkg/errors"
@@ -94,6 +96,12 @@ func (c *Client) sendRequest(req *internalRequest, internalError *Error, respons
 	request.Header.SetMethod(req.method)
 
 	if req.withRequest != nil {
+		if req.method == http.MethodGet || req.method == http.MethodHead {
+			return fmt.Errorf("sendRequest: request body is not expected for GET and HEAD requests")
+		}
+		if req.contentType == "" {
+			return fmt.Errorf("sendRequest: request body without Content-Type is not allowed")
+		}
 
 		// A json request is mandatory, so the request interface{} need to be passed as a raw json body.
 		rawJSONRequest := req.withRequest

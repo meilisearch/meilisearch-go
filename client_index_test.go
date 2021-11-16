@@ -133,6 +133,9 @@ func TestClient_CreateIndex(t *testing.T) {
 				if assert.NotNil(t, gotResp) {
 					require.Equal(t, tt.wantResp.UID, gotResp.UID)
 					require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
+					// Make sure that timestamps are also retrieved
+					require.NotZero(t, gotResp.CreatedAt)
+					require.NotZero(t, gotResp.UpdatedAt)
 				}
 			}
 		})
@@ -658,6 +661,11 @@ func TestClient_GetIndex(t *testing.T) {
 				require.Equal(t, gotCreatedResp.UID, gotResp.UID)
 				require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
 				require.Equal(t, gotCreatedResp.PrimaryKey, gotResp.PrimaryKey)
+				// Make sure that timestamps are also retrieved
+				require.NotZero(t, gotResp.CreatedAt)
+				require.Equal(t, gotCreatedResp.CreatedAt, gotResp.CreatedAt)
+				require.NotZero(t, gotResp.UpdatedAt)
+				require.Equal(t, gotCreatedResp.UpdatedAt, gotResp.UpdatedAt)
 			}
 		})
 	}
@@ -817,6 +825,9 @@ func TestClient_GetOrCreateIndex(t *testing.T) {
 			if assert.NotNil(t, gotResp) {
 				require.Equal(t, tt.wantResp.UID, gotResp.UID)
 				require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
+				// Make sure that timestamps are also retrieved
+				require.NotZero(t, gotResp.CreatedAt)
+				require.NotZero(t, gotResp.UpdatedAt)
 			}
 		})
 	}
@@ -858,6 +869,9 @@ func TestClient_Index(t *testing.T) {
 			got := tt.client.Index(tt.args.uid)
 			require.NotNil(t, got)
 			require.Equal(t, tt.want.UID, got.UID)
+			// Timestamps should be empty unless fetched
+			require.Zero(t, got.CreatedAt)
+			require.Zero(t, got.UpdatedAt)
 		})
 	}
 }
