@@ -373,8 +373,7 @@ func testParseCsvDocuments(t *testing.T, documents io.Reader) []map[string]inter
 	return docs
 }
 
-const testCsvDocuments = `
-id,name
+const testCsvDocuments = `id,name
 1,Alice In Wonderland
 2,Pride and Prejudice
 3,Le Petit Prince
@@ -554,8 +553,7 @@ func testParseNdjsonDocuments(t *testing.T, documents io.Reader) []map[string]in
 	return docs
 }
 
-const testNdjsonDocuments = `
-{"id": 1, "name": "Alice In Wonderland"}
+const testNdjsonDocuments = `{"id": 1, "name": "Alice In Wonderland"}
 {"id": 2, "name": "Pride and Prejudice"}
 {"id": 3, "name": "Le Petit Prince"}
 {"id": 4, "name": "The Great Gatsby"}
