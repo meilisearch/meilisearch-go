@@ -117,9 +117,9 @@ func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, pr
 	return resp, nil
 }
 
-func (i Index) AddDocumentsCsv(documents string, primaryKey ...string) (resp *AsyncUpdateID, err error) {
+func (i Index) AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *AsyncUpdateID, err error) {
 	// []byte avoids JSON conversion in Client.sendRequest()
-	return i.addDocuments([]byte(documents), contentTypeCSV, primaryKey...)
+	return i.addDocuments(documents, contentTypeCSV, primaryKey...)
 }
 
 func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...string) (resp *AsyncUpdateID, err error) {
@@ -132,9 +132,9 @@ func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...stri
 	return i.addDocuments(data, contentTypeCSV, primaryKey...)
 }
 
-func (i Index) AddDocumentsCsvInBatches(documents string, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
+func (i Index) AddDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
 	// Reuse io.Reader implementation
-	return i.AddDocumentsCsvFromReaderInBatches(strings.NewReader(documents), batchSize, primaryKey...)
+	return i.AddDocumentsCsvFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
 }
 
 func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
@@ -161,7 +161,7 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 			return nil, errors.Wrap(err, "could not write CSV records")
 		}
 
-		resp, err := i.AddDocumentsCsv(b.String(), primaryKey...)
+		resp, err := i.AddDocumentsCsv(b.Bytes(), primaryKey...)
 		if err != nil {
 			return nil, err
 		}
@@ -215,7 +215,7 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 	return responses, nil
 }
 
-func (i Index) AddDocumentsNdjson(documents string, primaryKey ...string) (resp *AsyncUpdateID, err error) {
+func (i Index) AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *AsyncUpdateID, err error) {
 	// []byte avoids JSON conversion in Client.sendRequest()
 	return i.addDocuments([]byte(documents), contentTypeNDJSON, primaryKey...)
 }
@@ -230,9 +230,9 @@ func (i Index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...s
 	return i.addDocuments(data, contentTypeNDJSON, primaryKey...)
 }
 
-func (i Index) AddDocumentsNdjsonInBatches(documents string, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
+func (i Index) AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
 	// Reuse io.Reader implementation
-	return i.AddDocumentsNdjsonFromReaderInBatches(strings.NewReader(documents), batchSize, primaryKey...)
+	return i.AddDocumentsNdjsonFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
 }
 
 func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error) {
@@ -255,7 +255,7 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 			}
 		}
 
-		resp, err := i.AddDocumentsNdjson(b.String(), primaryKey...)
+		resp, err := i.AddDocumentsNdjson(b.Bytes(), primaryKey...)
 		if err != nil {
 			return nil, err
 		}

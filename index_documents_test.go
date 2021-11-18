@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"bufio"
+	"bytes"
 	"encoding/csv"
 	"encoding/json"
 	"io"
@@ -373,19 +374,19 @@ func testParseCsvDocuments(t *testing.T, documents io.Reader) []map[string]inter
 	return docs
 }
 
-const testCsvDocuments = `id,name
+var testCsvDocuments = []byte(`id,name
 1,Alice In Wonderland
 2,Pride and Prejudice
 3,Le Petit Prince
 4,The Great Gatsby
 5,Don Quixote
-`
+`)
 
 func TestIndex_AddDocumentsCsv(t *testing.T) {
 	type args struct {
 		uid       string
 		client    *Client
-		documents string
+		documents []byte
 	}
 	type testData struct {
 		name     string
@@ -423,7 +424,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			i := c.Index(uid)
 			t.Cleanup(cleanup(c))
 
-			wantDocs := testParseCsvDocuments(t, strings.NewReader(tt.args.documents))
+			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
 				gotResp *AsyncUpdateID
@@ -431,7 +432,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			)
 
 			if testReader {
-				gotResp, err = i.AddDocumentsCsvFromReader(strings.NewReader(tt.args.documents))
+				gotResp, err = i.AddDocumentsCsvFromReader(bytes.NewReader(tt.args.documents))
 			} else {
 				gotResp, err = i.AddDocumentsCsv(tt.args.documents)
 			}
@@ -460,7 +461,7 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 		uid       string
 		client    *Client
 		batchSize int
-		documents string
+		documents []byte
 	}
 	type testData struct {
 		name     string
@@ -504,7 +505,7 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 			i := c.Index(uid)
 			t.Cleanup(cleanup(c))
 
-			wantDocs := testParseCsvDocuments(t, strings.NewReader(tt.args.documents))
+			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
 				gotResp []AsyncUpdateID
@@ -512,7 +513,7 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 			)
 
 			if testReader {
-				gotResp, err = i.AddDocumentsCsvFromReaderInBatches(strings.NewReader(tt.args.documents), tt.args.batchSize)
+				gotResp, err = i.AddDocumentsCsvFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize)
 			} else {
 				gotResp, err = i.AddDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize)
 			}
@@ -553,18 +554,18 @@ func testParseNdjsonDocuments(t *testing.T, documents io.Reader) []map[string]in
 	return docs
 }
 
-const testNdjsonDocuments = `{"id": 1, "name": "Alice In Wonderland"}
+var testNdjsonDocuments = []byte(`{"id": 1, "name": "Alice In Wonderland"}
 {"id": 2, "name": "Pride and Prejudice"}
 {"id": 3, "name": "Le Petit Prince"}
 {"id": 4, "name": "The Great Gatsby"}
 {"id": 5, "name": "Don Quixote"}
-`
+`)
 
 func TestIndex_AddDocumentsNdjson(t *testing.T) {
 	type args struct {
 		uid       string
 		client    *Client
-		documents string
+		documents []byte
 	}
 	type testData struct {
 		name     string
@@ -602,7 +603,7 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 			i := c.Index(uid)
 			t.Cleanup(cleanup(c))
 
-			wantDocs := testParseNdjsonDocuments(t, strings.NewReader(tt.args.documents))
+			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
 				gotResp *AsyncUpdateID
@@ -610,7 +611,7 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 			)
 
 			if testReader {
-				gotResp, err = i.AddDocumentsNdjsonFromReader(strings.NewReader(tt.args.documents))
+				gotResp, err = i.AddDocumentsNdjsonFromReader(bytes.NewReader(tt.args.documents))
 			} else {
 				gotResp, err = i.AddDocumentsNdjson(tt.args.documents)
 			}
@@ -639,7 +640,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 		uid       string
 		client    *Client
 		batchSize int
-		documents string
+		documents []byte
 	}
 	type testData struct {
 		name     string
@@ -683,7 +684,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 			i := c.Index(uid)
 			t.Cleanup(cleanup(c))
 
-			wantDocs := testParseNdjsonDocuments(t, strings.NewReader(tt.args.documents))
+			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
 				gotResp []AsyncUpdateID
@@ -691,7 +692,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 			)
 
 			if testReader {
-				gotResp, err = i.AddDocumentsNdjsonFromReaderInBatches(strings.NewReader(tt.args.documents), tt.args.batchSize)
+				gotResp, err = i.AddDocumentsNdjsonFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize)
 			} else {
 				gotResp, err = i.AddDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize)
 			}
