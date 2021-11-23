@@ -306,6 +306,12 @@ settings_guide_displayed_1: |-
     "release_date",
   }
   client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
+settings_guide_sortable_1: |-
+  sortableAttributes := []string{
+    "author",
+    "price",
+  }
+  client.Index("books").UpdateSortableAttributes(&sortableAttributes)
 add_movies_json_1: |-
   import (
     "encoding/json"
