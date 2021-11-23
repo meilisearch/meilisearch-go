@@ -230,13 +230,13 @@ func TestClient_GetDumpStatus(t *testing.T) {
 	tests := []struct {
 		name     string
 		client   *Client
-		wantResp []string
+		wantResp []DumpStatus
 		wantErr  bool
 	}{
 		{
 			name:     "TestGetDumpStatus",
 			client:   defaultClient,
-			wantResp: []string{"in_progress", "failed", "done"},
+			wantResp: []DumpStatus{DumpStatusInProgress, DumpStatusFailed, DumpStatusDone},
 			wantErr:  false,
 		},
 	}
