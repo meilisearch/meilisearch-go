@@ -269,43 +269,69 @@ search_parameter_guide_matches_1: |-
     Matches:               true,
   })
 settings_guide_synonyms_1: |-
-  synonyms := map[string][]string{
-    "sweater": []string{"jumper"},
-    "jumper":  []string{"sweater"},
+  settings := meilisearch.Settings{
+    Synonyms: map[string][]string{
+      "sweater": []string{"jumper"},
+      "jumper":     []string{"sweater"},
+    },
   }
-  client.Index("tops").UpdateSynonyms(&synonyms)
+  client.Index("tops").UpdateSettings(&settings)
 settings_guide_stop_words_1: |-
-  stopWords := []string{"the", "a", "an"}
-  client.Index("movies").UpdateStopWords(&stopWords)
+  settings := meilisearch.Settings{
+    StopWords: []string{
+      "the",
+      "a",
+      "an",
+    },
+  }
+  client.Index("movies").UpdateSettings(&settings)
 settings_guide_ranking_rules_1: |-
-  rankingRules := []string{
-    "words",
-    "typo",
-    "proximity",
-    "attribute",
-    "sort",
-    "exactness",
-    "release_date:asc",
-    "rank:desc",
+  settings := meilisearch.Settings{
+    RankingRules: []string{
+      "words",
+      "typo",
+      "proximity",
+      "attribute",
+      "sort",
+      "exactness",
+      "release_date:asc",
+      "rank:desc",
+    },
   }
-  client.Index("movies").UpdateRankingRules(&rankingRules)
+  client.Index("movies").UpdateSettings(&settings)
 settings_guide_distinct_1: |-
-  client.Index("jackets").UpdateDistinctAttribute("product_id")
+  distinctAttribute := "product_id"
+  settings := meilisearch.Settings{
+    DistinctAttribute: &distinctAttribute,
+  }
+  client.Index("jackets").UpdateSettings(&settings)
 settings_guide_searchable_1: |-
-  searchableAttributes := []string{
-    "title",
-    "description",
-    "genre",
+  settings := meilisearch.Settings{
+    SearchableAttributes: []string{
+      "title",
+      "description",
+      "genre",
+    },
   }
-  client.Index("movies").UpdateSearchableAttributes(&searchableAttributes)
+  client.Index("movies").UpdateSettings(&settings)
 settings_guide_displayed_1: |-
-  displayedAttributes := []string{
-    "title",
-    "description",
-    "genre",
-    "release_date",
+  settings := meilisearch.Settings{
+    DisplayedAttributes: []string{
+      "title",
+      "description",
+      "genre",
+      "release_date",
+    },
   }
-  client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
+  client.Index("movies").UpdateSettings(&settings)
+settings_guide_sortable_1: |-
+  settings := meilisearch.Settings{
+    SortableAttributes: []string{
+      "author",
+      "price",
+    },
+  }
+  client.Index("books").UpdateSettings(&settings)
 add_movies_json_1: |-
   import (
     "encoding/json"
