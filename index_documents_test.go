@@ -1,7 +1,13 @@
 package meilisearch
 
 import (
+	"bufio"
+	"bytes"
+	"encoding/csv"
+	"encoding/json"
+	"io"
 	"strconv"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -340,6 +346,373 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.args.documentsPtr, documents)
 		})
+	}
+}
+
+func testParseCsvDocuments(t *testing.T, documents io.Reader) []map[string]interface{} {
+	var (
+		docs   []map[string]interface{}
+		header []string
+	)
+	r := csv.NewReader(documents)
+	for {
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		require.NoError(t, err)
+		if header == nil {
+			header = record
+			continue
+		}
+		doc := make(map[string]interface{})
+		for i, key := range header {
+			doc[key] = record[i]
+		}
+		docs = append(docs, doc)
+	}
+	return docs
+}
+
+var testCsvDocuments = []byte(`id,name
+1,Alice In Wonderland
+2,Pride and Prejudice
+3,Le Petit Prince
+4,The Great Gatsby
+5,Don Quixote
+`)
+
+func TestIndex_AddDocumentsCsv(t *testing.T) {
+	type args struct {
+		uid       string
+		client    *Client
+		documents []byte
+	}
+	type testData struct {
+		name     string
+		args     args
+		wantResp *AsyncUpdateID
+	}
+
+	tests := []testData{
+		{
+			name: "TestIndexBasic",
+			args: args{
+				uid:       "csv",
+				client:    defaultClient,
+				documents: testCsvDocuments,
+			},
+			wantResp: &AsyncUpdateID{UpdateID: 0},
+		},
+	}
+
+	testAddDocumentsCsv := func(t *testing.T, tt testData, testReader bool) {
+		name := tt.name + "AddDocumentsCsv"
+		if testReader {
+			name += "FromReader"
+		}
+
+		uid := tt.args.uid
+		if testReader {
+			uid += "-reader"
+		} else {
+			uid += "-string"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(uid)
+			t.Cleanup(cleanup(c))
+
+			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
+
+			var (
+				gotResp *AsyncUpdateID
+				err     error
+			)
+
+			if testReader {
+				gotResp, err = i.AddDocumentsCsvFromReader(bytes.NewReader(tt.args.documents))
+			} else {
+				gotResp, err = i.AddDocumentsCsv(tt.args.documents)
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, gotResp, tt.wantResp)
+
+			testWaitForPendingUpdate(t, i, gotResp)
+
+			var documents []map[string]interface{}
+			err = i.GetDocuments(&DocumentsRequest{}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, wantDocs, documents)
+		})
+	}
+
+	for _, tt := range tests {
+		// Test both the string and io.Reader receiving versions
+		testAddDocumentsCsv(t, tt, false)
+		testAddDocumentsCsv(t, tt, true)
+	}
+}
+
+func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
+	type args struct {
+		uid       string
+		client    *Client
+		batchSize int
+		documents []byte
+	}
+	type testData struct {
+		name     string
+		args     args
+		wantResp []AsyncUpdateID
+	}
+
+	tests := []testData{
+		{
+			name: "TestIndexBasic",
+			args: args{
+				uid:       "csvbatch",
+				client:    defaultClient,
+				batchSize: 2,
+				documents: testCsvDocuments,
+			},
+			wantResp: []AsyncUpdateID{
+				{UpdateID: 0},
+				{UpdateID: 1},
+				{UpdateID: 2},
+			},
+		},
+	}
+
+	testAddDocumentsCsvInBatches := func(t *testing.T, tt testData, testReader bool) {
+		name := tt.name + "AddDocumentsCsv"
+		if testReader {
+			name += "FromReader"
+		}
+		name += "InBatches"
+
+		uid := tt.args.uid
+		if testReader {
+			uid += "-reader"
+		} else {
+			uid += "-string"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(uid)
+			t.Cleanup(cleanup(c))
+
+			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
+
+			var (
+				gotResp []AsyncUpdateID
+				err     error
+			)
+
+			if testReader {
+				gotResp, err = i.AddDocumentsCsvFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize)
+			} else {
+				gotResp, err = i.AddDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize)
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, gotResp, tt.wantResp)
+
+			testWaitForPendingBatchUpdate(t, i, gotResp)
+
+			var documents []map[string]interface{}
+			err = i.GetDocuments(&DocumentsRequest{}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, wantDocs, documents)
+		})
+	}
+
+	for _, tt := range tests {
+		// Test both the string and io.Reader receiving versions
+		testAddDocumentsCsvInBatches(t, tt, false)
+		testAddDocumentsCsvInBatches(t, tt, true)
+	}
+}
+
+func testParseNdjsonDocuments(t *testing.T, documents io.Reader) []map[string]interface{} {
+	var docs []map[string]interface{}
+	scanner := bufio.NewScanner(documents)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+		if line == "" {
+			continue
+		}
+		doc := make(map[string]interface{})
+		err := json.Unmarshal([]byte(line), &doc)
+		require.NoError(t, err)
+		docs = append(docs, doc)
+	}
+	require.NoError(t, scanner.Err())
+	return docs
+}
+
+var testNdjsonDocuments = []byte(`{"id": 1, "name": "Alice In Wonderland"}
+{"id": 2, "name": "Pride and Prejudice"}
+{"id": 3, "name": "Le Petit Prince"}
+{"id": 4, "name": "The Great Gatsby"}
+{"id": 5, "name": "Don Quixote"}
+`)
+
+func TestIndex_AddDocumentsNdjson(t *testing.T) {
+	type args struct {
+		uid       string
+		client    *Client
+		documents []byte
+	}
+	type testData struct {
+		name     string
+		args     args
+		wantResp *AsyncUpdateID
+	}
+
+	tests := []testData{
+		{
+			name: "TestIndexBasic",
+			args: args{
+				uid:       "ndjson",
+				client:    defaultClient,
+				documents: testNdjsonDocuments,
+			},
+			wantResp: &AsyncUpdateID{UpdateID: 0},
+		},
+	}
+
+	testAddDocumentsNdjson := func(t *testing.T, tt testData, testReader bool) {
+		name := tt.name + "AddDocumentsNdjson"
+		if testReader {
+			name += "FromReader"
+		}
+
+		uid := tt.args.uid
+		if testReader {
+			uid += "-reader"
+		} else {
+			uid += "-string"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(uid)
+			t.Cleanup(cleanup(c))
+
+			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
+
+			var (
+				gotResp *AsyncUpdateID
+				err     error
+			)
+
+			if testReader {
+				gotResp, err = i.AddDocumentsNdjsonFromReader(bytes.NewReader(tt.args.documents))
+			} else {
+				gotResp, err = i.AddDocumentsNdjson(tt.args.documents)
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, gotResp, tt.wantResp)
+
+			testWaitForPendingUpdate(t, i, gotResp)
+
+			var documents []map[string]interface{}
+			err = i.GetDocuments(&DocumentsRequest{}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, wantDocs, documents)
+		})
+	}
+
+	for _, tt := range tests {
+		// Test both the string and io.Reader receiving versions
+		testAddDocumentsNdjson(t, tt, false)
+		testAddDocumentsNdjson(t, tt, true)
+	}
+}
+
+func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
+	type args struct {
+		uid       string
+		client    *Client
+		batchSize int
+		documents []byte
+	}
+	type testData struct {
+		name     string
+		args     args
+		wantResp []AsyncUpdateID
+	}
+
+	tests := []testData{
+		{
+			name: "TestIndexBasic",
+			args: args{
+				uid:       "ndjsonbatch",
+				client:    defaultClient,
+				batchSize: 2,
+				documents: testNdjsonDocuments,
+			},
+			wantResp: []AsyncUpdateID{
+				{UpdateID: 0},
+				{UpdateID: 1},
+				{UpdateID: 2},
+			},
+		},
+	}
+
+	testAddDocumentsNdjsonInBatches := func(t *testing.T, tt testData, testReader bool) {
+		name := tt.name + "AddDocumentsNdjson"
+		if testReader {
+			name += "FromReader"
+		}
+		name += "InBatches"
+
+		uid := tt.args.uid
+		if testReader {
+			uid += "-reader"
+		} else {
+			uid += "-string"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(uid)
+			t.Cleanup(cleanup(c))
+
+			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
+
+			var (
+				gotResp []AsyncUpdateID
+				err     error
+			)
+
+			if testReader {
+				gotResp, err = i.AddDocumentsNdjsonFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize)
+			} else {
+				gotResp, err = i.AddDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize)
+			}
+
+			require.NoError(t, err)
+			require.Equal(t, gotResp, tt.wantResp)
+
+			testWaitForPendingBatchUpdate(t, i, gotResp)
+
+			var documents []map[string]interface{}
+			err = i.GetDocuments(&DocumentsRequest{}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, wantDocs, documents)
+		})
+	}
+
+	for _, tt := range tests {
+		// Test both the string and io.Reader receiving versions
+		testAddDocumentsNdjsonInBatches(t, tt, false)
+		testAddDocumentsNdjsonInBatches(t, tt, true)
 	}
 }
 
