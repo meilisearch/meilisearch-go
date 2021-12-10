@@ -39,7 +39,7 @@ func (c *Client) executeRequest(req internalRequest) error {
 		Function:         req.functionName,
 		RequestToString:  "empty request",
 		ResponseToString: "empty response",
-		MeilisearchApiMessage: meilisearchApiMessage{
+		MeilisearchApiError: meilisearchApiError{
 			Message: "empty meilisearch message",
 		},
 		StatusCodeExpected: req.acceptedStatusCodes,
@@ -171,7 +171,7 @@ func (c *Client) handleStatusCode(req *internalRequest, response *fasthttp.Respo
 
 		internalError.ErrorBody(rawBody)
 
-		if internalError.MeilisearchApiMessage.Code == "" {
+		if internalError.MeilisearchApiError.Code == "" {
 			return internalError.WithErrCode(MeilisearchApiErrorWithoutMessage)
 		}
 		return internalError.WithErrCode(MeilisearchApiError)

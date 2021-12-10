@@ -57,7 +57,7 @@ func (e ErrCode) rawMessage() string {
 	}
 }
 
-type meilisearchApiMessage struct {
+type meilisearchApiError struct {
 	Message string `json:"message"`
 	Code    string `json:"code"`
 	Type    string `json:"type"`
@@ -84,7 +84,7 @@ type Error struct {
 
 	// Error info from Meilisearch api
 	// Message is the raw request into string ('empty meilisearch message' if not present)
-	MeilisearchApiMessage meilisearchApiMessage
+	MeilisearchApiError meilisearchApiError
 
 	// StatusCode of the request
 	StatusCode int
@@ -112,10 +112,10 @@ func (e Error) Error() string {
 		"response":           e.ResponseToString,
 		"statusCodeExpected": e.StatusCodeExpected,
 		"statusCode":         e.StatusCode,
-		"message":            e.MeilisearchApiMessage.Message,
-		"code":               e.MeilisearchApiMessage.Code,
-		"type":               e.MeilisearchApiMessage.Type,
-		"link":               e.MeilisearchApiMessage.Link,
+		"message":            e.MeilisearchApiError.Message,
+		"code":               e.MeilisearchApiError.Code,
+		"type":               e.MeilisearchApiError.Type,
+		"link":               e.MeilisearchApiError.Link,
 	})
 	if e.OriginError != nil {
 		return errors.Wrap(e.OriginError, message).Error()
@@ -138,13 +138,13 @@ func (e *Error) WithErrCode(err ErrCode, errs ...error) *Error {
 // ErrorBody add a body to an error
 func (e *Error) ErrorBody(body []byte) {
 	e.ResponseToString = string(body)
-	msg := meilisearchApiMessage{}
+	msg := meilisearchApiError{}
 	err := json.Unmarshal(body, &msg)
 	if err == nil {
-		e.MeilisearchApiMessage.Message = msg.Message
-		e.MeilisearchApiMessage.Code = msg.Code
-		e.MeilisearchApiMessage.Type = msg.Type
-		e.MeilisearchApiMessage.Link = msg.Link
+		e.MeilisearchApiError.Message = msg.Message
+		e.MeilisearchApiError.Code = msg.Code
+		e.MeilisearchApiError.Type = msg.Type
+		e.MeilisearchApiError.Link = msg.Link
 	}
 }
 
