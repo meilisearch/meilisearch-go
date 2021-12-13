@@ -155,7 +155,7 @@ func (i Index) DeleteIfExists(uid string) (ok bool, err error) {
 	}
 	// err is not nil if status code is not 204 StatusNoContent
 	if err := i.client.executeRequest(req); err != nil {
-		if err.(*Error).MeilisearchApiMessage.Code != "index_not_found" {
+		if err.(*Error).MeilisearchApiError.Code != "index_not_found" {
 			return false, err
 		}
 		return false, nil

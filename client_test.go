@@ -41,7 +41,7 @@ func TestClient_TimeoutError(t *testing.T) {
 			name:   "TestTimeoutError",
 			client: timeoutClient,
 			expectedError: Error{
-				MeilisearchApiMessage: meilisearchApiMessage{},
+				MeilisearchApiError: meilisearchApiError{},
 			},
 		},
 	}
@@ -50,8 +50,8 @@ func TestClient_TimeoutError(t *testing.T) {
 			gotResp, err := tt.client.GetVersion()
 			require.Error(t, err)
 			require.Nil(t, gotResp)
-			require.Equal(t, tt.expectedError.MeilisearchApiMessage.Code,
-				err.(*Error).MeilisearchApiMessage.Code)
+			require.Equal(t, tt.expectedError.MeilisearchApiError.Code,
+				err.(*Error).MeilisearchApiError.Code)
 		})
 	}
 }
