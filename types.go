@@ -53,8 +53,8 @@ type StatsIndex struct {
 
 // Stats is the type that represent all stats
 type Stats struct {
-	DatabaseSize int64                 `json:"database_size"`
-	LastUpdate   time.Time             `json:"last_update"`
+	DatabaseSize int64                 `json:"databaseSize"`
+	LastUpdate   time.Time             `json:"lastUpdate"`
 	Indexes      map[string]StatsIndex `json:"indexes"`
 }
 
