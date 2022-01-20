@@ -28,6 +28,11 @@ type IndexInterface interface {
 	GetStats() (resp *StatsIndex, err error)
 
 	AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error)
+	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error)
+	AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *AsyncUpdateID, err error)
+	AddDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error)
+	AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *AsyncUpdateID, err error)
+	AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error)
 	UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error)
 	GetDocument(uid string, documentPtr interface{}) error
 	GetDocuments(request *DocumentsRequest, resp interface{}) error
@@ -150,7 +155,7 @@ func (i Index) DeleteIfExists(uid string) (ok bool, err error) {
 	}
 	// err is not nil if status code is not 204 StatusNoContent
 	if err := i.client.executeRequest(req); err != nil {
-		if err.(*Error).MeilisearchApiMessage.Code != "index_not_found" {
+		if err.(*Error).MeilisearchApiError.Code != "index_not_found" {
 			return false, err
 		}
 		return false, nil
