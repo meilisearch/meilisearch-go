@@ -134,7 +134,7 @@ func (c *Client) sendRequest(req *internalRequest, internalError *Error, respons
 		request.Header.Set("Content-Type", req.contentType)
 	}
 	if c.config.APIKey != "" {
-		request.Header.Set("X-Meili-API-Key", c.config.APIKey)
+		request.Header.Set("Authorization", "Bearer " + c.config.APIKey)
 	}
 
 	// request is sent
