@@ -30,7 +30,6 @@ type ClientInterface interface {
 	GetAllRawIndexes() (resp []map[string]interface{}, err error)
 	CreateIndex(config *IndexConfig) (resp *Index, err error)
 	DeleteIndex(uid string) (bool, error)
-	DeleteIndexIfExists(uid string) (bool, error)
 	GetKeys() (resp *Keys, err error)
 	GetAllStats() (resp *Stats, err error)
 	CreateDump() (resp *Dump, err error)
