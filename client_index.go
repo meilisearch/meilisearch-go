@@ -79,14 +79,6 @@ func (c *Client) GetAllRawIndexes() (resp []map[string]interface{}, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetOrCreateIndex(config *IndexConfig) (resp *Index, err error) {
-	resp, err = c.GetIndex(config.Uid)
-	if err == nil {
-		return resp, err
-	}
-	return c.CreateIndex(config)
-}
-
 func (c *Client) DeleteIndex(uid string) (ok bool, err error) {
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid,
