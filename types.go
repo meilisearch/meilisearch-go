@@ -58,42 +58,44 @@ type Stats struct {
 	Indexes      map[string]StatsIndex `json:"indexes"`
 }
 
-// UpdateStatus is the status of an update.
-type UpdateStatus string
+// TaskStatus is the status of a task.
+type TaskStatus string
 
 const (
-	// UpdateStatusUnknown is the default UpdateStatus, should not exist
-	UpdateStatusUnknown UpdateStatus = "unknown"
-	// UpdateStatusEnqueued means the server know the update but didn't handle it yet
-	UpdateStatusEnqueued UpdateStatus = "enqueued"
-	// UpdateStatusProcessing means the server is processing the update and all went well
-	UpdateStatusProcessing UpdateStatus = "processing"
-	// UpdateStatusProcessed means the server has processed the update and all went well
-	UpdateStatusProcessed UpdateStatus = "processed"
-	// UpdateStatusFailed means the server has processed the update and an error has been reported
-	UpdateStatusFailed UpdateStatus = "failed"
+	// TaskStatusUnknown is the default TaskStatus, should not exist
+	TaskStatusUnknown TaskStatus = "unknown"
+	// TaskStatusEnqueued the task request has been received and will be processed soon
+	TaskStatusEnqueued TaskStatus = "enqueued"
+	// TaskStatusProcessing the task is being processed
+	TaskStatusProcessing TaskStatus = "processing"
+	// TaskStatusSucceeded the task has been successfully processed
+	TaskStatusSucceeded TaskStatus = "succeeded"
+	// TaskStatusFailed a failure occurred when processing the task, no changes were made to the database
+	TaskStatusFailed TaskStatus = "failed"
 )
 
-// Update indicate information about an update
-type Update struct {
-	Status      UpdateStatus `json:"status"`
-	UpdateID    int64        `json:"updateId"`
-	Type        Unknown      `json:"type"`
-	Error       string       `json:"error"`
-	EnqueuedAt  time.Time    `json:"enqueuedAt"`
-	ProcessedAt time.Time    `json:"processedAt"`
+// Task indicate information about a task is returned for asynchronous method
+//
+// Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html
+type Task struct {
+	Status     TaskStatus          `json:"status"`
+	UID        int64               `json:"uid"`
+	IndexUID   string              `json:"indexUid"`
+	Type       string              `json:"type"`
+	Error      meilisearchApiError `json:"error,omitempty"`
+	Duration   string              `json:"duration,omitempty"`
+	EnqueuedAt time.Time           `json:"enqueuedAt"`
+	StartedAt  time.Time           `json:"startedAt,omitempty"`
+	FinishedAt time.Time           `json:"finishedAt,omitempty"`
 }
 
-// AsyncUpdateID is returned for asynchronous method
-//
-// Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_updates.html
-type AsyncUpdateID struct {
-	UpdateID int64 `json:"updateId"`
+type ResultTask struct {
+	Results []Task `json:"results"`
 }
 
 // Keys allow the user to connect to the MeiliSearch instance
 //
-// Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_updates.html
+// Documentation: https://docs.meilisearch.com/learn/advanced/security.html#protecting-a-meilisearch-instance
 type Keys struct {
 	Public  string `json:"public,omitempty"`
 	Private string `json:"private,omitempty"`

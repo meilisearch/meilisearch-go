@@ -22,39 +22,43 @@ func TestIndex_AddDocuments(t *testing.T) {
 	tests := []struct {
 		name          string
 		args          args
-		wantResp      *AsyncUpdateID
+		wantResp      *Task
 		expectedError Error
 	}{
 		{
 			name: "TestIndexBasicAddDocuments",
 			args: args{
-				UID:    "1",
+				UID:    "TestIndexBasicAddDocuments",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"ID": "123", "Name": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 		{
 			name: "TestIndexAddDocumentsWithCustomClient",
 			args: args{
-				UID:    "2",
+				UID:    "TestIndexAddDocumentsWithCustomClient",
 				client: customClient,
 				documentsPtr: []map[string]interface{}{
 					{"ID": "123", "Name": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 		{
 			name: "TestIndexMultipleAddDocuments",
 			args: args{
-				UID:    "2",
+				UID:    "TestIndexMultipleAddDocuments",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"ID": "1", "Name": "Alice In Wonderland"},
@@ -62,40 +66,46 @@ func TestIndex_AddDocuments(t *testing.T) {
 					{"ID": "456", "Name": "Le Petit Prince"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 		{
 			name: "TestIndexBasicAddDocumentsWithIntID",
 			args: args{
-				UID:    "3",
+				UID:    "TestIndexBasicAddDocumentsWithIntID",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"BookID": float64(123), "Title": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 		{
 			name: "TestIndexAddDocumentsWithIntIDWithCustomClient",
 			args: args{
-				UID:    "4",
+				UID:    "TestIndexAddDocumentsWithIntIDWithCustomClient",
 				client: customClient,
 				documentsPtr: []map[string]interface{}{
 					{"BookID": float64(123), "Title": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 		{
 			name: "TestIndexMultipleAddDocumentsWithIntID",
 			args: args{
-				UID:    "5",
+				UID:    "TestIndexMultipleAddDocumentsWithIntID",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"BookID": float64(1), "Title": "Alice In Wonderland"},
@@ -103,8 +113,10 @@ func TestIndex_AddDocuments(t *testing.T) {
 					{"BookID": float64(456), "Title": "Le Petit Prince", "Tag": "Conte"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 	}
@@ -115,9 +127,14 @@ func TestIndex_AddDocuments(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr)
-			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
+			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
+			require.Equal(t, gotResp.Status, tt.wantResp.Status)
+			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.Equal(t, gotResp.IndexUID, tt.args.UID)
+			require.NotZero(t, gotResp.EnqueuedAt)
 			require.NoError(t, err)
-			testWaitForPendingUpdate(t, i, gotResp)
+
+			testWaitForTask(t, i, gotResp)
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{
 				Limit: 3,
@@ -138,40 +155,44 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *AsyncUpdateID
+		wantResp *Task
 	}{
 		{
 			name: "TestIndexBasicAddDocumentsWithPrimaryKey",
 			args: args{
-				UID:    "1",
+				UID:    "TestIndexBasicAddDocumentsWithPrimaryKey",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"key": "123", "Name": "Pride and Prejudice"},
 				},
 				primaryKey: "key",
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 		{
 			name: "TestIndexAddDocumentsWithPrimaryKeyWithCustomClient",
 			args: args{
-				UID:    "2",
+				UID:    "TestIndexAddDocumentsWithPrimaryKeyWithCustomClient",
 				client: customClient,
 				documentsPtr: []map[string]interface{}{
 					{"key": "123", "Name": "Pride and Prejudice"},
 				},
 				primaryKey: "key",
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 		{
 			name: "TestIndexMultipleAddDocumentsWithPrimaryKey",
 			args: args{
-				UID:    "3",
+				UID:    "TestIndexMultipleAddDocumentsWithPrimaryKey",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"key": "1", "Name": "Alice In Wonderland"},
@@ -180,28 +201,32 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				},
 				primaryKey: "key",
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 		{
 			name: "TestIndexAddDocumentsWithPrimaryKeyWithIntID",
 			args: args{
-				UID:    "4",
+				UID:    "TestIndexAddDocumentsWithPrimaryKeyWithIntID",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"key": float64(123), "Name": "Pride and Prejudice"},
 				},
 				primaryKey: "key",
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 		{
 			name: "TestIndexMultipleAddDocumentsWithPrimaryKeyWithIntID",
 			args: args{
-				UID:    "5",
+				UID:    "TestIndexMultipleAddDocumentsWithPrimaryKeyWithIntID",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"key": float64(1), "Name": "Alice In Wonderland"},
@@ -210,8 +235,10 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				},
 				primaryKey: "key",
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
 			},
 		},
 	}
@@ -222,10 +249,14 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr, tt.args.primaryKey)
-			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
+			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
+			require.Equal(t, gotResp.Status, tt.wantResp.Status)
+			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.Equal(t, gotResp.IndexUID, tt.args.UID)
+			require.NotZero(t, gotResp.EnqueuedAt)
 			require.NoError(t, err)
 
-			testWaitForPendingUpdate(t, i, gotResp)
+			testWaitForTask(t, i, gotResp)
 
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{Limit: 3}, &documents)
@@ -254,13 +285,13 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 	testsNoKey := []struct {
 		name          string
 		args          argsNoKey
-		wantResp      []AsyncUpdateID
+		wantResp      []Task
 		expectedError Error
 	}{
 		{
 			name: "TestIndexBasicAddDocumentsInBatches",
 			args: argsNoKey{
-				UID:    "0",
+				UID:    "TestIndexBasicAddDocumentsInBatches",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"ID": "122", "Name": "Pride and Prejudice"},
@@ -270,9 +301,17 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 				},
 				batchSize: 2,
 			},
-			wantResp: []AsyncUpdateID{
-				{UpdateID: 0},
-				{UpdateID: 1},
+			wantResp: []Task{
+				{
+					UID:    0,
+					Status: "enqueued",
+					Type:   "documentAddition",
+				},
+				{
+					UID:    1,
+					Status: "enqueued",
+					Type:   "documentAddition",
+				},
 			},
 		},
 	}
@@ -280,13 +319,13 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 	testsWithKey := []struct {
 		name          string
 		args          argsWithKey
-		wantResp      []AsyncUpdateID
+		wantResp      []Task
 		expectedError Error
 	}{
 		{
-			name: "TestIndexBasicAddDocumentsInBatches",
+			name: "TestIndexBasicAddDocumentsInBatchesWithKey",
 			args: argsWithKey{
-				UID:    "0",
+				UID:    "TestIndexBasicAddDocumentsInBatchesWithKey",
 				client: defaultClient,
 				documentsPtr: []map[string]interface{}{
 					{"ID": "122", "Name": "Pride and Prejudice"},
@@ -297,9 +336,17 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 				batchSize:  2,
 				primaryKey: "ID",
 			},
-			wantResp: []AsyncUpdateID{
-				{UpdateID: 0},
-				{UpdateID: 1},
+			wantResp: []Task{
+				{
+					UID:    0,
+					Status: "enqueued",
+					Type:   "documentAddition",
+				},
+				{
+					UID:    1,
+					Status: "enqueued",
+					Type:   "documentAddition",
+				},
 			},
 		},
 	}
@@ -311,10 +358,17 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.AddDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize)
-			require.Equal(t, gotResp, tt.wantResp)
-			require.NoError(t, err)
 
-			testWaitForPendingBatchUpdate(t, i, gotResp)
+			require.NoError(t, err)
+			for i := 0; i < 2; i++ {
+				require.GreaterOrEqual(t, gotResp[i].UID, tt.wantResp[i].UID)
+				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+				require.Equal(t, gotResp[i].IndexUID, tt.args.UID)
+				require.NotZero(t, gotResp[i].EnqueuedAt)
+			}
+
+			testWaitForBatchTask(t, i, gotResp)
 
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{
@@ -333,10 +387,17 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.AddDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, tt.args.primaryKey)
-			require.Equal(t, gotResp, tt.wantResp)
-			require.NoError(t, err)
 
-			testWaitForPendingBatchUpdate(t, i, gotResp)
+			require.NoError(t, err)
+			for i := 0; i < 2; i++ {
+				require.GreaterOrEqual(t, gotResp[i].UID, tt.wantResp[i].UID)
+				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+				require.Equal(t, gotResp[i].IndexUID, tt.args.UID)
+				require.NotZero(t, gotResp[i].EnqueuedAt)
+			}
+
+			testWaitForBatchTask(t, i, gotResp)
 
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{
@@ -384,25 +445,29 @@ var testCsvDocuments = []byte(`id,name
 
 func TestIndex_AddDocumentsCsv(t *testing.T) {
 	type args struct {
-		uid       string
+		UID       string
 		client    *Client
 		documents []byte
 	}
 	type testData struct {
 		name     string
 		args     args
-		wantResp *AsyncUpdateID
+		wantResp *Task
 	}
 
 	tests := []testData{
 		{
 			name: "TestIndexBasic",
 			args: args{
-				uid:       "csv",
+				UID:       "csv",
 				client:    defaultClient,
 				documents: testCsvDocuments,
 			},
-			wantResp: &AsyncUpdateID{UpdateID: 0},
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
+			},
 		},
 	}
 
@@ -412,7 +477,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			name += "FromReader"
 		}
 
-		uid := tt.args.uid
+		uid := tt.args.UID
 		if testReader {
 			uid += "-reader"
 		} else {
@@ -427,7 +492,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp *AsyncUpdateID
+				gotResp *Task
 				err     error
 			)
 
@@ -438,9 +503,12 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			require.Equal(t, gotResp, tt.wantResp)
+			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
+			require.Equal(t, gotResp.Status, tt.wantResp.Status)
+			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.NotZero(t, gotResp.EnqueuedAt)
 
-			testWaitForPendingUpdate(t, i, gotResp)
+			testWaitForTask(t, i, gotResp)
 
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{}, &documents)
@@ -458,7 +526,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 
 func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 	type args struct {
-		uid       string
+		UID       string
 		client    *Client
 		batchSize int
 		documents []byte
@@ -466,22 +534,34 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 	type testData struct {
 		name     string
 		args     args
-		wantResp []AsyncUpdateID
+		wantResp []Task
 	}
 
 	tests := []testData{
 		{
 			name: "TestIndexBasic",
 			args: args{
-				uid:       "csvbatch",
+				UID:       "csvbatch",
 				client:    defaultClient,
 				batchSize: 2,
 				documents: testCsvDocuments,
 			},
-			wantResp: []AsyncUpdateID{
-				{UpdateID: 0},
-				{UpdateID: 1},
-				{UpdateID: 2},
+			wantResp: []Task{
+				{
+					UID:    0,
+					Status: "enqueued",
+					Type:   "documentAddition",
+				},
+				{
+					UID:    1,
+					Status: "enqueued",
+					Type:   "documentAddition",
+				},
+				{
+					UID:    2,
+					Status: "enqueued",
+					Type:   "documentAddition",
+				},
 			},
 		},
 	}
@@ -493,7 +573,7 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 		}
 		name += "InBatches"
 
-		uid := tt.args.uid
+		uid := tt.args.UID
 		if testReader {
 			uid += "-reader"
 		} else {
@@ -508,7 +588,7 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp []AsyncUpdateID
+				gotResp []Task
 				err     error
 			)
 
@@ -519,9 +599,14 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			require.Equal(t, gotResp, tt.wantResp)
+			for i := 0; i < 2; i++ {
+				require.GreaterOrEqual(t, gotResp[i].UID, tt.wantResp[i].UID)
+				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+				require.NotZero(t, gotResp[i].EnqueuedAt)
+			}
 
-			testWaitForPendingBatchUpdate(t, i, gotResp)
+			testWaitForBatchTask(t, i, gotResp)
 
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{}, &documents)
@@ -563,25 +648,29 @@ var testNdjsonDocuments = []byte(`{"id": 1, "name": "Alice In Wonderland"}
 
 func TestIndex_AddDocumentsNdjson(t *testing.T) {
 	type args struct {
-		uid       string
+		UID       string
 		client    *Client
 		documents []byte
 	}
 	type testData struct {
 		name     string
 		args     args
-		wantResp *AsyncUpdateID
+		wantResp *Task
 	}
 
 	tests := []testData{
 		{
 			name: "TestIndexBasic",
 			args: args{
-				uid:       "ndjson",
+				UID:       "ndjson",
 				client:    defaultClient,
 				documents: testNdjsonDocuments,
 			},
-			wantResp: &AsyncUpdateID{UpdateID: 0},
+			wantResp: &Task{
+				UID:    0,
+				Status: "enqueued",
+				Type:   "documentAddition",
+			},
 		},
 	}
 
@@ -591,7 +680,7 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 			name += "FromReader"
 		}
 
-		uid := tt.args.uid
+		uid := tt.args.UID
 		if testReader {
 			uid += "-reader"
 		} else {
@@ -606,7 +695,7 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp *AsyncUpdateID
+				gotResp *Task
 				err     error
 			)
 
@@ -617,9 +706,12 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			require.Equal(t, gotResp, tt.wantResp)
+			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
+			require.Equal(t, gotResp.Status, tt.wantResp.Status)
+			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.NotZero(t, gotResp.EnqueuedAt)
 
-			testWaitForPendingUpdate(t, i, gotResp)
+			testWaitForTask(t, i, gotResp)
 
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{}, &documents)
@@ -637,7 +729,7 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 
 func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 	type args struct {
-		uid       string
+		UID       string
 		client    *Client
 		batchSize int
 		documents []byte
@@ -645,22 +737,34 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 	type testData struct {
 		name     string
 		args     args
-		wantResp []AsyncUpdateID
+		wantResp []Task
 	}
 
 	tests := []testData{
 		{
 			name: "TestIndexBasic",
 			args: args{
-				uid:       "ndjsonbatch",
+				UID:       "ndjsonbatch",
 				client:    defaultClient,
 				batchSize: 2,
 				documents: testNdjsonDocuments,
 			},
-			wantResp: []AsyncUpdateID{
-				{UpdateID: 0},
-				{UpdateID: 1},
-				{UpdateID: 2},
+			wantResp: []Task{
+				{
+					UID:    0,
+					Status: "enqueued",
+					Type:   "documentAddition",
+				},
+				{
+					UID:    1,
+					Status: "enqueued",
+					Type:   "documentAddition",
+				},
+				{
+					UID:    2,
+					Status: "enqueued",
+					Type:   "documentAddition",
+				},
 			},
 		},
 	}
@@ -672,7 +776,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 		}
 		name += "InBatches"
 
-		uid := tt.args.uid
+		uid := tt.args.UID
 		if testReader {
 			uid += "-reader"
 		} else {
@@ -687,7 +791,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp []AsyncUpdateID
+				gotResp []Task
 				err     error
 			)
 
@@ -698,9 +802,14 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			require.Equal(t, gotResp, tt.wantResp)
+			for i := 0; i < 2; i++ {
+				require.GreaterOrEqual(t, gotResp[i].UID, tt.wantResp[i].UID)
+				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+				require.NotZero(t, gotResp[i].EnqueuedAt)
+			}
 
-			testWaitForPendingBatchUpdate(t, i, gotResp)
+			testWaitForBatchTask(t, i, gotResp)
 
 			var documents []map[string]interface{}
 			err = i.GetDocuments(&DocumentsRequest{}, &documents)
@@ -724,26 +833,30 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *AsyncUpdateID
+		wantResp *Task
 	}{
 		{
 			name: "TestIndexBasicDeleteAllDocuments",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexBasicDeleteAllDocuments",
 				client: defaultClient,
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 1,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "clearAll",
 			},
 		},
 		{
 			name: "TestIndexDeleteAllDocumentsWithCustomClient",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexDeleteAllDocumentsWithCustomClient",
 				client: customClient,
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 1,
+			wantResp: &Task{
+				UID:    2,
+				Status: "enqueued",
+				Type:   "clearAll",
 			},
 		},
 	}
@@ -753,12 +866,15 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			SetUpBasicIndex()
+			SetUpBasicIndex(tt.args.UID)
 			gotResp, err := i.DeleteAllDocuments()
 			require.NoError(t, err)
-			require.Equal(t, gotResp, tt.wantResp)
+			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
+			require.Equal(t, gotResp.Status, tt.wantResp.Status)
+			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.NotZero(t, gotResp.EnqueuedAt)
 
-			testWaitForPendingUpdate(t, i, gotResp)
+			testWaitForTask(t, i, gotResp)
 
 			var documents interface{}
 			err = i.GetDocuments(&DocumentsRequest{Limit: 5}, &documents)
@@ -779,7 +895,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *AsyncUpdateID
+		wantResp *Task
 	}{
 		{
 			name: "TestIndexBasicDeleteOneDocument",
@@ -791,8 +907,10 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"ID": "123", "Name": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentDeletion",
 			},
 		},
 		{
@@ -805,8 +923,10 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"ID": "123", "Name": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentDeletion",
 			},
 		},
 		{
@@ -821,8 +941,10 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"ID": "1", "Name": "Alice In Wonderland"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentDeletion",
 			},
 		},
 		{
@@ -835,8 +957,10 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"BookID": 123, "Title": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentDeletion",
 			},
 		},
 		{
@@ -849,8 +973,10 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"BookID": 123, "Title": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentDeletion",
 			},
 		},
 		{
@@ -865,8 +991,10 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"BookID": 1, "Title": "Alice In Wonderland"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 0,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentDeletion",
 			},
 		},
 	}
@@ -877,16 +1005,19 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
-			require.GreaterOrEqual(t, gotAddResp.UpdateID, tt.wantResp.UpdateID)
+			require.GreaterOrEqual(t, gotAddResp.UID, tt.wantResp.UID)
 			require.NoError(t, err)
 
-			testWaitForPendingUpdate(t, i, gotAddResp)
+			testWaitForTask(t, i, gotAddResp)
 
 			gotResp, err := i.DeleteDocument(tt.args.identifier)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotResp.UpdateID, tt.wantResp.UpdateID)
+			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
+			require.Equal(t, gotResp.Status, tt.wantResp.Status)
+			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.NotZero(t, gotResp.EnqueuedAt)
 
-			testWaitForPendingUpdate(t, i, gotResp)
+			testWaitForTask(t, i, gotResp)
 
 			var document []map[string]interface{}
 			err = i.GetDocument(tt.args.identifier, &document)
@@ -906,7 +1037,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *AsyncUpdateID
+		wantResp *Task
 	}{
 		{
 			name: "TestIndexBasicDeleteDocument",
@@ -918,8 +1049,10 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 1,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentDeletion",
 			},
 		},
 		{
@@ -932,8 +1065,10 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 1,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentDeletion",
 			},
 		},
 		{
@@ -948,8 +1083,10 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "1", Name: "Alice In Wonderland"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 1,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentDeletion",
 			},
 		},
 		{
@@ -964,8 +1101,10 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "1", Name: "Alice In Wonderland"},
 				},
 			},
-			wantResp: &AsyncUpdateID{
-				UpdateID: 1,
+			wantResp: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentDeletion",
 			},
 		},
 	}
@@ -978,13 +1117,16 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
 
-			testWaitForPendingUpdate(t, i, gotAddResp)
+			testWaitForTask(t, i, gotAddResp)
 
 			gotResp, err := i.DeleteDocuments(tt.args.identifier)
 			require.NoError(t, err)
-			require.Equal(t, gotResp, tt.wantResp)
+			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
+			require.Equal(t, gotResp.Status, tt.wantResp.Status)
+			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.NotZero(t, gotResp.EnqueuedAt)
 
-			testWaitForPendingUpdate(t, i, gotResp)
+			testWaitForTask(t, i, gotResp)
 
 			var document docTest
 			for _, identifier := range tt.args.identifier {
@@ -1011,7 +1153,7 @@ func TestIndex_GetDocument(t *testing.T) {
 		{
 			name: "TestIndexBasicGetDocument",
 			args: args{
-				UID:         "indexUID",
+				UID:         "TestIndexBasicGetDocument",
 				client:      defaultClient,
 				identifier:  "123",
 				documentPtr: &docTestBooks{},
@@ -1021,7 +1163,7 @@ func TestIndex_GetDocument(t *testing.T) {
 		{
 			name: "TestIndexGetDocumentWithCustomClient",
 			args: args{
-				UID:         "indexUID",
+				UID:         "TestIndexGetDocumentWithCustomClient",
 				client:      customClient,
 				identifier:  "123",
 				documentPtr: &docTestBooks{},
@@ -1031,7 +1173,7 @@ func TestIndex_GetDocument(t *testing.T) {
 		{
 			name: "TestIndexGetDocumentWithNoExistingDocument",
 			args: args{
-				UID:         "indexUID",
+				UID:         "TestIndexGetDocumentWithNoExistingDocument",
 				client:      defaultClient,
 				identifier:  "125",
 				documentPtr: &docTestBooks{},
@@ -1044,7 +1186,7 @@ func TestIndex_GetDocument(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
-			SetUpBasicIndex()
+			SetUpBasicIndex(tt.args.UID)
 
 			require.Empty(t, tt.args.documentPtr)
 			err := i.GetDocument(tt.args.identifier, tt.args.documentPtr)
@@ -1069,38 +1211,42 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *AsyncUpdateID
+		want *Task
 	}{
 		{
 			name: "TestIndexBasicUpdateDocument",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexBasicUpdateDocument",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "One Hundred Years of Solitude"},
 				},
 			},
-			want: &AsyncUpdateID{
-				UpdateID: 1,
+			want: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentPartial",
 			},
 		},
 		{
 			name: "TestIndexUpdateDocumentWithCustomClient",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexUpdateDocumentWithCustomClient",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "One Hundred Years of Solitude"},
 				},
 			},
-			want: &AsyncUpdateID{
-				UpdateID: 1,
+			want: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentPartial",
 			},
 		},
 		{
 			name: "TestIndexUpdateDocumentOnMultipleDocuments",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexUpdateDocumentOnMultipleDocuments",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "One Hundred Years of Solitude"},
@@ -1109,27 +1255,31 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 					{BookID: 42, Title: "The Great Gatsby"},
 				},
 			},
-			want: &AsyncUpdateID{
-				UpdateID: 1,
+			want: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentPartial",
 			},
 		},
 		{
 			name: "TestIndexUpdateDocumentWithNoExistingDocument",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexUpdateDocumentWithNoExistingDocument",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 237, Title: "One Hundred Years of Solitude"},
 				},
 			},
-			want: &AsyncUpdateID{
-				UpdateID: 1,
+			want: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentPartial",
 			},
 		},
 		{
 			name: "TestIndexUpdateDocumentWithNoExistingMultipleDocuments",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexUpdateDocumentWithNoExistingMultipleDocuments",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 246, Title: "One Hundred Years of Solitude"},
@@ -1138,8 +1288,10 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 					{BookID: 594, Title: "The Great Gatsby"},
 				},
 			},
-			want: &AsyncUpdateID{
-				UpdateID: 1,
+			want: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentPartial",
 			},
 		},
 	}
@@ -1148,13 +1300,16 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
-			SetUpBasicIndex()
+			SetUpBasicIndex(tt.args.UID)
 
 			got, err := i.UpdateDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
-			require.Equal(t, got, tt.want)
+			require.GreaterOrEqual(t, got.UID, tt.want.UID)
+			require.Equal(t, got.Status, tt.want.Status)
+			require.Equal(t, got.Type, tt.want.Type)
+			require.NotZero(t, got.EnqueuedAt)
 
-			testWaitForPendingUpdate(t, i, got)
+			testWaitForTask(t, i, got)
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
@@ -1177,40 +1332,44 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want *AsyncUpdateID
+		want *Task
 	}{
 		{
 			name: "TestIndexBasicUpdateDocumentsWithPrimaryKey",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexBasicUpdateDocumentsWithPrimaryKey",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "One Hundred Years of Solitude"},
 				},
 				primaryKey: "book_id",
 			},
-			want: &AsyncUpdateID{
-				UpdateID: 1,
+			want: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentPartial",
 			},
 		},
 		{
 			name: "TestIndexUpdateDocumentsWithPrimaryKeyWithCustomClient",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexUpdateDocumentsWithPrimaryKeyWithCustomClient",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "One Hundred Years of Solitude"},
 				},
 				primaryKey: "book_id",
 			},
-			want: &AsyncUpdateID{
-				UpdateID: 1,
+			want: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentPartial",
 			},
 		},
 		{
 			name: "TestIndexUpdateDocumentsWithPrimaryKeyOnMultipleDocuments",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexUpdateDocumentsWithPrimaryKeyOnMultipleDocuments",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "One Hundred Years of Solitude"},
@@ -1220,28 +1379,32 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				},
 				primaryKey: "book_id",
 			},
-			want: &AsyncUpdateID{
-				UpdateID: 1,
+			want: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentPartial",
 			},
 		},
 		{
 			name: "TestIndexUpdateDocumentsWithPrimaryKeyWithNoExistingDocument",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexUpdateDocumentsWithPrimaryKeyWithNoExistingDocument",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 237, Title: "One Hundred Years of Solitude"},
 				},
 				primaryKey: "book_id",
 			},
-			want: &AsyncUpdateID{
-				UpdateID: 1,
+			want: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentPartial",
 			},
 		},
 		{
 			name: "TestIndexUpdateDocumentsWithPrimaryKeyWithNoExistingMultipleDocuments",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexUpdateDocumentsWithPrimaryKeyWithNoExistingMultipleDocuments",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 246, Title: "One Hundred Years of Solitude"},
@@ -1251,8 +1414,10 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				},
 				primaryKey: "book_id",
 			},
-			want: &AsyncUpdateID{
-				UpdateID: 1,
+			want: &Task{
+				UID:    1,
+				Status: "enqueued",
+				Type:   "documentPartial",
 			},
 		},
 	}
@@ -1261,13 +1426,16 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
-			SetUpBasicIndex()
+			SetUpBasicIndex(tt.args.UID)
 
 			got, err := i.UpdateDocuments(tt.args.documentsPtr, tt.args.primaryKey)
 			require.NoError(t, err)
-			require.Equal(t, got, tt.want)
+			require.GreaterOrEqual(t, got.UID, tt.want.UID)
+			require.Equal(t, got.Status, tt.want.Status)
+			require.Equal(t, got.Type, tt.want.Type)
+			require.NotZero(t, got.EnqueuedAt)
 
-			testWaitForPendingUpdate(t, i, got)
+			testWaitForTask(t, i, got)
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
@@ -1299,12 +1467,12 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 	testsNoKey := []struct {
 		name string
 		args argsNoKey
-		want []AsyncUpdateID
+		want []Task
 	}{
 		{
 			name: "TestIndexBatchUpdateDocuments",
 			args: argsNoKey{
-				UID:    "indexUID",
+				UID:    "TestIndexBatchUpdateDocuments",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "One Hundred Years of Solitude"},
@@ -1312,9 +1480,17 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 				},
 				batchSize: 1,
 			},
-			want: []AsyncUpdateID{
-				{UpdateID: 1},
-				{UpdateID: 2},
+			want: []Task{
+				{
+					UID:    1,
+					Status: "enqueued",
+					Type:   "documentPartial",
+				},
+				{
+					UID:    2,
+					Status: "enqueued",
+					Type:   "documentPartial",
+				},
 			},
 		},
 	}
@@ -1322,12 +1498,12 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 	testsWithKey := []struct {
 		name string
 		args argsWithKey
-		want []AsyncUpdateID
+		want []Task
 	}{
 		{
 			name: "TestIndexBatchUpdateDocuments",
 			args: argsWithKey{
-				UID:    "indexUID",
+				UID:    "TestIndexBatchUpdateDocuments",
 				client: defaultClient,
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "One Hundred Years of Solitude"},
@@ -1336,9 +1512,17 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 				batchSize:  1,
 				primaryKey: "book_id",
 			},
-			want: []AsyncUpdateID{
-				{UpdateID: 1},
-				{UpdateID: 2},
+			want: []Task{
+				{
+					UID:    1,
+					Status: "enqueued",
+					Type:   "documentPartial",
+				},
+				{
+					UID:    2,
+					Status: "enqueued",
+					Type:   "documentPartial",
+				},
 			},
 		},
 	}
@@ -1348,13 +1532,18 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
-			SetUpBasicIndex()
+			SetUpBasicIndex(tt.args.UID)
 
 			got, err := i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize)
 			require.NoError(t, err)
-			require.Equal(t, got, tt.want)
+			for i := 0; i < 2; i++ {
+				require.GreaterOrEqual(t, got[i].UID, tt.want[i].UID)
+				require.Equal(t, got[i].Status, tt.want[i].Status)
+				require.Equal(t, got[i].Type, tt.want[i].Type)
+				require.NotZero(t, got[i].EnqueuedAt)
+			}
 
-			testWaitForPendingBatchUpdate(t, i, got)
+			testWaitForBatchTask(t, i, got)
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
@@ -1371,13 +1560,18 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
-			SetUpBasicIndex()
+			SetUpBasicIndex(tt.args.UID)
 
 			got, err := i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, tt.args.primaryKey)
 			require.NoError(t, err)
-			require.Equal(t, got, tt.want)
+			for i := 0; i < 2; i++ {
+				require.GreaterOrEqual(t, got[i].UID, tt.want[i].UID)
+				require.Equal(t, got[i].Status, tt.want[i].Status)
+				require.Equal(t, got[i].Type, tt.want[i].Type)
+				require.NotZero(t, got[i].EnqueuedAt)
+			}
 
-			testWaitForPendingBatchUpdate(t, i, got)
+			testWaitForBatchTask(t, i, got)
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {

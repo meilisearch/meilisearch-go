@@ -254,3 +254,131 @@ func TestClient_GetDumpStatus(t *testing.T) {
 		})
 	}
 }
+
+func TestClient_GetTask(t *testing.T) {
+	type args struct {
+		UID      string
+		client   *Client
+		taskID   int64
+		document []docTest
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "TestBasicGetTask",
+			args: args{
+				UID:    "TestBasicGetTask",
+				client: defaultClient,
+				taskID: 0,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+			},
+		},
+		{
+			name: "TestGetTaskWithCustomClient",
+			args: args{
+				UID:    "TestGetTaskWithCustomClient",
+				client: customClient,
+				taskID: 1,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+			},
+		},
+		{
+			name: "TestGetTask",
+			args: args{
+				UID:    "TestGetTask",
+				client: defaultClient,
+				taskID: 2,
+				document: []docTest{
+					{ID: "456", Name: "Le Petit Prince"},
+					{ID: "1", Name: "Alice In Wonderland"},
+				},
+			},
+		},
+	}
+
+	t.Cleanup(cleanup(defaultClient))
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			task, err := i.AddDocuments(tt.args.document)
+			require.NoError(t, err)
+
+			_, err = c.DefaultWaitForTask(task)
+			require.NoError(t, err)
+
+			gotResp, err := c.GetTask(task.UID)
+			require.NoError(t, err)
+			require.NotNil(t, gotResp)
+			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskID)
+			require.Equal(t, gotResp.IndexUID, tt.args.UID)
+			require.Equal(t, gotResp.Status, TaskStatusSucceeded)
+
+			// Make sure that timestamps are also retrieved
+			require.NotZero(t, gotResp.EnqueuedAt)
+			require.NotZero(t, gotResp.StartedAt)
+			require.NotZero(t, gotResp.FinishedAt)
+		})
+	}
+}
+
+func TestClient_GetTasks(t *testing.T) {
+	type args struct {
+		UID      string
+		client   *Client
+		document []docTest
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "TestBasicGetTasks",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			task, err := i.AddDocuments(tt.args.document)
+			require.NoError(t, err)
+
+			_, err = c.DefaultWaitForTask(task)
+			require.NoError(t, err)
+
+			gotResp, err := i.GetTasks()
+			require.NoError(t, err)
+			require.NotNil(t, (*gotResp).Results[0].Status)
+			require.NotZero(t, (*gotResp).Results[0].UID)
+			require.NotNil(t, (*gotResp).Results[0].Type)
+		})
+	}
+}

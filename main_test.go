@@ -29,7 +29,11 @@ func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
 	}
 
 	for _, index := range list {
-		_, _ = client.DeleteIndex(index.UID)
+		task, _ := client.DeleteIndex(index.UID)
+		_, err := client.DefaultWaitForTask(task)
+		if err != nil {
+			return false, err
+		}
 	}
 
 	return true, nil
@@ -41,24 +45,41 @@ func cleanup(c ClientInterface) func() {
 	}
 }
 
-func testWaitForPendingUpdate(t *testing.T, i *Index, u *AsyncUpdateID) {
-	_, err := i.DefaultWaitForPendingUpdate(u)
+func testWaitForTask(t *testing.T, i *Index, u *Task) {
+	_, err := i.DefaultWaitForTask(u)
 	require.NoError(t, err)
 }
 
-func testWaitForPendingBatchUpdate(t *testing.T, i *Index, u []AsyncUpdateID) {
+func testWaitForBatchTask(t *testing.T, i *Index, u []Task) {
 	for _, id := range u {
-		_, err := i.DefaultWaitForPendingUpdate(&id)
+		_, err := i.DefaultWaitForTask(&id)
 		require.NoError(t, err)
 	}
 }
 
-func SetUpBasicIndex() {
+func SetUpEmptyIndex(index *IndexConfig) (resp *Index, err error) {
 	client := NewClient(ClientConfig{
 		Host:   "http://localhost:7700",
 		APIKey: masterKey,
 	})
-	index := client.Index("indexUID")
+	task, err := client.CreateIndex(index)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+	finalTask, _ := client.DefaultWaitForTask(task)
+	if finalTask.Status != "succeeded" {
+		os.Exit(1)
+	}
+	return client.GetIndex(index.Uid)
+}
+
+func SetUpBasicIndex(indexUID string) {
+	client := NewClient(ClientConfig{
+		Host:   "http://localhost:7700",
+		APIKey: masterKey,
+	})
+	index := client.Index(indexUID)
 
 	documents := []map[string]interface{}{
 		{"book_id": 123, "title": "Pride and Prejudice"},
@@ -68,13 +89,13 @@ func SetUpBasicIndex() {
 		{"book_id": 4, "title": "Harry Potter and the Half-Blood Prince"},
 		{"book_id": 42, "title": "The Hitchhiker's Guide to the Galaxy"},
 	}
-	update, err := index.AddDocuments(documents)
+	task, err := index.AddDocuments(documents)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalUpdateStatus, _ := index.DefaultWaitForPendingUpdate(update)
-	if finalUpdateStatus != "processed" {
+	finalTask, _ := index.DefaultWaitForTask(task)
+	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
 }
@@ -108,13 +129,13 @@ func SetUpIndexForFaceting() {
 		{BookID: 921, Title: "The Brothers Karamazov", Tag: "Novel", Year: 1879},
 		{BookID: 1032, Title: "Crime and Punishment", Tag: "Crime fiction", Year: 1866},
 	}
-	update, err := index.AddDocuments(booksTest)
+	task, err := index.AddDocuments(booksTest)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalUpdateStatus, _ := index.DefaultWaitForPendingUpdate(update)
-	if finalUpdateStatus != "processed" {
+	finalTask, _ := index.DefaultWaitForTask(task)
+	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
 }

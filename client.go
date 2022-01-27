@@ -1,7 +1,9 @@
 package meilisearch
 
 import (
+	"context"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/valyala/fasthttp"
@@ -28,8 +30,8 @@ type ClientInterface interface {
 	GetRawIndex(uid string) (resp map[string]interface{}, err error)
 	GetAllIndexes() (resp []*Index, err error)
 	GetAllRawIndexes() (resp []map[string]interface{}, err error)
-	CreateIndex(config *IndexConfig) (resp *Index, err error)
-	DeleteIndex(uid string) (bool, error)
+	CreateIndex(config *IndexConfig) (resp *Task, err error)
+	DeleteIndex(uid string) (resp *Task, err error)
 	GetKeys() (resp *Keys, err error)
 	GetAllStats() (resp *Stats, err error)
 	CreateDump() (resp *Dump, err error)
@@ -38,6 +40,10 @@ type ClientInterface interface {
 	GetVersion() (resp *Version, err error)
 	Health() (*Health, error)
 	IsHealthy() bool
+	GetTask(taskID int64) (resp *Task, err error)
+	GetTasks() (resp *ResultTask, err error)
+	WaitForTask(ctx context.Context, interval time.Duration, taskID *Task) (*Task, error)
+	DefaultWaitForTask(taskID *Task) (*Task, error)
 }
 
 var _ ClientInterface = &Client{}
@@ -169,4 +175,67 @@ func (c *Client) GetDumpStatus(dumpUID string) (resp *Dump, err error) {
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (c *Client) GetTask(taskID int64) (resp *Task, err error) {
+	resp = &Task{}
+	req := internalRequest{
+		endpoint:            "/tasks/" + strconv.FormatInt(taskID, 10),
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetTask",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) GetTasks() (resp *ResultTask, err error) {
+	resp = &ResultTask{}
+	req := internalRequest{
+		endpoint:            "/tasks",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetTasks",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+// // DefaultWaitForTask checks each 50ms the status of a task.
+// // This is a default implementation of WaitForTask.
+func (c *Client) DefaultWaitForTask(task *Task) (*Task, error) {
+	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
+	defer cancelFunc()
+	return c.WaitForTask(ctx, time.Millisecond*50, task)
+}
+
+// WaitForTask waits for a task to be processed.
+// The function will check by regular interval provided in parameter interval
+// the TaskStatus. If it is not TaskStatusEnqueued or the ctx cancelled
+// we return the TaskStatus.
+func (c *Client) WaitForTask(
+	ctx context.Context,
+	interval time.Duration,
+	task *Task) (*Task, error) {
+	for {
+		if err := ctx.Err(); err != nil {
+			return nil, err
+		}
+		getTask, err := c.GetTask(task.UID)
+		if err != nil {
+			return nil, err
+		}
+		if getTask.Status != TaskStatusEnqueued && getTask.Status != TaskStatusProcessing {
+			return getTask, nil
+		}
+		time.Sleep(interval)
+	}
 }
