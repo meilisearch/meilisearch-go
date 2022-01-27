@@ -83,7 +83,7 @@ type Error struct {
 	ResponseToString string
 
 	// Error info from Meilisearch api
-	// Message is the raw request into string ('empty meilisearch message' if not present)
+	// Message is the raw request into string ('empty Meilisearch message' if not present)
 	MeilisearchApiError meilisearchApiError
 
 	// StatusCode of the request

@@ -4,7 +4,7 @@ import (
 	"net/http"
 )
 
-// This constant contains the default values assigned by meilisearch to the limit in search parameters
+// This constant contains the default values assigned by Meilisearch to the limit in search parameters
 //
 // Documentation: https://docs.meilisearch.com/reference/features/search_parameters.html
 const (

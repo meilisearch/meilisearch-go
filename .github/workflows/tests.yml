@@ -58,7 +58,7 @@ jobs:
           curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
           dep ensure
         fi
-    - name: MeiliSearch setup (latest version) with Docker
+    - name: Meilisearch setup (latest version) with Docker
       run: docker run -d -p 7700:7700 getmeili/meilisearch:latest ./meilisearch --master-key=masterKey --no-analytics=true
     - name: Run integration tests
       run: go test -v ./...
