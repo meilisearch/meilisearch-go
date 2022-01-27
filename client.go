@@ -10,7 +10,7 @@ import (
 // ClientConfig configure the Client
 type ClientConfig struct {
 
-	// Host is the host of your meilisearch database
+	// Host is the host of your Meilisearch database
 	// Example: 'http://localhost:7700'
 	Host string
 

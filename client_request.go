@@ -40,7 +40,7 @@ func (c *Client) executeRequest(req internalRequest) error {
 		RequestToString:  "empty request",
 		ResponseToString: "empty response",
 		MeilisearchApiError: meilisearchApiError{
-			Message: "empty meilisearch message",
+			Message: "empty Meilisearch message",
 		},
 		StatusCodeExpected: req.acceptedStatusCodes,
 	}
