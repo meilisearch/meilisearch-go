@@ -43,7 +43,7 @@ type ClientInterface interface {
 	GetTask(taskID int64) (resp *Task, err error)
 	GetTasks() (resp *ResultTask, err error)
 	WaitForTask(ctx context.Context, interval time.Duration, task *Task) (*Task, error)
-	DefaultWaitForTask(taskID *Task) (*Task, error)
+	DefaultWaitForTask(task *Task) (*Task, error)
 }
 
 var _ ClientInterface = &Client{}

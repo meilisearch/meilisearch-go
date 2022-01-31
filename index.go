@@ -68,8 +68,8 @@ type IndexInterface interface {
 	UpdateFilterableAttributes(request *[]string) (resp *Task, err error)
 	ResetFilterableAttributes() (resp *Task, err error)
 
-	WaitForTask(ctx context.Context, interval time.Duration, taskID *Task) (*Task, error)
-	DefaultWaitForTask(taskID *Task) (*Task, error)
+	WaitForTask(ctx context.Context, interval time.Duration, task *Task) (*Task, error)
+	DefaultWaitForTask(task *Task) (*Task, error)
 }
 
 var _ IndexInterface = &Index{}
@@ -208,6 +208,6 @@ func (i Index) DefaultWaitForTask(taskID *Task) (*Task, error) {
 func (i Index) WaitForTask(
 	ctx context.Context,
 	interval time.Duration,
-	taskID *Task) (*Task, error) {
-	return i.client.WaitForTask(ctx, interval, taskID)
+	task *Task) (*Task, error) {
+	return i.client.WaitForTask(ctx, interval, task)
 }
