@@ -14,53 +14,52 @@ func TestIndex_Delete(t *testing.T) {
 		deleteUid []string
 	}
 	tests := []struct {
-		name          string
-		client        *Client
-		args          args
-		wantErr       bool
-		expectedError []Error
+		name   string
+		client *Client
+		args   args
 	}{
 		{
 			name:   "TestIndexDeleteOneIndex",
 			client: defaultClient,
 			args: args{
-				createUid: []string{"1"},
-				deleteUid: []string{"1"},
+				createUid: []string{"TestIndexDeleteOneIndex"},
+				deleteUid: []string{"TestIndexDeleteOneIndex"},
 			},
-			wantErr: false,
 		},
 		{
 			name:   "TestIndexDeleteOneIndexWithCustomClient",
 			client: customClient,
 			args: args{
-				createUid: []string{"1"},
-				deleteUid: []string{"1"},
+				createUid: []string{"TestIndexDeleteOneIndexWithCustomClient"},
+				deleteUid: []string{"TestIndexDeleteOneIndexWithCustomClient"},
 			},
-			wantErr: false,
 		},
 		{
 			name:   "TestIndexDeleteMultipleIndex",
 			client: defaultClient,
 			args: args{
-				createUid: []string{"1", "2", "3", "4", "5"},
-				deleteUid: []string{"1", "2", "3", "4", "5"},
+				createUid: []string{
+					"TestIndexDeleteMultipleIndex_1",
+					"TestIndexDeleteMultipleIndex_2",
+					"TestIndexDeleteMultipleIndex_3",
+					"TestIndexDeleteMultipleIndex_4",
+					"TestIndexDeleteMultipleIndex_5",
+				},
+				deleteUid: []string{
+					"TestIndexDeleteMultipleIndex_1",
+					"TestIndexDeleteMultipleIndex_2",
+					"TestIndexDeleteMultipleIndex_3",
+					"TestIndexDeleteMultipleIndex_4",
+					"TestIndexDeleteMultipleIndex_5",
+				},
 			},
-			wantErr: false,
 		},
 		{
 			name:   "TestIndexDeleteNotExistingIndex",
 			client: defaultClient,
 			args: args{
 				createUid: []string{},
-				deleteUid: []string{"1"},
-			},
-			wantErr: true,
-			expectedError: []Error{
-				{
-					MeilisearchApiError: meilisearchApiError{
-						Code: "index_not_found",
-					},
-				},
+				deleteUid: []string{"TestIndexDeleteNotExistingIndex"},
 			},
 		},
 		{
@@ -68,24 +67,10 @@ func TestIndex_Delete(t *testing.T) {
 			client: defaultClient,
 			args: args{
 				createUid: []string{},
-				deleteUid: []string{"1", "2", "3"},
-			},
-			wantErr: true,
-			expectedError: []Error{
-				{
-					MeilisearchApiError: meilisearchApiError{
-						Code: "index_not_found",
-					},
-				},
-				{
-					MeilisearchApiError: meilisearchApiError{
-						Code: "index_not_found",
-					},
-				},
-				{
-					MeilisearchApiError: meilisearchApiError{
-						Code: "index_not_found",
-					},
+				deleteUid: []string{
+					"TestIndexDeleteMultipleNotExistingIndex_1",
+					"TestIndexDeleteMultipleNotExistingIndex_2",
+					"TestIndexDeleteMultipleNotExistingIndex_3",
 				},
 			},
 		},
@@ -93,21 +78,17 @@ func TestIndex_Delete(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
+			t.Cleanup(cleanup(c))
+
 			for _, uid := range tt.args.createUid {
-				_, err := c.CreateIndex(&IndexConfig{Uid: uid})
+				_, err := SetUpEmptyIndex(&IndexConfig{Uid: uid})
 				require.NoError(t, err, "CreateIndex() in DeleteTest error should be nil")
 			}
 			for k := range tt.args.deleteUid {
 				i := c.Index(tt.args.deleteUid[k])
-				gotOk, err := i.Delete(tt.args.deleteUid[k])
-				if tt.wantErr {
-					require.Error(t, err)
-					require.Equal(t, tt.expectedError[k].MeilisearchApiError.Code,
-						err.(*Error).MeilisearchApiError.Code)
-				} else {
-					require.NoError(t, err)
-					require.True(t, gotOk)
-				}
+				gotResp, err := i.Delete(tt.args.deleteUid[k])
+				require.True(t, gotResp)
+				require.NoError(t, err)
 			}
 		})
 	}
@@ -126,7 +107,7 @@ func TestIndex_GetStats(t *testing.T) {
 		{
 			name: "TestIndexBasicGetStats",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexBasicGetStats",
 				client: defaultClient,
 			},
 			wantResp: &StatsIndex{
@@ -138,7 +119,7 @@ func TestIndex_GetStats(t *testing.T) {
 		{
 			name: "TestIndexGetStatsWithCustomClient",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexGetStatsWithCustomClient",
 				client: customClient,
 			},
 			wantResp: &StatsIndex{
@@ -150,7 +131,7 @@ func TestIndex_GetStats(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpBasicIndex()
+			SetUpBasicIndex(tt.args.UID)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -187,10 +168,10 @@ func Test_newIndex(t *testing.T) {
 			name: "TestNewIndexCustomClient",
 			args: args{
 				client: customClient,
-				uid:    "TestBasicNewIndex",
+				uid:    "TestNewIndexCustomClient",
 			},
 			want: &Index{
-				UID:    "TestBasicNewIndex",
+				UID:    "TestNewIndexCustomClient",
 				client: customClient,
 			},
 		},
@@ -210,11 +191,11 @@ func Test_newIndex(t *testing.T) {
 	}
 }
 
-func TestIndex_GetUpdateStatus(t *testing.T) {
+func TestIndex_GetTask(t *testing.T) {
 	type args struct {
 		UID      string
 		client   *Client
-		updateID int64
+		taskID   int64
 		document []docTest
 	}
 	tests := []struct {
@@ -222,33 +203,33 @@ func TestIndex_GetUpdateStatus(t *testing.T) {
 		args args
 	}{
 		{
-			name: "TestBasicGetUpdateStatus",
+			name: "TestIndexBasicGetTask",
 			args: args{
-				UID:      "1",
-				client:   defaultClient,
-				updateID: 0,
+				UID:    "TestIndexBasicGetTask",
+				client: defaultClient,
+				taskID: 0,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 			},
 		},
 		{
-			name: "TestGetUpdateStatusWithCustomClient",
+			name: "TestIndexGetTaskWithCustomClient",
 			args: args{
-				UID:      "1",
-				client:   customClient,
-				updateID: 0,
+				UID:    "TestIndexGetTaskWithCustomClient",
+				client: customClient,
+				taskID: 0,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 			},
 		},
 		{
-			name: "TestGetUpdateStatus",
+			name: "TestIndexGetTask",
 			args: args{
-				UID:      "1",
-				client:   defaultClient,
-				updateID: 1,
+				UID:    "TestIndexGetTask",
+				client: defaultClient,
+				taskID: 0,
 				document: []docTest{
 					{ID: "456", Name: "Le Petit Prince"},
 					{ID: "1", Name: "Alice In Wonderland"},
@@ -263,113 +244,58 @@ func TestIndex_GetUpdateStatus(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
-			update, err := i.AddDocuments(tt.args.document)
+			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			gotResp, err := i.GetUpdateStatus(update.UpdateID)
+			_, err = c.WaitForTask(task)
+			require.NoError(t, err)
+
+			gotResp, err := i.GetTask(task.UID)
 			require.NoError(t, err)
 			require.NotNil(t, gotResp)
-			require.GreaterOrEqual(t, gotResp.UpdateID, tt.args.updateID)
-			require.NotNil(t, gotResp.UpdateID)
+			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskID)
+			require.Equal(t, gotResp.IndexUID, tt.args.UID)
+			require.Equal(t, gotResp.Status, TaskStatusSucceeded)
+
+			// Make sure that timestamps are also retrieved
+			require.NotZero(t, gotResp.EnqueuedAt)
+			require.NotZero(t, gotResp.StartedAt)
+			require.NotZero(t, gotResp.FinishedAt)
 		})
 	}
 }
 
-func TestIndex_GetAllUpdateStatus(t *testing.T) {
-	type args struct {
-		UID    string
-		client *Client
-	}
-	tests := []struct {
-		name     string
-		args     args
-		wantResp []Update
-	}{
-		{
-			name: "TestIndexBasicGetAllUpdateStatus",
-			args: args{
-				UID:    "indexUID",
-				client: defaultClient,
-			},
-			wantResp: []Update{
-				{
-					Status:   "processed",
-					UpdateID: 0,
-					Error:    "",
-				},
-			},
-		},
-		{
-			name: "TestIndexGetAllUpdateStatusWithCustomClient",
-			args: args{
-				UID:    "indexUID",
-				client: customClient,
-			},
-			wantResp: []Update{
-				{
-					Status:   "processed",
-					UpdateID: 0,
-					Error:    "",
-				},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := tt.args.client
-			i := c.Index(tt.args.UID)
-
-			SetUpBasicIndex()
-
-			gotResp, err := i.GetAllUpdateStatus()
-			require.NoError(t, err)
-			require.Equal(t, tt.wantResp[0].Status, (*gotResp)[0].Status)
-			require.Equal(t, tt.wantResp[0].UpdateID, (*gotResp)[0].UpdateID)
-			require.Equal(t, tt.wantResp[0].Error, (*gotResp)[0].Error)
-		})
-	}
-}
-
-func TestIndex_DefaultWaitForPendingUpdate(t *testing.T) {
+func TestIndex_GetTasks(t *testing.T) {
 	type args struct {
 		UID      string
 		client   *Client
-		updateID *AsyncUpdateID
 		document []docTest
 	}
 	tests := []struct {
 		name string
 		args args
-		want UpdateStatus
 	}{
 		{
-			name: "TestDefaultWaitForPendingUpdate",
+			name: "TestIndexBasicGetTasks",
 			args: args{
-				UID:    "1",
+				UID:    "indexUID",
 				client: defaultClient,
-				updateID: &AsyncUpdateID{
-					UpdateID: 0,
-				},
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 			},
-			want: "processed",
 		},
 		{
-			name: "TestDefaultWaitForPendingUpdateWithCustomClient",
+			name: "TestIndexGetTasksWithCustomClient",
 			args: args{
-				UID:    "1",
+				UID:    "indexUID",
 				client: customClient,
-				updateID: &AsyncUpdateID{
-					UpdateID: 0,
-				},
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 			},
-			want: "processed",
 		},
 	}
 	for _, tt := range tests {
@@ -378,39 +304,44 @@ func TestIndex_DefaultWaitForPendingUpdate(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			update, err := i.AddDocuments(tt.args.document)
+			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			got, err := i.DefaultWaitForPendingUpdate(update)
+			_, err = c.WaitForTask(task)
 			require.NoError(t, err)
-			require.Equal(t, tt.want, got)
+
+			gotResp, err := i.GetTasks()
+			require.NoError(t, err)
+			require.NotNil(t, (*gotResp).Results[0].Status)
+			require.NotZero(t, (*gotResp).Results[0].UID)
+			require.NotNil(t, (*gotResp).Results[0].Type)
 		})
 	}
 }
 
-func TestIndex_WaitForPendingUpdate(t *testing.T) {
+func TestIndex_WaitForTask(t *testing.T) {
 	type args struct {
 		UID      string
 		client   *Client
 		interval time.Duration
 		timeout  time.Duration
-		updateID *AsyncUpdateID
+		taskID   *Task
 		document []docTest
 	}
 	tests := []struct {
 		name string
 		args args
-		want UpdateStatus
+		want TaskStatus
 	}{
 		{
-			name: "TestDefaultWaitForPendingUpdate50",
+			name: "TestWaitForTask50",
 			args: args{
-				UID:      "1",
+				UID:      "TestWaitForTask50",
 				client:   defaultClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
-				updateID: &AsyncUpdateID{
-					UpdateID: 0,
+				taskID: &Task{
+					UID: 0,
 				},
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
@@ -418,17 +349,17 @@ func TestIndex_WaitForPendingUpdate(t *testing.T) {
 					{ID: "1", Name: "Alice In Wonderland"},
 				},
 			},
-			want: "processed",
+			want: "succeeded",
 		},
 		{
-			name: "TestDefaultWaitForPendingUpdate50WithCustomClient",
+			name: "TestWaitForTask50WithCustomClient",
 			args: args{
-				UID:      "1",
+				UID:      "TestWaitForTask50WithCustomClient",
 				client:   customClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
-				updateID: &AsyncUpdateID{
-					UpdateID: 0,
+				taskID: &Task{
+					UID: 0,
 				},
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
@@ -436,17 +367,17 @@ func TestIndex_WaitForPendingUpdate(t *testing.T) {
 					{ID: "1", Name: "Alice In Wonderland"},
 				},
 			},
-			want: "processed",
+			want: "succeeded",
 		},
 		{
-			name: "TestDefaultWaitForPendingUpdate10",
+			name: "TestWaitForTask10",
 			args: args{
-				UID:      "1",
+				UID:      "TestWaitForTask10",
 				client:   defaultClient,
 				interval: time.Millisecond * 10,
 				timeout:  time.Second * 5,
-				updateID: &AsyncUpdateID{
-					UpdateID: 1,
+				taskID: &Task{
+					UID: 1,
 				},
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
@@ -454,17 +385,17 @@ func TestIndex_WaitForPendingUpdate(t *testing.T) {
 					{ID: "1", Name: "Alice In Wonderland"},
 				},
 			},
-			want: "processed",
+			want: "succeeded",
 		},
 		{
-			name: "TestDefaultWaitForPendingUpdateWithTimeout",
+			name: "TestWaitForTaskWithTimeout",
 			args: args{
-				UID:      "1",
+				UID:      "TestWaitForTaskWithTimeout",
 				client:   defaultClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Millisecond * 10,
-				updateID: &AsyncUpdateID{
-					UpdateID: 1,
+				taskID: &Task{
+					UID: 1,
 				},
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
@@ -472,7 +403,7 @@ func TestIndex_WaitForPendingUpdate(t *testing.T) {
 					{ID: "1", Name: "Alice In Wonderland"},
 				},
 			},
-			want: "processed",
+			want: "succeeded",
 		},
 	}
 	for _, tt := range tests {
@@ -481,18 +412,18 @@ func TestIndex_WaitForPendingUpdate(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			update, err := i.AddDocuments(tt.args.document)
+			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
 			defer cancelFunc()
 
-			got, err := i.WaitForPendingUpdate(ctx, tt.args.interval, update)
+			gotTask, err := i.WaitForTask(task, waitParams{Context: ctx, Interval: tt.args.interval})
 			if tt.args.timeout < tt.args.interval {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, tt.want, got)
+				require.Equal(t, tt.want, gotTask.Status)
 			}
 		})
 	}
@@ -511,29 +442,29 @@ func TestIndex_FetchInfo(t *testing.T) {
 		{
 			name: "TestIndexBasicFetchInfo",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexBasicFetchInfo",
 				client: defaultClient,
 			},
 			wantResp: &Index{
-				UID:        "indexUID",
+				UID:        "TestIndexBasicFetchInfo",
 				PrimaryKey: "book_id",
 			},
 		},
 		{
 			name: "TestIndexFetchInfoWithCustomClient",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexFetchInfoWithCustomClient",
 				client: customClient,
 			},
 			wantResp: &Index{
-				UID:        "indexUID",
+				UID:        "TestIndexFetchInfoWithCustomClient",
 				PrimaryKey: "book_id",
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpBasicIndex()
+			SetUpBasicIndex(tt.args.UID)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -562,7 +493,7 @@ func TestIndex_FetchPrimaryKey(t *testing.T) {
 		{
 			name: "TestIndexBasicFetchPrimaryKey",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexBasicFetchPrimaryKey",
 				client: defaultClient,
 			},
 			wantPrimaryKey: "book_id",
@@ -570,7 +501,7 @@ func TestIndex_FetchPrimaryKey(t *testing.T) {
 		{
 			name: "TestIndexFetchPrimaryKeyWithCustomClient",
 			args: args{
-				UID:    "indexUID",
+				UID:    "TestIndexFetchPrimaryKeyWithCustomClient",
 				client: customClient,
 			},
 			wantPrimaryKey: "book_id",
@@ -578,7 +509,7 @@ func TestIndex_FetchPrimaryKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpBasicIndex()
+			SetUpBasicIndex(tt.args.UID)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -634,22 +565,29 @@ func TestIndex_UpdateIndex(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
-			i, err := c.CreateIndex(&tt.args.config)
+
+			i, err := SetUpEmptyIndex(&tt.args.config)
 			require.NoError(t, err)
 			require.Equal(t, tt.args.config.Uid, i.UID)
-			require.Equal(t, tt.args.config.PrimaryKey, i.PrimaryKey)
 			// Store original timestamps
 			createdAt := i.CreatedAt
 			updatedAt := i.UpdatedAt
 
 			gotResp, err := i.UpdateIndex(tt.args.primaryKey)
+			require.NoError(t, err)
+
+			_, err = c.WaitForTask(gotResp)
+			require.NoError(t, err)
 
 			require.NoError(t, err)
-			require.Equal(t, tt.wantResp.UID, gotResp.UID)
-			require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
+			require.Equal(t, tt.wantResp.UID, gotResp.IndexUID)
+
+			gotIndex, err := c.GetIndex(tt.args.config.Uid)
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp.PrimaryKey, gotIndex.PrimaryKey)
 			// Make sure that timestamps were correctly updated as well
-			require.Equal(t, createdAt, gotResp.CreatedAt)
-			require.NotEqual(t, updatedAt, gotResp.UpdatedAt)
+			require.Equal(t, createdAt, gotIndex.CreatedAt)
+			require.NotEqual(t, updatedAt, gotIndex.UpdatedAt)
 		})
 	}
 }

@@ -1,10 +1,8 @@
 package meilisearch
 
 import (
-	"context"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 // IndexConfig configure the Index
@@ -22,54 +20,53 @@ type IndexConfig struct {
 type IndexInterface interface {
 	FetchInfo() (resp *Index, err error)
 	FetchPrimaryKey() (resp *string, err error)
-	UpdateIndex(primaryKey string) (resp *Index, err error)
+	UpdateIndex(primaryKey string) (resp *Task, err error)
 	Delete(uid string) (ok bool, err error)
 	GetStats() (resp *StatsIndex, err error)
 
-	AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error)
-	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error)
-	AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *AsyncUpdateID, err error)
-	AddDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error)
-	AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *AsyncUpdateID, err error)
-	AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []AsyncUpdateID, err error)
-	UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *AsyncUpdateID, err error)
+	AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *Task, err error)
+	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []Task, err error)
+	AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *Task, err error)
+	AddDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []Task, err error)
+	AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *Task, err error)
+	AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []Task, err error)
+	UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *Task, err error)
 	GetDocument(uid string, documentPtr interface{}) error
 	GetDocuments(request *DocumentsRequest, resp interface{}) error
-	DeleteDocument(uid string) (resp *AsyncUpdateID, err error)
-	DeleteDocuments(uid []string) (resp *AsyncUpdateID, err error)
-	DeleteAllDocuments() (resp *AsyncUpdateID, err error)
+	DeleteDocument(uid string) (resp *Task, err error)
+	DeleteDocuments(uid []string) (resp *Task, err error)
+	DeleteAllDocuments() (resp *Task, err error)
 	Search(query string, request *SearchRequest) (*SearchResponse, error)
 
-	GetUpdateStatus(updateID int64) (resp *Update, err error)
-	GetAllUpdateStatus() (resp *[]Update, err error)
+	GetTask(taskID int64) (resp *Task, err error)
+	GetTasks() (resp *ResultTask, err error)
 
 	GetSettings() (resp *Settings, err error)
-	UpdateSettings(request *Settings) (resp *AsyncUpdateID, err error)
-	ResetSettings() (resp *AsyncUpdateID, err error)
+	UpdateSettings(request *Settings) (resp *Task, err error)
+	ResetSettings() (resp *Task, err error)
 	GetRankingRules() (resp *[]string, err error)
-	UpdateRankingRules(request *[]string) (resp *AsyncUpdateID, err error)
-	ResetRankingRules() (resp *AsyncUpdateID, err error)
+	UpdateRankingRules(request *[]string) (resp *Task, err error)
+	ResetRankingRules() (resp *Task, err error)
 	GetDistinctAttribute() (resp *string, err error)
-	UpdateDistinctAttribute(request string) (resp *AsyncUpdateID, err error)
-	ResetDistinctAttribute() (resp *AsyncUpdateID, err error)
+	UpdateDistinctAttribute(request string) (resp *Task, err error)
+	ResetDistinctAttribute() (resp *Task, err error)
 	GetSearchableAttributes() (resp *[]string, err error)
-	UpdateSearchableAttributes(request *[]string) (resp *AsyncUpdateID, err error)
-	ResetSearchableAttributes() (resp *AsyncUpdateID, err error)
+	UpdateSearchableAttributes(request *[]string) (resp *Task, err error)
+	ResetSearchableAttributes() (resp *Task, err error)
 	GetDisplayedAttributes() (resp *[]string, err error)
-	UpdateDisplayedAttributes(request *[]string) (resp *AsyncUpdateID, err error)
-	ResetDisplayedAttributes() (resp *AsyncUpdateID, err error)
+	UpdateDisplayedAttributes(request *[]string) (resp *Task, err error)
+	ResetDisplayedAttributes() (resp *Task, err error)
 	GetStopWords() (resp *[]string, err error)
-	UpdateStopWords(request *[]string) (resp *AsyncUpdateID, err error)
-	ResetStopWords() (resp *AsyncUpdateID, err error)
+	UpdateStopWords(request *[]string) (resp *Task, err error)
+	ResetStopWords() (resp *Task, err error)
 	GetSynonyms() (resp *map[string][]string, err error)
-	UpdateSynonyms(request *map[string][]string) (resp *AsyncUpdateID, err error)
-	ResetSynonyms() (resp *AsyncUpdateID, err error)
+	UpdateSynonyms(request *map[string][]string) (resp *Task, err error)
+	ResetSynonyms() (resp *Task, err error)
 	GetFilterableAttributes() (resp *[]string, err error)
-	UpdateFilterableAttributes(request *[]string) (resp *AsyncUpdateID, err error)
-	ResetFilterableAttributes() (resp *AsyncUpdateID, err error)
+	UpdateFilterableAttributes(request *[]string) (resp *Task, err error)
+	ResetFilterableAttributes() (resp *Task, err error)
 
-	WaitForPendingUpdate(ctx context.Context, interval time.Duration, updateID *AsyncUpdateID) (UpdateStatus, error)
-	DefaultWaitForPendingUpdate(updateID *AsyncUpdateID) (UpdateStatus, error)
+	WaitForTask(task *Task, options ...waitParams) (*Task, error)
 }
 
 var _ IndexInterface = &Index{}
@@ -106,34 +103,36 @@ func (i Index) FetchPrimaryKey() (resp *string, err error) {
 	return &index.PrimaryKey, nil
 }
 
-func (i Index) UpdateIndex(primaryKey string) (resp *Index, err error) {
+func (i Index) UpdateIndex(primaryKey string) (resp *Task, err error) {
 	request := &UpdateIndexRequest{
 		PrimaryKey: primaryKey,
 	}
-	i.PrimaryKey = primaryKey
+	i.PrimaryKey = primaryKey //nolint:golint,staticcheck
+	resp = &Task{}
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID,
 		method:              http.MethodPut,
 		contentType:         contentTypeJSON,
 		withRequest:         request,
-		withResponse:        &i,
-		acceptedStatusCodes: []int{http.StatusOK},
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateIndex",
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-	return &i, nil
+	return resp, nil
 }
 
 func (i Index) Delete(uid string) (ok bool, err error) {
+	resp := &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid,
 		method:              http.MethodDelete,
 		withRequest:         nil,
-		withResponse:        nil,
-		acceptedStatusCodes: []int{http.StatusNoContent},
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "Delete",
 	}
 	// err is not nil if status code is not 204 StatusNoContent
@@ -159,15 +158,15 @@ func (i Index) GetStats() (resp *StatsIndex, err error) {
 	return resp, nil
 }
 
-func (i Index) GetUpdateStatus(updateID int64) (resp *Update, err error) {
-	resp = &Update{}
+func (i Index) GetTask(taskID int64) (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/updates/" + strconv.FormatInt(updateID, 10),
+		endpoint:            "/indexes/" + i.UID + "/tasks/" + strconv.FormatInt(taskID, 10),
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetUpdateStatus",
+		functionName:        "GetTask",
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
@@ -175,15 +174,15 @@ func (i Index) GetUpdateStatus(updateID int64) (resp *Update, err error) {
 	return resp, nil
 }
 
-func (i Index) GetAllUpdateStatus() (resp *[]Update, err error) {
-	resp = &[]Update{}
+func (i Index) GetTasks() (resp *ResultTask, err error) {
+	resp = &ResultTask{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/updates",
+		endpoint:            "/indexes/" + i.UID + "/tasks",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetAllUpdateStatus",
+		functionName:        "GetTasks",
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
@@ -191,33 +190,11 @@ func (i Index) GetAllUpdateStatus() (resp *[]Update, err error) {
 	return resp, nil
 }
 
-// DefaultWaitForPendingUpdate checks each 50ms the status of a WaitForPendingUpdate.
-// This is a default implementation of WaitForPendingUpdate.
-func (i Index) DefaultWaitForPendingUpdate(updateID *AsyncUpdateID) (UpdateStatus, error) {
-	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancelFunc()
-	return i.WaitForPendingUpdate(ctx, time.Millisecond*50, updateID)
-}
-
-// WaitForPendingUpdate waits for the end of an update.
+// WaitForTask waits for a task to be processed.
 // The function will check by regular interval provided in parameter interval
-// the UpdateStatus. If it is not UpdateStatusEnqueued or the ctx cancelled
-// we return the UpdateStatus.
-func (i Index) WaitForPendingUpdate(
-	ctx context.Context,
-	interval time.Duration,
-	updateID *AsyncUpdateID) (UpdateStatus, error) {
-	for {
-		if err := ctx.Err(); err != nil {
-			return "", err
-		}
-		update, err := i.GetUpdateStatus(updateID.UpdateID)
-		if err != nil {
-			return UpdateStatusUnknown, nil
-		}
-		if update.Status != UpdateStatusEnqueued && update.Status != UpdateStatusProcessing {
-			return update.Status, nil
-		}
-		time.Sleep(interval)
-	}
+// the TaskStatus.
+// If no ctx and interval are provided WaitForTask will check each 50ms the
+// status of a task.
+func (i Index) WaitForTask(task *Task, options ...waitParams) (*Task, error) {
+	return i.client.WaitForTask(task, options...)
 }

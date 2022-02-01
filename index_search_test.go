@@ -347,7 +347,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 
 			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
 			require.NoError(t, err)
-			testWaitForPendingUpdate(t, i, updateFilter)
+			testWaitForTask(t, i, updateFilter)
 
 			got, err := i.Search(tt.args.query, &tt.args.request)
 			require.NoError(t, err)
@@ -666,7 +666,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 
 			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
 			require.NoError(t, err)
-			testWaitForPendingUpdate(t, i, updateFilter)
+			testWaitForTask(t, i, updateFilter)
 
 			got, err := i.Search(tt.args.query, &tt.args.request)
 			require.NoError(t, err)
@@ -897,7 +897,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 
 			updateFilter, err := i.UpdateSortableAttributes(&tt.args.sortableAttributes)
 			require.NoError(t, err)
-			testWaitForPendingUpdate(t, i, updateFilter)
+			testWaitForTask(t, i, updateFilter)
 
 			got, err := i.Search(tt.args.query, &tt.args.request)
 			require.NoError(t, err)
