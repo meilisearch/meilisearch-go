@@ -23,6 +23,11 @@ type ClientConfig struct {
 	Timeout time.Duration
 }
 
+type waitParams struct {
+	Context  context.Context
+	Interval time.Duration
+}
+
 // ClientInterface is interface for all Meilisearch client
 type ClientInterface interface {
 	Index(uid string) *Index
@@ -42,8 +47,7 @@ type ClientInterface interface {
 	IsHealthy() bool
 	GetTask(taskID int64) (resp *Task, err error)
 	GetTasks() (resp *ResultTask, err error)
-	WaitForTask(ctx context.Context, interval time.Duration, task *Task) (*Task, error)
-	DefaultWaitForTask(task *Task) (*Task, error)
+	WaitForTask(task *Task, options ...waitParams) (*Task, error)
 }
 
 var _ ClientInterface = &Client{}
@@ -209,24 +213,24 @@ func (c *Client) GetTasks() (resp *ResultTask, err error) {
 	return resp, nil
 }
 
-// // DefaultWaitForTask checks each 50ms the status of a task.
-// // This is a default implementation of WaitForTask.
-func (c *Client) DefaultWaitForTask(task *Task) (*Task, error) {
-	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancelFunc()
-	return c.WaitForTask(ctx, time.Millisecond*50, task)
-}
-
 // WaitForTask waits for a task to be processed.
 // The function will check by regular interval provided in parameter interval
-// the TaskStatus. If it is not TaskStatusEnqueued or the ctx cancelled
-// we return the TaskStatus.
-func (c *Client) WaitForTask(
-	ctx context.Context,
-	interval time.Duration,
-	task *Task) (*Task, error) {
+// the TaskStatus.
+// If no ctx and interval are provided WaitForTask will check each 50ms the
+// status of a task.
+func (c *Client) WaitForTask(task *Task, options ...waitParams) (*Task, error) {
+	if options == nil {
+		ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
+		defer cancelFunc()
+		options = []waitParams{
+			{
+				Context:  ctx,
+				Interval: time.Millisecond * 50,
+			},
+		}
+	}
 	for {
-		if err := ctx.Err(); err != nil {
+		if err := options[0].Context.Err(); err != nil {
 			return nil, err
 		}
 		getTask, err := c.GetTask(task.UID)
@@ -236,6 +240,6 @@ func (c *Client) WaitForTask(
 		if getTask.Status != TaskStatusEnqueued && getTask.Status != TaskStatusProcessing {
 			return getTask, nil
 		}
-		time.Sleep(interval)
+		time.Sleep(options[0].Interval)
 	}
 }

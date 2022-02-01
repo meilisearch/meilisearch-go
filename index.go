@@ -1,10 +1,8 @@
 package meilisearch
 
 import (
-	"context"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 // IndexConfig configure the Index
@@ -68,8 +66,7 @@ type IndexInterface interface {
 	UpdateFilterableAttributes(request *[]string) (resp *Task, err error)
 	ResetFilterableAttributes() (resp *Task, err error)
 
-	WaitForTask(ctx context.Context, interval time.Duration, task *Task) (*Task, error)
-	DefaultWaitForTask(task *Task) (*Task, error)
+	WaitForTask(task *Task, options ...waitParams) (*Task, error)
 }
 
 var _ IndexInterface = &Index{}
@@ -193,21 +190,11 @@ func (i Index) GetTasks() (resp *ResultTask, err error) {
 	return resp, nil
 }
 
-// DefaultWaitForTask checks each 50ms the status of a WaitForTask.
-// This is a default implementation of WaitForTask.
-func (i Index) DefaultWaitForTask(taskID *Task) (*Task, error) {
-	ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
-	defer cancelFunc()
-	return i.WaitForTask(ctx, time.Millisecond*50, taskID)
-}
-
 // WaitForTask waits for a task to be processed.
 // The function will check by regular interval provided in parameter interval
-// the TaskStatus. If it is not TaskStatusEnqueued or the ctx cancelled
-// we return the TaskStatus.
-func (i Index) WaitForTask(
-	ctx context.Context,
-	interval time.Duration,
-	task *Task) (*Task, error) {
-	return i.client.WaitForTask(ctx, interval, task)
+// the TaskStatus.
+// If no ctx and interval are provided WaitForTask will check each 50ms the
+// status of a task.
+func (i Index) WaitForTask(task *Task, options ...waitParams) (*Task, error) {
+	return i.client.WaitForTask(task, options...)
 }

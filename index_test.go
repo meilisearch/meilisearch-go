@@ -249,7 +249,7 @@ func TestIndex_GetTask(t *testing.T) {
 			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			_, err = c.DefaultWaitForTask(task)
+			_, err = c.WaitForTask(task)
 			require.NoError(t, err)
 
 			gotResp, err := i.GetTask(task.UID)
@@ -307,7 +307,7 @@ func TestIndex_GetTasks(t *testing.T) {
 			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			_, err = c.DefaultWaitForTask(task)
+			_, err = c.WaitForTask(task)
 			require.NoError(t, err)
 
 			gotResp, err := i.GetTasks()
@@ -315,63 +315,6 @@ func TestIndex_GetTasks(t *testing.T) {
 			require.NotNil(t, (*gotResp).Results[0].Status)
 			require.NotZero(t, (*gotResp).Results[0].UID)
 			require.NotNil(t, (*gotResp).Results[0].Type)
-		})
-	}
-}
-
-func TestIndex_DefaultWaitForTask(t *testing.T) {
-	type args struct {
-		UID      string
-		client   *Client
-		taskID   *Task
-		document []docTest
-	}
-	tests := []struct {
-		name string
-		args args
-		want TaskStatus
-	}{
-		{
-			name: "TestDefaultWaitForTask",
-			args: args{
-				UID:    "TestDefaultWaitForTask",
-				client: defaultClient,
-				taskID: &Task{
-					UID: 0,
-				},
-				document: []docTest{
-					{ID: "123", Name: "Pride and Prejudice"},
-				},
-			},
-			want: "succeeded",
-		},
-		{
-			name: "TestDefaultWaitForTaskWithCustomClient",
-			args: args{
-				UID:    "TestDefaultWaitForTaskWithCustomClient",
-				client: customClient,
-				taskID: &Task{
-					UID: 0,
-				},
-				document: []docTest{
-					{ID: "123", Name: "Pride and Prejudice"},
-				},
-			},
-			want: "succeeded",
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := tt.args.client
-			i := c.Index(tt.args.UID)
-			t.Cleanup(cleanup(c))
-
-			task, err := i.AddDocuments(tt.args.document)
-			require.NoError(t, err)
-
-			gotTask, err := i.DefaultWaitForTask(task)
-			require.NoError(t, err)
-			require.Equal(t, tt.want, gotTask.Status)
 		})
 	}
 }
@@ -391,9 +334,9 @@ func TestIndex_WaitForTask(t *testing.T) {
 		want TaskStatus
 	}{
 		{
-			name: "TestDefaultWaitForTask50",
+			name: "TestWaitForTask50",
 			args: args{
-				UID:      "TestDefaultWaitForTask50",
+				UID:      "TestWaitForTask50",
 				client:   defaultClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
@@ -409,9 +352,9 @@ func TestIndex_WaitForTask(t *testing.T) {
 			want: "succeeded",
 		},
 		{
-			name: "TestDefaultWaitForTask50WithCustomClient",
+			name: "TestWaitForTask50WithCustomClient",
 			args: args{
-				UID:      "TestDefaultWaitForTask50WithCustomClient",
+				UID:      "TestWaitForTask50WithCustomClient",
 				client:   customClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
@@ -427,9 +370,9 @@ func TestIndex_WaitForTask(t *testing.T) {
 			want: "succeeded",
 		},
 		{
-			name: "TestDefaultWaitForTask10",
+			name: "TestWaitForTask10",
 			args: args{
-				UID:      "TestDefaultWaitForTask10",
+				UID:      "TestWaitForTask10",
 				client:   defaultClient,
 				interval: time.Millisecond * 10,
 				timeout:  time.Second * 5,
@@ -445,9 +388,9 @@ func TestIndex_WaitForTask(t *testing.T) {
 			want: "succeeded",
 		},
 		{
-			name: "TestDefaultWaitForTaskWithTimeout",
+			name: "TestWaitForTaskWithTimeout",
 			args: args{
-				UID:      "TestDefaultWaitForTaskWithTimeout",
+				UID:      "TestWaitForTaskWithTimeout",
 				client:   defaultClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Millisecond * 10,
@@ -475,7 +418,7 @@ func TestIndex_WaitForTask(t *testing.T) {
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
 			defer cancelFunc()
 
-			gotTask, err := i.WaitForTask(ctx, tt.args.interval, task)
+			gotTask, err := i.WaitForTask(task, waitParams{Context: ctx, Interval: tt.args.interval})
 			if tt.args.timeout < tt.args.interval {
 				require.Error(t, err)
 			} else {
@@ -633,7 +576,7 @@ func TestIndex_UpdateIndex(t *testing.T) {
 			gotResp, err := i.UpdateIndex(tt.args.primaryKey)
 			require.NoError(t, err)
 
-			_, err = c.DefaultWaitForTask(gotResp)
+			_, err = c.WaitForTask(gotResp)
 			require.NoError(t, err)
 
 			require.NoError(t, err)

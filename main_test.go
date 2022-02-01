@@ -30,7 +30,7 @@ func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
 
 	for _, index := range list {
 		task, _ := client.DeleteIndex(index.UID)
-		_, err := client.DefaultWaitForTask(task)
+		_, err := client.WaitForTask(task)
 		if err != nil {
 			return false, err
 		}
@@ -46,13 +46,13 @@ func cleanup(c ClientInterface) func() {
 }
 
 func testWaitForTask(t *testing.T, i *Index, u *Task) {
-	_, err := i.DefaultWaitForTask(u)
+	_, err := i.WaitForTask(u)
 	require.NoError(t, err)
 }
 
 func testWaitForBatchTask(t *testing.T, i *Index, u []Task) {
 	for _, id := range u {
-		_, err := i.DefaultWaitForTask(&id)
+		_, err := i.WaitForTask(&id)
 		require.NoError(t, err)
 	}
 }
@@ -67,7 +67,7 @@ func SetUpEmptyIndex(index *IndexConfig) (resp *Index, err error) {
 		fmt.Println(err)
 		return nil, err
 	}
-	finalTask, _ := client.DefaultWaitForTask(task)
+	finalTask, _ := client.WaitForTask(task)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -94,7 +94,7 @@ func SetUpBasicIndex(indexUID string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := index.DefaultWaitForTask(task)
+	finalTask, _ := index.WaitForTask(task)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -134,7 +134,7 @@ func SetUpIndexForFaceting() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := index.DefaultWaitForTask(task)
+	finalTask, _ := index.WaitForTask(task)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}

@@ -1,7 +1,9 @@
 package meilisearch
 
 import (
+	"context"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -313,7 +315,7 @@ func TestClient_GetTask(t *testing.T) {
 			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			_, err = c.DefaultWaitForTask(task)
+			_, err = c.WaitForTask(task)
 			require.NoError(t, err)
 
 			gotResp, err := c.GetTask(task.UID)
@@ -371,7 +373,7 @@ func TestClient_GetTasks(t *testing.T) {
 			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			_, err = c.DefaultWaitForTask(task)
+			_, err = c.WaitForTask(task)
 			require.NoError(t, err)
 
 			gotResp, err := i.GetTasks()
@@ -379,6 +381,176 @@ func TestClient_GetTasks(t *testing.T) {
 			require.NotNil(t, (*gotResp).Results[0].Status)
 			require.NotZero(t, (*gotResp).Results[0].UID)
 			require.NotNil(t, (*gotResp).Results[0].Type)
+		})
+	}
+}
+
+func TestClient_DefaultWaitForTask(t *testing.T) {
+	type args struct {
+		UID      string
+		client   *Client
+		taskID   *Task
+		document []docTest
+	}
+	tests := []struct {
+		name string
+		args args
+		want TaskStatus
+	}{
+		{
+			name: "TestDefaultWaitForTask",
+			args: args{
+				UID:      "TestDefaultWaitForTask",
+				client:   defaultClient,
+				taskID: &Task{
+					UID: 0,
+				},
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+					{ID: "456", Name: "Le Petit Prince"},
+					{ID: "1", Name: "Alice In Wonderland"},
+				},
+			},
+			want: "succeeded",
+		},
+		{
+			name: "TestDefaultWaitForTaskWithCustomClient",
+			args: args{
+				UID:      "TestDefaultWaitForTaskWithCustomClient",
+				client:   customClient,
+				taskID: &Task{
+					UID: 0,
+				},
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+					{ID: "456", Name: "Le Petit Prince"},
+					{ID: "1", Name: "Alice In Wonderland"},
+				},
+			},
+			want: "succeeded",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			t.Cleanup(cleanup(c))
+
+			task, err := c.Index(tt.args.UID).AddDocuments(tt.args.document)
+			require.NoError(t, err)
+
+			gotTask, err := c.WaitForTask(task)
+			require.NoError(t, err)
+			require.Equal(t, tt.want, gotTask.Status)
+		})
+	}
+}
+
+
+func TestClient_WaitForTaskWithContext(t *testing.T) {
+	type args struct {
+		UID      string
+		client   *Client
+		interval time.Duration
+		timeout  time.Duration
+		taskID   *Task
+		document []docTest
+	}
+	tests := []struct {
+		name string
+		args args
+		want TaskStatus
+	}{
+		{
+			name: "TestWaitForTask50",
+			args: args{
+				UID:      "TestWaitForTask50",
+				client:   defaultClient,
+				interval: time.Millisecond * 50,
+				timeout:  time.Second * 5,
+				taskID: &Task{
+					UID: 0,
+				},
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+					{ID: "456", Name: "Le Petit Prince"},
+					{ID: "1", Name: "Alice In Wonderland"},
+				},
+			},
+			want: "succeeded",
+		},
+		{
+			name: "TestWaitForTask50WithCustomClient",
+			args: args{
+				UID:      "TestWaitForTask50WithCustomClient",
+				client:   customClient,
+				interval: time.Millisecond * 50,
+				timeout:  time.Second * 5,
+				taskID: &Task{
+					UID: 0,
+				},
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+					{ID: "456", Name: "Le Petit Prince"},
+					{ID: "1", Name: "Alice In Wonderland"},
+				},
+			},
+			want: "succeeded",
+		},
+		{
+			name: "TestWaitForTask10",
+			args: args{
+				UID:      "TestWaitForTask10",
+				client:   defaultClient,
+				interval: time.Millisecond * 10,
+				timeout:  time.Second * 5,
+				taskID: &Task{
+					UID: 1,
+				},
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+					{ID: "456", Name: "Le Petit Prince"},
+					{ID: "1", Name: "Alice In Wonderland"},
+				},
+			},
+			want: "succeeded",
+		},
+		{
+			name: "TestWaitForTaskWithTimeout",
+			args: args{
+				UID:      "TestWaitForTaskWithTimeout",
+				client:   defaultClient,
+				interval: time.Millisecond * 50,
+				timeout:  time.Millisecond * 10,
+				taskID: &Task{
+					UID: 1,
+				},
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+					{ID: "456", Name: "Le Petit Prince"},
+					{ID: "1", Name: "Alice In Wonderland"},
+				},
+			},
+			want: "succeeded",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			t.Cleanup(cleanup(c))
+
+			task, err := c.Index(tt.args.UID).AddDocuments(tt.args.document)
+			require.NoError(t, err)
+
+			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
+			defer cancelFunc()
+
+			gotTask, err := c.WaitForTask(task, waitParams{Context: ctx, Interval: tt.args.interval})
+			if tt.args.timeout < tt.args.interval {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tt.want, gotTask.Status)
+			}
 		})
 	}
 }
