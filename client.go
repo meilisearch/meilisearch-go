@@ -37,7 +37,11 @@ type ClientInterface interface {
 	GetAllRawIndexes() (resp []map[string]interface{}, err error)
 	CreateIndex(config *IndexConfig) (resp *Task, err error)
 	DeleteIndex(uid string) (resp *Task, err error)
-	GetKeys() (resp *Keys, err error)
+	CreateKey(request *Key) (resp *Key, err error)
+	GetKey(identifier string) (resp *Key, err error)
+	GetKeys() (resp *ResultKey, err error)
+	UpdateKey(identifier string, request *Key) (resp *Key, err error)
+	DeleteKey(identifier string) (resp bool, err error)
 	GetAllStats() (resp *Stats, err error)
 	CreateDump() (resp *Dump, err error)
 	GetDumpStatus(dumpUID string) (resp *Dump, err error)
@@ -109,8 +113,41 @@ func (c *Client) GetAllStats() (resp *Stats, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetKeys() (resp *Keys, err error) {
-	resp = &Keys{}
+func (c *Client) CreateKey(request *Key) (resp *Key, err error) {
+	resp = &Key{}
+	req := internalRequest{
+		endpoint:            "/keys",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         &request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusCreated},
+		functionName:        "CreateKey",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) GetKey(identifier string) (resp *Key, err error) {
+	resp = &Key{}
+	req := internalRequest{
+		endpoint:            "/keys/" + identifier,
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetKey",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) GetKeys() (resp *ResultKey, err error) {
+	resp = &ResultKey{}
 	req := internalRequest{
 		endpoint:            "/keys",
 		method:              http.MethodGet,
@@ -123,6 +160,38 @@ func (c *Client) GetKeys() (resp *Keys, err error) {
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (c *Client) UpdateKey(identifier string, request *Key) (resp *Key, err error) {
+	resp = &Key{}
+	req := internalRequest{
+		endpoint:            "/keys/" + identifier,
+		method:              http.MethodPatch,
+		contentType:         contentTypeJSON,
+		withRequest:         &request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "UpdateKey",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) DeleteKey(identifier string) (resp bool, err error) {
+	req := internalRequest{
+		endpoint:            "/keys/" + identifier,
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        nil,
+		acceptedStatusCodes: []int{http.StatusNoContent},
+		functionName:        "DeleteKey",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return true, err
+	}
+	return false, nil
 }
 
 func (c *Client) Health() (resp *Health, err error) {
