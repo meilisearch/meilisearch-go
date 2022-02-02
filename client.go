@@ -114,12 +114,13 @@ func (c *Client) GetAllStats() (resp *Stats, err error) {
 }
 
 func (c *Client) CreateKey(request *Key) (resp *Key, err error) {
+	parsedRequest := convertKeyToParsedKey(*request)
 	resp = &Key{}
 	req := internalRequest{
 		endpoint:            "/keys",
 		method:              http.MethodPost,
 		contentType:         contentTypeJSON,
-		withRequest:         &request,
+		withRequest:         &parsedRequest,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusCreated},
 		functionName:        "CreateKey",
@@ -163,12 +164,13 @@ func (c *Client) GetKeys() (resp *ResultKey, err error) {
 }
 
 func (c *Client) UpdateKey(identifier string, request *Key) (resp *Key, err error) {
+	parsedRequest := convertKeyToParsedKey(*request)
 	resp = &Key{}
 	req := internalRequest{
 		endpoint:            "/keys/" + identifier,
 		method:              http.MethodPatch,
 		contentType:         contentTypeJSON,
-		withRequest:         &request,
+		withRequest:         &parsedRequest,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "UpdateKey",
@@ -189,9 +191,9 @@ func (c *Client) DeleteKey(identifier string) (resp bool, err error) {
 		functionName:        "DeleteKey",
 	}
 	if err := c.executeRequest(req); err != nil {
-		return true, err
+		return false, err
 	}
-	return false, nil
+	return true, nil
 }
 
 func (c *Client) Health() (resp *Health, err error) {
@@ -311,4 +313,20 @@ func (c *Client) WaitForTask(task *Task, options ...waitParams) (*Task, error) {
 		}
 		time.Sleep(options[0].Interval)
 	}
+}
+
+// This function allows the user to create a Key with an ExpiredAt in time.Time
+// and transform the Key structure into a KeyParsed structure to send the time format
+// managed by Meilisearch
+func convertKeyToParsedKey(key Key) (resp KeyParsed) {
+	resp = KeyParsed{Description: key.Description, Actions: key.Actions, Indexes: key.Indexes}
+
+	// Convert time.Time to *string to feat the exact ISO-8601
+	// format of Meilisearch
+	if !key.ExpiresAt.IsZero() {
+		const Format = "2006-01-02T15:04:05"
+		timeParsedToString := key.ExpiresAt.Format(Format)
+		resp.ExpiresAt = &timeParsedToString
+	}
+	return resp
 }

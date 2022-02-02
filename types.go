@@ -101,9 +101,20 @@ type Key struct {
 	Key         string    `json:"key,omitempty"`
 	Actions     []string  `json:"actions,omitempty"`
 	Indexes     []string  `json:"indexes,omitempty"`
-	ExpiresAt   time.Time `json:"expiresAt"`
 	CreatedAt   time.Time `json:"createdAt,omitempty"`
 	UpdatedAt   time.Time `json:"updatedAt,omitempty"`
+	ExpiresAt   time.Time `json:"expiresAt"`
+}
+
+// This structure is used to send the exact ISO-8601 time format managed by Meilisearch
+type KeyParsed struct {
+	Description string    `json:"description"`
+	Key         string    `json:"key,omitempty"`
+	Actions     []string  `json:"actions,omitempty"`
+	Indexes     []string  `json:"indexes,omitempty"`
+	CreatedAt   time.Time `json:"createdAt,omitempty"`
+	UpdatedAt   time.Time `json:"updatedAt,omitempty"`
+	ExpiresAt   *string   `json:"expiresAt"`
 }
 
 type ResultKey struct {

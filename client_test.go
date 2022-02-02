@@ -81,6 +81,34 @@ func TestClient_GetAllStats(t *testing.T) {
 	}
 }
 
+func TestClient_GetKey(t *testing.T) {
+	tests := []struct {
+		name   string
+		client *Client
+	}{
+		{
+			name:   "TestGetKey",
+			client: defaultClient,
+		},
+		{
+			name:   "TestGetKeyWithCustomClient",
+			client: customClient,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			gotResp, err := tt.client.GetKeys()
+			require.NoError(t, err)
+
+			gotKey, err := tt.client.GetKey(gotResp.Results[0].Key)
+			require.NoError(t, err)
+			require.NotNil(t, gotKey.ExpiresAt)
+			require.NotNil(t, gotKey.CreatedAt)
+			require.NotNil(t, gotKey.UpdatedAt)
+		})
+	}
+}
+
 func TestClient_GetKeys(t *testing.T) {
 	tests := []struct {
 		name   string
@@ -92,14 +120,321 @@ func TestClient_GetKeys(t *testing.T) {
 		},
 		{
 			name:   "TestGetKeysWithCustomClient",
-			client: defaultClient,
+			client: customClient,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			gotResp, err := tt.client.GetKeys()
+
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "GetKeys() should not return nil value")
+			require.GreaterOrEqual(t, len(gotResp.Results), 2)
+		})
+	}
+}
+
+func TestClient_CreateKey(t *testing.T) {
+	tests := []struct {
+		name   string
+		client *Client
+		key    Key
+	}{
+		{
+			name:   "TestCreateBasicKey",
+			client: defaultClient,
+			key: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+		},
+		{
+			name:   "TestCreateKeyWithCustomClient",
+			client: customClient,
+			key: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+		},
+		{
+			name:   "TestCreateKeyWithExpirationAt",
+			client: defaultClient,
+			key: Key{
+				Actions:   []string{"*"},
+				Indexes:   []string{"*"},
+				ExpiresAt: time.Now().Add(time.Hour * 10),
+			},
+		},
+		{
+			name:   "TestCreateKeyWithDescription",
+			client: defaultClient,
+			key: Key{
+				Description: "TestCreateKeyWithDescription",
+				Actions:     []string{"*"},
+				Indexes:     []string{"*"},
+			},
+		},
+		{
+			name:   "TestCreateKeyWithActions",
+			client: defaultClient,
+			key: Key{
+				Description: "TestCreateKeyWithActions",
+				Actions:     []string{"documents.add", "documents.delete"},
+				Indexes:     []string{"*"},
+			},
+		},
+		{
+			name:   "TestCreateKeyWithIndexes",
+			client: defaultClient,
+			key: Key{
+				Description: "TestCreateKeyWithIndexes",
+				Actions:     []string{"*"},
+				Indexes:     []string{"movies", "games"},
+			},
+		},
+		{
+			name:   "TestCreateKeyWithAllOptions",
+			client: defaultClient,
+			key: Key{
+				Description: "TestCreateKeyWithAllOptions",
+				Actions:     []string{"documents.add", "documents.delete"},
+				Indexes:     []string{"movies", "games"},
+				ExpiresAt:   time.Now().Add(time.Hour * 10),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			const Format = "2006-01-02T15:04:05"
+			c := tt.client
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := c.CreateKey(&tt.key)
+			require.NoError(t, err)
+
+			gotKey, err := c.GetKey(gotResp.Key)
+			require.NoError(t, err)
+			require.Equal(t, tt.key.Description, gotKey.Description)
+			require.Equal(t, tt.key.Actions, gotKey.Actions)
+			require.Equal(t, tt.key.Indexes, gotKey.Indexes)
+			if !tt.key.ExpiresAt.IsZero() {
+				require.Equal(t, tt.key.ExpiresAt.Format(Format), gotKey.ExpiresAt.Format(Format))
+			}
+		})
+	}
+}
+
+func TestClient_UpdateKey(t *testing.T) {
+	tests := []struct {
+		name        string
+		client      *Client
+		keyToCreate Key
+		keyToUpdate Key
+	}{
+		{
+			name:   "TestUpdateKeyWithDescription",
+			client: defaultClient,
+			keyToCreate: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+			keyToUpdate: Key{
+				Description: "TestUpdateKeyWithDescription",
+				Actions:     []string{"*"},
+				Indexes:     []string{"*"},
+			},
+		},
+		{
+			name:   "TestUpdateKeyWithCustomClientWithDescription",
+			client: customClient,
+			keyToCreate: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+			keyToUpdate: Key{
+				Description: "TestUpdateKeyWithCustomClientWithDescription",
+				Actions:     []string{"*"},
+				Indexes:     []string{"*"},
+			},
+		},
+		{
+			name:   "TestUpdateKeyWithExpirationAt",
+			client: defaultClient,
+			keyToCreate: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+			keyToUpdate: Key{
+				Actions:   []string{"*"},
+				Indexes:   []string{"*"},
+				ExpiresAt: time.Now().Add(time.Hour * 10),
+			},
+		},
+		{
+			name:   "TestUpdateKeyWithActions",
+			client: defaultClient,
+			keyToCreate: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+			keyToUpdate: Key{
+				Description: "TestUpdateKeyWithActions",
+				Actions:     []string{"documents.add", "documents.delete"},
+				Indexes:     []string{"*"},
+			},
+		},
+		{
+			name:   "TestUpdateKeyWithIndexes",
+			client: defaultClient,
+			keyToCreate: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+			keyToUpdate: Key{
+				Description: "TestUpdateKeyWithIndexes",
+				Actions:     []string{"*"},
+				Indexes:     []string{"movies", "games"},
+			},
+		},
+		{
+			name:   "TestUpdateKeyWithAllOptions",
+			client: defaultClient,
+			keyToCreate: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+			keyToUpdate: Key{
+				Description: "TestUpdateKeyWithAllOptions",
+				Actions:     []string{"documents.add", "documents.delete"},
+				Indexes:     []string{"movies", "games"},
+				ExpiresAt:   time.Now().Add(time.Hour * 10),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			const Format = "2006-01-02T15:04:05"
+			c := tt.client
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := c.CreateKey(&tt.keyToCreate)
+			require.NoError(t, err)
+
+			if tt.keyToCreate.Description != "" {
+				require.Equal(t, tt.keyToCreate.Description, gotResp.Description)
+			}
+			if len(tt.keyToCreate.Actions) != 0 {
+				require.Equal(t, tt.keyToCreate.Actions, gotResp.Actions)
+			}
+			if len(tt.keyToCreate.Indexes) != 0 {
+				require.Equal(t, tt.keyToCreate.Indexes, gotResp.Indexes)
+			}
+			if !tt.keyToCreate.ExpiresAt.IsZero() {
+				require.Equal(t, tt.keyToCreate.ExpiresAt.Format(Format), gotResp.ExpiresAt.Format(Format))
+			}
+
+			gotKey, err := c.UpdateKey(gotResp.Key, &tt.keyToUpdate)
+			require.NoError(t, err)
+
+			if tt.keyToUpdate.Description != "" {
+				require.Equal(t, tt.keyToUpdate.Description, gotKey.Description)
+			}
+			if len(tt.keyToUpdate.Actions) != 0 {
+				require.Equal(t, tt.keyToUpdate.Actions, gotKey.Actions)
+			}
+			if len(tt.keyToUpdate.Indexes) != 0 {
+				require.Equal(t, tt.keyToUpdate.Indexes, gotKey.Indexes)
+			}
+			if !tt.keyToUpdate.ExpiresAt.IsZero() {
+				require.Equal(t, tt.keyToUpdate.ExpiresAt.Format(Format), gotKey.ExpiresAt.Format(Format))
+			}
+		})
+	}
+}
+
+func TestClient_DeleteKey(t *testing.T) {
+	tests := []struct {
+		name   string
+		client *Client
+		key    Key
+	}{
+		{
+			name:   "TestDeleteBasicKey",
+			client: defaultClient,
+			key: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+		},
+		{
+			name:   "TestDeleteKeyWithCustomClient",
+			client: customClient,
+			key: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+		},
+		{
+			name:   "TestDeleteKeyWithExpirationAt",
+			client: defaultClient,
+			key: Key{
+				Actions:   []string{"*"},
+				Indexes:   []string{"*"},
+				ExpiresAt: time.Now().Add(time.Hour * 10),
+			},
+		},
+		{
+			name:   "TestDeleteKeyWithDescription",
+			client: defaultClient,
+			key: Key{
+				Description: "TestDeleteKeyWithDescription",
+				Actions:     []string{"*"},
+				Indexes:     []string{"*"},
+			},
+		},
+		{
+			name:   "TestDeleteKeyWithActions",
+			client: defaultClient,
+			key: Key{
+				Description: "TestDeleteKeyWithActions",
+				Actions:     []string{"documents.add", "documents.delete"},
+				Indexes:     []string{"*"},
+			},
+		},
+		{
+			name:   "TestDeleteKeyWithIndexes",
+			client: defaultClient,
+			key: Key{
+				Description: "TestDeleteKeyWithIndexes",
+				Actions:     []string{"*"},
+				Indexes:     []string{"movies", "games"},
+			},
+		},
+		{
+			name:   "TestDeleteKeyWithAllOptions",
+			client: defaultClient,
+			key: Key{
+				Description: "TestDeleteKeyWithAllOptions",
+				Actions:     []string{"documents.add", "documents.delete"},
+				Indexes:     []string{"movies", "games"},
+				ExpiresAt:   time.Now().Add(time.Hour * 10),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.client
+
+			gotKey, err := c.CreateKey(&tt.key)
+			require.NoError(t, err)
+
+			gotResp, err := c.DeleteKey(gotKey.Key)
+			require.NoError(t, err)
+			require.True(t, gotResp)
+
+			gotResp, err = c.DeleteKey(gotKey.Key)
+			require.Error(t, err)
+			require.False(t, gotResp)
 		})
 	}
 }
@@ -400,8 +735,8 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 		{
 			name: "TestDefaultWaitForTask",
 			args: args{
-				UID:      "TestDefaultWaitForTask",
-				client:   defaultClient,
+				UID:    "TestDefaultWaitForTask",
+				client: defaultClient,
 				taskID: &Task{
 					UID: 0,
 				},
@@ -416,8 +751,8 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 		{
 			name: "TestDefaultWaitForTaskWithCustomClient",
 			args: args{
-				UID:      "TestDefaultWaitForTaskWithCustomClient",
-				client:   customClient,
+				UID:    "TestDefaultWaitForTaskWithCustomClient",
+				client: customClient,
 				taskID: &Task{
 					UID: 0,
 				},
@@ -444,7 +779,6 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 		})
 	}
 }
-
 
 func TestClient_WaitForTaskWithContext(t *testing.T) {
 	type args struct {

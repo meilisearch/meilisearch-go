@@ -47,7 +47,7 @@ func deleteAllKeys(client ClientInterface) (ok bool, err error) {
 	}
 
 	for _, key := range list.Results {
-		if strings.Contains(key.Description, "Test") { //(key.Description == nil) ||
+		if strings.Contains(key.Description, "Test") || (key.Description == "") {
 			_, err = client.DeleteKey(key.Key)
 			if err != nil {
 				return false, err
