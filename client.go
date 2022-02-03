@@ -37,7 +37,11 @@ type ClientInterface interface {
 	GetAllRawIndexes() (resp []map[string]interface{}, err error)
 	CreateIndex(config *IndexConfig) (resp *Task, err error)
 	DeleteIndex(uid string) (resp *Task, err error)
-	GetKeys() (resp *Keys, err error)
+	CreateKey(request *Key) (resp *Key, err error)
+	GetKey(identifier string) (resp *Key, err error)
+	GetKeys() (resp *ResultKey, err error)
+	UpdateKey(identifier string, request *Key) (resp *Key, err error)
+	DeleteKey(identifier string) (resp bool, err error)
 	GetAllStats() (resp *Stats, err error)
 	CreateDump() (resp *Dump, err error)
 	GetDumpStatus(dumpUID string) (resp *Dump, err error)
@@ -109,8 +113,42 @@ func (c *Client) GetAllStats() (resp *Stats, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetKeys() (resp *Keys, err error) {
-	resp = &Keys{}
+func (c *Client) CreateKey(request *Key) (resp *Key, err error) {
+	parsedRequest := convertKeyToParsedKey(*request)
+	resp = &Key{}
+	req := internalRequest{
+		endpoint:            "/keys",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         &parsedRequest,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusCreated},
+		functionName:        "CreateKey",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) GetKey(identifier string) (resp *Key, err error) {
+	resp = &Key{}
+	req := internalRequest{
+		endpoint:            "/keys/" + identifier,
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetKey",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) GetKeys() (resp *ResultKey, err error) {
+	resp = &ResultKey{}
 	req := internalRequest{
 		endpoint:            "/keys",
 		method:              http.MethodGet,
@@ -123,6 +161,39 @@ func (c *Client) GetKeys() (resp *Keys, err error) {
 		return nil, err
 	}
 	return resp, nil
+}
+
+func (c *Client) UpdateKey(identifier string, request *Key) (resp *Key, err error) {
+	parsedRequest := convertKeyToParsedKey(*request)
+	resp = &Key{}
+	req := internalRequest{
+		endpoint:            "/keys/" + identifier,
+		method:              http.MethodPatch,
+		contentType:         contentTypeJSON,
+		withRequest:         &parsedRequest,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "UpdateKey",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) DeleteKey(identifier string) (resp bool, err error) {
+	req := internalRequest{
+		endpoint:            "/keys/" + identifier,
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        nil,
+		acceptedStatusCodes: []int{http.StatusNoContent},
+		functionName:        "DeleteKey",
+	}
+	if err := c.executeRequest(req); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 func (c *Client) Health() (resp *Health, err error) {
@@ -242,4 +313,20 @@ func (c *Client) WaitForTask(task *Task, options ...waitParams) (*Task, error) {
 		}
 		time.Sleep(options[0].Interval)
 	}
+}
+
+// This function allows the user to create a Key with an ExpiredAt in time.Time
+// and transform the Key structure into a KeyParsed structure to send the time format
+// managed by Meilisearch
+func convertKeyToParsedKey(key Key) (resp KeyParsed) {
+	resp = KeyParsed{Description: key.Description, Actions: key.Actions, Indexes: key.Indexes}
+
+	// Convert time.Time to *string to feat the exact ISO-8601
+	// format of Meilisearch
+	if !key.ExpiresAt.IsZero() {
+		const Format = "2006-01-02T15:04:05"
+		timeParsedToString := key.ExpiresAt.Format(Format)
+		resp.ExpiresAt = &timeParsedToString
+	}
+	return resp
 }

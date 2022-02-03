@@ -4,6 +4,7 @@ import (
 	"crypto/tls"
 	"fmt"
 	"os"
+	"strings"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -39,9 +40,28 @@ func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
 	return true, nil
 }
 
+func deleteAllKeys(client ClientInterface) (ok bool, err error) {
+	list, err := client.GetKeys()
+	if err != nil {
+		return false, err
+	}
+
+	for _, key := range list.Results {
+		if strings.Contains(key.Description, "Test") || (key.Description == "") {
+			_, err = client.DeleteKey(key.Key)
+			if err != nil {
+				return false, err
+			}
+		}
+	}
+
+	return true, nil
+}
+
 func cleanup(c ClientInterface) func() {
 	return func() {
 		_, _ = deleteAllIndexes(c)
+		_, _ = deleteAllKeys(c)
 	}
 }
 
