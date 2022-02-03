@@ -93,17 +93,17 @@ func main() {
         { "id": 5, "title": "Moana", "genres": []string{"Fantasy", "Action"} },
         { "id": 6, "title": "Philadelphia", "genres": []string{"Drama"} },
 	}
-	update, err := index.AddDocuments(documents)
+	task, err := index.AddDocuments(documents)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	fmt.Println(update.UpdateID)
+	fmt.Println(task.taskID)
 }
 ```
 
-With the `updateId`, you can check the status (`enqueued`, `processing`, `processed` or `failed`) of your documents addition using the [update endpoint](https://docs.meilisearch.com/reference/api/updates.html#get-an-update-status).
+With the `taskID`, you can check the status (`enqueued`, `processing`, `succeeded` or `failed`) of your documents addition using the [task endpoint](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html#task-status).
 
 #### Basic Search <!-- omit in toc -->
 
@@ -192,12 +192,12 @@ JSON output:
 If you want to enable filtering, you must add your attributes to the `filterableAttributes` index setting.
 
 ```go
-updateId, err := index.UpdateFilterableAttributes(&[]string{"id", "genres"})
+task, err := index.UpdateFilterableAttributes(&[]string{"id", "genres"})
 ```
 
 You only need to perform this operation once.
 
-Note that MeiliSearch will rebuild your index whenever you update `filterableAttributes`. Depending on the size of your dataset, this might take time. You can track the process using the [update status](https://docs.meilisearch.com/reference/api/updates.html#get-an-update-status).
+Note that MeiliSearch will rebuild your index whenever you update `filterableAttributes`. Depending on the size of your dataset, this might take time. You can track the process using the [task status](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html#task-status).
 
 Then, you can perform the search:
 
