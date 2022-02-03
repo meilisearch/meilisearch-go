@@ -1,11 +1,11 @@
 <p align="center">
-  <img src="https://res.cloudinary.com/meilisearch/image/upload/v1587402338/SDKs/meilisearch_go.svg" alt="MeiliSearch-Go" width="200" height="200" />
+  <img src="https://raw.githubusercontent.com/meilisearch/integration-guides/main/assets/logos/meilisearch_go.svg" alt="Meilisearch-Go" width="200" height="200" />
 </p>
 
-<h1 align="center">MeiliSearch Go</h1>
+<h1 align="center">Meilisearch Go</h1>
 
 <h4 align="center">
-  <a href="https://github.com/meilisearch/MeiliSearch">MeiliSearch</a> |
+  <a href="https://github.com/meilisearch/meilisearch">Meilisearch</a> |
   <a href="https://docs.meilisearch.com">Documentation</a> |
   <a href="https://slack.meilisearch.com">Slack</a> |
   <a href="https://roadmap.meilisearch.com/tabs/1-under-consideration">Roadmap</a> |
@@ -20,18 +20,18 @@
   <a href="https://app.bors.tech/repositories/28783"><img src="https://bors.tech/images/badge_small.svg" alt="Bors enabled"></a>
 </p>
 
-<p align="center">⚡ The MeiliSearch API client written for Golang</p>
+<p align="center">⚡ The Meilisearch API client written for Golang</p>
 
-**MeiliSearch Go** is the MeiliSearch API client for Go developers.
+**Meilisearch Go** is the Meilisearch API client for Go developers.
 
-**MeiliSearch** is an open-source search engine. [Discover what MeiliSearch is!](https://github.com/meilisearch/MeiliSearch)
+**Meilisearch** is an open-source search engine. [Discover what Meilisearch is!](https://github.com/meilisearch/Meilisearch)
 
 ## Table of Contents <!-- omit in toc -->
 
 - [📖 Documentation](#-documentation)
 - [🔧 Installation](#-installation)
 - [🚀 Getting Started](#-getting-started)
-- [🤖 Compatibility with MeiliSearch](#-compatibility-with-meilisearch)
+- [🤖 Compatibility with Meilisearch](#-compatibility-with-meilisearch)
 - [💡 Learn More](#-learn-more)
 - [⚙️ Development Workflow and Contributing](#️-development-workflow-and-contributing)
 
@@ -46,21 +46,21 @@ With `go get` in command line:
 go get github.com/meilisearch/meilisearch-go
 ```
 
-### Run MeiliSearch <!-- omit in toc -->
+### Run Meilisearch <!-- omit in toc -->
 
-There are many easy ways to [download and run a MeiliSearch instance](https://docs.meilisearch.com/reference/features/installation.html#download-and-launch).
+There are many easy ways to [download and run a Meilisearch instance](https://docs.meilisearch.com/reference/features/installation.html#download-and-launch).
 
 For example, using the `curl` command in [your Terminal](https://itconnect.uw.edu/learn/workshops/online-tutorials/web-publishing/what-is-a-terminal/):
 
 ```bash
-# Install MeiliSearch
+# Install Meilisearch
 curl -L https://install.meilisearch.com | sh
 
-# Launch MeiliSearch
+# Launch Meilisearch
 ./meilisearch --master-key=masterKey
 ```
 
-NB: you can also download MeiliSearch from **Homebrew** or **APT** or even run it using **Docker**.
+NB: you can also download Meilisearch from **Homebrew** or **APT** or even run it using **Docker**.
 
 ## 🚀 Getting Started
 
@@ -84,7 +84,7 @@ func main() {
 	// An index is where the documents are stored.
 	index := client.Index("movies")
 
-	// If the index 'movies' does not exist, MeiliSearch creates it when you first add the documents.
+	// If the index 'movies' does not exist, Meilisearch creates it when you first add the documents.
 	documents := []map[string]interface{}{
         { "id": 1, "title": "Carol", "genres": []string{"Romance", "Drama"} },
         { "id": 2, "title": "Wonder Woman", "genres": []string{"Action", "Adventure"} },
@@ -118,7 +118,7 @@ import (
 )
 
 func main() {
-    // MeiliSearch is typo-tolerant:
+    // Meilisearch is typo-tolerant:
     searchRes, err := client.Index("movies").Search("philoudelphia",
         &meilisearch.SearchRequest{
             Limit: 10,
@@ -197,7 +197,7 @@ task, err := index.UpdateFilterableAttributes(&[]string{"id", "genres"})
 
 You only need to perform this operation once.
 
-Note that MeiliSearch will rebuild your index whenever you update `filterableAttributes`. Depending on the size of your dataset, this might take time. You can track the process using the [task status](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html#task-status).
+Note that Meilisearch will rebuild your index whenever you update `filterableAttributes`. Depending on the size of your dataset, this might take time. You can track the process using the [task status](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html#task-status).
 
 Then, you can perform the search:
 
@@ -225,9 +225,9 @@ searchRes, err := index.Search("wonder",
 }
 ```
 
-## 🤖 Compatibility with MeiliSearch
+## 🤖 Compatibility with Meilisearch
 
-This package only guarantees the compatibility with the [version v0.25.0 of MeiliSearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.25.0).
+This package only guarantees the compatibility with the [version v0.25.0 of Meilisearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.25.0).
 
 ## 💡 Learn More
 
@@ -246,4 +246,4 @@ If you want to know more about the development workflow or want to contribute, p
 
 <hr>
 
-**MeiliSearch** provides and maintains many **SDKs and Integration tools** like this one. We want to provide everyone with an **amazing search experience for any kind of project**. If you want to contribute, make suggestions, or just know what's going on right now, visit us in the [integration-guides](https://github.com/meilisearch/integration-guides) repository.
+**Meilisearch** provides and maintains many **SDKs and Integration tools** like this one. We want to provide everyone with an **amazing search experience for any kind of project**. If you want to contribute, make suggestions, or just know what's going on right now, visit us in the [integration-guides](https://github.com/meilisearch/integration-guides) repository.

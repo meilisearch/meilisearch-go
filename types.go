@@ -10,13 +10,13 @@ import (
 // Internal types to Meilisearch
 //
 
-// Client is a structure that give you the power for interacting with an high-level api with meilisearch.
+// Client is a structure that give you the power for interacting with an high-level api with Meilisearch.
 type Client struct {
 	config     ClientConfig
 	httpClient *fasthttp.Client
 }
 
-// Index is the type that represent an index in MeiliSearch
+// Index is the type that represent an index in Meilisearch
 type Index struct {
 	UID        string    `json:"uid"`
 	CreatedAt  time.Time `json:"createdAt"`
@@ -25,7 +25,7 @@ type Index struct {
 	client     *Client
 }
 
-// Settings is the type that represents the settings in MeiliSearch
+// Settings is the type that represents the settings in Meilisearch
 type Settings struct {
 	RankingRules         []string            `json:"rankingRules,omitempty"`
 	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
@@ -37,14 +37,14 @@ type Settings struct {
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
 }
 
-// Version is the type that represents the versions in MeiliSearch
+// Version is the type that represents the versions in Meilisearch
 type Version struct {
 	CommitSha  string `json:"commitSha"`
 	CommitDate string `json:"commitDate"`
 	PkgVersion string `json:"pkgVersion"`
 }
 
-// StatsIndex is the type that represent the stats of an index in MeiliSearch
+// StatsIndex is the type that represent the stats of an index in Meilisearch
 type StatsIndex struct {
 	NumberOfDocuments int64            `json:"numberOfDocuments"`
 	IsIndexing        bool             `json:"isIndexing"`
@@ -93,7 +93,7 @@ type ResultTask struct {
 	Results []Task `json:"results"`
 }
 
-// Keys allow the user to connect to the MeiliSearch instance
+// Keys allow the user to connect to the Meilisearch instance
 //
 // Documentation: https://docs.meilisearch.com/learn/advanced/security.html#protecting-a-meilisearch-instance
 type Key struct {
