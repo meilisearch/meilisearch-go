@@ -59,12 +59,34 @@ delete_documents_1: |-
   })
 search_post_1: |-
   client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
-get_update_1: |-
-  client.Index("movies").GetUpdateStatus(1)
-get_all_updates_1: |-
-  client.Index("movies").GetAllUpdateStatus()
+get_task_1: |-
+  client.GetTask(1);
+get_all_tasks_1: |-
+  client.GetTasks();
+get_task_by_index_1: |-
+  client.Index("movies").GetTask(1)
+get_all_tasks_by_index_1: |-
+  client.Index("movies").GetTasks()
+get_one_key_1: |-
+  client.GetKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4")
 get_keys_1: |-
   client.GetKeys()
+create_a_key_1: |-
+  client.CreateKey(&meilisearch.Key{
+    Description: "Add documents: Products API key",
+    Actions: []string{"documents.add"},
+    Indexes: []string{"products"},
+    ExpiresAt: time.Date(2042, time.April, 02, 0, 42, 42, 0, time.UTC),
+  })
+update_a_key_1: |-
+  client.UpdateKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4", &meilisearch.Key{
+    Description: "Manage documents: Products/Reviews API key",
+    Actions: []string{"documents.add", "document.delete"},
+    Indexes: []string{"products", "reviews"},
+    ExpiresAt: time.Date(2042, time.April, 02, 0, 42, 42, 0, time.UTC),
+  })
+delete_a_key_1: |-
+  client.DeleteKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4")
 get_settings_1: |-
   client.Index("movies").GetSettings()
 update_settings_1: |-
@@ -516,3 +538,48 @@ geosearch_guide_sort_usage_2: |-
       "rating:desc",
     },
   })
+security_guide_search_key_1: |-
+  client := meilisearch.NewClient(meilisearch.ClientConfig{
+    Host: "http://127.0.0.1:7700",
+    ApiKey: "apiKey",
+  })
+  client.Index("patient_medical_records").Search();
+security_guide_update_key_1: |-
+  client := meilisearch.NewClient(meilisearch.ClientConfig{
+    Host: "http://127.0.0.1:7700",
+    ApiKey: "masterKey",
+  })
+
+  client.UpdateKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4", &meilisearch.Key{
+    Indexes: []string{"doctors"},
+  })
+security_guide_create_key_1: |-
+  client := meilisearch.NewClient(meilisearch.ClientConfig{
+    Host: "http://127.0.0.1:7700",
+    ApiKey: "masterKey",
+  })
+
+  client.CreateKey(&meilisearch.Key{
+    Description: "Search patient records key",
+    Actions: []string{"search"},
+    Indexes: []string{"patient_medical_records"},
+    ExpiresAt: time.Date(2042, time.April, 02, 0, 42, 42, 0, time.UTC),
+  })
+security_guide_list_keys_1: |-
+  client := meilisearch.NewClient(meilisearch.ClientConfig{
+    Host: "http://127.0.0.1:7700",
+    ApiKey: "masterKey",
+  })
+  client.GetKeys();
+security_guide_delete_key_1: |-
+  client := meilisearch.NewClient(meilisearch.ClientConfig{
+    Host: "http://127.0.0.1:7700",
+    ApiKey: "masterKey",
+  })
+  client.DeleteKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4");
+authorization_header_1: |-
+  client := meilisearch.NewClient(meilisearch.ClientConfig{
+    Host: "http://127.0.0.1:7700",
+    ApiKey: "masterKey",
+  })
+  client.GetKeys();
