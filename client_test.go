@@ -656,9 +656,12 @@ func TestClient_GetTask(t *testing.T) {
 			gotResp, err := c.GetTask(task.UID)
 			require.NoError(t, err)
 			require.NotNil(t, gotResp)
+			require.NotNil(t, gotResp.Details)
 			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskID)
-			require.Equal(t, gotResp.IndexUID, tt.args.UID)
-			require.Equal(t, gotResp.Status, TaskStatusSucceeded)
+			require.Equal(t, tt.args.UID, gotResp.IndexUID)
+			require.Equal(t, TaskStatusSucceeded, gotResp.Status)
+			require.Equal(t, len(tt.args.document), gotResp.Details.ReceivedDocuments)
+			require.Equal(t, len(tt.args.document), gotResp.Details.IndexedDocuments)
 
 			// Make sure that timestamps are also retrieved
 			require.NotZero(t, gotResp.EnqueuedAt)

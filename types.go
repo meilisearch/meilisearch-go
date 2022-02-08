@@ -87,6 +87,22 @@ type Task struct {
 	EnqueuedAt time.Time           `json:"enqueuedAt"`
 	StartedAt  time.Time           `json:"startedAt,omitempty"`
 	FinishedAt time.Time           `json:"finishedAt,omitempty"`
+	Details    Details             `json:"details,omitempty"`
+}
+
+type Details struct {
+	ReceivedDocuments    int                 `json:"receivedDocuments,omitempty"`
+	IndexedDocuments     int                 `json:"indexedDocuments,omitempty"`
+	DeletedDocuments     int                 `json:"deletedDocuments,omitempty"`
+	PrimaryKey           string              `json:"primaryKey,omitempty"`
+	RankingRules         []string            `json:"rankingRules,omitempty"`
+	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
+	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
+	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
+	StopWords            []string            `json:"stopWords,omitempty"`
+	Synonyms             map[string][]string `json:"synonyms,omitempty"`
+	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
+	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
 }
 
 type ResultTask struct {
