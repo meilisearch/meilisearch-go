@@ -13,7 +13,7 @@ create_an_index_1: |-
     PrimaryKey: "movie_id",
   })
 update_an_index_1: |-
-  client.Index("movie_review").UpdateIndex("movie_review_id")
+  client.Index("movies").UpdateIndex("movie_review_id")
 delete_an_index_1: |-
   client.DeleteIndex("movies")
   // OR
