@@ -20,8 +20,8 @@ func (i Index) GetSettings() (resp *Settings, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateSettings(request *Settings) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) UpdateSettings(request *Settings) (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings",
 		method:              http.MethodPost,
@@ -37,8 +37,8 @@ func (i Index) UpdateSettings(request *Settings) (resp *AsyncUpdateID, err error
 	return resp, nil
 }
 
-func (i Index) ResetSettings() (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) ResetSettings() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings",
 		method:              http.MethodDelete,
@@ -69,8 +69,8 @@ func (i Index) GetRankingRules() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateRankingRules(request *[]string) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) UpdateRankingRules(request *[]string) (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/ranking-rules",
 		method:              http.MethodPost,
@@ -86,8 +86,8 @@ func (i Index) UpdateRankingRules(request *[]string) (resp *AsyncUpdateID, err e
 	return resp, nil
 }
 
-func (i Index) ResetRankingRules() (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) ResetRankingRules() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/ranking-rules",
 		method:              http.MethodDelete,
@@ -119,8 +119,8 @@ func (i Index) GetDistinctAttribute() (resp *string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateDistinctAttribute(request string) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) UpdateDistinctAttribute(request string) (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/distinct-attribute",
 		method:              http.MethodPost,
@@ -136,8 +136,8 @@ func (i Index) UpdateDistinctAttribute(request string) (resp *AsyncUpdateID, err
 	return resp, nil
 }
 
-func (i Index) ResetDistinctAttribute() (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) ResetDistinctAttribute() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/distinct-attribute",
 		method:              http.MethodDelete,
@@ -168,8 +168,8 @@ func (i Index) GetSearchableAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateSearchableAttributes(request *[]string) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) UpdateSearchableAttributes(request *[]string) (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/searchable-attributes",
 		method:              http.MethodPost,
@@ -185,8 +185,8 @@ func (i Index) UpdateSearchableAttributes(request *[]string) (resp *AsyncUpdateI
 	return resp, nil
 }
 
-func (i Index) ResetSearchableAttributes() (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) ResetSearchableAttributes() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/searchable-attributes",
 		method:              http.MethodDelete,
@@ -217,8 +217,8 @@ func (i Index) GetDisplayedAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateDisplayedAttributes(request *[]string) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) UpdateDisplayedAttributes(request *[]string) (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/displayed-attributes",
 		method:              http.MethodPost,
@@ -234,8 +234,8 @@ func (i Index) UpdateDisplayedAttributes(request *[]string) (resp *AsyncUpdateID
 	return resp, nil
 }
 
-func (i Index) ResetDisplayedAttributes() (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) ResetDisplayedAttributes() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/displayed-attributes",
 		method:              http.MethodDelete,
@@ -266,8 +266,8 @@ func (i Index) GetStopWords() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateStopWords(request *[]string) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) UpdateStopWords(request *[]string) (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/stop-words",
 		method:              http.MethodPost,
@@ -283,8 +283,8 @@ func (i Index) UpdateStopWords(request *[]string) (resp *AsyncUpdateID, err erro
 	return resp, nil
 }
 
-func (i Index) ResetStopWords() (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) ResetStopWords() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/stop-words",
 		method:              http.MethodDelete,
@@ -315,8 +315,8 @@ func (i Index) GetSynonyms() (resp *map[string][]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateSynonyms(request *map[string][]string) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) UpdateSynonyms(request *map[string][]string) (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/synonyms",
 		method:              http.MethodPost,
@@ -332,8 +332,8 @@ func (i Index) UpdateSynonyms(request *map[string][]string) (resp *AsyncUpdateID
 	return resp, nil
 }
 
-func (i Index) ResetSynonyms() (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) ResetSynonyms() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/synonyms",
 		method:              http.MethodDelete,
@@ -364,8 +364,8 @@ func (i Index) GetFilterableAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateFilterableAttributes(request *[]string) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) UpdateFilterableAttributes(request *[]string) (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/filterable-attributes",
 		method:              http.MethodPost,
@@ -381,8 +381,8 @@ func (i Index) UpdateFilterableAttributes(request *[]string) (resp *AsyncUpdateI
 	return resp, nil
 }
 
-func (i Index) ResetFilterableAttributes() (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) ResetFilterableAttributes() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/filterable-attributes",
 		method:              http.MethodDelete,
@@ -413,8 +413,8 @@ func (i Index) GetSortableAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateSortableAttributes(request *[]string) (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) UpdateSortableAttributes(request *[]string) (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/sortable-attributes",
 		method:              http.MethodPost,
@@ -430,8 +430,8 @@ func (i Index) UpdateSortableAttributes(request *[]string) (resp *AsyncUpdateID,
 	return resp, nil
 }
 
-func (i Index) ResetSortableAttributes() (resp *AsyncUpdateID, err error) {
-	resp = &AsyncUpdateID{}
+func (i Index) ResetSortableAttributes() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/sortable-attributes",
 		method:              http.MethodDelete,
