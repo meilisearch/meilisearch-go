@@ -35,6 +35,7 @@ func TestIndex_GetFilterableAttributes(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetFilterableAttributes()
 			require.NoError(t, err)
@@ -368,6 +369,7 @@ func TestIndex_GetSortableAttributes(t *testing.T) {
 			SetUpIndexForFaceting()
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetSortableAttributes()
 			require.NoError(t, err)
@@ -382,9 +384,9 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 		client *Client
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
+		name     string
+		args     args
+		wantTask *Task
 	}{
 		{
 			name: "TestIndexBasicResetFilterableAttributes",
@@ -392,8 +394,8 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 		{
@@ -402,8 +404,8 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 	}
@@ -414,10 +416,10 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotUpdate, err := i.ResetFilterableAttributes()
+			gotTask, err := i.ResetFilterableAttributes()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetFilterableAttributes()
 			require.NoError(t, err)
@@ -432,10 +434,10 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 		client *Client
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
-		wantResp   *[]string
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *[]string
 	}{
 		{
 			name: "TestIndexBasicResetDisplayedAttributes",
@@ -443,8 +445,8 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -454,8 +456,8 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -467,10 +469,10 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotUpdate, err := i.ResetDisplayedAttributes()
+			gotTask, err := i.ResetDisplayedAttributes()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetDisplayedAttributes()
 			require.NoError(t, err)
@@ -485,9 +487,9 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 		client *Client
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
+		name     string
+		args     args
+		wantTask *Task
 	}{
 		{
 			name: "TestIndexBasicResetDistinctAttribute",
@@ -495,8 +497,8 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 		{
@@ -505,8 +507,8 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 	}
@@ -517,10 +519,10 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotUpdate, err := i.ResetDistinctAttribute()
+			gotTask, err := i.ResetDistinctAttribute()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetDistinctAttribute()
 			require.NoError(t, err)
@@ -535,10 +537,10 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 		client *Client
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
-		wantResp   *[]string
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *[]string
 	}{
 		{
 			name: "TestIndexBasicResetRankingRules",
@@ -546,8 +548,8 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -557,8 +559,8 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -570,10 +572,10 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotUpdate, err := i.ResetRankingRules()
+			gotTask, err := i.ResetRankingRules()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetRankingRules()
 			require.NoError(t, err)
@@ -588,10 +590,10 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 		client *Client
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
-		wantResp   *[]string
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *[]string
 	}{
 		{
 			name: "TestIndexBasicResetSearchableAttributes",
@@ -599,8 +601,8 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -610,8 +612,8 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -623,10 +625,10 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotUpdate, err := i.ResetSearchableAttributes()
+			gotTask, err := i.ResetSearchableAttributes()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetSearchableAttributes()
 			require.NoError(t, err)
@@ -641,10 +643,10 @@ func TestIndex_ResetSettings(t *testing.T) {
 		client *Client
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
-		wantResp   *Settings
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *Settings
 	}{
 		{
 			name: "TestIndexBasicResetSettings",
@@ -652,8 +654,8 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -672,8 +674,8 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -694,10 +696,10 @@ func TestIndex_ResetSettings(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotUpdate, err := i.ResetSettings()
+			gotTask, err := i.ResetSettings()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
@@ -712,9 +714,9 @@ func TestIndex_ResetStopWords(t *testing.T) {
 		client *Client
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
+		name     string
+		args     args
+		wantTask *Task
 	}{
 		{
 			name: "TestIndexBasicResetStopWords",
@@ -722,8 +724,8 @@ func TestIndex_ResetStopWords(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 		{
@@ -732,8 +734,8 @@ func TestIndex_ResetStopWords(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 	}
@@ -744,10 +746,10 @@ func TestIndex_ResetStopWords(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotUpdate, err := i.ResetStopWords()
+			gotTask, err := i.ResetStopWords()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetStopWords()
 			require.NoError(t, err)
@@ -762,9 +764,9 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 		client *Client
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
+		name     string
+		args     args
+		wantTask *Task
 	}{
 		{
 			name: "TestIndexBasicResetSynonyms",
@@ -772,8 +774,8 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 		{
@@ -782,8 +784,8 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 	}
@@ -794,10 +796,10 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotUpdate, err := i.ResetSynonyms()
+			gotTask, err := i.ResetSynonyms()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetSynonyms()
 			require.NoError(t, err)
@@ -812,9 +814,9 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 		client *Client
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
+		name     string
+		args     args
+		wantTask *Task
 	}{
 		{
 			name: "TestIndexBasicResetSortableAttributes",
@@ -822,8 +824,8 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 		{
@@ -832,8 +834,8 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 	}
@@ -844,10 +846,10 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotUpdate, err := i.ResetSortableAttributes()
+			gotTask, err := i.ResetSortableAttributes()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetSortableAttributes()
 			require.NoError(t, err)
@@ -863,9 +865,9 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 		request []string
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
+		name     string
+		args     args
+		wantTask *Task
 	}{
 		{
 			name: "TestIndexBasicUpdateFilterableAttributes",
@@ -876,8 +878,8 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 		{
@@ -889,8 +891,8 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 	}
@@ -905,10 +907,10 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotUpdate, err := i.UpdateFilterableAttributes(&tt.args.request)
+			gotTask, err := i.UpdateFilterableAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetFilterableAttributes()
 			require.NoError(t, err)
@@ -924,10 +926,10 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 		request []string
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
-		wantResp   *[]string
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *[]string
 	}{
 		{
 			name: "TestIndexBasicUpdateDisplayedAttributes",
@@ -938,8 +940,8 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 					"book_id", "tag", "title",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -952,8 +954,8 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 					"book_id", "tag", "title",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -969,10 +971,10 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 
-			gotUpdate, err := i.UpdateDisplayedAttributes(&tt.args.request)
+			gotTask, err := i.UpdateDisplayedAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetDisplayedAttributes()
 			require.NoError(t, err)
@@ -988,9 +990,9 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 		request string
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
+		name     string
+		args     args
+		wantTask *Task
 	}{
 		{
 			name: "TestIndexBasicUpdateDistinctAttribute",
@@ -999,8 +1001,8 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 				client:  defaultClient,
 				request: "movie_id",
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 		{
@@ -1010,8 +1012,8 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 				client:  customClient,
 				request: "movie_id",
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 	}
@@ -1026,10 +1028,10 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotUpdate, err := i.UpdateDistinctAttribute(tt.args.request)
+			gotTask, err := i.UpdateDistinctAttribute(tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetDistinctAttribute()
 			require.NoError(t, err)
@@ -1045,10 +1047,10 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 		request []string
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
-		wantResp   *[]string
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *[]string
 	}{
 		{
 			name: "TestIndexBasicUpdateRankingRules",
@@ -1059,8 +1061,8 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"typo", "words",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -1073,8 +1075,8 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"typo", "words",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -1087,8 +1089,8 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"BookID:asc",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -1104,10 +1106,10 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 
-			gotUpdate, err := i.UpdateRankingRules(&tt.args.request)
+			gotTask, err := i.UpdateRankingRules(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetRankingRules()
 			require.NoError(t, err)
@@ -1123,10 +1125,10 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 		request []string
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
-		wantResp   *[]string
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *[]string
 	}{
 		{
 			name: "TestIndexBasicUpdateSearchableAttributes",
@@ -1137,8 +1139,8 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 					"title", "tag",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -1151,8 +1153,8 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 					"title", "tag",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -1168,10 +1170,10 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 
-			gotUpdate, err := i.UpdateSearchableAttributes(&tt.args.request)
+			gotTask, err := i.UpdateSearchableAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSearchableAttributes()
 			require.NoError(t, err)
@@ -1187,10 +1189,10 @@ func TestIndex_UpdateSettings(t *testing.T) {
 		request Settings
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
-		wantResp   *Settings
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *Settings
 	}{
 		{
 			name: "TestIndexBasicUpdateSettings",
@@ -1222,8 +1224,8 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1266,8 +1268,8 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1292,10 +1294,10 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 
-			gotUpdate, err := i.UpdateSettings(&tt.args.request)
+			gotTask, err := i.UpdateSettings(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSettings()
 			require.NoError(t, err)
@@ -1314,10 +1316,10 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 		secondResponse Settings
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
-		wantResp   *Settings
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *Settings
 	}{
 		{
 			name: "TestIndexUpdateJustSynonyms",
@@ -1366,8 +1368,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1427,8 +1429,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1488,8 +1490,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1549,8 +1551,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1610,8 +1612,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1671,8 +1673,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes: []string{},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1732,8 +1734,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1758,20 +1760,20 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 
-			gotUpdate, err := i.UpdateSettings(&tt.args.firstRequest)
+			gotTask, err := i.UpdateSettings(&tt.args.firstRequest)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSettings()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.firstResponse, gotResp)
 
-			gotUpdate, err = i.UpdateSettings(&tt.args.secondRequest)
+			gotTask, err = i.UpdateSettings(&tt.args.secondRequest)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
 
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSettings()
 			require.NoError(t, err)
@@ -1787,9 +1789,9 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 		request []string
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
+		name     string
+		args     args
+		wantTask *Task
 	}{
 		{
 			name: "TestIndexBasicUpdateStopWords",
@@ -1800,8 +1802,8 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 					"of", "the", "to",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 		{
@@ -1813,8 +1815,8 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 					"of", "the", "to",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 	}
@@ -1829,10 +1831,10 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotUpdate, err := i.UpdateStopWords(&tt.args.request)
+			gotTask, err := i.UpdateStopWords(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetStopWords()
 			require.NoError(t, err)
@@ -1848,9 +1850,9 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 		request map[string][]string
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
+		name     string
+		args     args
+		wantTask *Task
 	}{
 		{
 			name: "TestIndexBasicUpdateSynonyms",
@@ -1861,8 +1863,8 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 					"wolverine": {"logan", "xmen"},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 		{
@@ -1874,8 +1876,8 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 					"wolverine": {"logan", "xmen"},
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 	}
@@ -1890,10 +1892,10 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotUpdate, err := i.UpdateSynonyms(&tt.args.request)
+			gotTask, err := i.UpdateSynonyms(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSynonyms()
 			require.NoError(t, err)
@@ -1909,9 +1911,9 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 		request []string
 	}
 	tests := []struct {
-		name       string
-		args       args
-		wantUpdate *AsyncUpdateID
+		name     string
+		args     args
+		wantTask *Task
 	}{
 		{
 			name: "TestIndexBasicUpdateSortableAttributes",
@@ -1922,8 +1924,8 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 		{
@@ -1935,8 +1937,8 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantUpdate: &AsyncUpdateID{
-				UpdateID: 1,
+			wantTask: &Task{
+				UID: 1,
 			},
 		},
 	}
@@ -1951,10 +1953,10 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotUpdate, err := i.UpdateSortableAttributes(&tt.args.request)
+			gotTask, err := i.UpdateSortableAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotUpdate.UpdateID, tt.wantUpdate.UpdateID)
-			testWaitForPendingUpdate(t, i, gotUpdate)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSortableAttributes()
 			require.NoError(t, err)

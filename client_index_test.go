@@ -37,24 +37,11 @@ func TestClient_CreateIndex(t *testing.T) {
 			client: customClient,
 			args: args{
 				config: IndexConfig{
-					Uid: "TestBasicCreateIndex",
+					Uid: "TestCreateIndexWithCustomClient",
 				},
 			},
 			wantResp: &Index{
-				UID: "TestBasicCreateIndex",
-			},
-			wantErr: false,
-		},
-		{
-			name:   "TestCreateIndexWithCustomClient",
-			client: customClient,
-			args: args{
-				config: IndexConfig{
-					Uid: "TestBasicCreateIndex",
-				},
-			},
-			wantResp: &Index{
-				UID: "TestBasicCreateIndex",
+				UID: "TestCreateIndexWithCustomClient",
 			},
 			wantErr: false,
 		},
@@ -89,26 +76,11 @@ func TestClient_CreateIndex(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestCreateIndexAlreadyExist",
-			client: defaultClient,
-			args: args{
-				config: IndexConfig{
-					Uid: "indexUID",
-				},
-			},
-			wantErr: true,
-			expectedError: Error{
-				MeilisearchApiError: meilisearchApiError{
-					Code: "index_already_exists",
-				},
-			},
-		},
-		{
 			name:   "TestCreateIndexTimeout",
 			client: timeoutClient,
 			args: args{
 				config: IndexConfig{
-					Uid: "indexUID",
+					Uid: "TestCreateIndexTimeout",
 				},
 			},
 			wantErr: true,
@@ -121,21 +93,30 @@ func TestClient_CreateIndex(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
 			t.Cleanup(cleanup(c))
-			SetUpBasicIndex()
 
 			gotResp, err := c.CreateIndex(&tt.args.config)
+
 			if tt.wantErr {
 				require.Error(t, err)
 				require.Equal(t, tt.expectedError.MeilisearchApiError.Code,
 					err.(*Error).MeilisearchApiError.Code)
 			} else {
 				require.NoError(t, err)
-				if assert.NotNil(t, gotResp) {
-					require.Equal(t, tt.wantResp.UID, gotResp.UID)
-					require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
-					// Make sure that timestamps are also retrieved
-					require.NotZero(t, gotResp.CreatedAt)
-					require.NotZero(t, gotResp.UpdatedAt)
+				require.Equal(t, gotResp.Type, "indexCreation")
+				require.Equal(t, gotResp.Status, TaskStatusEnqueued)
+				// Make sure that timestamps are also retrieved
+				require.NotZero(t, gotResp.EnqueuedAt)
+
+				_, err := c.WaitForTask(gotResp)
+				require.NoError(t, err)
+
+				index, err := c.GetIndex(tt.args.config.Uid)
+
+				require.NoError(t, err)
+				if assert.NotNil(t, index) {
+					require.Equal(t, tt.wantResp.UID, gotResp.IndexUID)
+					require.Equal(t, tt.wantResp.UID, index.UID)
+					require.Equal(t, tt.wantResp.PrimaryKey, index.PrimaryKey)
 				}
 			}
 		})
@@ -158,8 +139,8 @@ func TestClient_DeleteIndex(t *testing.T) {
 			name:   "TestBasicDeleteIndex",
 			client: defaultClient,
 			args: args{
-				createUid: []string{"1"},
-				deleteUid: []string{"1"},
+				createUid: []string{"TestBasicDeleteIndex"},
+				deleteUid: []string{"TestBasicDeleteIndex"},
 			},
 			wantErr: false,
 		},
@@ -167,8 +148,8 @@ func TestClient_DeleteIndex(t *testing.T) {
 			name:   "TestDeleteIndexWithCustomClient",
 			client: customClient,
 			args: args{
-				createUid: []string{"1"},
-				deleteUid: []string{"1"},
+				createUid: []string{"TestDeleteIndexWithCustomClient"},
+				deleteUid: []string{"TestDeleteIndexWithCustomClient"},
 			},
 			wantErr: false,
 		},
@@ -176,8 +157,18 @@ func TestClient_DeleteIndex(t *testing.T) {
 			name:   "TestMultipleDeleteIndex",
 			client: defaultClient,
 			args: args{
-				createUid: []string{"2", "3", "4", "5"},
-				deleteUid: []string{"2", "3", "4", "5"},
+				createUid: []string{
+					"TestMultipleDeleteIndex_2",
+					"TestMultipleDeleteIndex_3",
+					"TestMultipleDeleteIndex_4",
+					"TestMultipleDeleteIndex_5",
+				},
+				deleteUid: []string{
+					"TestMultipleDeleteIndex_2",
+					"TestMultipleDeleteIndex_3",
+					"TestMultipleDeleteIndex_4",
+					"TestMultipleDeleteIndex_5",
+				},
 			},
 			wantErr: false,
 		},
@@ -185,52 +176,28 @@ func TestClient_DeleteIndex(t *testing.T) {
 			name:   "TestNotExistingDeleteIndex",
 			client: defaultClient,
 			args: args{
-				deleteUid: []string{"1"},
+				deleteUid: []string{"TestNotExistingDeleteIndex"},
 			},
-			wantErr: true,
-			expectedError: []Error{
-				{
-					MeilisearchApiError: meilisearchApiError{
-						Code: "index_not_found",
-					},
-				},
-			},
+			wantErr: false,
 		},
 		{
 			name:   "TestMultipleNotExistingDeleteIndex",
 			client: defaultClient,
 			args: args{
-				deleteUid: []string{"2", "3", "4", "5"},
-			},
-			wantErr: true,
-			expectedError: []Error{
-				{
-					MeilisearchApiError: meilisearchApiError{
-						Code: "index_not_found",
-					},
-				},
-				{
-					MeilisearchApiError: meilisearchApiError{
-						Code: "index_not_found",
-					},
-				},
-				{
-					MeilisearchApiError: meilisearchApiError{
-						Code: "index_not_found",
-					},
-				},
-				{
-					MeilisearchApiError: meilisearchApiError{
-						Code: "index_not_found",
-					},
+				deleteUid: []string{
+					"TestMultipleNotExistingDeleteIndex_2",
+					"TestMultipleNotExistingDeleteIndex_3",
+					"TestMultipleNotExistingDeleteIndex_4",
+					"TestMultipleNotExistingDeleteIndex_5",
 				},
 			},
+			wantErr: false,
 		},
 		{
 			name:   "TestDeleteIndexTimeout",
 			client: timeoutClient,
 			args: args{
-				deleteUid: []string{"1"},
+				deleteUid: []string{"TestDeleteIndexTimeout"},
 			},
 			wantErr: true,
 			expectedError: []Error{
@@ -246,122 +213,20 @@ func TestClient_DeleteIndex(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			for _, uid := range tt.args.createUid {
-				_, err := c.CreateIndex(&IndexConfig{Uid: uid})
+				_, err := SetUpEmptyIndex(&IndexConfig{Uid: uid})
 				require.NoError(t, err, "CreateIndex() in TestDeleteIndex error should be nil")
 			}
 			for k := range tt.args.deleteUid {
-				gotOk, err := c.DeleteIndex(tt.args.deleteUid[k])
+				gotResp, err := c.DeleteIndex(tt.args.deleteUid[k])
 				if tt.wantErr {
 					require.Error(t, err)
 					require.Equal(t, tt.expectedError[k].MeilisearchApiError.Code,
 						err.(*Error).MeilisearchApiError.Code)
 				} else {
 					require.NoError(t, err)
-					require.True(t, gotOk)
-				}
-			}
-		})
-	}
-}
-
-func TestClient_DeleteIndexIfExists(t *testing.T) {
-	type args struct {
-		createUid []string
-		deleteUid []string
-	}
-	tests := []struct {
-		name          string
-		client        *Client
-		args          args
-		wantOk        bool
-		wantErr       bool
-		expectedError []Error
-	}{
-		{
-			name:   "TestBasicDeleteIndexIfExists",
-			client: defaultClient,
-			args: args{
-				createUid: []string{"1"},
-				deleteUid: []string{"1"},
-			},
-			wantOk:  true,
-			wantErr: false,
-		},
-		{
-			name:   "TestDeleteIndexIfExistsWithCustomClient",
-			client: customClient,
-			args: args{
-				createUid: []string{"1"},
-				deleteUid: []string{"1"},
-			},
-			wantOk:  true,
-			wantErr: false,
-		},
-		{
-			name:   "TestMultipleDeleteIndexIfExists",
-			client: defaultClient,
-			args: args{
-				createUid: []string{"2", "3", "4", "5"},
-				deleteUid: []string{"2", "3", "4", "5"},
-			},
-			wantOk:  true,
-			wantErr: false,
-		},
-		{
-			name:   "TestNotExistingDeleteIndexIfExists",
-			client: defaultClient,
-			args: args{
-				deleteUid: []string{"1"},
-			},
-			wantOk:  false,
-			wantErr: false,
-		},
-		{
-			name:   "TestMultipleNotExistingDeleteIndexIfExists",
-			client: defaultClient,
-			args: args{
-				deleteUid: []string{"2", "3", "4", "5"},
-			},
-			wantOk:  false,
-			wantErr: false,
-		},
-		{
-			name:   "TestDeleteIndexIfExistsTimeout",
-			client: timeoutClient,
-			args: args{
-				deleteUid: []string{"1"},
-			},
-			wantOk:  false,
-			wantErr: true,
-			expectedError: []Error{
-				{
-					MeilisearchApiError: meilisearchApiError{},
-				},
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := tt.client
-			t.Cleanup(cleanup(c))
-
-			for _, uid := range tt.args.createUid {
-				_, err := c.CreateIndex(&IndexConfig{Uid: uid})
-				require.NoError(t, err, "CreateIndex() in TestDeleteIndexIfExists error should be nil")
-			}
-			for k := range tt.args.deleteUid {
-				gotOk, err := c.DeleteIndexIfExists(tt.args.deleteUid[k])
-				if tt.wantErr {
-					require.Error(t, err)
-					require.Equal(t, tt.expectedError[k].MeilisearchApiError.Code,
-						err.(*Error).MeilisearchApiError.Code)
-				} else {
-					require.NoError(t, err)
-					if tt.wantOk {
-						require.True(t, gotOk)
-					} else {
-						require.False(t, gotOk)
-					}
+					require.Equal(t, gotResp.Type, "indexDeletion")
+					// Make sure that timestamps are also retrieved
+					require.NotZero(t, gotResp.EnqueuedAt)
 				}
 			}
 		})
@@ -390,11 +255,11 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			name:   "TestBasicGetAllIndexes",
 			client: defaultClient,
 			args: args{
-				uid: []string{"1"},
+				uid: []string{"TestBasicGetAllIndexes"},
 			},
 			wantResp: []Index{
 				{
-					UID: "1",
+					UID: "TestBasicGetAllIndexes",
 				},
 			},
 		},
@@ -402,11 +267,11 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			name:   "TestGetAllIndexesWithCustomClient",
 			client: customClient,
 			args: args{
-				uid: []string{"1"},
+				uid: []string{"TestGetAllIndexesWithCustomClient"},
 			},
 			wantResp: []Index{
 				{
-					UID: "1",
+					UID: "TestGetAllIndexesWithCustomClient",
 				},
 			},
 		},
@@ -414,17 +279,21 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			name:   "TestGetAllIndexesOnMultipleIndex",
 			client: defaultClient,
 			args: args{
-				uid: []string{"1", "2", "3"},
+				uid: []string{
+					"TestGetAllIndexesOnMultipleIndex_1",
+					"TestGetAllIndexesOnMultipleIndex_2",
+					"TestGetAllIndexesOnMultipleIndex_3",
+				},
 			},
 			wantResp: []Index{
 				{
-					UID: "1",
+					UID: "TestGetAllIndexesOnMultipleIndex_1",
 				},
 				{
-					UID: "2",
+					UID: "TestGetAllIndexesOnMultipleIndex_2",
 				},
 				{
-					UID: "3",
+					UID: "TestGetAllIndexesOnMultipleIndex_3",
 				},
 			},
 		},
@@ -432,19 +301,23 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			name:   "TestGetAllIndexesOnMultipleIndexWithPrimaryKey",
 			client: defaultClient,
 			args: args{
-				uid: []string{"1", "2", "3"},
+				uid: []string{
+					"TestGetAllIndexesOnMultipleIndexWithPrimaryKey_1",
+					"TestGetAllIndexesOnMultipleIndexWithPrimaryKey_2",
+					"TestGetAllIndexesOnMultipleIndexWithPrimaryKey_3",
+				},
 			},
 			wantResp: []Index{
 				{
-					UID:        "1",
+					UID:        "TestGetAllIndexesOnMultipleIndexWithPrimaryKey_1",
 					PrimaryKey: "PrimaryKey1",
 				},
 				{
-					UID:        "2",
+					UID:        "TestGetAllIndexesOnMultipleIndexWithPrimaryKey_2",
 					PrimaryKey: "PrimaryKey2",
 				},
 				{
-					UID:        "3",
+					UID:        "TestGetAllIndexesOnMultipleIndexWithPrimaryKey_3",
 					PrimaryKey: "PrimaryKey3",
 				},
 			},
@@ -456,7 +329,7 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			for _, uid := range tt.args.uid {
-				_, err := c.CreateIndex(&IndexConfig{Uid: uid})
+				_, err := SetUpEmptyIndex(&IndexConfig{Uid: uid})
 				require.NoError(t, err, "CreateIndex() in TestGetAllIndexes error should be nil")
 			}
 			gotResp, err := c.GetAllIndexes()
@@ -488,11 +361,11 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			name:   "TestBasicGetAllRawIndexes",
 			client: defaultClient,
 			args: args{
-				uid: []string{"1"},
+				uid: []string{"TestBasicGetAllRawIndexes"},
 			},
 			wantResp: []map[string]interface{}{
 				{
-					"uid": "1",
+					"uid": "TestBasicGetAllRawIndexes",
 				},
 			},
 		},
@@ -500,11 +373,11 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			name:   "TestGetAllRawIndexesWithCustomClient",
 			client: customClient,
 			args: args{
-				uid: []string{"1"},
+				uid: []string{"TestGetAllRawIndexesWithCustomClient"},
 			},
 			wantResp: []map[string]interface{}{
 				{
-					"uid": "1",
+					"uid": "TestGetAllRawIndexesWithCustomClient",
 				},
 			},
 		},
@@ -512,17 +385,21 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			name:   "TestGetAllRawIndexesOnMultipleIndex",
 			client: defaultClient,
 			args: args{
-				uid: []string{"1", "2", "3"},
+				uid: []string{
+					"TestGetAllRawIndexesOnMultipleIndex_1",
+					"TestGetAllRawIndexesOnMultipleIndex_2",
+					"TestGetAllRawIndexesOnMultipleIndex_3",
+				},
 			},
 			wantResp: []map[string]interface{}{
 				{
-					"uid": "1",
+					"uid": "TestGetAllRawIndexesOnMultipleIndex_1",
 				},
 				{
-					"uid": "2",
+					"uid": "TestGetAllRawIndexesOnMultipleIndex_2",
 				},
 				{
-					"uid": "3",
+					"uid": "TestGetAllRawIndexesOnMultipleIndex_3",
 				},
 			},
 		},
@@ -530,19 +407,23 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			name:   "TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey",
 			client: defaultClient,
 			args: args{
-				uid: []string{"1", "2", "3"},
+				uid: []string{
+					"TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey_1",
+					"TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey_2",
+					"TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey_3",
+				},
 			},
 			wantResp: []map[string]interface{}{
 				{
-					"uid":        "1",
+					"uid":        "TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey_1",
 					"primaryKey": "PrimaryKey1",
 				},
 				{
-					"uid":        "2",
+					"uid":        "TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey_2",
 					"primaryKey": "PrimaryKey2",
 				},
 				{
-					"uid":        "3",
+					"uid":        "TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey_3",
 					"primaryKey": "PrimaryKey3",
 				},
 			},
@@ -554,7 +435,7 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			for _, uid := range tt.args.uid {
-				_, err := c.CreateIndex(&IndexConfig{Uid: uid})
+				_, err := SetUpEmptyIndex(&IndexConfig{Uid: uid})
 				require.NoError(t, err, "CreateIndex() in TestGetAllRawIndexes error should be nil")
 			}
 			gotResp, err := c.GetAllRawIndexes()
@@ -574,7 +455,6 @@ func TestClient_GetIndex(t *testing.T) {
 		client   *Client
 		args     args
 		wantResp *Index
-		wantErr  bool
 		wantCmp  bool
 	}{
 		{
@@ -582,14 +462,13 @@ func TestClient_GetIndex(t *testing.T) {
 			client: defaultClient,
 			args: args{
 				config: IndexConfig{
-					Uid: "1",
+					Uid: "TestBasicGetIndex",
 				},
-				uid: "1",
+				uid: "TestBasicGetIndex",
 			},
 			wantResp: &Index{
-				UID: "1",
+				UID: "TestBasicGetIndex",
 			},
-			wantErr: false,
 			wantCmp: false,
 		},
 		{
@@ -597,14 +476,13 @@ func TestClient_GetIndex(t *testing.T) {
 			client: customClient,
 			args: args{
 				config: IndexConfig{
-					Uid: "1",
+					Uid: "TestGetIndexWithCustomClient",
 				},
-				uid: "1",
+				uid: "TestGetIndexWithCustomClient",
 			},
 			wantResp: &Index{
-				UID: "1",
+				UID: "TestGetIndexWithCustomClient",
 			},
-			wantErr: false,
 			wantCmp: false,
 		},
 		{
@@ -612,28 +490,16 @@ func TestClient_GetIndex(t *testing.T) {
 			client: defaultClient,
 			args: args{
 				config: IndexConfig{
-					Uid:        "1",
+					Uid:        "TestGetIndexWithPrimaryKey",
 					PrimaryKey: "PrimaryKey",
 				},
-				uid: "1",
+				uid: "TestGetIndexWithPrimaryKey",
 			},
 			wantResp: &Index{
-				UID:        "1",
+				UID:        "TestGetIndexWithPrimaryKey",
 				PrimaryKey: "PrimaryKey",
 			},
-			wantErr: false,
 			wantCmp: false,
-		},
-		{
-			name:   "TestGetIndexOnNotExistingIndex",
-			client: defaultClient,
-			args: args{
-				config: IndexConfig{},
-				uid:    "1",
-			},
-			wantResp: nil,
-			wantErr:  true,
-			wantCmp:  false,
 		},
 	}
 	for _, tt := range tests {
@@ -641,7 +507,7 @@ func TestClient_GetIndex(t *testing.T) {
 			c := tt.client
 			t.Cleanup(cleanup(c))
 
-			gotCreatedResp, err := c.CreateIndex(&tt.args.config)
+			gotCreatedResp, err := SetUpEmptyIndex(&tt.args.config)
 			if tt.args.config.Uid != "" {
 				require.NoError(t, err)
 			} else {
@@ -649,23 +515,18 @@ func TestClient_GetIndex(t *testing.T) {
 			}
 
 			gotResp, err := c.GetIndex(tt.args.uid)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetIndex() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				t.Errorf("GetIndex() error = %v", err)
 				return
-			}
-			if tt.wantErr {
-				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, tt.wantResp.UID, gotResp.UID)
 				require.Equal(t, gotCreatedResp.UID, gotResp.UID)
+				require.Equal(t, tt.wantResp.UID, gotResp.UID)
+				require.Equal(t, tt.args.config.Uid, gotResp.UID)
 				require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
-				require.Equal(t, gotCreatedResp.PrimaryKey, gotResp.PrimaryKey)
 				// Make sure that timestamps are also retrieved
 				require.NotZero(t, gotResp.CreatedAt)
-				require.Equal(t, gotCreatedResp.CreatedAt, gotResp.CreatedAt)
 				require.NotZero(t, gotResp.UpdatedAt)
-				require.Equal(t, gotCreatedResp.UpdatedAt, gotResp.UpdatedAt)
 			}
 		})
 	}
@@ -681,61 +542,47 @@ func TestClient_GetRawIndex(t *testing.T) {
 		client   *Client
 		args     args
 		wantResp map[string]interface{}
-		wantErr  bool
 	}{
-		{
-			name:   "TestGetRawIndexOnNotExistingIndex",
-			client: defaultClient,
-			args: args{
-				config: IndexConfig{},
-				uid:    "1",
-			},
-			wantResp: nil,
-			wantErr:  true,
-		},
 		{
 			name:   "TestBasicGetRawIndex",
 			client: defaultClient,
 			args: args{
 				config: IndexConfig{
-					Uid: "1",
+					Uid: "TestBasicGetRawIndex",
 				},
-				uid: "1",
+				uid: "TestBasicGetRawIndex",
 			},
 			wantResp: map[string]interface{}{
-				"uid": string("1"),
+				"uid": string("TestBasicGetRawIndex"),
 			},
-			wantErr: false,
 		},
 		{
 			name:   "TestGetRawIndexWithCustomClient",
 			client: customClient,
 			args: args{
 				config: IndexConfig{
-					Uid: "1",
+					Uid: "TestGetRawIndexWithCustomClient",
 				},
-				uid: "1",
+				uid: "TestGetRawIndexWithCustomClient",
 			},
 			wantResp: map[string]interface{}{
-				"uid": string("1"),
+				"uid": string("TestGetRawIndexWithCustomClient"),
 			},
-			wantErr: false,
 		},
 		{
 			name:   "TestGetRawIndexWithPrimaryKey",
 			client: defaultClient,
 			args: args{
 				config: IndexConfig{
-					Uid:        "1",
+					Uid:        "TestGetRawIndexWithPrimaryKey",
 					PrimaryKey: "PrimaryKey",
 				},
-				uid: "1",
+				uid: "TestGetRawIndexWithPrimaryKey",
 			},
 			wantResp: map[string]interface{}{
-				"uid":        string("1"),
+				"uid":        string("TestGetRawIndexWithPrimaryKey"),
 				"primaryKey": "PrimaryKey",
 			},
-			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -743,92 +590,17 @@ func TestClient_GetRawIndex(t *testing.T) {
 			c := tt.client
 			t.Cleanup(cleanup(c))
 
-			_, err := c.CreateIndex(&tt.args.config)
-			if tt.args.config.Uid != "" {
-				require.NoError(t, err, "CreateIndex() in TestGetRawIndex error should be nil")
-			} else {
-				require.Error(t, err)
-			}
+			_, err := SetUpEmptyIndex(&tt.args.config)
+			require.NoError(t, err)
 
 			gotResp, err := c.GetRawIndex(tt.args.uid)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("GetRawIndex() error = %v, wantErr %v", err, tt.wantErr)
+			if err != nil {
+				t.Errorf("GetRawIndex() error = %v", err)
 				return
 			}
-			if tt.args.uid != gotResp["uid"] {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-				require.Equal(t, tt.wantResp["uid"], gotResp["uid"])
-				require.Equal(t, tt.wantResp["primaryKey"], gotResp["primaryKey"])
-			}
-		})
-	}
-}
-
-func TestClient_GetOrCreateIndex(t *testing.T) {
-	type args struct {
-		config IndexConfig
-	}
-	tests := []struct {
-		name     string
-		client   *Client
-		args     args
-		wantResp *Index
-	}{
-		{
-			name:   "TestBasicGetOrCreateIndex",
-			client: defaultClient,
-			args: args{
-				config: IndexConfig{
-					Uid: "TestBasicGetOrCreateIndex",
-				},
-			},
-			wantResp: &Index{
-				UID: "TestBasicGetOrCreateIndex",
-			},
-		},
-		{
-			name:   "TestGetOrCreateIndexWithCustomClient",
-			client: customClient,
-			args: args{
-				config: IndexConfig{
-					Uid: "TestBasicGetOrCreateIndex",
-				},
-			},
-			wantResp: &Index{
-				UID: "TestBasicGetOrCreateIndex",
-			},
-		},
-		{
-			name:   "TestGetOrCreateIndexWithPrimaryKey",
-			client: defaultClient,
-			args: args{
-				config: IndexConfig{
-					Uid:        "TestGetOrCreateIndexWithPrimaryKey",
-					PrimaryKey: "PrimaryKey",
-				},
-			},
-			wantResp: &Index{
-				UID:        "TestGetOrCreateIndexWithPrimaryKey",
-				PrimaryKey: "PrimaryKey",
-			},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := tt.client
-			t.Cleanup(cleanup(c))
-
-			gotResp, err := c.GetOrCreateIndex(&tt.args.config)
 			require.NoError(t, err)
-			if assert.NotNil(t, gotResp) {
-				require.Equal(t, tt.wantResp.UID, gotResp.UID)
-				require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
-				// Make sure that timestamps are also retrieved
-				require.NotZero(t, gotResp.CreatedAt)
-				require.NotZero(t, gotResp.UpdatedAt)
-			}
+			require.Equal(t, tt.wantResp["uid"], gotResp["uid"])
+			require.Equal(t, tt.wantResp["primaryKey"], gotResp["primaryKey"])
 		})
 	}
 }
@@ -847,20 +619,20 @@ func TestClient_Index(t *testing.T) {
 			name:   "TestBasicIndex",
 			client: defaultClient,
 			args: args{
-				uid: "1",
+				uid: "TestBasicIndex",
 			},
 			want: Index{
-				UID: "1",
+				UID: "TestBasicIndex",
 			},
 		},
 		{
 			name:   "TestIndexWithCustomClient",
 			client: customClient,
 			args: args{
-				uid: "1",
+				uid: "TestIndexWithCustomClient",
 			},
 			want: Index{
-				UID: "1",
+				UID: "TestIndexWithCustomClient",
 			},
 		},
 	}
