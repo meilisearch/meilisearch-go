@@ -227,7 +227,7 @@ searchRes, err := index.Search("wonder",
 
 ## 🤖 Compatibility with Meilisearch
 
-This package only guarantees the compatibility with the [version v0.25.0 of Meilisearch](https://github.com/meilisearch/MeiliSearch/releases/tag/v0.25.0).
+This package only guarantees the compatibility with the [version v0.25.0 of Meilisearch](https://github.com/meilisearch/meilisearch/releases/tag/v0.25.0).
 
 ## 💡 Learn More
 
