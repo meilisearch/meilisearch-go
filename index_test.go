@@ -418,7 +418,7 @@ func TestIndex_WaitForTask(t *testing.T) {
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
 			defer cancelFunc()
 
-			gotTask, err := i.WaitForTask(task, waitParams{Context: ctx, Interval: tt.args.interval})
+			gotTask, err := i.WaitForTask(task, WaitParams{Context: ctx, Interval: tt.args.interval})
 			if tt.args.timeout < tt.args.interval {
 				require.Error(t, err)
 			} else {

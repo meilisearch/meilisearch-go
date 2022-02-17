@@ -881,7 +881,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
 			defer cancelFunc()
 
-			gotTask, err := c.WaitForTask(task, waitParams{Context: ctx, Interval: tt.args.interval})
+			gotTask, err := c.WaitForTask(task, WaitParams{Context: ctx, Interval: tt.args.interval})
 			if tt.args.timeout < tt.args.interval {
 				require.Error(t, err)
 			} else {

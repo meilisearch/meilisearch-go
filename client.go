@@ -23,7 +23,7 @@ type ClientConfig struct {
 	Timeout time.Duration
 }
 
-type waitParams struct {
+type WaitParams struct {
 	Context  context.Context
 	Interval time.Duration
 }
@@ -51,7 +51,7 @@ type ClientInterface interface {
 	IsHealthy() bool
 	GetTask(taskID int64) (resp *Task, err error)
 	GetTasks() (resp *ResultTask, err error)
-	WaitForTask(task *Task, options ...waitParams) (*Task, error)
+	WaitForTask(task *Task, options ...WaitParams) (*Task, error)
 }
 
 var _ ClientInterface = &Client{}
@@ -289,11 +289,11 @@ func (c *Client) GetTasks() (resp *ResultTask, err error) {
 // the TaskStatus.
 // If no ctx and interval are provided WaitForTask will check each 50ms the
 // status of a task.
-func (c *Client) WaitForTask(task *Task, options ...waitParams) (*Task, error) {
+func (c *Client) WaitForTask(task *Task, options ...WaitParams) (*Task, error) {
 	if options == nil {
 		ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
 		defer cancelFunc()
-		options = []waitParams{
+		options = []WaitParams{
 			{
 				Context:  ctx,
 				Interval: time.Millisecond * 50,
