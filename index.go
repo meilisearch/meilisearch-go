@@ -66,7 +66,7 @@ type IndexInterface interface {
 	UpdateFilterableAttributes(request *[]string) (resp *Task, err error)
 	ResetFilterableAttributes() (resp *Task, err error)
 
-	WaitForTask(task *Task, options ...waitParams) (*Task, error)
+	WaitForTask(task *Task, options ...WaitParams) (*Task, error)
 }
 
 var _ IndexInterface = &Index{}
@@ -195,6 +195,6 @@ func (i Index) GetTasks() (resp *ResultTask, err error) {
 // the TaskStatus.
 // If no ctx and interval are provided WaitForTask will check each 50ms the
 // status of a task.
-func (i Index) WaitForTask(task *Task, options ...waitParams) (*Task, error) {
+func (i Index) WaitForTask(task *Task, options ...WaitParams) (*Task, error) {
 	return i.client.WaitForTask(task, options...)
 }
