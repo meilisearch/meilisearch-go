@@ -3,6 +3,7 @@ package meilisearch
 import (
 	"time"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/valyala/fasthttp"
 )
 
@@ -137,7 +138,24 @@ type ResultKey struct {
 	Results []Key `json:"results"`
 }
 
-// DumpStatus is the status of a dump.
+// Information to create a tenant token
+//
+// ExpiresAt is a time.Time when the key will expire.
+// Note that if an ExpiresAt value is included it should be in UTC time.
+// ApiKey is the API key parent of the token.
+type TenantTokenOptions struct {
+	APIKey			string
+	ExpiresAt   	time.Time
+}
+
+// Custom Claims structure to create a Tenant Token
+type TenantTokenClaims struct {
+	APIKeyPrefix	string	 	`json:"apiKeyPrefix"`
+	SearchRules		interface{} `json:"searchRules"`
+	jwt.StandardClaims
+}
+
+// DumpStatus is the status of a dump
 type DumpStatus string
 
 const (
