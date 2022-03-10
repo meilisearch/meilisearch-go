@@ -77,7 +77,6 @@ func testWaitForBatchTask(t *testing.T, i *Index, u []Task) {
 	}
 }
 
-
 func GetPrivateKey() (key string) {
 	list, err := defaultClient.GetKeys()
 	if err != nil {
@@ -201,8 +200,8 @@ var timeoutClient = NewClient(ClientConfig{
 })
 
 var privateClient = NewClient(ClientConfig{
-	Host:    "http://localhost:7700",
-	APIKey:  GetPrivateKey(),
+	Host:   "http://localhost:7700",
+	APIKey: GetPrivateKey(),
 })
 
 func TestMain(m *testing.M) {

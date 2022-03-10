@@ -327,18 +327,18 @@ func (c *Client) WaitForTask(task *Task, options ...waitParams) (*Task, error) {
 // ApiKey options is the API key parent of the token. If you leave it empty the client API Key will be used.
 func (c *Client) GenerateTenantToken(SearchRules interface{}, Options *TenantTokenOptions) (resp string, err error) {
 	// Validate the arguments
-	if (SearchRules == nil) {
+	if SearchRules == nil {
 		return "", fmt.Errorf("GenerateTenantToken: The search rules added in the token generation must be of type array or object")
 	}
-	if ((Options == nil || Options.APIKey == "") && c.config.APIKey == "") {
+	if (Options == nil || Options.APIKey == "") && c.config.APIKey == "" {
 		return "", fmt.Errorf("GenerateTenantToken: The API key used for the token generation must exist and be a valid Meilisearch key")
 	}
-	if (Options != nil && !Options.ExpiresAt.IsZero() && Options.ExpiresAt.Before(time.Now())) {
+	if Options != nil && !Options.ExpiresAt.IsZero() && Options.ExpiresAt.Before(time.Now()) {
 		return "", fmt.Errorf("GenerateTenantToken: When the expiresAt field in the token generation has a value, it must be a date set in the future")
 	}
 
 	var secret string
-	if (Options == nil || Options.APIKey == "") {
+	if Options == nil || Options.APIKey == "" {
 		secret = c.config.APIKey
 	} else {
 		secret = Options.APIKey
@@ -349,7 +349,7 @@ func (c *Client) GenerateTenantToken(SearchRules interface{}, Options *TenantTok
 
 	// Create the claims
 	claims := TenantTokenClaims{}
-	if (Options != nil && !Options.ExpiresAt.IsZero()) {
+	if Options != nil && !Options.ExpiresAt.IsZero() {
 		claims.StandardClaims = jwt.StandardClaims{
 			ExpiresAt: Options.ExpiresAt.Unix(),
 		}

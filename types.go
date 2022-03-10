@@ -144,14 +144,14 @@ type ResultKey struct {
 // Note that if an ExpiresAt value is included it should be in UTC time.
 // ApiKey is the API key parent of the token.
 type TenantTokenOptions struct {
-	APIKey			string
-	ExpiresAt   	time.Time
+	APIKey    string
+	ExpiresAt time.Time
 }
 
 // Custom Claims structure to create a Tenant Token
 type TenantTokenClaims struct {
-	APIKeyPrefix	string	 	`json:"apiKeyPrefix"`
-	SearchRules		interface{} `json:"searchRules"`
+	APIKeyPrefix string      `json:"apiKeyPrefix"`
+	SearchRules  interface{} `json:"searchRules"`
 	jwt.StandardClaims
 }
 
