@@ -895,7 +895,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 	type args struct {
 		UID         string
 		client      *Client
-		searchRules interface{}
+		searchRules map[string]interface{}
 		options     *TenantTokenOptions
 		filter      []string
 	}

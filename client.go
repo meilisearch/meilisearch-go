@@ -54,7 +54,7 @@ type ClientInterface interface {
 	GetTask(taskID int64) (resp *Task, err error)
 	GetTasks() (resp *ResultTask, err error)
 	WaitForTask(task *Task, options ...waitParams) (*Task, error)
-	GenerateTenantToken(searchRules interface{}, options *TenantTokenOptions) (resp string, err error)
+	GenerateTenantToken(searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
 }
 
 var _ ClientInterface = &Client{}
@@ -325,7 +325,7 @@ func (c *Client) WaitForTask(task *Task, options ...waitParams) (*Task, error) {
 // accessible indexes for the signing API Key.
 // ExpiresAt options is a time.Time when the key will expire. Note that if an ExpiresAt value is included it should be in UTC time.
 // ApiKey options is the API key parent of the token. If you leave it empty the client API Key will be used.
-func (c *Client) GenerateTenantToken(SearchRules interface{}, Options *TenantTokenOptions) (resp string, err error) {
+func (c *Client) GenerateTenantToken(SearchRules map[string]interface{}, Options *TenantTokenOptions) (resp string, err error) {
 	// Validate the arguments
 	if SearchRules == nil {
 		return "", fmt.Errorf("GenerateTenantToken: The search rules added in the token generation must be of type array or object")
