@@ -2,10 +2,12 @@ package meilisearch
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 	"time"
 
+	"github.com/golang-jwt/jwt"
 	"github.com/valyala/fasthttp"
 )
 
@@ -52,6 +54,7 @@ type ClientInterface interface {
 	GetTask(taskID int64) (resp *Task, err error)
 	GetTasks() (resp *ResultTask, err error)
 	WaitForTask(task *Task, options ...WaitParams) (*Task, error)
+	GenerateTenantToken(searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
 }
 
 var _ ClientInterface = &Client{}
@@ -284,7 +287,8 @@ func (c *Client) GetTasks() (resp *ResultTask, err error) {
 	return resp, nil
 }
 
-// WaitForTask waits for a task to be processed.
+// WaitForTask waits for a task to be processed
+//
 // The function will check by regular interval provided in parameter interval
 // the TaskStatus.
 // If no ctx and interval are provided WaitForTask will check each 50ms the
@@ -315,7 +319,54 @@ func (c *Client) WaitForTask(task *Task, options ...WaitParams) (*Task, error) {
 	}
 }
 
-// This function allows the user to create a Key with an ExpiredAt in time.Time
+// Generate a JWT token for the use of multitenancy
+//
+// SearchRules parameters is mandatory and should contains the rules to be enforced at search time for all or specific
+// accessible indexes for the signing API Key.
+// ExpiresAt options is a time.Time when the key will expire. Note that if an ExpiresAt value is included it should be in UTC time.
+// ApiKey options is the API key parent of the token. If you leave it empty the client API Key will be used.
+func (c *Client) GenerateTenantToken(SearchRules map[string]interface{}, Options *TenantTokenOptions) (resp string, err error) {
+	// Validate the arguments
+	if SearchRules == nil {
+		return "", fmt.Errorf("GenerateTenantToken: The search rules added in the token generation must be of type array or object")
+	}
+	if (Options == nil || Options.APIKey == "") && c.config.APIKey == "" {
+		return "", fmt.Errorf("GenerateTenantToken: The API key used for the token generation must exist and be a valid Meilisearch key")
+	}
+	if Options != nil && !Options.ExpiresAt.IsZero() && Options.ExpiresAt.Before(time.Now()) {
+		return "", fmt.Errorf("GenerateTenantToken: When the expiresAt field in the token generation has a value, it must be a date set in the future")
+	}
+
+	var secret string
+	if Options == nil || Options.APIKey == "" {
+		secret = c.config.APIKey
+	} else {
+		secret = Options.APIKey
+	}
+
+	// For HMAC signing method, the key should be any []byte
+	hmacSampleSecret := []byte(secret)
+
+	// Create the claims
+	claims := TenantTokenClaims{}
+	if Options != nil && !Options.ExpiresAt.IsZero() {
+		claims.StandardClaims = jwt.StandardClaims{
+			ExpiresAt: Options.ExpiresAt.Unix(),
+		}
+	}
+	claims.APIKeyPrefix = secret[:8]
+	claims.SearchRules = SearchRules
+
+	// Create a new token object, specifying signing method and the claims
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// Sign and get the complete encoded token as a string using the secret
+	tokenString, err := token.SignedString(hmacSampleSecret)
+
+	return tokenString, err
+}
+
+// This function allows the user to create a Key with an ExpiresAt in time.Time
 // and transform the Key structure into a KeyParsed structure to send the time format
 // managed by Meilisearch
 func convertKeyToParsedKey(key Key) (resp KeyParsed) {

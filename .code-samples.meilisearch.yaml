@@ -583,3 +583,21 @@ authorization_header_1: |-
     ApiKey: "masterKey",
   })
   client.GetKeys();
+tenant_token_guide_generate_sdk_1: |-
+  searchRules := map[string]interface{}{
+    "patient_medical_records": map[string]string{
+      "filter": "user_id = 1",
+    },
+  }
+  options := &meilisearch.TenantTokenOptions{
+    APIKey: "B5KdX2MY2jV6EXfUs6scSfmC...",
+    ExpiresAt: time.Date(2025, time.December, 20, 0, 0, 0, 0, time.UTC),
+  }
+
+  token, err := client.GenerateTenantToken(searchRules, options);
+tenant_token_guide_search_sdk_1: |-
+  frontEndClient := meilisearch.NewClient(meilisearch.ClientConfig{
+    Host: "http://127.0.0.1:7700",
+    APIKey: token,
+  })
+  frontEndClient.Index("patient_medical_records").Search("blood test", &meilisearch.SearchRequest{});
