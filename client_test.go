@@ -441,11 +441,10 @@ func TestClient_DeleteKey(t *testing.T) {
 
 func TestClient_Health(t *testing.T) {
 	tests := []struct {
-		name          string
-		client        *Client
-		wantResp      *Health
-		wantErr       bool
-		expectedError Error
+		name     string
+		client   *Client
+		wantResp *Health
+		wantErr  bool
 	}{
 		{
 			name:   "TestHealth",
@@ -887,6 +886,199 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				require.Equal(t, tt.want, gotTask.Status)
+			}
+		})
+	}
+}
+
+func TestClient_GenerateTenantToken(t *testing.T) {
+	type args struct {
+		UID         string
+		client      *Client
+		searchRules map[string]interface{}
+		options     *TenantTokenOptions
+		filter      []string
+	}
+	tests := []struct {
+		name       string
+		args       args
+		wantErr    bool
+		wantFilter bool
+	}{
+		{
+			name: "TestDefaultGenerateTenantToken",
+			args: args{
+				UID:    "TestDefaultGenerateTenantToken",
+				client: privateClient,
+				searchRules: map[string]interface{}{
+					"*": map[string]string{},
+				},
+				options: nil,
+				filter:  nil,
+			},
+			wantErr:    false,
+			wantFilter: false,
+		},
+		{
+			name: "TestGenerateTenantTokenWithApiKey",
+			args: args{
+				UID:    "TestGenerateTenantTokenWithApiKey",
+				client: defaultClient,
+				searchRules: map[string]interface{}{
+					"*": map[string]string{},
+				},
+				options: &TenantTokenOptions{
+					APIKey: GetPrivateKey(),
+				},
+				filter: nil,
+			},
+			wantErr:    false,
+			wantFilter: false,
+		},
+		{
+			name: "TestGenerateTenantTokenWithOnlyExpiresAt",
+			args: args{
+				UID:    "TestGenerateTenantTokenWithOnlyExpiresAt",
+				client: privateClient,
+				searchRules: map[string]interface{}{
+					"*": map[string]string{},
+				},
+				options: &TenantTokenOptions{
+					ExpiresAt: time.Now().Add(time.Hour * 10),
+				},
+				filter: nil,
+			},
+			wantErr:    false,
+			wantFilter: false,
+		},
+		{
+			name: "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
+			args: args{
+				UID:    "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
+				client: defaultClient,
+				searchRules: map[string]interface{}{
+					"*": map[string]string{},
+				},
+				options: &TenantTokenOptions{
+					APIKey:    GetPrivateKey(),
+					ExpiresAt: time.Now().Add(time.Hour * 10),
+				},
+				filter: nil,
+			},
+			wantErr:    false,
+			wantFilter: false,
+		},
+		{
+			name: "TestGenerateTenantTokenWithFilters",
+			args: args{
+				UID:    "indexUID",
+				client: privateClient,
+				searchRules: map[string]interface{}{
+					"*": map[string]string{
+						"filter": "book_id > 1000",
+					},
+				},
+				options: nil,
+				filter: []string{
+					"book_id",
+				},
+			},
+			wantErr:    false,
+			wantFilter: true,
+		},
+		{
+			name: "TestGenerateTenantTokenWithFilterOnOneINdex",
+			args: args{
+				UID:    "indexUID",
+				client: privateClient,
+				searchRules: map[string]interface{}{
+					"indexUID": map[string]string{
+						"filter": "year > 2000",
+					},
+				},
+				options: nil,
+				filter: []string{
+					"year",
+				},
+			},
+			wantErr:    false,
+			wantFilter: true,
+		},
+		{
+			name: "TestGenerateTenantTokenWithoutSearchRules",
+			args: args{
+				UID:         "TestGenerateTenantTokenWithoutSearchRules",
+				client:      privateClient,
+				searchRules: nil,
+				options:     nil,
+				filter:      nil,
+			},
+			wantErr:    true,
+			wantFilter: false,
+		},
+		{
+			name: "TestGenerateTenantTokenWithoutApiKey",
+			args: args{
+				UID: "TestGenerateTenantTokenWithoutApiKey",
+				client: NewClient(ClientConfig{
+					Host:   "http://localhost:7700",
+					APIKey: "",
+				}),
+				searchRules: map[string]interface{}{
+					"*": map[string]string{},
+				},
+				options: nil,
+				filter:  nil,
+			},
+			wantErr:    true,
+			wantFilter: false,
+		},
+		{
+			name: "TestGenerateTenantTokenWithBadExpiresAt",
+			args: args{
+				UID:    "TestGenerateTenantTokenWithBadExpiresAt",
+				client: defaultClient,
+				searchRules: map[string]interface{}{
+					"*": map[string]string{},
+				},
+				options: &TenantTokenOptions{
+					ExpiresAt: time.Now().Add(-time.Hour * 10),
+				},
+				filter: nil,
+			},
+			wantErr:    true,
+			wantFilter: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			t.Cleanup(cleanup(c))
+
+			token, err := c.GenerateTenantToken(tt.args.searchRules, tt.args.options)
+
+			if tt.wantErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+
+				if tt.wantFilter {
+					gotTask, err := c.Index(tt.args.UID).UpdateFilterableAttributes(&tt.args.filter)
+					require.NoError(t, err, "UpdateFilterableAttributes() in TestGenerateTenantToken error should be nil")
+					testWaitForTask(t, c.Index(tt.args.UID), gotTask)
+				} else {
+					_, err := SetUpEmptyIndex(&IndexConfig{Uid: tt.args.UID})
+					require.NoError(t, err, "CreateIndex() in TestGenerateTenantToken error should be nil")
+				}
+
+				client := NewClient(ClientConfig{
+					Host:   "http://localhost:7700",
+					APIKey: token,
+				})
+
+				_, err = client.Index(tt.args.UID).Search("", &SearchRequest{})
+
+				require.NoError(t, err)
 			}
 		})
 	}

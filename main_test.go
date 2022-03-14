@@ -77,6 +77,19 @@ func testWaitForBatchTask(t *testing.T, i *Index, u []Task) {
 	}
 }
 
+func GetPrivateKey() (key string) {
+	list, err := defaultClient.GetKeys()
+	if err != nil {
+		return ""
+	}
+	for _, key := range list.Results {
+		if strings.Contains(key.Description, "Admin API Key") || (key.Description == "") {
+			return key.Key
+		}
+	}
+	return ""
+}
+
 func SetUpEmptyIndex(index *IndexConfig) (resp *Index, err error) {
 	client := NewClient(ClientConfig{
 		Host:   "http://localhost:7700",
@@ -184,6 +197,11 @@ var timeoutClient = NewClient(ClientConfig{
 	Host:    "http://localhost:7700",
 	APIKey:  masterKey,
 	Timeout: 1,
+})
+
+var privateClient = NewClient(ClientConfig{
+	Host:   "http://localhost:7700",
+	APIKey: GetPrivateKey(),
 })
 
 func TestMain(m *testing.M) {
