@@ -2038,14 +2038,10 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo13(out *jwriter.Writ
 		out.RawString(prefix)
 		out.Raw((in.UpdatedAt).MarshalJSON())
 	}
-	{
+	if in.ExpiresAt != nil {
 		const prefix string = ",\"expiresAt\":"
 		out.RawString(prefix)
-		if in.ExpiresAt == nil {
-			out.RawString("null")
-		} else {
-			out.String(string(*in.ExpiresAt))
-		}
+		out.String(string(*in.ExpiresAt))
 	}
 	out.RawByte('}')
 }
