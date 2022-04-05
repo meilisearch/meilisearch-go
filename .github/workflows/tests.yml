@@ -22,9 +22,7 @@ jobs:
     - name: Run linter
       uses: golangci/golangci-lint-action@v2
       with:
-        version: v1.42
-        # Optional: show only new issues if it's a pull request. The default value is `false`.
-        # only-new-issues: true
+        version: v1.45.2
     - name: Run go vet
       run: go vet
 
