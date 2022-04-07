@@ -248,10 +248,6 @@ filtering_guide_2: |-
     Filter: "release_date > 795484800 AND (director = \"Tim Burton\" OR director = \"Christopher Nolan\")",
   })
 filtering_guide_3: |-
-  resp, err := client.Index("movies").Search("horror", &meilisearch.SearchRequest{
-    Filter: "director = \"Jordan Peele\"",
-  })
-filtering_guide_4: |-
   resp, err := client.Index("movies").Search("Planet of the Apes", &meilisearch.SearchRequest{
     Filter: "rating >= 3 AND (NOT director = \"Tim Burton\")",
   })
@@ -277,14 +273,6 @@ search_parameter_guide_crop_1: |-
 search_parameter_guide_highlight_1: |-
   resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
     AttributesToHighlight: []string{"overview"},
-  })
-search_parameter_guide_filter_1: |-
-  resp, err := client.Index("movies").Search("n", &meilisearch.SearchRequest{
-    Filter: "title = Nightshift",
-  })
-search_parameter_guide_filter_2: |-
-  resp, err := client.Index("movies").Search("n", &meilisearch.SearchRequest{
-    Filter: "title = \"Kung Fu Panda\"",
   })
 search_parameter_guide_matches_1: |-
   resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
@@ -374,15 +362,6 @@ documents_guide_add_movie_1: |-
     },
   }
   client.Index("movies").AddDocuments(documents)
-search_guide_1: |-
-  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
-    Limit:  5,
-    Offset: 10,
-  })
-search_guide_2: |-
-  resp, err := client.Index("movies").Search("Avengers", &meilisearch.SearchRequest{
-    Filter: "release_date > \"795484800\"",
-  })
 getting_started_add_documents_md: |-
   ```bash
   go get -u github.com/meilisearch/meilisearch-go
@@ -447,24 +426,11 @@ faceted_search_facets_distribution_1: |-
       "genres",
     },
   })
-faceted_search_walkthrough_filterable_attributes_1: |-
-  resp, err := client.Index("movies").UpdateFilterableAttributes(&[]string{
-    "director",
-    "producer",
-    "genres",
-    "production_companies",
-  })
 faceted_search_walkthrough_filter_1: |-
   resp, err := client.Index("movies").Search("thriller", &meilisearch.SearchRequest{
     Filter: [][]string{
       []string{"genres = Horror", "genres = Mystery"},
       []string{"director = \"Jordan Peele\""},
-    },
-  })
-faceted_search_walkthrough_facets_distribution_1: |-
-  resp, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
-    FacetsDistribution: []string{
-      "genres",
     },
   })
 post_dump_1: |-
