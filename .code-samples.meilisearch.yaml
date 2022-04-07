@@ -434,10 +434,7 @@ getting_started_add_meteorites: |-
     var meteorites []map[string]interface{}
     json.Unmarshal(byteValue, &meteorites)
 
-    _, err := client.Index("meteorites").AddDocuments(meteorites)
-    if err != nil {
-        panic(err)
-    }
+    client.Index("meteorites").AddDocuments(meteorites)
 getting_started_update_rankingRules: |-
   rankingRules := []string{
     "exactness",
