@@ -10,10 +10,10 @@ list_all_indexes_1: |-
 create_an_index_1: |-
   client.CreateIndex(&meilisearch.IndexConfig{
     Uid: "movies",
-    PrimaryKey: "movie_id",
+    PrimaryKey: "id",
   })
 update_an_index_1: |-
-  client.Index("movies").UpdateIndex("movie_review_id")
+  client.Index("movies").UpdateIndex("id")
 delete_an_index_1: |-
   client.DeleteIndex("movies")
   // OR
@@ -367,8 +367,8 @@ landing_getting_started_1: |-
     { "id": 4, "title": "Mad Max: Fury Road" },
     { "id": 5, "title": "Moana" },
     { "id": 6, "title": "Philadelphia" },
-	}
-	client.Index("movies").AddDocuments(documents)
+  }
+  client.Index("movies").AddDocuments(documents)
 documents_guide_add_movie_1: |-
   documents := []map[string]interface{}{
     {
@@ -377,10 +377,8 @@ documents_guide_add_movie_1: |-
     },
   }
   client.Index("movies").AddDocuments(documents)
-getting_started_check_task_status_md: |-
-  ```go
+getting_started_check_task_status: |-
   client.Index("movies").GetTask(0)
-  ```
 getting_started_add_documents_md: |-
   ```bash
   go get -u github.com/meilisearch/meilisearch-go
