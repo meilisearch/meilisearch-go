@@ -418,10 +418,7 @@ getting_started_add_documents_md: |-
   [About this SDK](https://github.com/meilisearch/meilisearch-go/)
 getting_started_search_md: |-
   ```go
-  resp, err := client.Index("movies").Search("botman", &meilisearch.SearchRequest{})
-  if err != nil {
-      panic(err)
-  }
+  client.Index("movies").Search("botman", &meilisearch.SearchRequest{})
   ```
 
   [About this SDK](https://github.com/meilisearch/meilisearch-go/)
