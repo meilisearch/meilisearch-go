@@ -362,6 +362,10 @@ documents_guide_add_movie_1: |-
     },
   }
   client.Index("movies").AddDocuments(documents)
+getting_started_check_task_status_md: |-
+  ```go
+  client.Index("movies").GetTask(0)
+  ```
 getting_started_add_documents_md: |-
   ```bash
   go get -u github.com/meilisearch/meilisearch-go
@@ -408,6 +412,94 @@ getting_started_search_md: |-
   ```
 
   [About this SDK](https://github.com/meilisearch/meilisearch-go/)
+getting_started_add_meteorites: |-
+    client := meilisearch.NewClient(meilisearch.ClientConfig{
+      Host: "http://127.0.0.1:7700",
+    })
+
+    jsonFile, _ := os.Open("meteorites.json")
+    defer jsonFile.Close()
+
+    byteValue, _ := ioutil.ReadAll(jsonFile)
+    var meteorites []map[string]interface{}
+    json.Unmarshal(byteValue, &meteorites)
+
+    _, err := client.Index("meteorites").AddDocuments(meteorites)
+    if err != nil {
+        panic(err)
+    }
+getting_started_update_rankingRules: |-
+  rankingRules := []string{
+    "exactness",
+    "words",
+    "typo",
+    "proximity",
+    "attribute",
+    "sort",
+    "release_date:asc",
+    "rank:desc"
+  }
+  client.Index("movies").UpdateRankingRules(&rankingRules)
+getting_started_update_displayedAttributes: |-
+  displayedAttributes := []string{
+    "title",
+    "overview",
+    "poster"
+  }
+  client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
+getting_started_update_searchableAttributes: |-
+  searchableAttributes := []string{
+    "title"
+  }
+  client.Index("movies").UpdateSearchableAttributes(&searchableAttributes)
+getting_started_update_stop_words: |-
+  stopWords := []string{"the"}
+  client.Index("movies").UpdateStopWords(&stopWords)
+getting_started_synonyms: |-
+  synonyms := map[string][]string{
+    "winnie":  []string{"piglet"},
+    "piglet":  []string{"winnie"}
+  }
+  client.Index("movies").UpdateSynonyms(&synonyms)
+getting_started_filtering: |-
+  resp, err := client.Index("meteorites").Search("", &meilisearch.SearchRequest{
+    Filter: "mass < 200",
+  })
+getting_started_geoRadius: |-
+  resp, err := client.Index("meteorites").Search("", &meilisearch.SearchRequest{
+    Filter: "_geoRadius(46.9480, 7.4474, 210000)",
+  })
+getting_started_geoPoint: |-
+  resp, err := client.Index("meteorites").Search("", &meilisearch.SearchRequest{
+    Sort: []string{
+      "_geoPoint(48.8583701,2.2922926):asc",
+    },
+  })
+getting_started_sorting: |-
+  resp, err := client.Index("meteorites").Search("", &meilisearch.SearchRequest{
+    Filter: "mass < 200",
+    Sort: []string{
+      "mass:asc",
+    },
+  })
+getting_started_configure_settings: |-
+  settings := meilisearch.Settings{
+    FilterableAttributes: []string{
+      "mass",
+      "_geo",
+    },
+    SortableAttributes: []string{
+      "mass",
+      "_geo",
+    },
+  }
+  client.Index("meteorites").UpdateSettings(&settings)
+getting_started_communicating_with_a_protected_instance: |-
+  client := meilisearch.NewClient(meilisearch.ClientConfig{
+    Host: "http://127.0.0.1:7700",
+    ApiKey: "masterKey",
+  })
+  client.Index("movies").Search("", &meilisearch.SearchRequest{})
 faceted_search_update_settings_1: |-
   resp, err := client.Index("movies").UpdateFilterableAttributes(&[]string{
     "director",
