@@ -444,19 +444,19 @@ getting_started_update_rankingRules: |-
     "attribute",
     "sort",
     "release_date:asc",
-    "rank:desc"
+    "rank:desc",
   }
   client.Index("movies").UpdateRankingRules(&rankingRules)
 getting_started_update_displayedAttributes: |-
   displayedAttributes := []string{
     "title",
     "overview",
-    "poster"
+    "poster",
   }
   client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
 getting_started_update_searchableAttributes: |-
   searchableAttributes := []string{
-    "title"
+    "title",
   }
   client.Index("movies").UpdateSearchableAttributes(&searchableAttributes)
 getting_started_update_stop_words: |-
@@ -465,7 +465,7 @@ getting_started_update_stop_words: |-
 getting_started_synonyms: |-
   synonyms := map[string][]string{
     "winnie":  []string{"piglet"},
-    "piglet":  []string{"winnie"}
+    "piglet":  []string{"winnie"},
   }
   client.Index("movies").UpdateSynonyms(&synonyms)
 getting_started_filtering: |-
