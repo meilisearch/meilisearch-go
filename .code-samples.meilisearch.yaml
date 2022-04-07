@@ -337,8 +337,8 @@ settings_guide_displayed_1: |-
 settings_guide_sortable_1: |-
   settings := meilisearch.Settings{
     SortableAttributes: []string{
-      "author",
       "price",
+      "author",
     },
   }
   client.Index("books").UpdateSettings(&settings)
