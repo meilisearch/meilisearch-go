@@ -105,13 +105,13 @@ update_settings_1: |-
     DistinctAttribute: &distinctAttribute,
     SearchableAttributes: []string{
       "title",
-      "description",
-      "genre",
+      "overview",
+      "genres",
     },
     DisplayedAttributes: []string{
       "title",
-      "description",
-      "genre",
+      "overview",
+      "genres",
       "release_date",
     },
     StopWords: []string{
@@ -186,8 +186,8 @@ get_searchable_attributes_1: |-
 update_searchable_attributes_1: |-
   searchableAttributes := []string{
     "title",
-    "description",
-    "genre",
+    "overview",
+    "genres",
   }
   client.Index("movies").UpdateSearchableAttributes(&searchableAttributes)
 reset_searchable_attributes_1: |-
@@ -197,8 +197,8 @@ get_displayed_attributes_1: |-
 update_displayed_attributes_1: |-
   displayedAttributes := []string{
     "title",
-    "description",
-    "genre",
+    "overview",
+    "genres",
     "release_date",
   }
   client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
@@ -227,15 +227,15 @@ distinct_attribute_guide_1: |-
 field_properties_guide_searchable_1: |-
   searchableAttributes := []string{
     "title",
-    "description",
-    "genre",
+    "overview",
+    "genres",
   }
   client.Index("movies").UpdateSearchableAttributes(&searchableAttributes)
 field_properties_guide_displayed_1: |-
   displayedAttributes := []string{
     "title",
-    "description",
-    "genre",
+    "overview",
+    "genres",
     "release_date",
   }
   client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
@@ -331,8 +331,8 @@ settings_guide_searchable_1: |-
   settings := meilisearch.Settings{
     SearchableAttributes: []string{
       "title",
-      "description",
-      "genre",
+      "overview",
+      "genres",
     },
   }
   client.Index("movies").UpdateSettings(&settings)
@@ -340,8 +340,8 @@ settings_guide_displayed_1: |-
   settings := meilisearch.Settings{
     DisplayedAttributes: []string{
       "title",
-      "description",
-      "genre",
+      "overview",
+      "genres",
       "release_date",
     },
   }
