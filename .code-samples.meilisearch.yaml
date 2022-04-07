@@ -354,6 +354,21 @@ add_movies_json_1: |-
   json.Unmarshal([]byte(file), &movies)
 
   client.Index("movies").AddDocuments(&movies)
+landing_getting_started_1: |-
+  client := meilisearch.NewClient(meilisearch.ClientConfig{
+    Host: "http://127.0.0.1:7700",
+    APIKey: "masterKey",
+  })
+
+  documents := []map[string]interface{}{
+    { "id": 1, "title": "Carol" },
+    { "id": 2, "title": "Wonder Woman" },
+    { "id": 3, "title": "Life of Pi" },
+    { "id": 4, "title": "Mad Max: Fury Road" },
+    { "id": 5, "title": "Moana" },
+    { "id": 6, "title": "Philadelphia" },
+	}
+	client.Index("movies").AddDocuments(documents)
 documents_guide_add_movie_1: |-
   documents := []map[string]interface{}{
     {
