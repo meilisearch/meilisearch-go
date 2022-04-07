@@ -512,7 +512,8 @@ getting_started_communicating_with_a_protected_instance: |-
     Host: "http://127.0.0.1:7700",
     APIKey: "apiKey",
   })
-  client.Index("movies").Search("", &meilisearch.SearchRequest{})
+
+  resp, err := client.Index("movies").Search("", &meilisearch.SearchRequest{})
 faceted_search_update_settings_1: |-
   resp, err := client.Index("movies").UpdateFilterableAttributes(&[]string{
     "director",
