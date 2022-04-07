@@ -514,11 +514,11 @@ geosearch_guide_filter_settings_1: |-
   client.Index("restaurants").UpdateFilterableAttributes(&filterableAttributes)
 geosearch_guide_filter_usage_1: |-
   resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
-    Filter: "_geoRadius(45.4628328, 9.1076931, 2000)",
+    Filter: "_geoRadius(45.472735, 9.184019, 2000)",
   })
 geosearch_guide_filter_usage_2: |-
   resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
-    Filter: "_geoRadius(45.4628328, 9.1076931, 2000) AND type = pizza",
+    Filter: "_geoRadius(45.472735, 9.184019, 2000) AND type = pizza",
   })
 geosearch_guide_sort_settings_1: |-
   sortableAttributes := []string{
@@ -528,13 +528,13 @@ geosearch_guide_sort_settings_1: |-
 geosearch_guide_sort_usage_1: |-
   resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
     Sort: []string{
-      "_geoPoint(48.8583701,2.2922926):asc",
+      "_geoPoint(48.8561446,2.2978204):asc",
     },
   })
 geosearch_guide_sort_usage_2: |-
   resp, err := client.Index("restaurants").Search("", &meilisearch.SearchRequest{
     Sort: []string{
-      "_geoPoint(48.8583701,2.2922926):asc",
+      "_geoPoint(48.8561446,2.2978204):asc",
       "rating:desc",
     },
   })
