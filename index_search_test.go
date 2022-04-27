@@ -100,7 +100,7 @@ func TestIndex_Search(t *testing.T) {
 			want: &SearchResponse{
 				Hits: []interface{}{
 					map[string]interface{}{
-						"book_id": float64(1), "title": "Alice In Wonderland",
+						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 				},
 				NbHits:           20,
@@ -192,13 +192,13 @@ func TestIndex_Search(t *testing.T) {
 			want: &SearchResponse{
 				Hits: []interface{}{
 					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
-					},
-					map[string]interface{}{
 						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 					map[string]interface{}{
 						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(1032), "title": "Crime and Punishment",
 					},
 					map[string]interface{}{
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
@@ -532,13 +532,13 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			want: &SearchResponse{
 				Hits: []interface{}{
 					map[string]interface{}{
+						"book_id": float64(742), "title": "The Great Gatsby",
+					},
+					map[string]interface{}{
 						"book_id": float64(17), "title": "In Search of Lost Time",
 					},
 					map[string]interface{}{
 						"book_id": float64(204), "title": "Ulysses",
-					},
-					map[string]interface{}{
-						"book_id": float64(742), "title": "The Great Gatsby",
 					},
 				},
 				NbHits:           3,
@@ -590,13 +590,13 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			want: &SearchResponse{
 				Hits: []interface{}{
 					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
 						"book_id": float64(1), "title": "Alice In Wonderland",
 					},
 					map[string]interface{}{
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
-					},
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
 					},
 				},
 				NbHits:           3,
