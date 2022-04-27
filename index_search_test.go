@@ -916,3 +916,172 @@ func TestIndex_SearchWithSort(t *testing.T) {
 		})
 	}
 }
+
+func TestIndex_SearchOnNestedFileds(t *testing.T) {
+	type args struct {
+		UID        string
+		PrimaryKey string
+		client     *Client
+		query      string
+		request    SearchRequest
+		searchableAttribute []string
+		sortableAttribute []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want *SearchResponse
+	}{
+		{
+			name: "TestIndexBasicSearchOnNestedFields",
+			args: args{
+				UID:     "TestIndexBasicSearchOnNestedFields",
+				client:  defaultClient,
+				query:   "An awesome",
+				request: SearchRequest{},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(5), "title": "The Hobbit",
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexBasicSearchOnNestedFieldsWithCustomClient",
+			args: args{
+				UID:     "TestIndexBasicSearchOnNestedFieldsWithCustomClient",
+				client:  customClient,
+				query:   "An awesome",
+				request: SearchRequest{},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(5), "title": "The Hobbit",
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchOnMultipleNestedFields",
+			args: args{
+				UID:     "TestIndexSearchOnMultipleNestedFields",
+				client:  defaultClient,
+				query:   "french",
+				request: SearchRequest{},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(2), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"id": float64(3), "title": "Le Rouge et le Noir",
+					},
+				},
+				NbHits:           2,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchOnNestedFieldsWithSearchableAttribute",
+			args: args{
+				UID:     "TestIndexSearchOnNestedFieldsWithSearchableAttribute",
+				client:  defaultClient,
+				query:   "An awesome",
+				request: SearchRequest{},
+				searchableAttribute: []string{
+					"title", "info.comment",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(5), "title": "The Hobbit",
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchOnNestedFieldsWithSortableAttribute",
+			args: args{
+				UID:     "TestIndexSearchOnNestedFieldsWithSortableAttribute",
+				client:  defaultClient,
+				query:   "An awesome",
+				request: SearchRequest{
+					Sort: []string{
+						"info.reviewNb:desc",
+					},
+				},
+				searchableAttribute: []string{
+					"title", "info.comment",
+				},
+				sortableAttribute: []string{
+					"info.reviewNb",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(5), "title": "The Hobbit",
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexWithNestedFields(tt.args.UID)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			if tt.args.searchableAttribute != nil {
+				gotTask, err := i.UpdateSearchableAttributes(&tt.args.searchableAttribute)
+				require.NoError(t, err)
+				testWaitForTask(t, i, gotTask)
+			}
+
+			if tt.args.sortableAttribute != nil {
+				gotTask, err := i.UpdateSortableAttributes(&tt.args.sortableAttribute)
+				require.NoError(t, err)
+				testWaitForTask(t, i, gotTask)
+			}
+
+			got, err := i.Search(tt.args.query, &tt.args.request)
+
+			require.NoError(t, err)
+			require.Equal(t, len(tt.want.Hits), len(got.Hits))
+			for len := range got.Hits {
+				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
+				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["id"], got.Hits[len].(map[string]interface{})["id"])
+			}
+			require.Equal(t, tt.want.NbHits, got.NbHits)
+			require.Equal(t, tt.want.Offset, got.Offset)
+			require.Equal(t, tt.want.Limit, got.Limit)
+			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
+			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
+			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
+		})
+	}
+}
