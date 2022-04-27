@@ -236,7 +236,7 @@ func TestIndex_Search(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexSearchWithAttributeToHighlightWithCustomPreAndPostTag",
+			name: "TestIndexSearchWithCustomPreAndPostHighlightTags",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
