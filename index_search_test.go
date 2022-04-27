@@ -164,18 +164,102 @@ func TestIndex_Search(t *testing.T) {
 				query:  "to",
 				request: SearchRequest{
 					AttributesToCrop: []string{"title"},
-					CropLength:       7,
+					CropLength:       2,
 				},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
 					map[string]interface{}{
 						"book_id": float64(42), "title": "The Hitchhiker's Guide to the Galaxy",
+						"_formatted": map[string]interface{}{
+							"book_id": "42", "tag": "Epic fantasy", "title": "…Guide to…", "year": "1978",
+						},
 					},
 				},
 				NbHits:           1,
 				Offset:           0,
 				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchWithAttributesToCropAndCustomCropMarker",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "to",
+				request: SearchRequest{
+					AttributesToCrop: []string{"title"},
+					CropLength:       2,
+					CropMarker:       "(ꈍᴗꈍ)",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(42), "title": "The Hitchhiker's Guide to the Galaxy",
+						"_formatted": map[string]interface{}{
+							"book_id": "42", "tag": "Epic fantasy", "title": "(ꈍᴗꈍ)Guide to(ꈍᴗꈍ)", "year": "1978",
+						},
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchWithAttributeToHighlight",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "prince",
+				request: SearchRequest{
+					Limit:                 1,
+					AttributesToHighlight: []string{"*"},
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+						"_formatted": map[string]interface{}{
+							"book_id": "456", "tag": "Tale", "title": "Le Petit <em>Prince</em>", "year": "1943",
+						},
+					},
+				},
+				NbHits:           2,
+				Offset:           0,
+				Limit:            1,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchWithAttributeToHighlightWithCustomPreAndPostTag",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "prince",
+				request: SearchRequest{
+					Limit:                 1,
+					AttributesToHighlight: []string{"*"},
+					HighlightPreTag:       "(⊃｡•́‿•̀｡)⊃ ",
+					HighlightPostTag:      " ⊂(´• ω •`⊂)",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+						"_formatted": map[string]interface{}{
+							"book_id": "456", "tag": "Tale", "title": "Le Petit (⊃｡•́‿•̀｡)⊃ Prince ⊂(´• ω •`⊂)", "year": "1943",
+						},
+					},
+				},
+				NbHits:           2,
+				Offset:           0,
+				Limit:            1,
 				ExhaustiveNbHits: false,
 			},
 		},
@@ -244,6 +328,9 @@ func TestIndex_Search(t *testing.T) {
 			for len := range got.Hits {
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+			}
+			if tt.want.Hits[0].(map[string]interface{})["_formatted"] != nil {
+				require.Equal(t, tt.want.Hits[0].(map[string]interface{})["_formatted"], got.Hits[0].(map[string]interface{})["_formatted"])
 			}
 			require.Equal(t, tt.want.NbHits, got.NbHits)
 			require.Equal(t, tt.want.Offset, got.Offset)

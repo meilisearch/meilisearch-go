@@ -1456,6 +1456,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo10(in *jlexer.Lexer,
 			}
 		case "CropLength":
 			out.CropLength = int64(in.Int64())
+		case "CropMarker":
+			out.CropMarker = string(in.String())
 		case "AttributesToHighlight":
 			if in.IsNull() {
 				in.Skip()
@@ -1479,6 +1481,10 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo10(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
+		case "HighlightPreTag":
+			out.HighlightPreTag = string(in.String())
+		case "HighlightPostTag":
+			out.HighlightPostTag = string(in.String())
 		case "Filter":
 			if m, ok := out.Filter.(easyjson.Unmarshaler); ok {
 				m.UnmarshalEasyJSON(in)
@@ -1599,6 +1605,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo10(out *jwriter.Writ
 		out.Int64(int64(in.CropLength))
 	}
 	{
+		const prefix string = ",\"CropMarker\":"
+		out.RawString(prefix)
+		out.String(string(in.CropMarker))
+	}
+	{
 		const prefix string = ",\"AttributesToHighlight\":"
 		out.RawString(prefix)
 		if in.AttributesToHighlight == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
@@ -1613,6 +1624,16 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo10(out *jwriter.Writ
 			}
 			out.RawByte(']')
 		}
+	}
+	{
+		const prefix string = ",\"HighlightPreTag\":"
+		out.RawString(prefix)
+		out.String(string(in.HighlightPreTag))
+	}
+	{
+		const prefix string = ",\"HighlightPostTag\":"
+		out.RawString(prefix)
+		out.String(string(in.HighlightPostTag))
 	}
 	{
 		const prefix string = ",\"Filter\":"
