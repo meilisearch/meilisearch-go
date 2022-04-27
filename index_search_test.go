@@ -919,13 +919,13 @@ func TestIndex_SearchWithSort(t *testing.T) {
 
 func TestIndex_SearchOnNestedFileds(t *testing.T) {
 	type args struct {
-		UID        string
-		PrimaryKey string
-		client     *Client
-		query      string
-		request    SearchRequest
+		UID                 string
+		PrimaryKey          string
+		client              *Client
+		query               string
+		request             SearchRequest
 		searchableAttribute []string
-		sortableAttribute []string
+		sortableAttribute   []string
 	}
 	tests := []struct {
 		name string
@@ -1021,9 +1021,9 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 		{
 			name: "TestIndexSearchOnNestedFieldsWithSortableAttribute",
 			args: args{
-				UID:     "TestIndexSearchOnNestedFieldsWithSortableAttribute",
-				client:  defaultClient,
-				query:   "An awesome",
+				UID:    "TestIndexSearchOnNestedFieldsWithSortableAttribute",
+				client: defaultClient,
+				query:  "An awesome",
 				request: SearchRequest{
 					Sort: []string{
 						"info.reviewNb:desc",
