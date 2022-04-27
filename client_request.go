@@ -137,6 +137,8 @@ func (c *Client) sendRequest(req *internalRequest, internalError *Error, respons
 		request.Header.Set("Authorization", "Bearer "+c.config.APIKey)
 	}
 
+	request.Header.Set("User-Agent", GetQualifiedVersion())
+
 	// request is sent
 	if c.config.Timeout != 0 {
 		err = c.httpClient.DoTimeout(request, response, c.config.Timeout)
