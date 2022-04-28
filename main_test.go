@@ -209,6 +209,15 @@ var (
 	defaultRankingRules = []string{
 		"words", "typo", "proximity", "attribute", "sort", "exactness",
 	}
+	defaultTypoTolerance = TypoTolerance{
+		Enabled: true,
+		MinWordSizeForTypos: MinWordSizeForTypo{
+			OneTypo:  5,
+			TwoTypos: 9,
+		},
+		DisableOnWords:      []string{},
+		DisableOnAttributes: []string{},
+	}
 )
 
 var customClient = NewFastHTTPCustomClient(ClientConfig{
