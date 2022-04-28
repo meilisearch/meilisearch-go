@@ -266,13 +266,24 @@ search_parameter_guide_retrieve_1: |-
     AttributesToRetrieve: []string{"overview", "title"},
   })
 search_parameter_guide_crop_1: |-
-  resp, err := client.Index("movies").Search("shifu" &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
     AttributesToCrop: []string{"overview"},
-    CropLength:       10,
+    CropLength:       5,
+  })
+search_parameter_guide_crop_marker_1: |-
+  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
+    AttributesToCrop: []string{"overview"},
+    CropMarker:       "[…]",
   })
 search_parameter_guide_highlight_1: |-
   resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
     AttributesToHighlight: []string{"overview"},
+  })
+search_parameter_guide_highlight_tag_1: |-
+  resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
+    AttributesToHighlight: []string{"overview"},
+    HighlightPreTag: "<span class=\"highlight\">",
+    HighlightPostTag: "</span>",
   })
 search_parameter_guide_matches_1: |-
   resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
