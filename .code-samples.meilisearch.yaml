@@ -127,6 +127,17 @@ update_settings_1: |-
       "wolverine": []string{"xmen", "logan"},
       "logan":     []string{"wolverine"},
     },
+    TypoTolerance: &meilisearch.TypoTolerance{
+		  Enabled: true,
+		  MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+		  	OneTypo:  8,
+		  	TwoTypos: 10,
+		  },
+		  DisableOnWords: []string{},
+		  DisableOnAttributes: []string{
+        "title",
+      },
+		},
   }
   client.Index("movies").UpdateSettings(&settings)
 reset_settings_1: |-
@@ -214,6 +225,20 @@ update_sortable_attributes_1: |-
   client.Index("books").UpdateSortableAttributes(&sortableAttributes)
 reset_sortable_attributes_1: |-
   client.Index("books").ResetSortableAttributes()
+get_typo_tolerance_1:
+  client.Index("books").GetTypoTolerance()
+update_typo_tolerance_1: |-
+  client.Index("books").UpdateTypoTolerance(&meilisearch.TypoTolerance{
+    MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+        OneTypo: 4,
+        TwoTypos: 10,
+      },
+      DisableOnAttributes: []string{
+         "title",
+      },
+  })
+reset_typo_tolerance_1: |-
+  client.Index("books").ResetTypoTolerance()
 get_index_stats_1: |-
   client.Index("movies").GetStats()
 get_indexes_stats_1: |-
@@ -353,6 +378,38 @@ settings_guide_sortable_1: |-
     },
   }
   client.Index("books").UpdateSettings(&settings)
+settings_guide_typo_tolerance_1: |-
+  client.index("movies").UpdateTypoTolerance({
+    MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+      TwoTypos: 12,
+    },
+    DisableOnAttributes: []string{
+      "title",
+    },
+  })
+typo_tolerance_guide_1: |-
+  client.index("movies").UpdateTypoTolerance({
+    Enabled: false,
+  })
+typo_tolerance_guide_2: |-
+  client.index("movies").UpdateTypoTolerance({
+    DisableOnAttributes: []string{
+      "title",
+    },
+  })
+typo_tolerance_guide_3: |-
+  client.index("movies").UpdateTypoTolerance({
+    DisableOnWords: []string{
+      "shrek",
+    },
+  })
+typo_tolerance_guide_4: |-
+  client.index("movies").UpdateTypoTolerance({
+    MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+      OneTypo: 4,
+      TwoTypos: 10,
+    },
+  })
 add_movies_json_1: |-
   import (
     "encoding/json"
