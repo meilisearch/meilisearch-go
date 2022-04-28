@@ -944,6 +944,10 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				Hits: []interface{}{
 					map[string]interface{}{
 						"id": float64(5), "title": "The Hobbit",
+						"info": map[string]interface{}{
+							"comment": "An awesome book",
+							"reviewNb": float64(900),
+						},
 					},
 				},
 				NbHits:           1,
@@ -964,6 +968,10 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				Hits: []interface{}{
 					map[string]interface{}{
 						"id": float64(5), "title": "The Hobbit",
+						"info": map[string]interface{}{
+							"comment": "An awesome book",
+							"reviewNb": float64(900),
+						},
 					},
 				},
 				NbHits:           1,
@@ -984,9 +992,17 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				Hits: []interface{}{
 					map[string]interface{}{
 						"id": float64(2), "title": "Le Petit Prince",
+						"info": map[string]interface{}{
+							"comment": "A french book",
+							"reviewNb": float64(600),
+						},
 					},
 					map[string]interface{}{
 						"id": float64(3), "title": "Le Rouge et le Noir",
+						"info": map[string]interface{}{
+							"comment": "Another french book",
+							"reviewNb": float64(700),
+						},
 					},
 				},
 				NbHits:           2,
@@ -1010,6 +1026,10 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				Hits: []interface{}{
 					map[string]interface{}{
 						"id": float64(5), "title": "The Hobbit",
+						"info": map[string]interface{}{
+							"comment": "An awesome book",
+							"reviewNb": float64(900),
+						},
 					},
 				},
 				NbHits:           1,
@@ -1040,6 +1060,10 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				Hits: []interface{}{
 					map[string]interface{}{
 						"id": float64(5), "title": "The Hobbit",
+						"info": map[string]interface{}{
+							"comment": "An awesome book",
+							"reviewNb": float64(900),
+						},
 					},
 				},
 				NbHits:           1,
@@ -1073,8 +1097,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 			for len := range got.Hits {
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["id"], got.Hits[len].(map[string]interface{})["id"])
+				require.Equal(t, tt.want.Hits[len], got.Hits[len])
 			}
 			require.Equal(t, tt.want.NbHits, got.NbHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
