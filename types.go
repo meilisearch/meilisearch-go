@@ -197,7 +197,10 @@ type SearchRequest struct {
 	AttributesToRetrieve  []string
 	AttributesToCrop      []string
 	CropLength            int64
+	CropMarker            string
 	AttributesToHighlight []string
+	HighlightPreTag       string
+	HighlightPostTag      string
 	Filter                interface{}
 	Matches               bool
 	FacetsDistribution    []string

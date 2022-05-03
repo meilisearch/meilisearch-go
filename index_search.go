@@ -38,6 +38,15 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	if request.CropLength != 0 {
 		searchPostRequestParams["cropLength"] = request.CropLength
 	}
+	if request.CropMarker != "" {
+		searchPostRequestParams["cropMarker"] = request.CropMarker
+	}
+	if request.HighlightPreTag != "" {
+		searchPostRequestParams["highlightPreTag"] = request.HighlightPreTag
+	}
+	if request.HighlightPostTag != "" {
+		searchPostRequestParams["highlightPostTag"] = request.HighlightPostTag
+	}
 	if len(request.AttributesToRetrieve) != 0 {
 		searchPostRequestParams["attributesToRetrieve"] = request.AttributesToRetrieve
 	}
