@@ -128,15 +128,11 @@ update_settings_1: |-
       "logan":     []string{"wolverine"},
     },
     TypoTolerance: &meilisearch.TypoTolerance{
-		  Enabled: true,
 		  MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
 		  	OneTypo:  8,
 		  	TwoTypos: 10,
 		  },
-		  DisableOnWords: []string{},
-		  DisableOnAttributes: []string{
-        "title",
-      },
+		  DisableOnAttributes: []string{"title"},
 		},
   }
   client.Index("movies").UpdateSettings(&settings)
@@ -233,9 +229,7 @@ update_typo_tolerance_1: |-
         OneTypo: 4,
         TwoTypos: 10,
       },
-      DisableOnAttributes: []string{
-         "title",
-      },
+      DisableOnAttributes: []string{"title"},
   })
 reset_typo_tolerance_1: |-
   client.Index("books").ResetTypoTolerance()
@@ -383,9 +377,7 @@ settings_guide_typo_tolerance_1: |-
     MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
       TwoTypos: 12,
     },
-    DisableOnAttributes: []string{
-      "title",
-    },
+    DisableOnAttributes: []string{"title"},
   })
 typo_tolerance_guide_1: |-
   client.index("movies").UpdateTypoTolerance({
@@ -393,15 +385,11 @@ typo_tolerance_guide_1: |-
   })
 typo_tolerance_guide_2: |-
   client.index("movies").UpdateTypoTolerance({
-    DisableOnAttributes: []string{
-      "title",
-    },
+    DisableOnAttributes: []string{"title"},
   })
 typo_tolerance_guide_3: |-
   client.index("movies").UpdateTypoTolerance({
-    DisableOnWords: []string{
-      "shrek",
-    },
+    DisableOnWords: []string{"shrek"},
   })
 typo_tolerance_guide_4: |-
   client.index("movies").UpdateTypoTolerance({
