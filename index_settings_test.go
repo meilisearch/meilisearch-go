@@ -1322,11 +1322,11 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 					TypoTolerance: &TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypo{
+						MinWordSizeForTypos: MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
-						DisableOnWords: []string{},
+						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
 					},
 				},
@@ -1376,11 +1376,11 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 					TypoTolerance: &TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypo{
+						MinWordSizeForTypos: MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
-						DisableOnWords: []string{},
+						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
 					},
 				},
@@ -1898,7 +1898,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					TypoTolerance: &TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypo{
+						MinWordSizeForTypos: MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
@@ -1917,7 +1917,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms:             map[string][]string(nil),
 					TypoTolerance: &TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypo{
+						MinWordSizeForTypos: MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
@@ -1930,7 +1930,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				secondRequest: Settings{
 					TypoTolerance: &TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypo{
+						MinWordSizeForTypos: MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
@@ -1955,7 +1955,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance: &TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypo{
+						MinWordSizeForTypos: MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
@@ -2219,7 +2219,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 				client: defaultClient,
 				request: TypoTolerance{
 					Enabled: true,
-					MinWordSizeForTypos: MinWordSizeForTypo{
+					MinWordSizeForTypos: MinWordSizeForTypos{
 						OneTypo:  7,
 						TwoTypos: 10,
 					},
@@ -2239,7 +2239,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 				client: customClient,
 				request: TypoTolerance{
 					Enabled: true,
-					MinWordSizeForTypos: MinWordSizeForTypo{
+					MinWordSizeForTypos: MinWordSizeForTypos{
 						OneTypo:  7,
 						TwoTypos: 10,
 					},
@@ -2259,7 +2259,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 				client: defaultClient,
 				request: TypoTolerance{
 					Enabled: true,
-					MinWordSizeForTypos: MinWordSizeForTypo{
+					MinWordSizeForTypos: MinWordSizeForTypos{
 						OneTypo:  7,
 						TwoTypos: 10,
 					},
@@ -2281,7 +2281,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 				client: defaultClient,
 				request: TypoTolerance{
 					Enabled: true,
-					MinWordSizeForTypos: MinWordSizeForTypo{
+					MinWordSizeForTypos: MinWordSizeForTypos{
 						OneTypo:  7,
 						TwoTypos: 10,
 					},

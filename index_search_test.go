@@ -945,7 +945,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 					map[string]interface{}{
 						"id": float64(5), "title": "The Hobbit",
 						"info": map[string]interface{}{
-							"comment": "An awesome book",
+							"comment":  "An awesome book",
 							"reviewNb": float64(900),
 						},
 					},
@@ -969,7 +969,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 					map[string]interface{}{
 						"id": float64(5), "title": "The Hobbit",
 						"info": map[string]interface{}{
-							"comment": "An awesome book",
+							"comment":  "An awesome book",
 							"reviewNb": float64(900),
 						},
 					},
@@ -993,14 +993,14 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 					map[string]interface{}{
 						"id": float64(2), "title": "Le Petit Prince",
 						"info": map[string]interface{}{
-							"comment": "A french book",
+							"comment":  "A french book",
 							"reviewNb": float64(600),
 						},
 					},
 					map[string]interface{}{
 						"id": float64(3), "title": "Le Rouge et le Noir",
 						"info": map[string]interface{}{
-							"comment": "Another french book",
+							"comment":  "Another french book",
 							"reviewNb": float64(700),
 						},
 					},
@@ -1027,7 +1027,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 					map[string]interface{}{
 						"id": float64(5), "title": "The Hobbit",
 						"info": map[string]interface{}{
-							"comment": "An awesome book",
+							"comment":  "An awesome book",
 							"reviewNb": float64(900),
 						},
 					},
@@ -1061,7 +1061,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 					map[string]interface{}{
 						"id": float64(5), "title": "The Hobbit",
 						"info": map[string]interface{}{
-							"comment": "An awesome book",
+							"comment":  "An awesome book",
 							"reviewNb": float64(900),
 						},
 					},

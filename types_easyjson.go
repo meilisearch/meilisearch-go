@@ -2072,7 +2072,7 @@ func (v *ResultKey) UnmarshalJSON(data []byte) error {
 func (v *ResultKey) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo13(l, v)
 }
-func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo14(in *jlexer.Lexer, out *MinWordSizeForTypo) {
+func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo14(in *jlexer.Lexer, out *MinWordSizeForTypos) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -2105,7 +2105,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo14(in *jlexer.Lexer,
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo14(out *jwriter.Writer, in MinWordSizeForTypo) {
+func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo14(out *jwriter.Writer, in MinWordSizeForTypos) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -2129,26 +2129,26 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo14(out *jwriter.Writ
 }
 
 // MarshalJSON supports json.Marshaler interface
-func (v MinWordSizeForTypo) MarshalJSON() ([]byte, error) {
+func (v MinWordSizeForTypos) MarshalJSON() ([]byte, error) {
 	w := jwriter.Writer{}
 	easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo14(&w, v)
 	return w.Buffer.BuildBytes(), w.Error
 }
 
 // MarshalEasyJSON supports easyjson.Marshaler interface
-func (v MinWordSizeForTypo) MarshalEasyJSON(w *jwriter.Writer) {
+func (v MinWordSizeForTypos) MarshalEasyJSON(w *jwriter.Writer) {
 	easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo14(w, v)
 }
 
 // UnmarshalJSON supports json.Unmarshaler interface
-func (v *MinWordSizeForTypo) UnmarshalJSON(data []byte) error {
+func (v *MinWordSizeForTypos) UnmarshalJSON(data []byte) error {
 	r := jlexer.Lexer{Data: data}
 	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo14(&r, v)
 	return r.Error()
 }
 
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *MinWordSizeForTypo) UnmarshalEasyJSON(l *jlexer.Lexer) {
+func (v *MinWordSizeForTypos) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo14(l, v)
 }
 func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo15(in *jlexer.Lexer, out *KeyParsed) {
