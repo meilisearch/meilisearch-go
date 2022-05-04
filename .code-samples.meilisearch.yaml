@@ -127,6 +127,13 @@ update_settings_1: |-
       "wolverine": []string{"xmen", "logan"},
       "logan":     []string{"wolverine"},
     },
+    TypoTolerance: &meilisearch.TypoTolerance{
+		  MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+		  	OneTypo:  8,
+		  	TwoTypos: 10,
+		  },
+		  DisableOnAttributes: []string{"title"},
+		},
   }
   client.Index("movies").UpdateSettings(&settings)
 reset_settings_1: |-
@@ -214,6 +221,18 @@ update_sortable_attributes_1: |-
   client.Index("books").UpdateSortableAttributes(&sortableAttributes)
 reset_sortable_attributes_1: |-
   client.Index("books").ResetSortableAttributes()
+get_typo_tolerance_1:
+  client.Index("books").GetTypoTolerance()
+update_typo_tolerance_1: |-
+  client.Index("books").UpdateTypoTolerance(&meilisearch.TypoTolerance{
+    MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+        OneTypo: 4,
+        TwoTypos: 10,
+      },
+      DisableOnAttributes: []string{"title"},
+  })
+reset_typo_tolerance_1: |-
+  client.Index("books").ResetTypoTolerance()
 get_index_stats_1: |-
   client.Index("movies").GetStats()
 get_indexes_stats_1: |-
@@ -266,13 +285,24 @@ search_parameter_guide_retrieve_1: |-
     AttributesToRetrieve: []string{"overview", "title"},
   })
 search_parameter_guide_crop_1: |-
-  resp, err := client.Index("movies").Search("shifu" &meilisearch.SearchRequest{
+  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
     AttributesToCrop: []string{"overview"},
-    CropLength:       10,
+    CropLength:       5,
+  })
+search_parameter_guide_crop_marker_1: |-
+  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
+    AttributesToCrop: []string{"overview"},
+    CropMarker:       "[…]",
   })
 search_parameter_guide_highlight_1: |-
   resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
     AttributesToHighlight: []string{"overview"},
+  })
+search_parameter_guide_highlight_tag_1: |-
+  resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
+    AttributesToHighlight: []string{"overview"},
+    HighlightPreTag: "<span class=\"highlight\">",
+    HighlightPostTag: "</span>",
   })
 search_parameter_guide_matches_1: |-
   resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
@@ -342,6 +372,32 @@ settings_guide_sortable_1: |-
     },
   }
   client.Index("books").UpdateSettings(&settings)
+settings_guide_typo_tolerance_1: |-
+  client.index("movies").UpdateTypoTolerance({
+    MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+      TwoTypos: 12,
+    },
+    DisableOnAttributes: []string{"title"},
+  })
+typo_tolerance_guide_1: |-
+  client.index("movies").UpdateTypoTolerance({
+    Enabled: false,
+  })
+typo_tolerance_guide_2: |-
+  client.index("movies").UpdateTypoTolerance({
+    DisableOnAttributes: []string{"title"},
+  })
+typo_tolerance_guide_3: |-
+  client.index("movies").UpdateTypoTolerance({
+    DisableOnWords: []string{"shrek"},
+  })
+typo_tolerance_guide_4: |-
+  client.index("movies").UpdateTypoTolerance({
+    MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+      OneTypo: 4,
+      TwoTypos: 10,
+    },
+  })
 add_movies_json_1: |-
   import (
     "encoding/json"
