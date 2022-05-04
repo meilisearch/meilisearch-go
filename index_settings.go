@@ -445,3 +445,52 @@ func (i Index) ResetSortableAttributes() (resp *Task, err error) {
 	}
 	return resp, nil
 }
+
+func (i Index) GetTypoTolerance() (resp *TypoTolerance, err error) {
+	resp = &TypoTolerance{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/typo-tolerance",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetTypoTolerance",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) UpdateTypoTolerance(request *TypoTolerance) (resp *Task, err error) {
+	resp = &Task{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/typo-tolerance",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         &request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateTypoTolerance",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) ResetTypoTolerance() (resp *Task, err error) {
+	resp = &Task{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/typo-tolerance",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetTypoTolerance",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

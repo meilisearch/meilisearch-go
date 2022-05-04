@@ -135,7 +135,7 @@ func SetUpBasicIndex(indexUID string) {
 
 func SetUpIndexWithNestedFields(indexUID string) {
 	client := NewClient(ClientConfig{
-		Host: "http://localhost:7700",
+		Host:   "http://localhost:7700",
 		APIKey: masterKey,
 	})
 	index := client.Index(indexUID)
@@ -208,6 +208,15 @@ var (
 	})
 	defaultRankingRules = []string{
 		"words", "typo", "proximity", "attribute", "sort", "exactness",
+	}
+	defaultTypoTolerance = TypoTolerance{
+		Enabled: true,
+		MinWordSizeForTypos: MinWordSizeForTypos{
+			OneTypo:  5,
+			TwoTypos: 9,
+		},
+		DisableOnWords:      []string{},
+		DisableOnAttributes: []string{},
 	}
 )
 
