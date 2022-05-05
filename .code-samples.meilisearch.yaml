@@ -92,48 +92,48 @@ get_settings_1: |-
 update_settings_1: |-
   distinctAttribute := "movie_id"
   settings := meilisearch.Settings{
-    RankingRules: []string{
-      "words",
-      "typo",
-      "proximity",
-      "attribute",
-      "sort",
-      "exactness",
-      "release_date:desc",
-      "rank:desc",
-    },
-    DistinctAttribute: &distinctAttribute,
-    SearchableAttributes: []string{
-      "title",
-      "overview",
-      "genres",
-    },
-    DisplayedAttributes: []string{
-      "title",
-      "overview",
-      "genres",
-      "release_date",
-    },
-    StopWords: []string{
-      "the",
-      "a",
-      "an",
-    },
-    SortableAttributes: []string{
-      "title",
-      "release_date",
-    },
-    Synonyms: map[string][]string{
-      "wolverine": []string{"xmen", "logan"},
-      "logan":     []string{"wolverine"},
-    },
-    TypoTolerance: &meilisearch.TypoTolerance{
-		  MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
-		  	OneTypo:  8,
-		  	TwoTypos: 10,
-		  },
-		  DisableOnAttributes: []string{"title"},
-		},
+  	RankingRules: []string{
+  		"words",
+  		"typo",
+  		"proximity",
+  		"attribute",
+  		"sort",
+  		"exactness",
+  		"release_date:desc",
+  		"rank:desc",
+  	},
+  	DistinctAttribute: &distinctAttribute,
+  	SearchableAttributes: []string{
+  		"title",
+  		"overview",
+  		"genres",
+  	},
+  	DisplayedAttributes: []string{
+  		"title",
+  		"overview",
+  		"genres",
+  		"release_date",
+  	},
+  	StopWords: []string{
+  		"the",
+  		"a",
+  		"an",
+  	},
+  	SortableAttributes: []string{
+  		"title",
+  		"release_date",
+  	},
+  	Synonyms: map[string][]string{
+  		"wolverine": []string{"xmen", "logan"},
+  		"logan":     []string{"wolverine"},
+  	},
+  	TypoTolerance: &meilisearch.TypoTolerance{
+  		MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+  			OneTypo:  8,
+  			TwoTypos: 10,
+  		},
+  		DisableOnAttributes: []string{"title"},
+  	},
   }
   client.Index("movies").UpdateSettings(&settings)
 reset_settings_1: |-
