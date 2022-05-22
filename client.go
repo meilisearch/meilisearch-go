@@ -71,7 +71,7 @@ func NewFastHTTPCustomClient(config ClientConfig, client *fasthttp.Client) *Clie
 // NewClient creates Meilisearch with default fasthttp.Client
 func NewClient(config ClientConfig) *Client {
 	client := &fasthttp.Client{
-		Name: "meilsearch-client",
+		Name: "meilisearch-client",
 	}
 	c := &Client{
 		config:     config,

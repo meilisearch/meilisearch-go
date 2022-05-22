@@ -470,7 +470,7 @@ func TestClient_Health(t *testing.T) {
 					APIKey: masterKey,
 				},
 				httpClient: &fasthttp.Client{
-					Name: "meilsearch-client",
+					Name: "meilisearch-client",
 				},
 			},
 			wantErr: true,
@@ -513,7 +513,7 @@ func TestClient_IsHealthy(t *testing.T) {
 					APIKey: masterKey,
 				},
 				httpClient: &fasthttp.Client{
-					Name: "meilsearch-client",
+					Name: "meilisearch-client",
 				},
 			},
 			want: false,
