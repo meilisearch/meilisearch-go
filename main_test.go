@@ -133,6 +133,33 @@ func SetUpBasicIndex(indexUID string) {
 	}
 }
 
+func SetUpIndexWithNestedFields(indexUID string) {
+	client := NewClient(ClientConfig{
+		Host:   "http://localhost:7700",
+		APIKey: masterKey,
+	})
+	index := client.Index(indexUID)
+
+	documents := []map[string]interface{}{
+		{"id": 1, "title": "Pride and Prejudice", "info": map[string]interface{}{"comment": "A great book", "reviewNb": 50}},
+		{"id": 2, "title": "Le Petit Prince", "info": map[string]interface{}{"comment": "A french book", "reviewNb": 600}},
+		{"id": 3, "title": "Le Rouge et le Noir", "info": map[string]interface{}{"comment": "Another french book", "reviewNb": 700}},
+		{"id": 4, "title": "Alice In Wonderland", "comment": "A weird book", "info": map[string]interface{}{"comment": "A weird book", "reviewNb": 800}},
+		{"id": 5, "title": "The Hobbit", "info": map[string]interface{}{"comment": "An awesome book", "reviewNb": 900}},
+		{"id": 6, "title": "Harry Potter and the Half-Blood Prince", "info": map[string]interface{}{"comment": "The best book", "reviewNb": 1000}},
+		{"id": 7, "title": "The Hitchhiker's Guide to the Galaxy"},
+	}
+	task, err := index.AddDocuments(documents)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	finalTask, _ := index.WaitForTask(task)
+	if finalTask.Status != "succeeded" {
+		os.Exit(1)
+	}
+}
+
 func SetUpIndexForFaceting() {
 	client := NewClient(ClientConfig{
 		Host:   "http://localhost:7700",
@@ -181,6 +208,15 @@ var (
 	})
 	defaultRankingRules = []string{
 		"words", "typo", "proximity", "attribute", "sort", "exactness",
+	}
+	defaultTypoTolerance = TypoTolerance{
+		Enabled: true,
+		MinWordSizeForTypos: MinWordSizeForTypos{
+			OneTypo:  5,
+			TwoTypos: 9,
+		},
+		DisableOnWords:      []string{},
+		DisableOnAttributes: []string{},
 	}
 )
 

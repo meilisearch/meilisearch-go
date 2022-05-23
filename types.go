@@ -36,6 +36,21 @@ type Settings struct {
 	Synonyms             map[string][]string `json:"synonyms,omitempty"`
 	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
+	TypoTolerance        *TypoTolerance      `json:"typoTolerance,omitempty"`
+}
+
+// TypoTolerance is the type that represents the typo tolerance setting in Meilisearch
+type TypoTolerance struct {
+	Enabled             bool                `json:"enabled,omitempty"`
+	MinWordSizeForTypos MinWordSizeForTypos `json:"minWordSizeForTypos,omitempty"`
+	DisableOnWords      []string            `json:"disableOnWords,omitempty"`
+	DisableOnAttributes []string            `json:"disableOnAttributes,omitempty"`
+}
+
+// MinWordSizeForTypos is the type that represents the minWordSizeForTypos setting in the typo tolerance setting in Meilisearch
+type MinWordSizeForTypos struct {
+	OneTypo  int64 `json:"oneTypo,omitempty"`
+	TwoTypos int64 `json:"twoTypos,omitempty"`
 }
 
 // Version is the type that represents the versions in Meilisearch
@@ -197,7 +212,10 @@ type SearchRequest struct {
 	AttributesToRetrieve  []string
 	AttributesToCrop      []string
 	CropLength            int64
+	CropMarker            string
 	AttributesToHighlight []string
+	HighlightPreTag       string
+	HighlightPostTag      string
 	Filter                interface{}
 	Matches               bool
 	FacetsDistribution    []string

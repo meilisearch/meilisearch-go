@@ -100,7 +100,7 @@ func TestIndex_Search(t *testing.T) {
 			want: &SearchResponse{
 				Hits: []interface{}{
 					map[string]interface{}{
-						"book_id": float64(1), "title": "Alice In Wonderland",
+						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 				},
 				NbHits:           20,
@@ -164,18 +164,102 @@ func TestIndex_Search(t *testing.T) {
 				query:  "to",
 				request: SearchRequest{
 					AttributesToCrop: []string{"title"},
-					CropLength:       7,
+					CropLength:       2,
 				},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
 					map[string]interface{}{
 						"book_id": float64(42), "title": "The Hitchhiker's Guide to the Galaxy",
+						"_formatted": map[string]interface{}{
+							"book_id": "42", "tag": "Epic fantasy", "title": "…Guide to…", "year": "1978",
+						},
 					},
 				},
 				NbHits:           1,
 				Offset:           0,
 				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchWithAttributesToCropAndCustomCropMarker",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "to",
+				request: SearchRequest{
+					AttributesToCrop: []string{"title"},
+					CropLength:       2,
+					CropMarker:       "(ꈍᴗꈍ)",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(42), "title": "The Hitchhiker's Guide to the Galaxy",
+						"_formatted": map[string]interface{}{
+							"book_id": "42", "tag": "Epic fantasy", "title": "(ꈍᴗꈍ)Guide to(ꈍᴗꈍ)", "year": "1978",
+						},
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchWithAttributeToHighlight",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "prince",
+				request: SearchRequest{
+					Limit:                 1,
+					AttributesToHighlight: []string{"*"},
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+						"_formatted": map[string]interface{}{
+							"book_id": "456", "tag": "Tale", "title": "Le Petit <em>Prince</em>", "year": "1943",
+						},
+					},
+				},
+				NbHits:           2,
+				Offset:           0,
+				Limit:            1,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchWithCustomPreAndPostHighlightTags",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "prince",
+				request: SearchRequest{
+					Limit:                 1,
+					AttributesToHighlight: []string{"*"},
+					HighlightPreTag:       "(⊃｡•́‿•̀｡)⊃ ",
+					HighlightPostTag:      " ⊂(´• ω •`⊂)",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+						"_formatted": map[string]interface{}{
+							"book_id": "456", "tag": "Tale", "title": "Le Petit (⊃｡•́‿•̀｡)⊃ Prince ⊂(´• ω •`⊂)", "year": "1943",
+						},
+					},
+				},
+				NbHits:           2,
+				Offset:           0,
+				Limit:            1,
 				ExhaustiveNbHits: false,
 			},
 		},
@@ -192,13 +276,13 @@ func TestIndex_Search(t *testing.T) {
 			want: &SearchResponse{
 				Hits: []interface{}{
 					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
-					},
-					map[string]interface{}{
 						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 					map[string]interface{}{
 						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(1032), "title": "Crime and Punishment",
 					},
 					map[string]interface{}{
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
@@ -244,6 +328,9 @@ func TestIndex_Search(t *testing.T) {
 			for len := range got.Hits {
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+			}
+			if tt.want.Hits[0].(map[string]interface{})["_formatted"] != nil {
+				require.Equal(t, tt.want.Hits[0].(map[string]interface{})["_formatted"], got.Hits[0].(map[string]interface{})["_formatted"])
 			}
 			require.Equal(t, tt.want.NbHits, got.NbHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
@@ -532,13 +619,13 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			want: &SearchResponse{
 				Hits: []interface{}{
 					map[string]interface{}{
+						"book_id": float64(742), "title": "The Great Gatsby",
+					},
+					map[string]interface{}{
 						"book_id": float64(17), "title": "In Search of Lost Time",
 					},
 					map[string]interface{}{
 						"book_id": float64(204), "title": "Ulysses",
-					},
-					map[string]interface{}{
-						"book_id": float64(742), "title": "The Great Gatsby",
 					},
 				},
 				NbHits:           3,
@@ -590,13 +677,13 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			want: &SearchResponse{
 				Hits: []interface{}{
 					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
 						"book_id": float64(1), "title": "Alice In Wonderland",
 					},
 					map[string]interface{}{
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
-					},
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
 					},
 				},
 				NbHits:           3,
@@ -906,6 +993,198 @@ func TestIndex_SearchWithSort(t *testing.T) {
 			for len := range got.Hits {
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+			}
+			require.Equal(t, tt.want.NbHits, got.NbHits)
+			require.Equal(t, tt.want.Offset, got.Offset)
+			require.Equal(t, tt.want.Limit, got.Limit)
+			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
+			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
+			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
+		})
+	}
+}
+
+func TestIndex_SearchOnNestedFileds(t *testing.T) {
+	type args struct {
+		UID                 string
+		PrimaryKey          string
+		client              *Client
+		query               string
+		request             SearchRequest
+		searchableAttribute []string
+		sortableAttribute   []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want *SearchResponse
+	}{
+		{
+			name: "TestIndexBasicSearchOnNestedFields",
+			args: args{
+				UID:     "TestIndexBasicSearchOnNestedFields",
+				client:  defaultClient,
+				query:   "An awesome",
+				request: SearchRequest{},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(5), "title": "The Hobbit",
+						"info": map[string]interface{}{
+							"comment":  "An awesome book",
+							"reviewNb": float64(900),
+						},
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexBasicSearchOnNestedFieldsWithCustomClient",
+			args: args{
+				UID:     "TestIndexBasicSearchOnNestedFieldsWithCustomClient",
+				client:  customClient,
+				query:   "An awesome",
+				request: SearchRequest{},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(5), "title": "The Hobbit",
+						"info": map[string]interface{}{
+							"comment":  "An awesome book",
+							"reviewNb": float64(900),
+						},
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchOnMultipleNestedFields",
+			args: args{
+				UID:     "TestIndexSearchOnMultipleNestedFields",
+				client:  defaultClient,
+				query:   "french",
+				request: SearchRequest{},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(2), "title": "Le Petit Prince",
+						"info": map[string]interface{}{
+							"comment":  "A french book",
+							"reviewNb": float64(600),
+						},
+					},
+					map[string]interface{}{
+						"id": float64(3), "title": "Le Rouge et le Noir",
+						"info": map[string]interface{}{
+							"comment":  "Another french book",
+							"reviewNb": float64(700),
+						},
+					},
+				},
+				NbHits:           2,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchOnNestedFieldsWithSearchableAttribute",
+			args: args{
+				UID:     "TestIndexSearchOnNestedFieldsWithSearchableAttribute",
+				client:  defaultClient,
+				query:   "An awesome",
+				request: SearchRequest{},
+				searchableAttribute: []string{
+					"title", "info.comment",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(5), "title": "The Hobbit",
+						"info": map[string]interface{}{
+							"comment":  "An awesome book",
+							"reviewNb": float64(900),
+						},
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+		{
+			name: "TestIndexSearchOnNestedFieldsWithSortableAttribute",
+			args: args{
+				UID:    "TestIndexSearchOnNestedFieldsWithSortableAttribute",
+				client: defaultClient,
+				query:  "An awesome",
+				request: SearchRequest{
+					Sort: []string{
+						"info.reviewNb:desc",
+					},
+				},
+				searchableAttribute: []string{
+					"title", "info.comment",
+				},
+				sortableAttribute: []string{
+					"info.reviewNb",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(5), "title": "The Hobbit",
+						"info": map[string]interface{}{
+							"comment":  "An awesome book",
+							"reviewNb": float64(900),
+						},
+					},
+				},
+				NbHits:           1,
+				Offset:           0,
+				Limit:            20,
+				ExhaustiveNbHits: false,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexWithNestedFields(tt.args.UID)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			if tt.args.searchableAttribute != nil {
+				gotTask, err := i.UpdateSearchableAttributes(&tt.args.searchableAttribute)
+				require.NoError(t, err)
+				testWaitForTask(t, i, gotTask)
+			}
+
+			if tt.args.sortableAttribute != nil {
+				gotTask, err := i.UpdateSortableAttributes(&tt.args.sortableAttribute)
+				require.NoError(t, err)
+				testWaitForTask(t, i, gotTask)
+			}
+
+			got, err := i.Search(tt.args.query, &tt.args.request)
+
+			require.NoError(t, err)
+			require.Equal(t, len(tt.want.Hits), len(got.Hits))
+			for len := range got.Hits {
+				require.Equal(t, tt.want.Hits[len], got.Hits[len])
 			}
 			require.Equal(t, tt.want.NbHits, got.NbHits)
 			require.Equal(t, tt.want.Offset, got.Offset)

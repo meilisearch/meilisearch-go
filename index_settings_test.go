@@ -230,6 +230,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 		{
@@ -247,6 +248,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 	}
@@ -374,6 +376,47 @@ func TestIndex_GetSortableAttributes(t *testing.T) {
 			gotResp, err := i.GetSortableAttributes()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
+		})
+	}
+}
+
+func TestIndex_GetTypoTolerance(t *testing.T) {
+	type args struct {
+		UID    string
+		client *Client
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantResp *TypoTolerance
+	}{
+		{
+			name: "TestIndexBasicGetTypoTolerance",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+			},
+			wantResp: &defaultTypoTolerance,
+		},
+		{
+			name: "TestIndexGetTypoToleranceWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customClient,
+			},
+			wantResp: &defaultTypoTolerance,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexForFaceting()
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := i.GetTypoTolerance()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
 		})
 	}
 }
@@ -666,6 +709,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 		{
@@ -686,6 +730,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 	}
@@ -854,6 +899,59 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 			gotResp, err := i.GetSortableAttributes()
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
+		})
+	}
+}
+
+func TestIndex_ResetTypoTolerance(t *testing.T) {
+	type args struct {
+		UID    string
+		client *Client
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *TypoTolerance
+	}{
+		{
+			name: "TestIndexBasicResetTypoTolerance",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+			},
+			wantTask: &Task{
+				UID: 1,
+			},
+			wantResp: &defaultTypoTolerance,
+		},
+		{
+			name: "TestIndexResetTypoToleranceWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customClient,
+			},
+			wantTask: &Task{
+				UID: 1,
+			},
+			wantResp: &defaultTypoTolerance,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexForFaceting()
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotTask, err := i.ResetTypoTolerance()
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
+
+			gotResp, err := i.GetTypoTolerance()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
 		})
 	}
 }
@@ -1222,6 +1320,15 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					SortableAttributes: []string{
 						"title",
 					},
+					TypoTolerance: &TypoTolerance{
+						Enabled: true,
+						MinWordSizeForTypos: MinWordSizeForTypos{
+							OneTypo:  7,
+							TwoTypos: 10,
+						},
+						DisableOnWords:      []string{},
+						DisableOnAttributes: []string{},
+					},
 				},
 			},
 			wantTask: &Task{
@@ -1236,6 +1343,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 		{
@@ -1266,6 +1374,15 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					SortableAttributes: []string{
 						"title",
 					},
+					TypoTolerance: &TypoTolerance{
+						Enabled: true,
+						MinWordSizeForTypos: MinWordSizeForTypos{
+							OneTypo:  7,
+							TwoTypos: 10,
+						},
+						DisableOnWords:      []string{},
+						DisableOnAttributes: []string{},
+					},
 				},
 			},
 			wantTask: &Task{
@@ -1280,6 +1397,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 	}
@@ -1347,6 +1465,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1366,6 +1485,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
 			wantTask: &Task{
@@ -1380,6 +1500,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 		{
@@ -1408,6 +1529,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1427,6 +1549,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
 			wantTask: &Task{
@@ -1441,6 +1564,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 		{
@@ -1469,6 +1593,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms:             map[string][]string(nil),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
 				},
 				secondRequest: Settings{
 					SearchableAttributes: []string{
@@ -1488,6 +1613,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms:             map[string][]string(nil),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
 			wantTask: &Task{
@@ -1502,6 +1628,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 		{
@@ -1530,6 +1657,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms:             map[string][]string(nil),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
 				},
 				secondRequest: Settings{
 					DisplayedAttributes: []string{
@@ -1549,6 +1677,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms:             map[string][]string(nil),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
 			wantTask: &Task{
@@ -1563,6 +1692,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 		{
@@ -1591,6 +1721,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms:             map[string][]string(nil),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
 				},
 				secondRequest: Settings{
 					StopWords: []string{
@@ -1610,6 +1741,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Synonyms:             map[string][]string(nil),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
 			wantTask: &Task{
@@ -1624,6 +1756,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 		{
@@ -1652,6 +1785,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"title",
 					},
 					SortableAttributes: []string{},
+					TypoTolerance:      &defaultTypoTolerance,
 				},
 				secondRequest: Settings{
 					FilterableAttributes: []string{
@@ -1671,6 +1805,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"title",
 					},
 					SortableAttributes: []string{},
+					TypoTolerance:      &defaultTypoTolerance,
 				},
 			},
 			wantTask: &Task{
@@ -1685,6 +1820,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 		{
@@ -1713,6 +1849,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes: []string{
 						"title",
 					},
+					TypoTolerance: &defaultTypoTolerance,
 				},
 				secondRequest: Settings{
 					SortableAttributes: []string{
@@ -1732,6 +1869,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes: []string{
 						"title",
 					},
+					TypoTolerance: &defaultTypoTolerance,
 				},
 			},
 			wantTask: &Task{
@@ -1746,6 +1884,103 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Synonyms:             map[string][]string(nil),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
+			},
+		},
+		{
+			name: "TestIndexUpdateJustTypoTolerance",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				firstRequest: Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					TypoTolerance: &TypoTolerance{
+						Enabled: true,
+						MinWordSizeForTypos: MinWordSizeForTypos{
+							OneTypo:  7,
+							TwoTypos: 10,
+						},
+						DisableOnWords:      []string{},
+						DisableOnAttributes: []string{},
+					},
+				},
+				firstResponse: Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             map[string][]string(nil),
+					TypoTolerance: &TypoTolerance{
+						Enabled: true,
+						MinWordSizeForTypos: MinWordSizeForTypos{
+							OneTypo:  7,
+							TwoTypos: 10,
+						},
+						DisableOnWords:      []string{},
+						DisableOnAttributes: []string{},
+					},
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+				},
+				secondRequest: Settings{
+					TypoTolerance: &TypoTolerance{
+						Enabled: true,
+						MinWordSizeForTypos: MinWordSizeForTypos{
+							OneTypo:  7,
+							TwoTypos: 10,
+						},
+						DisableOnWords: []string{
+							"and",
+						},
+						DisableOnAttributes: []string{
+							"year",
+						},
+					},
+				},
+				secondResponse: Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+					TypoTolerance: &TypoTolerance{
+						Enabled: true,
+						MinWordSizeForTypos: MinWordSizeForTypos{
+							OneTypo:  7,
+							TwoTypos: 10,
+						},
+						DisableOnWords: []string{
+							"and",
+						},
+						DisableOnAttributes: []string{
+							"year",
+						},
+					},
+				},
+			},
+			wantTask: &Task{
+				UID: 1,
+			},
+			wantResp: &Settings{
+				RankingRules:         defaultRankingRules,
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
+				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
 			},
 		},
 	}
@@ -1959,6 +2194,126 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSortableAttributes()
+			require.NoError(t, err)
+			require.Equal(t, &tt.args.request, gotResp)
+		})
+	}
+}
+
+func TestIndex_UpdateTypoTolerance(t *testing.T) {
+	type args struct {
+		UID     string
+		client  *Client
+		request TypoTolerance
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantTask *Task
+		wantResp *TypoTolerance
+	}{
+		{
+			name: "TestIndexBasicUpdateTypoTolerance",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: TypoTolerance{
+					Enabled: true,
+					MinWordSizeForTypos: MinWordSizeForTypos{
+						OneTypo:  7,
+						TwoTypos: 10,
+					},
+					DisableOnWords:      []string{},
+					DisableOnAttributes: []string{},
+				},
+			},
+			wantTask: &Task{
+				UID: 1,
+			},
+			wantResp: &defaultTypoTolerance,
+		},
+		{
+			name: "TestIndexUpdateTypoToleranceWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customClient,
+				request: TypoTolerance{
+					Enabled: true,
+					MinWordSizeForTypos: MinWordSizeForTypos{
+						OneTypo:  7,
+						TwoTypos: 10,
+					},
+					DisableOnWords:      []string{},
+					DisableOnAttributes: []string{},
+				},
+			},
+			wantTask: &Task{
+				UID: 1,
+			},
+			wantResp: &defaultTypoTolerance,
+		},
+		{
+			name: "TestIndexUpdateTypoToleranceWithDisableOnWords",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: TypoTolerance{
+					Enabled: true,
+					MinWordSizeForTypos: MinWordSizeForTypos{
+						OneTypo:  7,
+						TwoTypos: 10,
+					},
+					DisableOnWords: []string{
+						"and",
+					},
+					DisableOnAttributes: []string{},
+				},
+			},
+			wantTask: &Task{
+				UID: 1,
+			},
+			wantResp: &defaultTypoTolerance,
+		},
+		{
+			name: "TestIndexUpdateTypoToleranceWithDisableOnAttributes",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: TypoTolerance{
+					Enabled: true,
+					MinWordSizeForTypos: MinWordSizeForTypos{
+						OneTypo:  7,
+						TwoTypos: 10,
+					},
+					DisableOnWords: []string{},
+					DisableOnAttributes: []string{
+						"year",
+					},
+				},
+			},
+			wantTask: &Task{
+				UID: 1,
+			},
+			wantResp: &defaultTypoTolerance,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexForFaceting()
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := i.GetTypoTolerance()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+
+			gotTask, err := i.UpdateTypoTolerance(&tt.args.request)
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			testWaitForTask(t, i, gotTask)
+
+			gotResp, err = i.GetTypoTolerance()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
