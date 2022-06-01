@@ -3,6 +3,16 @@
 # the documentation on build
 # You can read more on https://github.com/meilisearch/documentation/tree/master/.vuepress/code-samples
 ---
+updating_guide_get_displayed_attributes_old: |- 
+updating_guide_reset_displayed_attributes_old: |-
+updating_guide_check_version: |-
+updating_guide_create_dump: |-
+updating_guide_get_dump_status: |-
+updating_guide_get_settings: |-
+updating_guide_retrieve_documents: |-
+updating_guide_update_settings: |-
+updating_guide_add_documents: |-
+
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
@@ -491,7 +501,7 @@ getting_started_add_meteorites: |-
     json.Unmarshal(byteValue, &meteorites)
 
     client.Index("meteorites").AddDocuments(meteorites)
-getting_started_update_rankingRules: |-
+getting_started_update_ranking_rules: |-
   rankingRules := []string{
     "exactness",
     "words",
@@ -503,14 +513,14 @@ getting_started_update_rankingRules: |-
     "rank:desc",
   }
   client.Index("movies").UpdateRankingRules(&rankingRules)
-getting_started_update_displayedAttributes: |-
+getting_started_update_displayed_attributes: |-
   displayedAttributes := []string{
     "title",
     "overview",
     "poster",
   }
   client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
-getting_started_update_searchableAttributes: |-
+getting_started_update_searchable_attributes: |-
   searchableAttributes := []string{
     "title",
   }
@@ -528,11 +538,11 @@ getting_started_filtering: |-
   resp, err := client.Index("meteorites").Search("", &meilisearch.SearchRequest{
     Filter: "mass < 200",
   })
-getting_started_geoRadius: |-
+getting_started_geo_radius: |-
   resp, err := client.Index("meteorites").Search("", &meilisearch.SearchRequest{
     Filter: "_geoRadius(46.9480, 7.4474, 210000)",
   })
-getting_started_geoPoint: |-
+getting_started_geo_point: |-
   resp, err := client.Index("meteorites").Search("", &meilisearch.SearchRequest{
     Sort: []string{
       "_geoPoint(48.8583701,2.2922926):asc",
@@ -660,12 +670,12 @@ geosearch_guide_sort_usage_2: |-
       "rating:desc",
     },
   })
-document_guide_create_index_primary_key: |-
+primary_field_guide_create_index_primary_key: |-
   client.CreateIndex(&meilisearch.IndexConfig{
     Uid: "movies",
     PrimaryKey: "reference_number",
   })
-document_guide_add_document_primary_key: |-
+primary_field_guide_add_document_primary_key: |-
   documents := []map[string]interface{}{
     {
       "reference_number": 287947,
