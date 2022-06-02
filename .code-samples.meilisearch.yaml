@@ -662,7 +662,7 @@ geosearch_guide_sort_usage_2: |-
   })
 primary_field_guide_create_index_primary_key: |-
   client.CreateIndex(&meilisearch.IndexConfig{
-    Uid: "movies",
+    Uid: "books",
     PrimaryKey: "reference_number",
   })
 primary_field_guide_add_document_primary_key: |-
@@ -672,7 +672,7 @@ primary_field_guide_add_document_primary_key: |-
       "title":            "Diary of a Wimpy Kid",
       "author":           "Jeff Kinney",
       "genres":           []string{"comedy", "humor"},
-      "price":     5.00,
+      "price":            5.00,
     },
   }
   client.Index("books").AddDocuments(documents, "reference_number")
