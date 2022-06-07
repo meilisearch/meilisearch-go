@@ -72,6 +72,8 @@ func NewFastHTTPCustomClient(config ClientConfig, client *fasthttp.Client) *Clie
 func NewClient(config ClientConfig) *Client {
 	client := &fasthttp.Client{
 		Name: "meilisearch-client",
+		// Reuse the most recently-used idle connection.
+		ConnPoolStrategy: fasthttp.LIFO,
 	}
 	c := &Client{
 		config:     config,
