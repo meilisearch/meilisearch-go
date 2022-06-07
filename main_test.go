@@ -26,11 +26,11 @@ type docTestBooks struct {
 }
 
 func getenv(key, fallback string) string {
-    value := os.Getenv(key)
-    if len(value) == 0 {
-        return fallback
-    }
-    return value
+	value := os.Getenv(key)
+	if len(value) == 0 {
+		return fallback
+	}
+	return value
 }
 
 func deleteAllIndexes(client ClientInterface) (ok bool, err error) {

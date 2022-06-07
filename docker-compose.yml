@@ -2,13 +2,12 @@ version: "3.8"
 
 services:
   package:
-    image: golang:1.18.3
+    build: .
     tty: true
     stdin_open: true
     working_dir: /home/package
     environment:
       - MEILISEARCH_HOST=http://meilisearch:7700
-      - MEILISEARCH_PORT=7700
     depends_on:
       - meilisearch
     links:
