@@ -491,7 +491,7 @@ getting_started_add_meteorites: |-
     json.Unmarshal(byteValue, &meteorites)
 
     client.Index("meteorites").AddDocuments(meteorites)
-getting_started_update_rankingRules: |-
+getting_started_update_ranking_rules: |-
   rankingRules := []string{
     "exactness",
     "words",
@@ -503,14 +503,14 @@ getting_started_update_rankingRules: |-
     "rank:desc",
   }
   client.Index("movies").UpdateRankingRules(&rankingRules)
-getting_started_update_displayedAttributes: |-
+getting_started_update_displayed_attributes: |-
   displayedAttributes := []string{
     "title",
     "overview",
     "poster",
   }
   client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
-getting_started_update_searchableAttributes: |-
+getting_started_update_searchable_attributes: |-
   searchableAttributes := []string{
     "title",
   }
@@ -528,11 +528,11 @@ getting_started_filtering: |-
   resp, err := client.Index("meteorites").Search("", &meilisearch.SearchRequest{
     Filter: "mass < 200",
   })
-getting_started_geoRadius: |-
+getting_started_geo_radius: |-
   resp, err := client.Index("meteorites").Search("", &meilisearch.SearchRequest{
     Filter: "_geoRadius(46.9480, 7.4474, 210000)",
   })
-getting_started_geoPoint: |-
+getting_started_geo_point: |-
   resp, err := client.Index("meteorites").Search("", &meilisearch.SearchRequest{
     Sort: []string{
       "_geoPoint(48.8583701,2.2922926):asc",
@@ -660,22 +660,24 @@ geosearch_guide_sort_usage_2: |-
       "rating:desc",
     },
   })
-document_guide_create_index_primary_key: |-
+primary_field_guide_create_index_primary_key: |-
   client.CreateIndex(&meilisearch.IndexConfig{
-    Uid: "movies",
+    Uid: "books",
     PrimaryKey: "reference_number",
   })
-document_guide_add_document_primary_key: |-
+primary_field_guide_add_document_primary_key: |-
   documents := []map[string]interface{}{
     {
       "reference_number": 287947,
-      "title":            "Shazam",
-      "poster":           "https://image.tmdb.org/t/p/w1280/xnopI5Xtky18MPhK40cZAGAOVeV.jpg",
-      "overview":         "A boy is given the ability to become an adult superhero in times of need with a single magic word.",
-      "release_date":     "2019-03-23",
+      "title":            "Diary of a Wimpy Kid",
+      "author":           "Jeff Kinney",
+      "genres":           []string{"comedy", "humor"},
+      "price":            5.00,
     },
   }
-  client.Index("movies").AddDocuments(documents, "reference_number")
+  client.Index("books").AddDocuments(documents, "reference_number")
+primary_field_guide_update_document_primary_key: |-
+  client.Index("books").UpdateIndex("title")
 security_guide_search_key_1: |-
   client := meilisearch.NewClient(meilisearch.ClientConfig{
     Host: "http://127.0.0.1:7700",
