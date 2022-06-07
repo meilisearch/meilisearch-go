@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"context"
+	"sync"
 	"testing"
 	"time"
 
@@ -889,6 +890,29 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestClient_ConnectionCloseByServer(t *testing.T) {
+	t.Skip("Skip until <https://github.com/meilisearch/meilisearch/pull/2471> merged.")
+
+	meili := NewClient(ClientConfig{Host: "http://localhost:7700"})
+
+	// Simulate 10 clients sending requests.
+	g := sync.WaitGroup{}
+	for i := 0; i < 10; i++ {
+		g.Add(1)
+		go func() {
+			defer g.Done()
+
+			_, _ = meili.Index("foo").Search("bar", &SearchRequest{})
+			time.Sleep(5 * time.Second)
+			_, err := meili.Index("foo").Search("bar", &SearchRequest{})
+			if e, ok := err.(*Error); ok && e.ErrCode == MeilisearchCommunicationError {
+				require.NoErrorf(t, e, "unexpected error")
+			}
+		}()
+	}
+	g.Wait()
 }
 
 func TestClient_GenerateTenantToken(t *testing.T) {
