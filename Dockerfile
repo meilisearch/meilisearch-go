@@ -7,6 +7,5 @@ COPY go.sum .
 
 COPY --from=golangci/golangci-lint:v1.42.0 /usr/bin/golangci-lint /usr/local/bin/golangci-lint
 
-RUN go clean -cache
 RUN go mod download
 RUN go mod verify

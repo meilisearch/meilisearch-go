@@ -23,10 +23,10 @@ type docTestBooks struct {
 	Year   int    `json:"year"`
 }
 
-func getMeilisearchHost() string {
-	value := os.Getenv("MEILISEARCH_HOST")
+func getenv(key, fallback string) string {
+	value := os.Getenv(key)
 	if len(value) == 0 {
-		return "http://localhost:7700"
+		return fallback
 	}
 	return value
 }
@@ -113,7 +113,7 @@ func GetPrivateUIDKey() (key string) {
 
 func SetUpEmptyIndex(index *IndexConfig) (resp *Index, err error) {
 	client := NewClient(ClientConfig{
-		Host:   getMeilisearchHost(),
+		Host:   getenv("MEILISEARCH_HOST", "http://localhost:7700"),
 		APIKey: masterKey,
 	})
 	task, err := client.CreateIndex(index)
@@ -130,7 +130,7 @@ func SetUpEmptyIndex(index *IndexConfig) (resp *Index, err error) {
 
 func SetUpBasicIndex(indexUID string) {
 	client := NewClient(ClientConfig{
-		Host:   getMeilisearchHost(),
+		Host:   getenv("MEILISEARCH_HOST", "http://localhost:7700"),
 		APIKey: masterKey,
 	})
 	index := client.Index(indexUID)
@@ -156,7 +156,7 @@ func SetUpBasicIndex(indexUID string) {
 
 func SetUpIndexWithNestedFields(indexUID string) {
 	client := NewClient(ClientConfig{
-		Host:   getMeilisearchHost(),
+		Host:   getenv("MEILISEARCH_HOST", "http://localhost:7700"),
 		APIKey: masterKey,
 	})
 	index := client.Index(indexUID)
@@ -183,7 +183,7 @@ func SetUpIndexWithNestedFields(indexUID string) {
 
 func SetUpIndexForFaceting() {
 	client := NewClient(ClientConfig{
-		Host:   getMeilisearchHost(),
+		Host:   getenv("MEILISEARCH_HOST", "http://localhost:7700"),
 		APIKey: masterKey,
 	})
 	index := client.Index("indexUID")
@@ -224,7 +224,7 @@ func SetUpIndexForFaceting() {
 var (
 	masterKey     = "masterKey"
 	defaultClient = NewClient(ClientConfig{
-		Host:   getMeilisearchHost(),
+		Host:   getenv("MEILISEARCH_HOST", "http://localhost:7700"),
 		APIKey: masterKey,
 	})
 	defaultRankingRules = []string{
@@ -248,7 +248,7 @@ var (
 )
 
 var customClient = NewFastHTTPCustomClient(ClientConfig{
-	Host:   getMeilisearchHost(),
+	Host:   getenv("MEILISEARCH_HOST", "http://localhost:7700"),
 	APIKey: masterKey,
 },
 	&fasthttp.Client{
@@ -257,13 +257,13 @@ var customClient = NewFastHTTPCustomClient(ClientConfig{
 	})
 
 var timeoutClient = NewClient(ClientConfig{
-	Host:    getMeilisearchHost(),
+	Host:    getenv("MEILISEARCH_HOST", "http://localhost:7700"),
 	APIKey:  masterKey,
 	Timeout: 1,
 })
 
 var privateClient = NewClient(ClientConfig{
-	Host:   getMeilisearchHost(),
+	Host:   getenv("MEILISEARCH_HOST", "http://localhost:7700"),
 	APIKey: GetPrivateKey(),
 })
 
