@@ -217,23 +217,21 @@ type SearchRequest struct {
 	HighlightPreTag       string
 	HighlightPostTag      string
 	Filter                interface{}
-	Matches               bool
-	FacetsDistribution    []string
+	ShowMatchesPosition   bool
+	Facets                []string
 	PlaceholderSearch     bool
 	Sort                  []string
 }
 
 // SearchResponse is the response body for search method
 type SearchResponse struct {
-	Hits                  []interface{} `json:"hits"`
-	NbHits                int64         `json:"nbHits"`
-	Offset                int64         `json:"offset"`
-	Limit                 int64         `json:"limit"`
-	ExhaustiveNbHits      bool          `json:"exhaustiveNbHits"`
-	ProcessingTimeMs      int64         `json:"processingTimeMs"`
-	Query                 string        `json:"query"`
-	FacetsDistribution    interface{}   `json:"facetsDistribution,omitempty"`
-	ExhaustiveFacetsCount interface{}   `json:"exhaustiveFacetsCount,omitempty"`
+	Hits               []interface{} `json:"hits"`
+	EstimatedTotalHits int64         `json:"estimatedTotalHits"`
+	Offset             int64         `json:"offset"`
+	Limit              int64         `json:"limit"`
+	ProcessingTimeMs   int64         `json:"processingTimeMs"`
+	Query              string        `json:"query"`
+	FacetDistribution  interface{}   `json:"facetDistribution,omitempty"`
 }
 
 // DocumentsRequest is the request body for list documents method
