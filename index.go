@@ -112,7 +112,7 @@ func (i Index) UpdateIndex(primaryKey string) (resp *Task, err error) {
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID,
-		method:              http.MethodPut,
+		method:              http.MethodPatch,
 		contentType:         contentTypeJSON,
 		withRequest:         request,
 		withResponse:        resp,
