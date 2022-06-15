@@ -1426,33 +1426,23 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo10(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
-		case "nbHits":
-			out.NbHits = int64(in.Int64())
+		case "estimatedTotalHits":
+			out.EstimatedTotalHits = int64(in.Int64())
 		case "offset":
 			out.Offset = int64(in.Int64())
 		case "limit":
 			out.Limit = int64(in.Int64())
-		case "exhaustiveNbHits":
-			out.ExhaustiveNbHits = bool(in.Bool())
 		case "processingTimeMs":
 			out.ProcessingTimeMs = int64(in.Int64())
 		case "query":
 			out.Query = string(in.String())
-		case "facetsDistribution":
-			if m, ok := out.FacetsDistribution.(easyjson.Unmarshaler); ok {
+		case "facetDistribution":
+			if m, ok := out.FacetDistribution.(easyjson.Unmarshaler); ok {
 				m.UnmarshalEasyJSON(in)
-			} else if m, ok := out.FacetsDistribution.(json.Unmarshaler); ok {
+			} else if m, ok := out.FacetDistribution.(json.Unmarshaler); ok {
 				_ = m.UnmarshalJSON(in.Raw())
 			} else {
-				out.FacetsDistribution = in.Interface()
-			}
-		case "exhaustiveFacetsCount":
-			if m, ok := out.ExhaustiveFacetsCount.(easyjson.Unmarshaler); ok {
-				m.UnmarshalEasyJSON(in)
-			} else if m, ok := out.ExhaustiveFacetsCount.(json.Unmarshaler); ok {
-				_ = m.UnmarshalJSON(in.Raw())
-			} else {
-				out.ExhaustiveFacetsCount = in.Interface()
+				out.FacetDistribution = in.Interface()
 			}
 		default:
 			in.SkipRecursive()
@@ -1491,9 +1481,9 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo10(out *jwriter.Writ
 		}
 	}
 	{
-		const prefix string = ",\"nbHits\":"
+		const prefix string = ",\"estimatedTotalHits\":"
 		out.RawString(prefix)
-		out.Int64(int64(in.NbHits))
+		out.Int64(int64(in.EstimatedTotalHits))
 	}
 	{
 		const prefix string = ",\"offset\":"
@@ -1506,11 +1496,6 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo10(out *jwriter.Writ
 		out.Int64(int64(in.Limit))
 	}
 	{
-		const prefix string = ",\"exhaustiveNbHits\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.ExhaustiveNbHits))
-	}
-	{
 		const prefix string = ",\"processingTimeMs\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.ProcessingTimeMs))
@@ -1520,26 +1505,15 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo10(out *jwriter.Writ
 		out.RawString(prefix)
 		out.String(string(in.Query))
 	}
-	if in.FacetsDistribution != nil {
-		const prefix string = ",\"facetsDistribution\":"
+	if in.FacetDistribution != nil {
+		const prefix string = ",\"facetDistribution\":"
 		out.RawString(prefix)
-		if m, ok := in.FacetsDistribution.(easyjson.Marshaler); ok {
+		if m, ok := in.FacetDistribution.(easyjson.Marshaler); ok {
 			m.MarshalEasyJSON(out)
-		} else if m, ok := in.FacetsDistribution.(json.Marshaler); ok {
+		} else if m, ok := in.FacetDistribution.(json.Marshaler); ok {
 			out.Raw(m.MarshalJSON())
 		} else {
-			out.Raw(json.Marshal(in.FacetsDistribution))
-		}
-	}
-	if in.ExhaustiveFacetsCount != nil {
-		const prefix string = ",\"exhaustiveFacetsCount\":"
-		out.RawString(prefix)
-		if m, ok := in.ExhaustiveFacetsCount.(easyjson.Marshaler); ok {
-			m.MarshalEasyJSON(out)
-		} else if m, ok := in.ExhaustiveFacetsCount.(json.Marshaler); ok {
-			out.Raw(m.MarshalJSON())
-		} else {
-			out.Raw(json.Marshal(in.ExhaustiveFacetsCount))
+			out.Raw(json.Marshal(in.FacetDistribution))
 		}
 	}
 	out.RawByte('}')
@@ -1676,27 +1650,27 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo11(in *jlexer.Lexer,
 			} else {
 				out.Filter = in.Interface()
 			}
-		case "Matches":
-			out.Matches = bool(in.Bool())
-		case "FacetsDistribution":
+		case "ShowMatchesPosition":
+			out.ShowMatchesPosition = bool(in.Bool())
+		case "Facets":
 			if in.IsNull() {
 				in.Skip()
-				out.FacetsDistribution = nil
+				out.Facets = nil
 			} else {
 				in.Delim('[')
-				if out.FacetsDistribution == nil {
+				if out.Facets == nil {
 					if !in.IsDelim(']') {
-						out.FacetsDistribution = make([]string, 0, 4)
+						out.Facets = make([]string, 0, 4)
 					} else {
-						out.FacetsDistribution = []string{}
+						out.Facets = []string{}
 					}
 				} else {
-					out.FacetsDistribution = (out.FacetsDistribution)[:0]
+					out.Facets = (out.Facets)[:0]
 				}
 				for !in.IsDelim(']') {
 					var v40 string
 					v40 = string(in.String())
-					out.FacetsDistribution = append(out.FacetsDistribution, v40)
+					out.Facets = append(out.Facets, v40)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -1830,18 +1804,18 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo11(out *jwriter.Writ
 		}
 	}
 	{
-		const prefix string = ",\"Matches\":"
+		const prefix string = ",\"ShowMatchesPosition\":"
 		out.RawString(prefix)
-		out.Bool(bool(in.Matches))
+		out.Bool(bool(in.ShowMatchesPosition))
 	}
 	{
-		const prefix string = ",\"FacetsDistribution\":"
+		const prefix string = ",\"Facets\":"
 		out.RawString(prefix)
-		if in.FacetsDistribution == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+		if in.Facets == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v48, v49 := range in.FacetsDistribution {
+			for v48, v49 := range in.Facets {
 				if v48 > 0 {
 					out.RawByte(',')
 				}

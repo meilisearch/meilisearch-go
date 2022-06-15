@@ -306,7 +306,7 @@ search_parameter_guide_highlight_tag_1: |-
   })
 search_parameter_guide_matches_1: |-
   resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
-    Matches:               true,
+    ShowMatchesPosition:    true,
   })
 settings_guide_synonyms_1: |-
   settings := meilisearch.Settings{
@@ -578,7 +578,7 @@ faceted_search_filter_1: |-
   })
 faceted_search_facets_distribution_1: |-
   resp, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
-    FacetsDistribution: []string{
+    Facets: []string{
       "genres",
     },
   })
