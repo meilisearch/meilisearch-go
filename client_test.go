@@ -532,13 +532,13 @@ func TestClient_CreateDump(t *testing.T) {
 	tests := []struct {
 		name     string
 		client   *Client
-		wantResp *Dump
+		wantResp *Task
 	}{
 		{
 			name:   "TestCreateDump",
 			client: defaultClient,
-			wantResp: &Dump{
-				Status: "in_progress",
+			wantResp: &Task{
+				Status: "enqueued",
 			},
 		},
 	}
@@ -554,40 +554,11 @@ func TestClient_CreateDump(t *testing.T) {
 
 			// Waiting for CreateDump() to finished
 			for {
-				gotResp, _ := c.GetDumpStatus(gotResp.UID)
-				if gotResp.Status == "done" {
+				gotResp, _ := c.GetTask(gotResp.TaskUID)
+				if gotResp.Status == "succeeded" {
 					break
 				}
 			}
-		})
-	}
-}
-
-func TestClient_GetDumpStatus(t *testing.T) {
-	tests := []struct {
-		name     string
-		client   *Client
-		wantResp []DumpStatus
-		wantErr  bool
-	}{
-		{
-			name:     "TestGetDumpStatus",
-			client:   defaultClient,
-			wantResp: []DumpStatus{DumpStatusInProgress, DumpStatusFailed, DumpStatusDone},
-			wantErr:  false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := tt.client
-
-			dump, err := c.CreateDump()
-			require.NoError(t, err, "CreateDump() in TestGetDumpStatus error should be nil")
-
-			gotResp, err := c.GetDumpStatus(dump.UID)
-			require.NoError(t, err)
-			require.Contains(t, tt.wantResp, gotResp.Status, "GetDumpStatus() got response status %v", gotResp.Status)
-			require.NotEqual(t, "failed", gotResp.Status, "GetDumpStatus() response status should not be failed")
 		})
 	}
 }

@@ -45,8 +45,7 @@ type ClientInterface interface {
 	UpdateKey(identifier string, request *Key) (resp *Key, err error)
 	DeleteKey(identifier string) (resp bool, err error)
 	GetAllStats() (resp *Stats, err error)
-	CreateDump() (resp *Dump, err error)
-	GetDumpStatus(dumpUID string) (resp *Dump, err error)
+	CreateDump() (resp *Task, err error)
 	Version() (*Version, error)
 	GetVersion() (resp *Version, err error)
 	Health() (*Health, error)
@@ -224,8 +223,8 @@ func (c *Client) IsHealthy() bool {
 	return true
 }
 
-func (c *Client) CreateDump() (resp *Dump, err error) {
-	resp = &Dump{}
+func (c *Client) CreateDump() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/dumps",
 		method:              http.MethodPost,
