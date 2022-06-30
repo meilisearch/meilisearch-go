@@ -129,8 +129,10 @@ type ResultTask struct {
 //
 // Documentation: https://docs.meilisearch.com/learn/advanced/security.html#protecting-a-meilisearch-instance
 type Key struct {
+	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Key         string    `json:"key,omitempty"`
+	UID         string    `json:"uid,omitempty"`
 	Actions     []string  `json:"actions,omitempty"`
 	Indexes     []string  `json:"indexes,omitempty"`
 	CreatedAt   time.Time `json:"createdAt,omitempty"`
@@ -140,6 +142,7 @@ type Key struct {
 
 // This structure is used to send the exact ISO-8601 time format managed by Meilisearch
 type KeyParsed struct {
+	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Key         string    `json:"key,omitempty"`
 	Actions     []string  `json:"actions,omitempty"`
@@ -149,8 +152,23 @@ type KeyParsed struct {
 	ExpiresAt   *string   `json:"expiresAt"`
 }
 
-type ResultKey struct {
+// This structure is used to update a Key
+type KeyUpdate struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
+// Return of multiple keys is wrap in a KeysResults
+type KeysResults struct {
 	Results []Key `json:"results"`
+	Offset  int64 `json:"offset"`
+	Limit   int64 `json:"limit"`
+	Total   int64 `json:"total"`
+}
+
+type KeysQuery struct {
+	Limit  int64 `json:"limit,omitempty"`
+	Offset int64 `json:"offset,omitempty"`
 }
 
 // Information to create a tenant token

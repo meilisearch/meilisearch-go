@@ -98,7 +98,7 @@ func TestClient_GetKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.client.GetKeys()
+			gotResp, err := tt.client.GetKeys(nil)
 			require.NoError(t, err)
 
 			gotKey, err := tt.client.GetKey(gotResp.Results[0].Key)
@@ -111,26 +111,56 @@ func TestClient_GetKey(t *testing.T) {
 }
 
 func TestClient_GetKeys(t *testing.T) {
+	type args struct {
+		client  *Client
+		request *KeysQuery
+	}
 	tests := []struct {
-		name   string
-		client *Client
+		name string
+		args args
 	}{
 		{
-			name:   "TestGetKeys",
-			client: defaultClient,
+			name: "TestBasicGetKeys",
+			args: args{
+				client:  defaultClient,
+				request: nil,
+			},
 		},
 		{
-			name:   "TestGetKeysWithCustomClient",
-			client: customClient,
+			name: "TestGetKeysWithCustomClient",
+			args: args{
+				client:  customClient,
+				request: nil,
+			},
+		},
+		{
+			name: "TestGetKeysWithEmptyParam",
+			args: args{
+				client:  defaultClient,
+				request: &KeysQuery{},
+			},
+		},
+		{
+			name: "TestGetKeysWithLimit",
+			args: args{
+				client: defaultClient,
+				request: &KeysQuery{
+					Limit: 1,
+				},
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.client.GetKeys()
+			gotResp, err := tt.args.client.GetKeys(tt.args.request)
 
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "GetKeys() should not return nil value")
-			require.GreaterOrEqual(t, len(gotResp.Results), 2)
+			if tt.args.request != nil && tt.args.request.Limit != 0 {
+				require.Equal(t, tt.args.request.Limit, int64(len(gotResp.Results)))
+			} else {
+				require.GreaterOrEqual(t, len(gotResp.Results), 2)
+			}
 		})
 	}
 }
@@ -170,6 +200,7 @@ func TestClient_CreateKey(t *testing.T) {
 			name:   "TestCreateKeyWithDescription",
 			client: defaultClient,
 			key: Key{
+				Name:        "TestCreateKeyWithDescription",
 				Description: "TestCreateKeyWithDescription",
 				Actions:     []string{"*"},
 				Indexes:     []string{"*"},
@@ -179,6 +210,7 @@ func TestClient_CreateKey(t *testing.T) {
 			name:   "TestCreateKeyWithActions",
 			client: defaultClient,
 			key: Key{
+				Name:        "TestCreateKeyWithActions",
 				Description: "TestCreateKeyWithActions",
 				Actions:     []string{"documents.add", "documents.delete"},
 				Indexes:     []string{"*"},
@@ -188,6 +220,7 @@ func TestClient_CreateKey(t *testing.T) {
 			name:   "TestCreateKeyWithIndexes",
 			client: defaultClient,
 			key: Key{
+				Name:        "TestCreateKeyWithIndexes",
 				Description: "TestCreateKeyWithIndexes",
 				Actions:     []string{"*"},
 				Indexes:     []string{"movies", "games"},
@@ -197,6 +230,7 @@ func TestClient_CreateKey(t *testing.T) {
 			name:   "TestCreateKeyWithAllOptions",
 			client: defaultClient,
 			key: Key{
+				Name:        "TestCreateKeyWithAllOptions",
 				Description: "TestCreateKeyWithAllOptions",
 				Actions:     []string{"documents.add", "documents.delete"},
 				Indexes:     []string{"movies", "games"},
@@ -241,8 +275,6 @@ func TestClient_UpdateKey(t *testing.T) {
 			},
 			keyToUpdate: Key{
 				Description: "TestUpdateKeyWithDescription",
-				Actions:     []string{"*"},
-				Indexes:     []string{"*"},
 			},
 		},
 		{
@@ -250,65 +282,32 @@ func TestClient_UpdateKey(t *testing.T) {
 			client: customClient,
 			keyToCreate: Key{
 				Actions: []string{"*"},
-				Indexes: []string{"*"},
+				Indexes: []string{"TestUpdateKeyWithCustomClientWithDescription"},
 			},
 			keyToUpdate: Key{
 				Description: "TestUpdateKeyWithCustomClientWithDescription",
-				Actions:     []string{"*"},
-				Indexes:     []string{"*"},
 			},
 		},
 		{
-			name:   "TestUpdateKeyWithExpirationAt",
+			name:   "TestUpdateKeyWithName",
 			client: defaultClient,
 			keyToCreate: Key{
 				Actions: []string{"*"},
-				Indexes: []string{"*"},
+				Indexes: []string{"TestUpdateKeyWithName"},
 			},
 			keyToUpdate: Key{
-				Actions:   []string{"*"},
-				Indexes:   []string{"*"},
-				ExpiresAt: time.Now().Add(time.Hour * 10),
+				Name: "TestUpdateKeyWithName",
 			},
 		},
 		{
-			name:   "TestUpdateKeyWithActions",
+			name:   "TestUpdateKeyWithNameAndAction",
 			client: defaultClient,
 			keyToCreate: Key{
-				Actions: []string{"*"},
+				Actions: []string{"search"},
 				Indexes: []string{"*"},
 			},
 			keyToUpdate: Key{
-				Description: "TestUpdateKeyWithActions",
-				Actions:     []string{"documents.add", "documents.delete"},
-				Indexes:     []string{"*"},
-			},
-		},
-		{
-			name:   "TestUpdateKeyWithIndexes",
-			client: defaultClient,
-			keyToCreate: Key{
-				Actions: []string{"*"},
-				Indexes: []string{"*"},
-			},
-			keyToUpdate: Key{
-				Description: "TestUpdateKeyWithIndexes",
-				Actions:     []string{"*"},
-				Indexes:     []string{"movies", "games"},
-			},
-		},
-		{
-			name:   "TestUpdateKeyWithAllOptions",
-			client: defaultClient,
-			keyToCreate: Key{
-				Actions: []string{"*"},
-				Indexes: []string{"*"},
-			},
-			keyToUpdate: Key{
-				Description: "TestUpdateKeyWithAllOptions",
-				Actions:     []string{"documents.add", "documents.delete"},
-				Indexes:     []string{"movies", "games"},
-				ExpiresAt:   time.Now().Add(time.Hour * 10),
+				Name: "TestUpdateKeyWithName",
 			},
 		},
 	}
@@ -346,8 +345,8 @@ func TestClient_UpdateKey(t *testing.T) {
 			if len(tt.keyToUpdate.Indexes) != 0 {
 				require.Equal(t, tt.keyToUpdate.Indexes, gotKey.Indexes)
 			}
-			if !tt.keyToUpdate.ExpiresAt.IsZero() {
-				require.Equal(t, tt.keyToUpdate.ExpiresAt.Format(Format), gotKey.ExpiresAt.Format(Format))
+			if tt.keyToUpdate.Description != "" {
+				require.Equal(t, tt.keyToUpdate.Name, gotKey.Name)
 			}
 		})
 	}
