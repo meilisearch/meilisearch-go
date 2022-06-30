@@ -596,7 +596,7 @@ func TestClient_GetTask(t *testing.T) {
 	type args struct {
 		UID      string
 		client   *Client
-		taskID   int64
+		taskUID  int64
 		document []docTest
 	}
 	tests := []struct {
@@ -606,9 +606,9 @@ func TestClient_GetTask(t *testing.T) {
 		{
 			name: "TestBasicGetTask",
 			args: args{
-				UID:    "TestBasicGetTask",
-				client: defaultClient,
-				taskID: 0,
+				UID:     "TestBasicGetTask",
+				client:  defaultClient,
+				taskUID: 0,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
@@ -617,9 +617,9 @@ func TestClient_GetTask(t *testing.T) {
 		{
 			name: "TestGetTaskWithCustomClient",
 			args: args{
-				UID:    "TestGetTaskWithCustomClient",
-				client: customClient,
-				taskID: 1,
+				UID:     "TestGetTaskWithCustomClient",
+				client:  customClient,
+				taskUID: 1,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
@@ -628,9 +628,9 @@ func TestClient_GetTask(t *testing.T) {
 		{
 			name: "TestGetTask",
 			args: args{
-				UID:    "TestGetTask",
-				client: defaultClient,
-				taskID: 2,
+				UID:     "TestGetTask",
+				client:  defaultClient,
+				taskUID: 2,
 				document: []docTest{
 					{ID: "456", Name: "Le Petit Prince"},
 					{ID: "1", Name: "Alice In Wonderland"},
@@ -650,14 +650,14 @@ func TestClient_GetTask(t *testing.T) {
 			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(task)
+			_, err = c.WaitForTask(task.TaskUID)
 			require.NoError(t, err)
 
-			gotResp, err := c.GetTask(task.UID)
+			gotResp, err := c.GetTask(task.TaskUID)
 			require.NoError(t, err)
 			require.NotNil(t, gotResp)
 			require.NotNil(t, gotResp.Details)
-			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskID)
+			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskUID)
 			require.Equal(t, tt.args.UID, gotResp.IndexUID)
 			require.Equal(t, TaskStatusSucceeded, gotResp.Status)
 			require.Equal(t, len(tt.args.document), gotResp.Details.ReceivedDocuments)
@@ -676,6 +676,7 @@ func TestClient_GetTasks(t *testing.T) {
 		UID      string
 		client   *Client
 		document []docTest
+		query    *TasksQuery
 	}
 	tests := []struct {
 		name string
@@ -689,6 +690,7 @@ func TestClient_GetTasks(t *testing.T) {
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
+				query: nil,
 			},
 		},
 		{
@@ -698,6 +700,61 @@ func TestClient_GetTasks(t *testing.T) {
 				client: customClient,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: nil,
+			},
+		},
+		{
+			name: "TestGetTasksWithLimit",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit: 1,
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithLimit",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit: 1,
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithFrom",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					From: 0,
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithParameters",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:    1,
+					From:     0,
+					IndexUID: []string{"indexUID"},
 				},
 			},
 		},
@@ -711,14 +768,24 @@ func TestClient_GetTasks(t *testing.T) {
 			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(task)
+			_, err = c.WaitForTask(task.TaskUID)
 			require.NoError(t, err)
 
-			gotResp, err := i.GetTasks()
+			gotResp, err := i.GetTasks(tt.args.query)
 			require.NoError(t, err)
 			require.NotNil(t, (*gotResp).Results[0].Status)
 			require.NotZero(t, (*gotResp).Results[0].UID)
 			require.NotNil(t, (*gotResp).Results[0].Type)
+			if tt.args.query != nil {
+				if tt.args.query.Limit != 0 {
+					require.Equal(t, tt.args.query.Limit, (*gotResp).Limit)
+				} else {
+					require.Equal(t, int64(20), (*gotResp).Limit)
+				}
+				if tt.args.query.From != 0 {
+					require.Equal(t, tt.args.query.From, (*gotResp).From)
+				}
+			}
 		})
 	}
 }
@@ -727,7 +794,7 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 	type args struct {
 		UID      string
 		client   *Client
-		taskID   *Task
+		taskUID  *Task
 		document []docTest
 	}
 	tests := []struct {
@@ -740,7 +807,7 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 			args: args{
 				UID:    "TestDefaultWaitForTask",
 				client: defaultClient,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 0,
 				},
 				document: []docTest{
@@ -756,7 +823,7 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 			args: args{
 				UID:    "TestDefaultWaitForTaskWithCustomClient",
 				client: customClient,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 0,
 				},
 				document: []docTest{
@@ -776,7 +843,7 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 			task, err := c.Index(tt.args.UID).AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			gotTask, err := c.WaitForTask(task)
+			gotTask, err := c.WaitForTask(task.TaskUID)
 			require.NoError(t, err)
 			require.Equal(t, tt.want, gotTask.Status)
 		})
@@ -789,7 +856,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 		client   *Client
 		interval time.Duration
 		timeout  time.Duration
-		taskID   *Task
+		taskUID  *Task
 		document []docTest
 	}
 	tests := []struct {
@@ -804,7 +871,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 				client:   defaultClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 0,
 				},
 				document: []docTest{
@@ -822,7 +889,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 				client:   customClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 0,
 				},
 				document: []docTest{
@@ -840,7 +907,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 				client:   defaultClient,
 				interval: time.Millisecond * 10,
 				timeout:  time.Second * 5,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 1,
 				},
 				document: []docTest{
@@ -858,7 +925,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 				client:   defaultClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Millisecond * 10,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 1,
 				},
 				document: []docTest{
@@ -881,7 +948,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
 			defer cancelFunc()
 
-			gotTask, err := c.WaitForTask(task, WaitParams{Context: ctx, Interval: tt.args.interval})
+			gotTask, err := c.WaitForTask(task.TaskUID, WaitParams{Context: ctx, Interval: tt.args.interval})
 			if tt.args.timeout < tt.args.interval {
 				require.Error(t, err)
 			} else {

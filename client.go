@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt"
@@ -51,9 +52,9 @@ type ClientInterface interface {
 	GetVersion() (resp *Version, err error)
 	Health() (*Health, error)
 	IsHealthy() bool
-	GetTask(taskID int64) (resp *Task, err error)
-	GetTasks() (resp *ResultTask, err error)
-	WaitForTask(task *Task, options ...WaitParams) (*Task, error)
+	GetTask(taskUID int64) (resp *Task, err error)
+	GetTasks(param *TasksQuery) (resp *TaskResult, err error)
+	WaitForTask(taskUID int64, options ...WaitParams) (*Task, error)
 	GenerateTenantToken(searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
 }
 
@@ -257,10 +258,10 @@ func (c *Client) GetDumpStatus(dumpUID string) (resp *Dump, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetTask(taskID int64) (resp *Task, err error) {
+func (c *Client) GetTask(taskUID int64) (resp *Task, err error) {
 	resp = &Task{}
 	req := internalRequest{
-		endpoint:            "/tasks/" + strconv.FormatInt(taskID, 10),
+		endpoint:            "/tasks/" + strconv.FormatInt(taskUID, 10),
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
@@ -273,15 +274,31 @@ func (c *Client) GetTask(taskID int64) (resp *Task, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetTasks() (resp *ResultTask, err error) {
-	resp = &ResultTask{}
+func (c *Client) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
+	resp = &TaskResult{}
 	req := internalRequest{
 		endpoint:            "/tasks",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetTasks",
+	}
+	if param != nil && param.Limit != 0 {
+		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+	}
+	if param != nil && param.From != 0 {
+		req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
+	}
+	if param != nil && param.Status != "" {
+		req.withQueryParams["status"] = param.Status
+	}
+	if param != nil && param.Type != "" {
+		req.withQueryParams["type"] = param.Type
+	}
+	if param != nil && len(param.IndexUID) != 0 {
+		req.withQueryParams["indexUid"] = strings.Join(param.IndexUID, ",")
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
@@ -295,7 +312,7 @@ func (c *Client) GetTasks() (resp *ResultTask, err error) {
 // the TaskStatus.
 // If no ctx and interval are provided WaitForTask will check each 50ms the
 // status of a task.
-func (c *Client) WaitForTask(task *Task, options ...WaitParams) (*Task, error) {
+func (c *Client) WaitForTask(taskUID int64, options ...WaitParams) (*Task, error) {
 	if options == nil {
 		ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
 		defer cancelFunc()
@@ -310,7 +327,7 @@ func (c *Client) WaitForTask(task *Task, options ...WaitParams) (*Task, error) {
 		if err := options[0].Context.Err(); err != nil {
 			return nil, err
 		}
-		getTask, err := c.GetTask(task.UID)
+		getTask, err := c.GetTask(taskUID)
 		if err != nil {
 			return nil, err
 		}

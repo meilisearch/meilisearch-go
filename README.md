@@ -99,11 +99,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(task.taskID)
+	fmt.Println(task.taskUID)
 }
 ```
 
-With the `taskID`, you can check the status (`enqueued`, `processing`, `succeeded` or `failed`) of your documents addition using the [task endpoint](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html#task-status).
+With the `taskUID`, you can check the status (`enqueued`, `processing`, `succeeded` or `failed`) of your documents addition using the [task endpoint](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html#task-status).
 
 #### Basic Search <!-- omit in toc -->
 

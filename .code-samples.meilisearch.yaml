@@ -62,11 +62,11 @@ search_post_1: |-
 get_task_1: |-
   client.GetTask(1);
 get_all_tasks_1: |-
-  client.GetTasks();
+  client.GetTasks(nil);
 get_task_by_index_1: |-
   client.Index("movies").GetTask(1)
 get_all_tasks_by_index_1: |-
-  client.Index("movies").GetTasks()
+  client.Index("movies").GetTasks(nil)
 get_one_key_1: |-
   client.GetKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4")
 get_keys_1: |-
