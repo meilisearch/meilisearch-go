@@ -165,8 +165,8 @@ type TenantTokenOptions struct {
 
 // Custom Claims structure to create a Tenant Token
 type TenantTokenClaims struct {
-	APIKeyPrefix string      `json:"apiKeyPrefix"`
-	SearchRules  interface{} `json:"searchRules"`
+	APIKeyUID   string      `json:"apiKeyUid"`
+	SearchRules interface{} `json:"searchRules"`
 	jwt.StandardClaims
 }
 

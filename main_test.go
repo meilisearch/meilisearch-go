@@ -90,6 +90,19 @@ func GetPrivateKey() (key string) {
 	return ""
 }
 
+func GetPrivateUIDKey() (key string) {
+	list, err := defaultClient.GetKeys(nil)
+	if err != nil {
+		return ""
+	}
+	for _, key := range list.Results {
+		if strings.Contains(key.Name, "Default Admin API Key") || (key.Description == "") {
+			return key.UID
+		}
+	}
+	return ""
+}
+
 func SetUpEmptyIndex(index *IndexConfig) (resp *Index, err error) {
 	client := NewClient(ClientConfig{
 		Host:   "http://localhost:7700",
