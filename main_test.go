@@ -24,7 +24,7 @@ type docTestBooks struct {
 }
 
 func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
-	list, err := client.GetAllIndexes()
+	list, err := client.GetAllIndexes(nil)
 	if err != nil {
 		return false, err
 	}
