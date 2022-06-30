@@ -29,7 +29,7 @@ func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
 		return false, err
 	}
 
-	for _, index := range list {
+	for _, index := range list.Results {
 		task, _ := client.DeleteIndex(index.UID)
 		_, err := client.WaitForTask(task)
 		if err != nil {

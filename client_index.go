@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"net/http"
+	"strconv"
 )
 
 func (c *Client) Index(uid string) *Index {
