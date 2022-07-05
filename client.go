@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
 	"time"
 
@@ -53,7 +54,7 @@ type ClientInterface interface {
 	GetTask(taskID int64) (resp *Task, err error)
 	GetTasks() (resp *ResultTask, err error)
 	WaitForTask(task *Task, options ...WaitParams) (*Task, error)
-	GenerateTenantToken(searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
+	GenerateTenantToken(APIKeyUID string, searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
 }
 
 var _ ClientInterface = &Client{}
@@ -333,13 +334,16 @@ func (c *Client) WaitForTask(task *Task, options ...WaitParams) (*Task, error) {
 // accessible indexes for the signing API Key.
 // ExpiresAt options is a time.Time when the key will expire. Note that if an ExpiresAt value is included it should be in UTC time.
 // ApiKey options is the API key parent of the token. If you leave it empty the client API Key will be used.
-func (c *Client) GenerateTenantToken(SearchRules map[string]interface{}, Options *TenantTokenOptions) (resp string, err error) {
+func (c *Client) GenerateTenantToken(APIKeyUID string, SearchRules map[string]interface{}, Options *TenantTokenOptions) (resp string, err error) {
 	// Validate the arguments
 	if SearchRules == nil {
 		return "", fmt.Errorf("GenerateTenantToken: The search rules added in the token generation must be of type array or object")
 	}
 	if (Options == nil || Options.APIKey == "") && c.config.APIKey == "" {
 		return "", fmt.Errorf("GenerateTenantToken: The API key used for the token generation must exist and be a valid Meilisearch key")
+	}
+	if APIKeyUID == "" || !IsValidUUID(APIKeyUID) {
+		return "", fmt.Errorf("GenerateTenantToken: The uid used for the token generation must exist and comply to uuid4 format")
 	}
 	if Options != nil && !Options.ExpiresAt.IsZero() && Options.ExpiresAt.Before(time.Now()) {
 		return "", fmt.Errorf("GenerateTenantToken: When the expiresAt field in the token generation has a value, it must be a date set in the future")
@@ -362,7 +366,7 @@ func (c *Client) GenerateTenantToken(SearchRules map[string]interface{}, Options
 			ExpiresAt: Options.ExpiresAt.Unix(),
 		}
 	}
-	claims.APIKeyPrefix = secret[:8]
+	claims.APIKeyUID = APIKeyUID
 	claims.SearchRules = SearchRules
 
 	// Create a new token object, specifying signing method and the claims
@@ -388,4 +392,9 @@ func convertKeyToParsedKey(key Key) (resp KeyParsed) {
 		resp.ExpiresAt = &timeParsedToString
 	}
 	return resp
+}
+
+func IsValidUUID(uuid string) bool {
+	r := regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
+	return r.MatchString(uuid)
 }

@@ -887,8 +887,9 @@ func TestClient_ConnectionCloseByServer(t *testing.T) {
 
 func TestClient_GenerateTenantToken(t *testing.T) {
 	type args struct {
-		UID         string
+		IndexUID    string
 		client      *Client
+		APIKeyUID   string
 		searchRules map[string]interface{}
 		options     *TenantTokenOptions
 		filter      []string
@@ -902,8 +903,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestDefaultGenerateTenantToken",
 			args: args{
-				UID:    "TestDefaultGenerateTenantToken",
-				client: privateClient,
+				IndexUID:  "TestDefaultGenerateTenantToken",
+				client:    privateClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -916,8 +918,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithApiKey",
 			args: args{
-				UID:    "TestGenerateTenantTokenWithApiKey",
-				client: defaultClient,
+				IndexUID:  "TestGenerateTenantTokenWithApiKey",
+				client:    defaultClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -932,8 +935,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithOnlyExpiresAt",
 			args: args{
-				UID:    "TestGenerateTenantTokenWithOnlyExpiresAt",
-				client: privateClient,
+				IndexUID:  "TestGenerateTenantTokenWithOnlyExpiresAt",
+				client:    privateClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -948,8 +952,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
 			args: args{
-				UID:    "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
-				client: defaultClient,
+				IndexUID:  "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
+				client:    defaultClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -965,8 +970,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithFilters",
 			args: args{
-				UID:    "indexUID",
-				client: privateClient,
+				IndexUID:  "indexUID",
+				client:    privateClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{
 						"filter": "book_id > 1000",
@@ -983,8 +989,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithFilterOnOneINdex",
 			args: args{
-				UID:    "indexUID",
-				client: privateClient,
+				IndexUID:  "indexUID",
+				client:    privateClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"indexUID": map[string]string{
 						"filter": "year > 2000",
@@ -1001,8 +1008,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithoutSearchRules",
 			args: args{
-				UID:         "TestGenerateTenantTokenWithoutSearchRules",
+				IndexUID:    "TestGenerateTenantTokenWithoutSearchRules",
 				client:      privateClient,
+				APIKeyUID:   GetPrivateUIDKey(),
 				searchRules: nil,
 				options:     nil,
 				filter:      nil,
@@ -1013,11 +1021,12 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithoutApiKey",
 			args: args{
-				UID: "TestGenerateTenantTokenWithoutApiKey",
+				IndexUID: "TestGenerateTenantTokenWithoutApiKey",
 				client: NewClient(ClientConfig{
 					Host:   "http://localhost:7700",
 					APIKey: "",
 				}),
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -1030,8 +1039,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithBadExpiresAt",
 			args: args{
-				UID:    "TestGenerateTenantTokenWithBadExpiresAt",
-				client: defaultClient,
+				IndexUID:  "TestGenerateTenantTokenWithBadExpiresAt",
+				client:    defaultClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -1043,13 +1053,43 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 			wantErr:    true,
 			wantFilter: false,
 		},
+		{
+			name: "TestGenerateTenantTokenWithBadAPIKeyUID",
+			args: args{
+				IndexUID:  "TestGenerateTenantTokenWithBadAPIKeyUID",
+				client:    defaultClient,
+				APIKeyUID: GetPrivateUIDKey() + "1234",
+				searchRules: map[string]interface{}{
+					"*": map[string]string{},
+				},
+				options: nil,
+				filter:  nil,
+			},
+			wantErr:    true,
+			wantFilter: false,
+		},
+		{
+			name: "TestGenerateTenantTokenWithEmptyAPIKeyUID",
+			args: args{
+				IndexUID:  "TestGenerateTenantTokenWithEmptyAPIKeyUID",
+				client:    defaultClient,
+				APIKeyUID: "",
+				searchRules: map[string]interface{}{
+					"*": map[string]string{},
+				},
+				options: nil,
+				filter:  nil,
+			},
+			wantErr:    true,
+			wantFilter: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			token, err := c.GenerateTenantToken(tt.args.searchRules, tt.args.options)
+			token, err := c.GenerateTenantToken(tt.args.APIKeyUID, tt.args.searchRules, tt.args.options)
 
 			if tt.wantErr {
 				require.Error(t, err)
@@ -1057,11 +1097,11 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 				require.NoError(t, err)
 
 				if tt.wantFilter {
-					gotTask, err := c.Index(tt.args.UID).UpdateFilterableAttributes(&tt.args.filter)
+					gotTask, err := c.Index(tt.args.IndexUID).UpdateFilterableAttributes(&tt.args.filter)
 					require.NoError(t, err, "UpdateFilterableAttributes() in TestGenerateTenantToken error should be nil")
-					testWaitForTask(t, c.Index(tt.args.UID), gotTask)
+					testWaitForTask(t, c.Index(tt.args.IndexUID), gotTask)
 				} else {
-					_, err := SetUpEmptyIndex(&IndexConfig{Uid: tt.args.UID})
+					_, err := SetUpEmptyIndex(&IndexConfig{Uid: tt.args.IndexUID})
 					require.NoError(t, err, "CreateIndex() in TestGenerateTenantToken error should be nil")
 				}
 
@@ -1070,7 +1110,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 					APIKey: token,
 				})
 
-				_, err = client.Index(tt.args.UID).Search("", &SearchRequest{})
+				_, err = client.Index(tt.args.IndexUID).Search("", &SearchRequest{})
 
 				require.NoError(t, err)
 			}
