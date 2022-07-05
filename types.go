@@ -26,6 +26,19 @@ type Index struct {
 	client     *Client
 }
 
+// Return of multiple indexes is wrap in a IndexesResults
+type IndexesResults struct {
+	Results []Index `json:"results"`
+	Offset  int64   `json:"offset"`
+	Limit   int64   `json:"limit"`
+	Total   int64   `json:"total"`
+}
+
+type IndexesQuery struct {
+	Limit  int64 `json:"limit,omitempty"`
+	Offset int64 `json:"offset,omitempty"`
+}
+
 // Settings is the type that represents the settings in Meilisearch
 type Settings struct {
 	RankingRules         []string            `json:"rankingRules,omitempty"`

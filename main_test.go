@@ -24,12 +24,12 @@ type docTestBooks struct {
 }
 
 func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
-	list, err := client.GetAllIndexes()
+	list, err := client.GetAllIndexes(nil)
 	if err != nil {
 		return false, err
 	}
 
-	for _, index := range list {
+	for _, index := range list.Results {
 		task, _ := client.DeleteIndex(index.UID)
 		_, err := client.WaitForTask(task)
 		if err != nil {

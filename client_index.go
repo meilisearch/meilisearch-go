@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"net/http"
+	"strconv"
 )
 
 func (c *Client) Index(uid string) *Index {
@@ -49,15 +50,22 @@ func (c *Client) CreateIndex(config *IndexConfig) (resp *Task, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetAllIndexes() (resp []*Index, err error) {
-	resp = []*Index{}
+func (c *Client) GetAllIndexes(param *IndexesQuery) (resp *IndexesResults, err error) {
+	resp = &IndexesResults{}
 	req := internalRequest{
 		endpoint:            "/indexes",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetAllIndexes",
+	}
+	if param != nil && param.Limit != 0 {
+		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+	}
+	if param != nil && param.Offset != 0 {
+		req.withQueryParams["offset"] = strconv.FormatInt(param.Offset, 10)
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
@@ -65,15 +73,22 @@ func (c *Client) GetAllIndexes() (resp []*Index, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetAllRawIndexes() (resp []map[string]interface{}, err error) {
-	resp = []map[string]interface{}{}
+func (c *Client) GetAllRawIndexes(param *IndexesQuery) (resp map[string]interface{}, err error) {
+	resp = map[string]interface{}{}
 	req := internalRequest{
 		endpoint:            "/indexes",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetAllRawIndexes",
+	}
+	if param != nil && param.Limit != 0 {
+		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+	}
+	if param != nil && param.Offset != 0 {
+		req.withQueryParams["offset"] = strconv.FormatInt(param.Offset, 10)
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err

@@ -35,8 +35,8 @@ type ClientInterface interface {
 	Index(uid string) *Index
 	GetIndex(indexID string) (resp *Index, err error)
 	GetRawIndex(uid string) (resp map[string]interface{}, err error)
-	GetAllIndexes() (resp []*Index, err error)
-	GetAllRawIndexes() (resp []map[string]interface{}, err error)
+	GetAllIndexes(param *IndexesQuery) (resp *IndexesResults, err error)
+	GetAllRawIndexes(param *IndexesQuery) (resp map[string]interface{}, err error)
 	CreateIndex(config *IndexConfig) (resp *Task, err error)
 	DeleteIndex(uid string) (resp *Task, err error)
 	CreateKey(request *Key) (resp *Key, err error)
