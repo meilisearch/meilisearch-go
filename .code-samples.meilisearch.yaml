@@ -6,7 +6,7 @@
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
-  client.GetAllIndexes()
+  client.GetAllIndexes(nil)
 create_an_index_1: |-
   client.CreateIndex(&meilisearch.IndexConfig{
     Uid: "movies",
@@ -23,7 +23,7 @@ get_one_document_1: |-
   client.Index("movies").GetDocument("25684", &a)
 get_documents_1: |-
   var a []interface{}
-  client.Index("movies").GetDocuments(&meilisearch.DocumentsRequest{
+  client.Index("movies").GetDocuments(nil, &meilisearch.DocumentsRequest{
     Limit: 2,
   }, &a)
 add_or_replace_documents_1: |-
@@ -70,7 +70,7 @@ get_all_tasks_by_index_1: |-
 get_one_key_1: |-
   client.GetKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4")
 get_keys_1: |-
-  client.GetKeys()
+  client.GetKeys(nil)
 create_a_key_1: |-
   client.CreateKey(&meilisearch.Key{
     Description: "Add documents: Products API key",
@@ -591,8 +591,6 @@ faceted_search_walkthrough_filter_1: |-
   })
 post_dump_1: |-
   resp, err := client.CreateDump()
-get_dump_status_1: |-
-  resp, err := client.GetDumpStatus("dump-uid")
 phrase_search_1: |-
   resp, err := client.Index("movies").Search("\"african american\" horror", &meilisearch.SearchRequest{})
 sorting_guide_update_sortable_attributes_1: |-
@@ -710,7 +708,7 @@ security_guide_list_keys_1: |-
     Host: "http://127.0.0.1:7700",
     APIKey: "masterKey",
   })
-  client.GetKeys();
+  client.GetKeys(nil);
 security_guide_delete_key_1: |-
   client := meilisearch.NewClient(meilisearch.ClientConfig{
     Host: "http://127.0.0.1:7700",
@@ -722,7 +720,7 @@ authorization_header_1: |-
     Host: "http://127.0.0.1:7700",
     APIKey: "masterKey",
   })
-  client.GetKeys();
+  client.GetKeys(nil);
 tenant_token_guide_generate_sdk_1: |-
   searchRules := map[string]interface{}{
     "patient_medical_records": map[string]string{

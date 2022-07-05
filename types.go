@@ -26,6 +26,19 @@ type Index struct {
 	client     *Client
 }
 
+// Return of multiple indexes is wrap in a IndexesResults
+type IndexesResults struct {
+	Results []Index `json:"results"`
+	Offset  int64   `json:"offset"`
+	Limit   int64   `json:"limit"`
+	Total   int64   `json:"total"`
+}
+
+type IndexesQuery struct {
+	Limit  int64 `json:"limit,omitempty"`
+	Offset int64 `json:"offset,omitempty"`
+}
+
 // Settings is the type that represents the settings in Meilisearch
 type Settings struct {
 	RankingRules         []string            `json:"rankingRules,omitempty"`
@@ -143,8 +156,10 @@ type TaskResult struct {
 //
 // Documentation: https://docs.meilisearch.com/learn/advanced/security.html#protecting-a-meilisearch-instance
 type Key struct {
+	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Key         string    `json:"key,omitempty"`
+	UID         string    `json:"uid,omitempty"`
 	Actions     []string  `json:"actions,omitempty"`
 	Indexes     []string  `json:"indexes,omitempty"`
 	CreatedAt   time.Time `json:"createdAt,omitempty"`
@@ -154,6 +169,7 @@ type Key struct {
 
 // This structure is used to send the exact ISO-8601 time format managed by Meilisearch
 type KeyParsed struct {
+	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Key         string    `json:"key,omitempty"`
 	Actions     []string  `json:"actions,omitempty"`
@@ -163,8 +179,23 @@ type KeyParsed struct {
 	ExpiresAt   *string   `json:"expiresAt"`
 }
 
-type ResultKey struct {
+// This structure is used to update a Key
+type KeyUpdate struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
+// Return of multiple keys is wrap in a KeysResults
+type KeysResults struct {
 	Results []Key `json:"results"`
+	Offset  int64 `json:"offset"`
+	Limit   int64 `json:"limit"`
+	Total   int64 `json:"total"`
+}
+
+type KeysQuery struct {
+	Limit  int64 `json:"limit,omitempty"`
+	Offset int64 `json:"offset,omitempty"`
 }
 
 // Information to create a tenant token
@@ -179,8 +210,8 @@ type TenantTokenOptions struct {
 
 // Custom Claims structure to create a Tenant Token
 type TenantTokenClaims struct {
-	APIKeyPrefix string      `json:"apiKeyPrefix"`
-	SearchRules  interface{} `json:"searchRules"`
+	APIKeyUID   string      `json:"apiKeyUid"`
+	SearchRules interface{} `json:"searchRules"`
 	jwt.StandardClaims
 }
 
@@ -248,11 +279,18 @@ type SearchResponse struct {
 	FacetDistribution  interface{}   `json:"facetDistribution,omitempty"`
 }
 
-// DocumentsRequest is the request body for list documents method
-type DocumentsRequest struct {
-	Offset               int64    `json:"offset,omitempty"`
-	Limit                int64    `json:"limit,omitempty"`
-	AttributesToRetrieve []string `json:"attributesToRetrieve,omitempty"`
+// DocumentsQuery is the request body for list documents method
+type DocumentsQuery struct {
+	Offset int64    `json:"offset,omitempty"`
+	Limit  int64    `json:"limit,omitempty"`
+	Fields []string `json:"fields,omitempty"`
+}
+
+type DocumentsResult struct {
+	Results []map[string]interface{} `json:"results"`
+	Limit   int64                    `json:"limit"`
+	Offset  int64                    `json:"offset"`
+	Total   int64                    `json:"total"`
 }
 
 // RawType is an alias for raw byte[]

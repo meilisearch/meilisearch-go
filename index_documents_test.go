@@ -19,10 +19,14 @@ func TestIndex_AddDocuments(t *testing.T) {
 		client       *Client
 		documentsPtr interface{}
 	}
+	type resp struct {
+		wantResp     *Task
+		documentsRes DocumentsResult
+	}
 	tests := []struct {
 		name          string
 		args          args
-		wantResp      *Task
+		resp          resp
 		expectedError Error
 	}{
 		{
@@ -34,10 +38,20 @@ func TestIndex_AddDocuments(t *testing.T) {
 					{"ID": "123", "Name": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"ID": "123", "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
 			},
 		},
 		{
@@ -49,10 +63,20 @@ func TestIndex_AddDocuments(t *testing.T) {
 					{"ID": "123", "Name": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"ID": "123", "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
 			},
 		},
 		{
@@ -66,10 +90,22 @@ func TestIndex_AddDocuments(t *testing.T) {
 					{"ID": "456", "Name": "Le Petit Prince"},
 				},
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"ID": "1", "Name": "Alice In Wonderland"},
+						{"ID": "123", "Name": "Pride and Prejudice"},
+						{"ID": "456", "Name": "Le Petit Prince"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  3,
+				},
 			},
 		},
 		{
@@ -81,10 +117,20 @@ func TestIndex_AddDocuments(t *testing.T) {
 					{"BookID": float64(123), "Title": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"BookID": float64(123), "Title": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
 			},
 		},
 		{
@@ -96,10 +142,20 @@ func TestIndex_AddDocuments(t *testing.T) {
 					{"BookID": float64(123), "Title": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"BookID": float64(123), "Title": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
 			},
 		},
 		{
@@ -113,10 +169,22 @@ func TestIndex_AddDocuments(t *testing.T) {
 					{"BookID": float64(456), "Title": "Le Petit Prince", "Tag": "Conte"},
 				},
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"BookID": float64(1), "Title": "Alice In Wonderland"},
+						{"BookID": float64(123), "Title": "Pride and Prejudice"},
+						{"BookID": float64(456), "Title": "Le Petit Prince", "Tag": "Conte"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  3,
+				},
 			},
 		},
 	}
@@ -127,20 +195,20 @@ func TestIndex_AddDocuments(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr)
-			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
-			require.Equal(t, gotResp.Status, tt.wantResp.Status)
-			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
+			require.Equal(t, gotResp.Status, tt.resp.wantResp.Status)
+			require.Equal(t, gotResp.Type, tt.resp.wantResp.Type)
 			require.Equal(t, gotResp.IndexUID, tt.args.UID)
 			require.NotZero(t, gotResp.EnqueuedAt)
 			require.NoError(t, err)
 
 			testWaitForTask(t, i, gotResp)
-			var documents []map[string]interface{}
-			err = i.GetDocuments(&DocumentsRequest{
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{
 				Limit: 3,
 			}, &documents)
 			require.NoError(t, err)
-			require.Equal(t, tt.args.documentsPtr, documents)
+			require.Equal(t, tt.resp.documentsRes, documents)
 		})
 	}
 }
@@ -152,10 +220,15 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 		documentsPtr interface{}
 		primaryKey   string
 	}
+	type resp struct {
+		wantResp     *Task
+		documentsRes DocumentsResult
+	}
 	tests := []struct {
-		name     string
-		args     args
-		wantResp *Task
+		name          string
+		args          args
+		resp          resp
+		expectedError Error
 	}{
 		{
 			name: "TestIndexBasicAddDocumentsWithPrimaryKey",
@@ -167,10 +240,20 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				},
 				primaryKey: "key",
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"key": "123", "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
 			},
 		},
 		{
@@ -183,10 +266,20 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				},
 				primaryKey: "key",
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"key": "123", "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
 			},
 		},
 		{
@@ -201,10 +294,22 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				},
 				primaryKey: "key",
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"key": "1", "Name": "Alice In Wonderland"},
+						{"key": "123", "Name": "Pride and Prejudice"},
+						{"key": "456", "Name": "Le Petit Prince"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  3,
+				},
 			},
 		},
 		{
@@ -217,10 +322,20 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				},
 				primaryKey: "key",
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"key": float64(123), "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
 			},
 		},
 		{
@@ -235,10 +350,22 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				},
 				primaryKey: "key",
 			},
-			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+			resp: resp{
+				wantResp: &Task{
+					TaskUID:    0,
+					Status: "enqueued",
+					Type:   "documentAdditionOrUpdate",
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"key": float64(1), "Name": "Alice In Wonderland"},
+						{"key": float64(123), "Name": "Pride and Prejudice"},
+						{"key": float64(456), "Name": "Le Petit Prince"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  3,
+				},
 			},
 		},
 	}
@@ -249,19 +376,19 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr, tt.args.primaryKey)
-			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
-			require.Equal(t, gotResp.Status, tt.wantResp.Status)
-			require.Equal(t, gotResp.Type, tt.wantResp.Type)
-			require.Equal(t, gotResp.IndexUID, tt.args.UID)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
+			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.resp.wantResp.Type, gotResp.Type)
+			require.Equal(t, tt.args.UID, gotResp.IndexUID)
 			require.NotZero(t, gotResp.EnqueuedAt)
 			require.NoError(t, err)
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents []map[string]interface{}
-			err = i.GetDocuments(&DocumentsRequest{Limit: 3}, &documents)
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{Limit: 3}, &documents)
 			require.NoError(t, err)
-			require.Equal(t, tt.args.documentsPtr, documents)
+			require.Equal(t, tt.resp.documentsRes, documents)
 		})
 	}
 }
@@ -1197,6 +1324,85 @@ func TestIndex_GetDocument(t *testing.T) {
 				require.NoError(t, err)
 				require.NotEmpty(t, tt.args.documentPtr)
 				require.Equal(t, strconv.Itoa(tt.args.documentPtr.BookID), tt.args.identifier)
+			}
+		})
+	}
+}
+
+func TestIndex_GetDocuments(t *testing.T) {
+	type args struct {
+		UID     string
+		client  *Client
+		request *DocumentsQuery
+		resp    *DocumentsResult
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "TestIndexBasicGetDocuments",
+			args: args{
+				UID:     "TestIndexBasicGetDocuments",
+				client:  defaultClient,
+				request: nil,
+				resp:    &DocumentsResult{},
+			},
+		},
+		{
+			name: "TestIndexGetDocumentsWithCustomClient",
+			args: args{
+				UID:     "TestIndexGetDocumentsWithCustomClient",
+				client:  customClient,
+				request: nil,
+				resp:    &DocumentsResult{},
+			},
+		},
+		{
+			name: "TestIndexGetDocumentsWithEmptyStruct",
+			args: args{
+				UID:     "TestIndexGetDocumentsWithNoExistingDocument",
+				client:  defaultClient,
+				request: &DocumentsQuery{},
+				resp:    &DocumentsResult{},
+			},
+		},
+		{
+			name: "TestIndexGetDocumentsWithLimit",
+			args: args{
+				UID:    "TestIndexGetDocumentsWithNoExistingDocument",
+				client: defaultClient,
+				request: &DocumentsQuery{
+					Limit: 3,
+				},
+				resp: &DocumentsResult{},
+			},
+		},
+		{
+			name: "TestIndexGetDocumentsWithLimit",
+			args: args{
+				UID:    "TestIndexGetDocumentsWithNoExistingDocument",
+				client: defaultClient,
+				request: &DocumentsQuery{
+					Fields: []string{"title"},
+				},
+				resp: &DocumentsResult{},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+			SetUpBasicIndex(tt.args.UID)
+
+			err := i.GetDocuments(tt.args.request, tt.args.resp)
+			require.NoError(t, err)
+			if tt.args.request != nil && tt.args.request.Limit != 0 {
+				require.Equal(t, tt.args.request.Limit, int64(len(tt.args.resp.Results)))
+			} else {
+				require.Equal(t, 6, len(tt.args.resp.Results))
 			}
 		})
 	}

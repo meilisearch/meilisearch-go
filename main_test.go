@@ -24,12 +24,12 @@ type docTestBooks struct {
 }
 
 func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
-	list, err := client.GetAllIndexes()
+	list, err := client.GetAllIndexes(nil)
 	if err != nil {
 		return false, err
 	}
 
-	for _, index := range list {
+	for _, index := range list.Results {
 		task, _ := client.DeleteIndex(index.UID)
 		_, err := client.WaitForTask(task.TaskUID)
 		if err != nil {
@@ -41,7 +41,7 @@ func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
 }
 
 func deleteAllKeys(client ClientInterface) (ok bool, err error) {
-	list, err := client.GetKeys()
+	list, err := client.GetKeys(nil)
 	if err != nil {
 		return false, err
 	}
@@ -78,13 +78,26 @@ func testWaitForBatchTask(t *testing.T, i *Index, u []Task) {
 }
 
 func GetPrivateKey() (key string) {
-	list, err := defaultClient.GetKeys()
+	list, err := defaultClient.GetKeys(nil)
 	if err != nil {
 		return ""
 	}
 	for _, key := range list.Results {
-		if strings.Contains(key.Description, "Admin API Key") || (key.Description == "") {
+		if strings.Contains(key.Name, "Default Admin API Key") || (key.Description == "") {
 			return key.Key
+		}
+	}
+	return ""
+}
+
+func GetPrivateUIDKey() (key string) {
+	list, err := defaultClient.GetKeys(nil)
+	if err != nil {
+		return ""
+	}
+	for _, key := range list.Results {
+		if strings.Contains(key.Name, "Default Admin API Key") || (key.Description == "") {
+			return key.UID
 		}
 	}
 	return ""

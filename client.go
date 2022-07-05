@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"regexp"
 	"strconv"
 	"strings"
 	"time"
@@ -36,18 +37,17 @@ type ClientInterface interface {
 	Index(uid string) *Index
 	GetIndex(indexID string) (resp *Index, err error)
 	GetRawIndex(uid string) (resp map[string]interface{}, err error)
-	GetAllIndexes() (resp []*Index, err error)
-	GetAllRawIndexes() (resp []map[string]interface{}, err error)
+	GetAllIndexes(param *IndexesQuery) (resp *IndexesResults, err error)
+	GetAllRawIndexes(param *IndexesQuery) (resp map[string]interface{}, err error)
 	CreateIndex(config *IndexConfig) (resp *Task, err error)
 	DeleteIndex(uid string) (resp *Task, err error)
 	CreateKey(request *Key) (resp *Key, err error)
 	GetKey(identifier string) (resp *Key, err error)
-	GetKeys() (resp *ResultKey, err error)
-	UpdateKey(identifier string, request *Key) (resp *Key, err error)
-	DeleteKey(identifier string) (resp bool, err error)
+	GetKeys(param *KeysQuery) (resp *KeysResults, err error)
+	UpdateKey(keyOrUID string, request *Key) (resp *Key, err error)
+	DeleteKey(keyOrUID string) (resp bool, err error)
 	GetAllStats() (resp *Stats, err error)
-	CreateDump() (resp *Dump, err error)
-	GetDumpStatus(dumpUID string) (resp *Dump, err error)
+	CreateDump() (resp *Task, err error)
 	Version() (*Version, error)
 	GetVersion() (resp *Version, err error)
 	Health() (*Health, error)
@@ -55,7 +55,7 @@ type ClientInterface interface {
 	GetTask(taskUID int64) (resp *Task, err error)
 	GetTasks(param *TasksQuery) (resp *TaskResult, err error)
 	WaitForTask(taskUID int64, options ...WaitParams) (*Task, error)
-	GenerateTenantToken(searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
+  GenerateTenantToken(APIKeyUID string, searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
 }
 
 var _ ClientInterface = &Client{}
@@ -153,15 +153,22 @@ func (c *Client) GetKey(identifier string) (resp *Key, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetKeys() (resp *ResultKey, err error) {
-	resp = &ResultKey{}
+func (c *Client) GetKeys(param *KeysQuery) (resp *KeysResults, err error) {
+	resp = &KeysResults{}
 	req := internalRequest{
 		endpoint:            "/keys",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
+		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetKeys",
+	}
+	if param != nil && param.Limit != 0 {
+		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+	}
+	if param != nil && param.Offset != 0 {
+		req.withQueryParams["offset"] = strconv.FormatInt(param.Offset, 10)
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
@@ -169,11 +176,11 @@ func (c *Client) GetKeys() (resp *ResultKey, err error) {
 	return resp, nil
 }
 
-func (c *Client) UpdateKey(identifier string, request *Key) (resp *Key, err error) {
-	parsedRequest := convertKeyToParsedKey(*request)
+func (c *Client) UpdateKey(keyOrUID string, request *Key) (resp *Key, err error) {
+	parsedRequest := KeyUpdate{Name: request.Name, Description: request.Description}
 	resp = &Key{}
 	req := internalRequest{
-		endpoint:            "/keys/" + identifier,
+		endpoint:            "/keys/" + keyOrUID,
 		method:              http.MethodPatch,
 		contentType:         contentTypeJSON,
 		withRequest:         &parsedRequest,
@@ -187,9 +194,9 @@ func (c *Client) UpdateKey(identifier string, request *Key) (resp *Key, err erro
 	return resp, nil
 }
 
-func (c *Client) DeleteKey(identifier string) (resp bool, err error) {
+func (c *Client) DeleteKey(keyOrUID string) (resp bool, err error) {
 	req := internalRequest{
-		endpoint:            "/keys/" + identifier,
+		endpoint:            "/keys/" + keyOrUID,
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        nil,
@@ -225,8 +232,8 @@ func (c *Client) IsHealthy() bool {
 	return true
 }
 
-func (c *Client) CreateDump() (resp *Dump, err error) {
-	resp = &Dump{}
+func (c *Client) CreateDump() (resp *Task, err error) {
+	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/dumps",
 		method:              http.MethodPost,
@@ -344,13 +351,16 @@ func (c *Client) WaitForTask(taskUID int64, options ...WaitParams) (*Task, error
 // accessible indexes for the signing API Key.
 // ExpiresAt options is a time.Time when the key will expire. Note that if an ExpiresAt value is included it should be in UTC time.
 // ApiKey options is the API key parent of the token. If you leave it empty the client API Key will be used.
-func (c *Client) GenerateTenantToken(SearchRules map[string]interface{}, Options *TenantTokenOptions) (resp string, err error) {
+func (c *Client) GenerateTenantToken(APIKeyUID string, SearchRules map[string]interface{}, Options *TenantTokenOptions) (resp string, err error) {
 	// Validate the arguments
 	if SearchRules == nil {
 		return "", fmt.Errorf("GenerateTenantToken: The search rules added in the token generation must be of type array or object")
 	}
 	if (Options == nil || Options.APIKey == "") && c.config.APIKey == "" {
 		return "", fmt.Errorf("GenerateTenantToken: The API key used for the token generation must exist and be a valid Meilisearch key")
+	}
+	if APIKeyUID == "" || !IsValidUUID(APIKeyUID) {
+		return "", fmt.Errorf("GenerateTenantToken: The uid used for the token generation must exist and comply to uuid4 format")
 	}
 	if Options != nil && !Options.ExpiresAt.IsZero() && Options.ExpiresAt.Before(time.Now()) {
 		return "", fmt.Errorf("GenerateTenantToken: When the expiresAt field in the token generation has a value, it must be a date set in the future")
@@ -373,7 +383,7 @@ func (c *Client) GenerateTenantToken(SearchRules map[string]interface{}, Options
 			ExpiresAt: Options.ExpiresAt.Unix(),
 		}
 	}
-	claims.APIKeyPrefix = secret[:8]
+	claims.APIKeyUID = APIKeyUID
 	claims.SearchRules = SearchRules
 
 	// Create a new token object, specifying signing method and the claims
@@ -399,4 +409,9 @@ func convertKeyToParsedKey(key Key) (resp KeyParsed) {
 		resp.ExpiresAt = &timeParsedToString
 	}
 	return resp
+}
+
+func IsValidUUID(uuid string) bool {
+	r := regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
+	return r.MatchString(uuid)
 }
