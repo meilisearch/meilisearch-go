@@ -125,8 +125,8 @@ type TasksQuery struct {
 	Limit    int64    `json:"limit,omitempty"`
 	From     int64    `json:"from,omitempty"`
 	IndexUID []string `json:"indexUid,omitempty"`
-	Status   string   `json:"status,omitempty"`
-	Type     string   `json:"type,omitempty"`
+	Status   []string `json:"status,omitempty"`
+	Type     []string `json:"type,omitempty"`
 }
 
 type Details struct {

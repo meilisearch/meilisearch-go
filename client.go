@@ -55,7 +55,7 @@ type ClientInterface interface {
 	GetTask(taskUID int64) (resp *Task, err error)
 	GetTasks(param *TasksQuery) (resp *TaskResult, err error)
 	WaitForTask(taskUID int64, options ...WaitParams) (*Task, error)
-  GenerateTenantToken(APIKeyUID string, searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
+	GenerateTenantToken(APIKeyUID string, searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
 }
 
 var _ ClientInterface = &Client{}
@@ -292,20 +292,22 @@ func (c *Client) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetTasks",
 	}
-	if param != nil && param.Limit != 0 {
-		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
-	}
-	if param != nil && param.From != 0 {
-		req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
-	}
-	if param != nil && param.Status != "" {
-		req.withQueryParams["status"] = param.Status
-	}
-	if param != nil && param.Type != "" {
-		req.withQueryParams["type"] = param.Type
-	}
-	if param != nil && len(param.IndexUID) != 0 {
-		req.withQueryParams["indexUid"] = strings.Join(param.IndexUID, ",")
+	if param != nil {
+		if param.Limit != 0 {
+			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+		}
+		if param.From != 0 {
+			req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
+		}
+		if len(param.Status) != 0 {
+			req.withQueryParams["status"] = strings.Join(param.Status, ",")
+		}
+		if len(param.Type) != 0 {
+			req.withQueryParams["type"] = strings.Join(param.Type, ",")
+		}
+		if len(param.IndexUID) != 0 {
+			req.withQueryParams["indexUid"] = strings.Join(param.IndexUID, ",")
+		}
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err

@@ -166,7 +166,7 @@ func (i Index) GetTask(taskUID int64) (resp *Task, err error) {
 func (i Index) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 	resp = &TaskResult{}
 	req := internalRequest{
-		endpoint:            "/tasks?indexUid=" + i.UID,
+		endpoint:            "/tasks",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
@@ -174,23 +174,25 @@ func (i Index) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetTasks",
 	}
-	if param != nil && param.Limit != 0 {
-		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
-	}
-	if param != nil && param.From != 0 {
-		req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
-	}
-	if param != nil && param.Status != "" {
-		req.withQueryParams["status"] = param.Status
-	}
-	if param != nil && param.Type != "" {
-		req.withQueryParams["type"] = param.Type
-	}
-	if param != nil && len(param.IndexUID) != 0 {
-		param.IndexUID = append(param.IndexUID, i.UID)
-		req.withQueryParams["indexUid"] = strings.Join(param.IndexUID, ",")
-	} else {
-		req.withQueryParams["indexUid"] = i.UID
+	if param != nil {
+		if param.Limit != 0 {
+			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+		}
+		if param.From != 0 {
+			req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
+		}
+		if len(param.Status) != 0 {
+			req.withQueryParams["status"] = strings.Join(param.Status, ",")
+		}
+		if len(param.Type) != 0 {
+			req.withQueryParams["type"] = strings.Join(param.Type, ",")
+		}
+		if len(param.IndexUID) != 0 {
+			param.IndexUID = append(param.IndexUID, i.UID)
+			req.withQueryParams["indexUid"] = strings.Join(param.IndexUID, ",")
+		} else {
+			req.withQueryParams["indexUid"] = i.UID
+		}
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err

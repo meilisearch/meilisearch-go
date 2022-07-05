@@ -40,9 +40,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -65,9 +65,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -92,9 +92,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -119,9 +119,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -144,9 +144,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -171,9 +171,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -242,9 +242,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -268,9 +268,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -296,9 +296,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -324,9 +324,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -352,9 +352,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -430,14 +430,14 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 			},
 			wantResp: []Task{
 				{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					TaskUID:    1,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -465,14 +465,14 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 			},
 			wantResp: []Task{
 				{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					TaskUID:    1,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -591,9 +591,9 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 				documents: testCsvDocuments,
 			},
 			wantResp: &Task{
-				TaskUID:    0,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 	}
@@ -675,19 +675,19 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 			},
 			wantResp: []Task{
 				{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					TaskUID:    1,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					TaskUID:    2,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -794,9 +794,9 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 				documents: testNdjsonDocuments,
 			},
 			wantResp: &Task{
-				TaskUID:    0,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 	}
@@ -878,19 +878,19 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 			},
 			wantResp: []Task{
 				{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					TaskUID:    1,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					TaskUID:    2,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -969,9 +969,9 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 				client: defaultClient,
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -981,9 +981,9 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 				client: customClient,
 			},
 			wantResp: &Task{
-				TaskUID:    2,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 2,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 	}
@@ -1035,9 +1035,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1051,9 +1051,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1069,9 +1069,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1085,9 +1085,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1101,9 +1101,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1119,9 +1119,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 	}
@@ -1177,9 +1177,9 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1193,9 +1193,9 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1211,9 +1211,9 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1229,9 +1229,9 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 	}
@@ -1429,9 +1429,9 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				},
 			},
 			want: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1444,9 +1444,9 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				},
 			},
 			want: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1462,9 +1462,9 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				},
 			},
 			want: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1477,9 +1477,9 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				},
 			},
 			want: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1495,9 +1495,9 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				},
 			},
 			want: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 	}
@@ -1551,9 +1551,9 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "book_id",
 			},
 			want: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1567,9 +1567,9 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "book_id",
 			},
 			want: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1586,9 +1586,9 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "book_id",
 			},
 			want: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1602,9 +1602,9 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "book_id",
 			},
 			want: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1621,9 +1621,9 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "book_id",
 			},
 			want: &Task{
-				TaskUID:    1,
-				Status: "enqueued",
-				Type:   "documentAdditionOrUpdate",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 	}
@@ -1688,14 +1688,14 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 			},
 			want: []Task{
 				{
-					TaskUID:    1,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					TaskUID:    2,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -1720,14 +1720,14 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 			},
 			want: []Task{
 				{
-					TaskUID:    1,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					TaskUID:    2,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
