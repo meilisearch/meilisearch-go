@@ -265,11 +265,18 @@ type SearchResponse struct {
 	FacetDistribution  interface{}   `json:"facetDistribution,omitempty"`
 }
 
-// DocumentsRequest is the request body for list documents method
-type DocumentsRequest struct {
-	Offset               int64    `json:"offset,omitempty"`
-	Limit                int64    `json:"limit,omitempty"`
-	AttributesToRetrieve []string `json:"attributesToRetrieve,omitempty"`
+// DocumentsQuery is the request body for list documents method
+type DocumentsQuery struct {
+	Offset int64    `json:"offset,omitempty"`
+	Limit  int64    `json:"limit,omitempty"`
+	Fields []string `json:"fields,omitempty"`
+}
+
+type DocumentsResult struct {
+	Results []map[string]interface{} `json:"results"`
+	Limit   int64                    `json:"limit"`
+	Offset  int64                    `json:"offset"`
+	Total   int64                    `json:"total"`
 }
 
 // RawType is an alias for raw byte[]

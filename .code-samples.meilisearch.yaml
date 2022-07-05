@@ -23,7 +23,7 @@ get_one_document_1: |-
   client.Index("movies").GetDocument("25684", &a)
 get_documents_1: |-
   var a []interface{}
-  client.Index("movies").GetDocuments(&meilisearch.DocumentsRequest{
+  client.Index("movies").GetDocuments(nil, &meilisearch.DocumentsRequest{
     Limit: 2,
   }, &a)
 add_or_replace_documents_1: |-
