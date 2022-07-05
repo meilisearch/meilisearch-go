@@ -70,7 +70,7 @@ get_all_tasks_by_index_1: |-
 get_one_key_1: |-
   client.GetKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4")
 get_keys_1: |-
-  client.GetKeys()
+  client.GetKeys(nil)
 create_a_key_1: |-
   client.CreateKey(&meilisearch.Key{
     Description: "Add documents: Products API key",
@@ -708,7 +708,7 @@ security_guide_list_keys_1: |-
     Host: "http://127.0.0.1:7700",
     APIKey: "masterKey",
   })
-  client.GetKeys();
+  client.GetKeys(nil);
 security_guide_delete_key_1: |-
   client := meilisearch.NewClient(meilisearch.ClientConfig{
     Host: "http://127.0.0.1:7700",
@@ -720,7 +720,7 @@ authorization_header_1: |-
     Host: "http://127.0.0.1:7700",
     APIKey: "masterKey",
   })
-  client.GetKeys();
+  client.GetKeys(nil);
 tenant_token_guide_generate_sdk_1: |-
   searchRules := map[string]interface{}{
     "patient_medical_records": map[string]string{

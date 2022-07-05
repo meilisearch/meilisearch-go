@@ -41,9 +41,9 @@ type ClientInterface interface {
 	DeleteIndex(uid string) (resp *Task, err error)
 	CreateKey(request *Key) (resp *Key, err error)
 	GetKey(identifier string) (resp *Key, err error)
-	GetKeys() (resp *ResultKey, err error)
-	UpdateKey(identifier string, request *Key) (resp *Key, err error)
-	DeleteKey(identifier string) (resp bool, err error)
+	GetKeys(param *KeysQuery) (resp *KeysResults, err error)
+	UpdateKey(keyOrUID string, request *Key) (resp *Key, err error)
+	DeleteKey(keyOrUID string) (resp bool, err error)
 	GetAllStats() (resp *Stats, err error)
 	CreateDump() (resp *Task, err error)
 	Version() (*Version, error)
@@ -151,15 +151,22 @@ func (c *Client) GetKey(identifier string) (resp *Key, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetKeys() (resp *ResultKey, err error) {
-	resp = &ResultKey{}
+func (c *Client) GetKeys(param *KeysQuery) (resp *KeysResults, err error) {
+	resp = &KeysResults{}
 	req := internalRequest{
 		endpoint:            "/keys",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        resp,
+		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetKeys",
+	}
+	if param != nil && param.Limit != 0 {
+		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+	}
+	if param != nil && param.Offset != 0 {
+		req.withQueryParams["offset"] = strconv.FormatInt(param.Offset, 10)
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
@@ -167,11 +174,11 @@ func (c *Client) GetKeys() (resp *ResultKey, err error) {
 	return resp, nil
 }
 
-func (c *Client) UpdateKey(identifier string, request *Key) (resp *Key, err error) {
-	parsedRequest := convertKeyToParsedKey(*request)
+func (c *Client) UpdateKey(keyOrUID string, request *Key) (resp *Key, err error) {
+	parsedRequest := KeyUpdate{Name: request.Name, Description: request.Description}
 	resp = &Key{}
 	req := internalRequest{
-		endpoint:            "/keys/" + identifier,
+		endpoint:            "/keys/" + keyOrUID,
 		method:              http.MethodPatch,
 		contentType:         contentTypeJSON,
 		withRequest:         &parsedRequest,
@@ -185,9 +192,9 @@ func (c *Client) UpdateKey(identifier string, request *Key) (resp *Key, err erro
 	return resp, nil
 }
 
-func (c *Client) DeleteKey(identifier string) (resp bool, err error) {
+func (c *Client) DeleteKey(keyOrUID string) (resp bool, err error) {
 	req := internalRequest{
-		endpoint:            "/keys/" + identifier,
+		endpoint:            "/keys/" + keyOrUID,
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        nil,
