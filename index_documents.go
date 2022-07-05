@@ -40,14 +40,16 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDocuments",
 	}
-	if request != nil && request.Limit != 0 {
-		req.withQueryParams["limit"] = strconv.FormatInt(request.Limit, 10)
-	}
-	if request != nil && request.Offset != 0 {
-		req.withQueryParams["offset"] = strconv.FormatInt(request.Offset, 10)
-	}
-	if request != nil && len(request.Fields) != 0 {
-		req.withQueryParams["fields"] = strings.Join(request.Fields, ",")
+	if request != nil {
+		if request.Limit != 0 {
+			req.withQueryParams["limit"] = strconv.FormatInt(request.Limit, 10)
+		}
+		if request.Offset != 0 {
+			req.withQueryParams["offset"] = strconv.FormatInt(request.Offset, 10)
+		}
+		if len(request.Fields) != 0 {
+			req.withQueryParams["fields"] = strings.Join(request.Fields, ",")
+		}
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return err
