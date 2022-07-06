@@ -3,7 +3,6 @@ package meilisearch
 import (
 	"net/http"
 	"strconv"
-	"strings"
 )
 
 // IndexConfig configure the Index
@@ -32,7 +31,7 @@ type IndexInterface interface {
 	AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *Task, err error)
 	AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []Task, err error)
 	UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *Task, err error)
-	GetDocument(uid string, documentPtr interface{}) error
+	GetDocument(uid string, request *DocumentQuery, documentPtr interface{}) error
 	GetDocuments(param *DocumentsQuery, resp *DocumentsResult) error
 	DeleteDocument(uid string) (resp *Task, err error)
 	DeleteDocuments(uid []string) (resp *Task, err error)

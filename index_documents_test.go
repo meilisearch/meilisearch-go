@@ -1147,7 +1147,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 
 			var document []map[string]interface{}
-			err = i.GetDocument(tt.args.identifier, &document)
+			err = i.GetDocument(tt.args.identifier, nil, &document)
 			require.Error(t, err)
 			require.Empty(t, document)
 		})
@@ -1257,7 +1257,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 
 			var document docTest
 			for _, identifier := range tt.args.identifier {
-				err = i.GetDocument(identifier, &document)
+				err = i.GetDocument(identifier, nil, &document)
 				require.Error(t, err)
 				require.Empty(t, document)
 			}
@@ -1270,6 +1270,7 @@ func TestIndex_GetDocument(t *testing.T) {
 		UID         string
 		client      *Client
 		identifier  string
+		request     *DocumentQuery
 		documentPtr *docTestBooks
 	}
 	tests := []struct {
@@ -1283,6 +1284,7 @@ func TestIndex_GetDocument(t *testing.T) {
 				UID:         "TestIndexBasicGetDocument",
 				client:      defaultClient,
 				identifier:  "123",
+				request:     nil,
 				documentPtr: &docTestBooks{},
 			},
 			wantErr: false,
@@ -1293,6 +1295,7 @@ func TestIndex_GetDocument(t *testing.T) {
 				UID:         "TestIndexGetDocumentWithCustomClient",
 				client:      customClient,
 				identifier:  "123",
+				request:     nil,
 				documentPtr: &docTestBooks{},
 			},
 			wantErr: false,
@@ -1303,6 +1306,31 @@ func TestIndex_GetDocument(t *testing.T) {
 				UID:         "TestIndexGetDocumentWithNoExistingDocument",
 				client:      defaultClient,
 				identifier:  "125",
+				request:     nil,
+				documentPtr: &docTestBooks{},
+			},
+			wantErr: true,
+		},
+		{
+			name: "TestIndexGetDocumentWithEmptyParameters",
+			args: args{
+				UID:         "TestIndexGetDocumentWithEmptyParameters",
+				client:      defaultClient,
+				identifier:  "125",
+				request:     &DocumentQuery{},
+				documentPtr: &docTestBooks{},
+			},
+			wantErr: true,
+		},
+		{
+			name: "TestIndexGetDocumentWithParametersFields",
+			args: args{
+				UID:        "TestIndexGetDocumentWithParametersFields",
+				client:     defaultClient,
+				identifier: "125",
+				request: &DocumentQuery{
+					Fields: []string{"book_id", "title"},
+				},
 				documentPtr: &docTestBooks{},
 			},
 			wantErr: true,
@@ -1316,7 +1344,7 @@ func TestIndex_GetDocument(t *testing.T) {
 			SetUpBasicIndex(tt.args.UID)
 
 			require.Empty(t, tt.args.documentPtr)
-			err := i.GetDocument(tt.args.identifier, tt.args.documentPtr)
+			err := i.GetDocument(tt.args.identifier, tt.args.request, tt.args.documentPtr)
 			if tt.wantErr {
 				require.Error(t, err)
 				require.Empty(t, tt.args.documentPtr)
@@ -1519,7 +1547,7 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
-				err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
+				err = i.GetDocument(strconv.Itoa(identifier.BookID), nil, &document)
 				require.NoError(t, err)
 				require.Equal(t, identifier.BookID, document.BookID)
 				require.Equal(t, identifier.Title, document.Title)
@@ -1645,7 +1673,7 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
-				err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
+				err = i.GetDocument(strconv.Itoa(identifier.BookID), nil, &document)
 				require.NoError(t, err)
 				require.Equal(t, identifier.BookID, document.BookID)
 				require.Equal(t, identifier.Title, document.Title)
@@ -1753,7 +1781,7 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
-				err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
+				err = i.GetDocument(strconv.Itoa(identifier.BookID), nil, &document)
 				require.NoError(t, err)
 				require.Equal(t, identifier.BookID, document.BookID)
 				require.Equal(t, identifier.Title, document.Title)
@@ -1781,7 +1809,7 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 
 			var document docTestBooks
 			for _, identifier := range tt.args.documentsPtr {
-				err = i.GetDocument(strconv.Itoa(identifier.BookID), &document)
+				err = i.GetDocument(strconv.Itoa(identifier.BookID), nil, &document)
 				require.NoError(t, err)
 				require.Equal(t, identifier.BookID, document.BookID)
 				require.Equal(t, identifier.Title, document.Title)
