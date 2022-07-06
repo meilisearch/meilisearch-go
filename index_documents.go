@@ -393,7 +393,7 @@ func (i Index) DeleteDocuments(identifier []string) (resp *Task, err error) {
 	return resp, nil
 }
 
-func (i Index) DeleteAllDocuments() (resp *Task, err error) {
+func (i Index) DeleteDocuments() (resp *Task, err error) {
 	resp = &Task{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents",
@@ -401,7 +401,7 @@ func (i Index) DeleteAllDocuments() (resp *Task, err error) {
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "DeleteAllDocuments",
+		functionName:        "DeleteDocuments",
 	}
 	if err = i.client.executeRequest(req); err != nil {
 		return nil, err
