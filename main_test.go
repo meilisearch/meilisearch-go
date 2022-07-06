@@ -31,7 +31,7 @@ func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
 
 	for _, index := range list.Results {
 		task, _ := client.DeleteIndex(index.UID)
-		_, err := client.WaitForTask(task)
+		_, err := client.WaitForTask(task.TaskUID)
 		if err != nil {
 			return false, err
 		}
@@ -66,13 +66,13 @@ func cleanup(c ClientInterface) func() {
 }
 
 func testWaitForTask(t *testing.T, i *Index, u *Task) {
-	_, err := i.WaitForTask(u)
+	_, err := i.WaitForTask(u.TaskUID)
 	require.NoError(t, err)
 }
 
 func testWaitForBatchTask(t *testing.T, i *Index, u []Task) {
 	for _, id := range u {
-		_, err := i.WaitForTask(&id)
+		_, err := i.WaitForTask(id.TaskUID)
 		require.NoError(t, err)
 	}
 }
@@ -113,7 +113,7 @@ func SetUpEmptyIndex(index *IndexConfig) (resp *Index, err error) {
 		fmt.Println(err)
 		return nil, err
 	}
-	finalTask, _ := client.WaitForTask(task)
+	finalTask, _ := client.WaitForTask(task.TaskUID)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -140,7 +140,7 @@ func SetUpBasicIndex(indexUID string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := index.WaitForTask(task)
+	finalTask, _ := index.WaitForTask(task.TaskUID)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -167,7 +167,7 @@ func SetUpIndexWithNestedFields(indexUID string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := index.WaitForTask(task)
+	finalTask, _ := index.WaitForTask(task.TaskUID)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -207,7 +207,7 @@ func SetUpIndexForFaceting() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := index.WaitForTask(task)
+	finalTask, _ := index.WaitForTask(task.TaskUID)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}

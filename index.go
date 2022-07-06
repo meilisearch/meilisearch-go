@@ -39,8 +39,8 @@ type IndexInterface interface {
 	DeleteAllDocuments() (resp *Task, err error)
 	Search(query string, request *SearchRequest) (*SearchResponse, error)
 
-	GetTask(taskID int64) (resp *Task, err error)
-	GetTasks() (resp *ResultTask, err error)
+	GetTask(taskUID int64) (resp *Task, err error)
+	GetTasks(param *TasksQuery) (resp *TaskResult, err error)
 
 	GetSettings() (resp *Settings, err error)
 	UpdateSettings(request *Settings) (resp *Task, err error)
@@ -67,7 +67,7 @@ type IndexInterface interface {
 	UpdateFilterableAttributes(request *[]string) (resp *Task, err error)
 	ResetFilterableAttributes() (resp *Task, err error)
 
-	WaitForTask(task *Task, options ...WaitParams) (*Task, error)
+	WaitForTask(taskUID int64, options ...WaitParams) (*Task, error)
 }
 
 var _ IndexInterface = &Index{}
@@ -159,31 +159,40 @@ func (i Index) GetStats() (resp *StatsIndex, err error) {
 	return resp, nil
 }
 
-func (i Index) GetTask(taskID int64) (resp *Task, err error) {
-	resp = &Task{}
-	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/tasks/" + strconv.FormatInt(taskID, 10),
-		method:              http.MethodGet,
-		withRequest:         nil,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetTask",
-	}
-	if err := i.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-	return resp, nil
+func (i Index) GetTask(taskUID int64) (resp *Task, err error) {
+	return i.client.GetTask(taskUID)
 }
 
-func (i Index) GetTasks() (resp *ResultTask, err error) {
-	resp = &ResultTask{}
+func (i Index) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
+	resp = &TaskResult{}
 	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/tasks",
+		endpoint:            "/tasks",
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetTasks",
+	}
+	if param != nil {
+		if param.Limit != 0 {
+			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+		}
+		if param.From != 0 {
+			req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
+		}
+		if len(param.Status) != 0 {
+			req.withQueryParams["status"] = strings.Join(param.Status, ",")
+		}
+		if len(param.Type) != 0 {
+			req.withQueryParams["type"] = strings.Join(param.Type, ",")
+		}
+		if len(param.IndexUID) != 0 {
+			param.IndexUID = append(param.IndexUID, i.UID)
+			req.withQueryParams["indexUid"] = strings.Join(param.IndexUID, ",")
+		} else {
+			req.withQueryParams["indexUid"] = i.UID
+		}
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
@@ -196,6 +205,6 @@ func (i Index) GetTasks() (resp *ResultTask, err error) {
 // the TaskStatus.
 // If no ctx and interval are provided WaitForTask will check each 50ms the
 // status of a task.
-func (i Index) WaitForTask(task *Task, options ...WaitParams) (*Task, error) {
-	return i.client.WaitForTask(task, options...)
+func (i Index) WaitForTask(taskUID int64, options ...WaitParams) (*Task, error) {
+	return i.client.WaitForTask(taskUID, options...)
 }

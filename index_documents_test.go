@@ -40,9 +40,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -65,9 +65,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -92,9 +92,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -119,9 +119,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -144,9 +144,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -171,9 +171,9 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -242,9 +242,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -268,9 +268,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -296,9 +296,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -324,9 +324,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -352,9 +352,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			},
 			resp: resp{
 				wantResp: &Task{
-					TaskUID:    0,
-					Status: "enqueued",
-					Type:   "documentAdditionOrUpdate",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				documentsRes: DocumentsResult{
 					Results: []map[string]interface{}{
@@ -430,14 +430,14 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 			},
 			wantResp: []Task{
 				{
-					UID:    0,
-					Status: "enqueued",
-					Type:   "documentAddition",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					UID:    1,
-					Status: "enqueued",
-					Type:   "documentAddition",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -465,14 +465,14 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 			},
 			wantResp: []Task{
 				{
-					UID:    0,
-					Status: "enqueued",
-					Type:   "documentAddition",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					UID:    1,
-					Status: "enqueued",
-					Type:   "documentAddition",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -488,7 +488,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
-				require.GreaterOrEqual(t, gotResp[i].UID, tt.wantResp[i].UID)
+				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
 				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
 				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
 				require.Equal(t, gotResp[i].IndexUID, tt.args.UID)
@@ -497,13 +497,13 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 
 			testWaitForBatchTask(t, i, gotResp)
 
-			var documents []map[string]interface{}
-			err = i.GetDocuments(&DocumentsRequest{
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{
 				Limit: 4,
 			}, &documents)
 
 			require.NoError(t, err)
-			require.Equal(t, tt.args.documentsPtr, documents)
+			require.Equal(t, tt.args.documentsPtr, documents.Results)
 		})
 	}
 
@@ -517,7 +517,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
-				require.GreaterOrEqual(t, gotResp[i].UID, tt.wantResp[i].UID)
+				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
 				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
 				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
 				require.Equal(t, gotResp[i].IndexUID, tt.args.UID)
@@ -526,13 +526,13 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 
 			testWaitForBatchTask(t, i, gotResp)
 
-			var documents []map[string]interface{}
-			err = i.GetDocuments(&DocumentsRequest{
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{
 				Limit: 4,
 			}, &documents)
 
 			require.NoError(t, err)
-			require.Equal(t, tt.args.documentsPtr, documents)
+			require.Equal(t, tt.args.documentsPtr, documents.Results)
 		})
 	}
 }
@@ -591,9 +591,9 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 				documents: testCsvDocuments,
 			},
 			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 	}
@@ -630,17 +630,17 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
-			require.Equal(t, gotResp.Status, tt.wantResp.Status)
-			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
+			require.Equal(t, tt.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.wantResp.Type, gotResp.Type)
 			require.NotZero(t, gotResp.EnqueuedAt)
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents []map[string]interface{}
-			err = i.GetDocuments(&DocumentsRequest{}, &documents)
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
 			require.NoError(t, err)
-			require.Equal(t, wantDocs, documents)
+			require.Equal(t, wantDocs, documents.Results)
 		})
 	}
 
@@ -675,19 +675,19 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 			},
 			wantResp: []Task{
 				{
-					UID:    0,
-					Status: "enqueued",
-					Type:   "documentAddition",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					UID:    1,
-					Status: "enqueued",
-					Type:   "documentAddition",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					UID:    2,
-					Status: "enqueued",
-					Type:   "documentAddition",
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -727,7 +727,7 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
-				require.GreaterOrEqual(t, gotResp[i].UID, tt.wantResp[i].UID)
+				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
 				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
 				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
 				require.NotZero(t, gotResp[i].EnqueuedAt)
@@ -735,10 +735,10 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 
 			testWaitForBatchTask(t, i, gotResp)
 
-			var documents []map[string]interface{}
-			err = i.GetDocuments(&DocumentsRequest{}, &documents)
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
 			require.NoError(t, err)
-			require.Equal(t, wantDocs, documents)
+			require.Equal(t, wantDocs, documents.Results)
 		})
 	}
 
@@ -794,9 +794,9 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 				documents: testNdjsonDocuments,
 			},
 			wantResp: &Task{
-				UID:    0,
-				Status: "enqueued",
-				Type:   "documentAddition",
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 	}
@@ -833,17 +833,17 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 			}
 
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
-			require.Equal(t, gotResp.Status, tt.wantResp.Status)
-			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
+			require.Equal(t, tt.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.wantResp.Type, gotResp.Type)
 			require.NotZero(t, gotResp.EnqueuedAt)
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents []map[string]interface{}
-			err = i.GetDocuments(&DocumentsRequest{}, &documents)
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
 			require.NoError(t, err)
-			require.Equal(t, wantDocs, documents)
+			require.Equal(t, wantDocs, documents.Results)
 		})
 	}
 
@@ -878,19 +878,19 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 			},
 			wantResp: []Task{
 				{
-					UID:    0,
-					Status: "enqueued",
-					Type:   "documentAddition",
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					UID:    1,
-					Status: "enqueued",
-					Type:   "documentAddition",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					UID:    2,
-					Status: "enqueued",
-					Type:   "documentAddition",
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -930,7 +930,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
-				require.GreaterOrEqual(t, gotResp[i].UID, tt.wantResp[i].UID)
+				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
 				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
 				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
 				require.NotZero(t, gotResp[i].EnqueuedAt)
@@ -938,10 +938,10 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 
 			testWaitForBatchTask(t, i, gotResp)
 
-			var documents []map[string]interface{}
-			err = i.GetDocuments(&DocumentsRequest{}, &documents)
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
 			require.NoError(t, err)
-			require.Equal(t, wantDocs, documents)
+			require.Equal(t, wantDocs, documents.Results)
 		})
 	}
 
@@ -969,9 +969,9 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 				client: defaultClient,
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "clearAll",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -981,9 +981,9 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 				client: customClient,
 			},
 			wantResp: &Task{
-				UID:    2,
-				Status: "enqueued",
-				Type:   "clearAll",
+				TaskUID: 2,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 	}
@@ -996,17 +996,17 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			SetUpBasicIndex(tt.args.UID)
 			gotResp, err := i.DeleteAllDocuments()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
-			require.Equal(t, gotResp.Status, tt.wantResp.Status)
-			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
+			require.Equal(t, tt.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.wantResp.Type, gotResp.Type)
 			require.NotZero(t, gotResp.EnqueuedAt)
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents interface{}
-			err = i.GetDocuments(&DocumentsRequest{Limit: 5}, &documents)
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{Limit: 5}, &documents)
 			require.NoError(t, err)
-			require.Empty(t, documents)
+			require.Empty(t, documents.Results)
 		})
 	}
 }
@@ -1035,9 +1035,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1051,9 +1051,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1069,9 +1069,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1085,9 +1085,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1101,9 +1101,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1119,9 +1119,9 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 	}
@@ -1132,16 +1132,16 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
-			require.GreaterOrEqual(t, gotAddResp.UID, tt.wantResp.UID)
+			require.GreaterOrEqual(t, gotAddResp.TaskUID, tt.wantResp.TaskUID)
 			require.NoError(t, err)
 
 			testWaitForTask(t, i, gotAddResp)
 
 			gotResp, err := i.DeleteDocument(tt.args.identifier)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
-			require.Equal(t, gotResp.Status, tt.wantResp.Status)
-			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
+			require.Equal(t, tt.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.wantResp.Type, gotResp.Type)
 			require.NotZero(t, gotResp.EnqueuedAt)
 
 			testWaitForTask(t, i, gotResp)
@@ -1177,9 +1177,9 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1193,9 +1193,9 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1211,9 +1211,9 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 		{
@@ -1229,9 +1229,9 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 				},
 			},
 			wantResp: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentDeletion",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
 			},
 		},
 	}
@@ -1248,9 +1248,9 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 
 			gotResp, err := i.DeleteDocuments(tt.args.identifier)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
-			require.Equal(t, gotResp.Status, tt.wantResp.Status)
-			require.Equal(t, gotResp.Type, tt.wantResp.Type)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
+			require.Equal(t, tt.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.wantResp.Type, gotResp.Type)
 			require.NotZero(t, gotResp.EnqueuedAt)
 
 			testWaitForTask(t, i, gotResp)
@@ -1429,9 +1429,9 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				},
 			},
 			want: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentPartial",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1444,9 +1444,9 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				},
 			},
 			want: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentPartial",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1462,9 +1462,9 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				},
 			},
 			want: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentPartial",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1477,9 +1477,9 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				},
 			},
 			want: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentPartial",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1495,9 +1495,9 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 				},
 			},
 			want: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentPartial",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 	}
@@ -1510,7 +1510,7 @@ func TestIndex_UpdateDocuments(t *testing.T) {
 
 			got, err := i.UpdateDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, got.UID, tt.want.UID)
+			require.GreaterOrEqual(t, got.TaskUID, tt.want.TaskUID)
 			require.Equal(t, got.Status, tt.want.Status)
 			require.Equal(t, got.Type, tt.want.Type)
 			require.NotZero(t, got.EnqueuedAt)
@@ -1551,9 +1551,9 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "book_id",
 			},
 			want: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentPartial",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1567,9 +1567,9 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "book_id",
 			},
 			want: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentPartial",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1586,9 +1586,9 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "book_id",
 			},
 			want: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentPartial",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1602,9 +1602,9 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "book_id",
 			},
 			want: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentPartial",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 		{
@@ -1621,9 +1621,9 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "book_id",
 			},
 			want: &Task{
-				UID:    1,
-				Status: "enqueued",
-				Type:   "documentPartial",
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
 			},
 		},
 	}
@@ -1636,7 +1636,7 @@ func TestIndex_UpdateDocumentsWithPrimaryKey(t *testing.T) {
 
 			got, err := i.UpdateDocuments(tt.args.documentsPtr, tt.args.primaryKey)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, got.UID, tt.want.UID)
+			require.GreaterOrEqual(t, got.TaskUID, tt.want.TaskUID)
 			require.Equal(t, got.Status, tt.want.Status)
 			require.Equal(t, got.Type, tt.want.Type)
 			require.NotZero(t, got.EnqueuedAt)
@@ -1688,14 +1688,14 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 			},
 			want: []Task{
 				{
-					UID:    1,
-					Status: "enqueued",
-					Type:   "documentPartial",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					UID:    2,
-					Status: "enqueued",
-					Type:   "documentPartial",
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -1720,14 +1720,14 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 			},
 			want: []Task{
 				{
-					UID:    1,
-					Status: "enqueued",
-					Type:   "documentPartial",
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 				{
-					UID:    2,
-					Status: "enqueued",
-					Type:   "documentPartial",
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
 				},
 			},
 		},
@@ -1743,7 +1743,7 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 			got, err := i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize)
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
-				require.GreaterOrEqual(t, got[i].UID, tt.want[i].UID)
+				require.GreaterOrEqual(t, got[i].TaskUID, tt.want[i].TaskUID)
 				require.Equal(t, got[i].Status, tt.want[i].Status)
 				require.Equal(t, got[i].Type, tt.want[i].Type)
 				require.NotZero(t, got[i].EnqueuedAt)
@@ -1771,7 +1771,7 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 			got, err := i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, tt.args.primaryKey)
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
-				require.GreaterOrEqual(t, got[i].UID, tt.want[i].UID)
+				require.GreaterOrEqual(t, got[i].TaskUID, tt.want[i].TaskUID)
 				require.Equal(t, got[i].Status, tt.want[i].Status)
 				require.Equal(t, got[i].Type, tt.want[i].Type)
 				require.NotZero(t, got[i].EnqueuedAt)

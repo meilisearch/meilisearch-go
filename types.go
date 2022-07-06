@@ -108,7 +108,8 @@ const (
 // Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html
 type Task struct {
 	Status     TaskStatus          `json:"status"`
-	UID        int64               `json:"uid"`
+	UID        int64               `json:"uid,omitempty"`
+	TaskUID    int64               `json:"taskUid,omitempty"`
 	IndexUID   string              `json:"indexUid"`
 	Type       string              `json:"type"`
 	Error      meilisearchApiError `json:"error,omitempty"`
@@ -117,6 +118,15 @@ type Task struct {
 	StartedAt  time.Time           `json:"startedAt,omitempty"`
 	FinishedAt time.Time           `json:"finishedAt,omitempty"`
 	Details    Details             `json:"details,omitempty"`
+}
+
+// TasksQuery is the request body for list documents method
+type TasksQuery struct {
+	Limit    int64    `json:"limit,omitempty"`
+	From     int64    `json:"from,omitempty"`
+	IndexUID []string `json:"indexUid,omitempty"`
+	Status   []string `json:"status,omitempty"`
+	Type     []string `json:"type,omitempty"`
 }
 
 type Details struct {
@@ -134,8 +144,12 @@ type Details struct {
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
 }
 
-type ResultTask struct {
+// Return of multiple tasks is wrap in a TaskResult
+type TaskResult struct {
 	Results []Task `json:"results"`
+	Limit   int64  `json:"limit"`
+	From    int64  `json:"from"`
+	Next    int64  `json:"next"`
 }
 
 // Keys allow the user to connect to the Meilisearch instance

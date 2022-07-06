@@ -107,7 +107,7 @@ func TestClient_CreateIndex(t *testing.T) {
 				// Make sure that timestamps are also retrieved
 				require.NotZero(t, gotResp.EnqueuedAt)
 
-				_, err := c.WaitForTask(gotResp)
+				_, err := c.WaitForTask(gotResp.TaskUID)
 				require.NoError(t, err)
 
 				index, err := c.GetIndex(tt.args.config.Uid)
