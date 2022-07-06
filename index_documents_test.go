@@ -825,7 +825,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 	}
 }
 
-func TestIndex_DeleteAllDocuments(t *testing.T) {
+func TestIndex_DeleteDocuments(t *testing.T) {
 	type args struct {
 		UID    string
 		client *Client
@@ -836,9 +836,9 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 		wantResp *Task
 	}{
 		{
-			name: "TestIndexBasicDeleteAllDocuments",
+			name: "TestIndexBasicDeleteDocuments",
 			args: args{
-				UID:    "TestIndexBasicDeleteAllDocuments",
+				UID:    "TestIndexBasicDeleteDocuments",
 				client: defaultClient,
 			},
 			wantResp: &Task{
@@ -848,9 +848,9 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexDeleteAllDocumentsWithCustomClient",
+			name: "TestIndexDeleteDocumentsWithCustomClient",
 			args: args{
-				UID:    "TestIndexDeleteAllDocumentsWithCustomClient",
+				UID:    "TestIndexDeleteDocumentsWithCustomClient",
 				client: customClient,
 			},
 			wantResp: &Task{
@@ -867,7 +867,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			SetUpBasicIndex(tt.args.UID)
-			gotResp, err := i.DeleteAllDocuments()
+			gotResp, err := i.DeleteDocuments()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.UID, tt.wantResp.UID)
 			require.Equal(t, gotResp.Status, tt.wantResp.Status)

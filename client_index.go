@@ -49,7 +49,7 @@ func (c *Client) CreateIndex(config *IndexConfig) (resp *Task, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetAllIndexes() (resp []*Index, err error) {
+func (c *Client) GetIndexes() (resp []*Index, err error) {
 	resp = []*Index{}
 	req := internalRequest{
 		endpoint:            "/indexes",
@@ -57,7 +57,7 @@ func (c *Client) GetAllIndexes() (resp []*Index, err error) {
 		withRequest:         nil,
 		withResponse:        &resp,
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetAllIndexes",
+		functionName:        "GetIndexes",
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
@@ -65,7 +65,7 @@ func (c *Client) GetAllIndexes() (resp []*Index, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetAllRawIndexes() (resp []map[string]interface{}, err error) {
+func (c *Client) GetRawIndexes() (resp []map[string]interface{}, err error) {
 	resp = []map[string]interface{}{}
 	req := internalRequest{
 		endpoint:            "/indexes",
@@ -73,7 +73,7 @@ func (c *Client) GetAllRawIndexes() (resp []map[string]interface{}, err error) {
 		withRequest:         nil,
 		withResponse:        &resp,
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetAllRawIndexes",
+		functionName:        "GetRawIndexes",
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
