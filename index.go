@@ -3,6 +3,7 @@ package meilisearch
 import (
 	"net/http"
 	"strconv"
+	"strings"
 )
 
 // IndexConfig configure the Index
