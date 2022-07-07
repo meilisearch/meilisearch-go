@@ -20,7 +20,7 @@ delete_an_index_1: |-
   client.Index("movies").Delete()
 get_one_document_1: |-
   var a interface{}
-  client.Index("movies").GetDocument("25684", &a)
+  client.Index("movies").GetDocument("25684", nil, &a)
 get_documents_1: |-
   var a []interface{}
   client.Index("movies").GetDocuments(nil, &meilisearch.DocumentsRequest{

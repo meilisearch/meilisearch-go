@@ -15,14 +15,20 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (i Index) GetDocument(identifier string, documentPtr interface{}) error {
+func (i Index) GetDocument(identifier string, request *DocumentQuery, documentPtr interface{}) error {
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents/" + identifier,
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        documentPtr,
+		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDocument",
+	}
+	if request != nil {
+		if len(request.Fields) != 0 {
+			req.withQueryParams["fields"] = strings.Join(request.Fields, ",")
+		}
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return err

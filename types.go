@@ -279,6 +279,11 @@ type SearchResponse struct {
 	FacetDistribution  interface{}   `json:"facetDistribution,omitempty"`
 }
 
+// DocumentQuery is the request body get one documents method
+type DocumentQuery struct {
+	Fields []string `json:"fields,omitempty"`
+}
+
 // DocumentsQuery is the request body for list documents method
 type DocumentsQuery struct {
 	Offset int64    `json:"offset,omitempty"`
