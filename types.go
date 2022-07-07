@@ -121,7 +121,7 @@ type Task struct {
 }
 
 
-// TaskInfo indicate Information of the regarding a task returned by asynchronous method
+// TaskInfo indicates information regarding a task returned by an asynchronous method
 //
 // Documentation: https://docs.meilisearch.com/reference/api/tasks.html#tasks
 type TaskInfo struct {
