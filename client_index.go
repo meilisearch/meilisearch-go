@@ -29,12 +29,12 @@ func (c *Client) GetRawIndex(uid string) (resp map[string]interface{}, err error
 	return resp, nil
 }
 
-func (c *Client) CreateIndex(config *IndexConfig) (resp *Task, err error) {
+func (c *Client) CreateIndex(config *IndexConfig) (resp *TaskInfo, err error) {
 	request := &CreateIndexRequest{
 		UID:        config.Uid,
 		PrimaryKey: config.PrimaryKey,
 	}
-	resp = &Task{}
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes",
 		method:              http.MethodPost,
@@ -96,8 +96,8 @@ func (c *Client) GetAllRawIndexes(param *IndexesQuery) (resp map[string]interfac
 	return resp, nil
 }
 
-func (c *Client) DeleteIndex(uid string) (resp *Task, err error) {
-	resp = &Task{}
+func (c *Client) DeleteIndex(uid string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid,
 		method:              http.MethodDelete,

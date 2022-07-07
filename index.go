@@ -21,51 +21,51 @@ type IndexConfig struct {
 type IndexInterface interface {
 	FetchInfo() (resp *Index, err error)
 	FetchPrimaryKey() (resp *string, err error)
-	UpdateIndex(primaryKey string) (resp *Task, err error)
+	UpdateIndex(primaryKey string) (resp *TaskInfo, err error)
 	Delete(uid string) (ok bool, err error)
 	GetStats() (resp *StatsIndex, err error)
 
-	AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *Task, err error)
-	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []Task, err error)
-	AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *Task, err error)
-	AddDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []Task, err error)
-	AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *Task, err error)
-	AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []Task, err error)
-	UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *Task, err error)
+	AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error)
+	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []TaskInfo, err error)
+	AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *TaskInfo, err error)
+	AddDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error)
+	AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *TaskInfo, err error)
+	AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error)
+	UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error)
 	GetDocument(uid string, request *DocumentQuery, documentPtr interface{}) error
 	GetDocuments(param *DocumentsQuery, resp *DocumentsResult) error
-	DeleteDocument(uid string) (resp *Task, err error)
-	DeleteDocuments(uid []string) (resp *Task, err error)
-	DeleteAllDocuments() (resp *Task, err error)
+	DeleteDocument(uid string) (resp *TaskInfo, err error)
+	DeleteDocuments(uid []string) (resp *TaskInfo, err error)
+	DeleteAllDocuments() (resp *TaskInfo, err error)
 	Search(query string, request *SearchRequest) (*SearchResponse, error)
 
 	GetTask(taskUID int64) (resp *Task, err error)
 	GetTasks(param *TasksQuery) (resp *TaskResult, err error)
 
 	GetSettings() (resp *Settings, err error)
-	UpdateSettings(request *Settings) (resp *Task, err error)
-	ResetSettings() (resp *Task, err error)
+	UpdateSettings(request *Settings) (resp *TaskInfo, err error)
+	ResetSettings() (resp *TaskInfo, err error)
 	GetRankingRules() (resp *[]string, err error)
-	UpdateRankingRules(request *[]string) (resp *Task, err error)
-	ResetRankingRules() (resp *Task, err error)
+	UpdateRankingRules(request *[]string) (resp *TaskInfo, err error)
+	ResetRankingRules() (resp *TaskInfo, err error)
 	GetDistinctAttribute() (resp *string, err error)
-	UpdateDistinctAttribute(request string) (resp *Task, err error)
-	ResetDistinctAttribute() (resp *Task, err error)
+	UpdateDistinctAttribute(request string) (resp *TaskInfo, err error)
+	ResetDistinctAttribute() (resp *TaskInfo, err error)
 	GetSearchableAttributes() (resp *[]string, err error)
-	UpdateSearchableAttributes(request *[]string) (resp *Task, err error)
-	ResetSearchableAttributes() (resp *Task, err error)
+	UpdateSearchableAttributes(request *[]string) (resp *TaskInfo, err error)
+	ResetSearchableAttributes() (resp *TaskInfo, err error)
 	GetDisplayedAttributes() (resp *[]string, err error)
-	UpdateDisplayedAttributes(request *[]string) (resp *Task, err error)
-	ResetDisplayedAttributes() (resp *Task, err error)
+	UpdateDisplayedAttributes(request *[]string) (resp *TaskInfo, err error)
+	ResetDisplayedAttributes() (resp *TaskInfo, err error)
 	GetStopWords() (resp *[]string, err error)
-	UpdateStopWords(request *[]string) (resp *Task, err error)
-	ResetStopWords() (resp *Task, err error)
+	UpdateStopWords(request *[]string) (resp *TaskInfo, err error)
+	ResetStopWords() (resp *TaskInfo, err error)
 	GetSynonyms() (resp *map[string][]string, err error)
-	UpdateSynonyms(request *map[string][]string) (resp *Task, err error)
-	ResetSynonyms() (resp *Task, err error)
+	UpdateSynonyms(request *map[string][]string) (resp *TaskInfo, err error)
+	ResetSynonyms() (resp *TaskInfo, err error)
 	GetFilterableAttributes() (resp *[]string, err error)
-	UpdateFilterableAttributes(request *[]string) (resp *Task, err error)
-	ResetFilterableAttributes() (resp *Task, err error)
+	UpdateFilterableAttributes(request *[]string) (resp *TaskInfo, err error)
+	ResetFilterableAttributes() (resp *TaskInfo, err error)
 
 	WaitForTask(taskUID int64, options ...WaitParams) (*Task, error)
 }
@@ -104,12 +104,12 @@ func (i Index) FetchPrimaryKey() (resp *string, err error) {
 	return &index.PrimaryKey, nil
 }
 
-func (i Index) UpdateIndex(primaryKey string) (resp *Task, err error) {
+func (i Index) UpdateIndex(primaryKey string) (resp *TaskInfo, err error) {
 	request := &UpdateIndexRequest{
 		PrimaryKey: primaryKey,
 	}
 	i.PrimaryKey = primaryKey //nolint:golint,staticcheck
-	resp = &Task{}
+	resp = &TaskInfo{}
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID,
@@ -127,7 +127,7 @@ func (i Index) UpdateIndex(primaryKey string) (resp *Task, err error) {
 }
 
 func (i Index) Delete(uid string) (ok bool, err error) {
-	resp := &Task{}
+	resp := &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + uid,
 		method:              http.MethodDelete,

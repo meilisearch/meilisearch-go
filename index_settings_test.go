@@ -429,7 +429,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetFilterableAttributes",
@@ -437,7 +437,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -447,7 +447,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -479,7 +479,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -488,7 +488,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -499,7 +499,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -532,7 +532,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetDistinctAttribute",
@@ -540,7 +540,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -550,7 +550,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -582,7 +582,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -591,7 +591,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
@@ -602,7 +602,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
@@ -635,7 +635,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -644,7 +644,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -655,7 +655,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -688,7 +688,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *Settings
 	}{
 		{
@@ -697,7 +697,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -718,7 +718,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -761,7 +761,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetStopWords",
@@ -769,7 +769,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -779,7 +779,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -811,7 +811,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetSynonyms",
@@ -819,7 +819,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -829,7 +829,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -861,7 +861,7 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetSortableAttributes",
@@ -869,7 +869,7 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -879,7 +879,7 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -911,7 +911,7 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *TypoTolerance
 	}{
 		{
@@ -920,7 +920,7 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
@@ -931,7 +931,7 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
@@ -965,7 +965,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateFilterableAttributes",
@@ -976,7 +976,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -989,7 +989,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1026,7 +1026,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -1038,7 +1038,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 					"book_id", "tag", "title",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -1052,7 +1052,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 					"book_id", "tag", "title",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -1090,7 +1090,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateDistinctAttribute",
@@ -1099,7 +1099,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 				client:  defaultClient,
 				request: "movie_id",
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1110,7 +1110,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 				client:  customClient,
 				request: "movie_id",
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1147,7 +1147,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -1159,7 +1159,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"typo", "words",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
@@ -1173,7 +1173,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"typo", "words",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
@@ -1187,7 +1187,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"BookID:asc",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
@@ -1225,7 +1225,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -1237,7 +1237,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 					"title", "tag",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -1251,7 +1251,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 					"title", "tag",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -1289,7 +1289,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *Settings
 	}{
 		{
@@ -1331,7 +1331,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -1385,7 +1385,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -1436,7 +1436,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *Settings
 	}{
 		{
@@ -1488,7 +1488,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -1552,7 +1552,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -1616,7 +1616,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -1680,7 +1680,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -1744,7 +1744,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -1808,7 +1808,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:      &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -1872,7 +1872,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance: &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -1968,7 +1968,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &Settings{
@@ -2026,7 +2026,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateStopWords",
@@ -2037,7 +2037,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 					"of", "the", "to",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -2050,7 +2050,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 					"of", "the", "to",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -2087,7 +2087,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateSynonyms",
@@ -2098,7 +2098,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 					"wolverine": {"logan", "xmen"},
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -2111,7 +2111,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 					"wolverine": {"logan", "xmen"},
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -2148,7 +2148,7 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateSortableAttributes",
@@ -2159,7 +2159,7 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -2172,7 +2172,7 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -2209,7 +2209,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *TypoTolerance
 	}{
 		{
@@ -2227,7 +2227,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					DisableOnAttributes: []string{},
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
@@ -2247,7 +2247,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					DisableOnAttributes: []string{},
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
@@ -2269,7 +2269,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					DisableOnAttributes: []string{},
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
@@ -2291,7 +2291,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &Task{
+			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,

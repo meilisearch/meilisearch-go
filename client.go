@@ -39,15 +39,15 @@ type ClientInterface interface {
 	GetRawIndex(uid string) (resp map[string]interface{}, err error)
 	GetAllIndexes(param *IndexesQuery) (resp *IndexesResults, err error)
 	GetAllRawIndexes(param *IndexesQuery) (resp map[string]interface{}, err error)
-	CreateIndex(config *IndexConfig) (resp *Task, err error)
-	DeleteIndex(uid string) (resp *Task, err error)
+	CreateIndex(config *IndexConfig) (resp *TaskInfo, err error)
+	DeleteIndex(uid string) (resp *TaskInfo, err error)
 	CreateKey(request *Key) (resp *Key, err error)
 	GetKey(identifier string) (resp *Key, err error)
 	GetKeys(param *KeysQuery) (resp *KeysResults, err error)
 	UpdateKey(keyOrUID string, request *Key) (resp *Key, err error)
 	DeleteKey(keyOrUID string) (resp bool, err error)
 	GetAllStats() (resp *Stats, err error)
-	CreateDump() (resp *Task, err error)
+	CreateDump() (resp *TaskInfo, err error)
 	Version() (*Version, error)
 	GetVersion() (resp *Version, err error)
 	Health() (*Health, error)
@@ -232,8 +232,8 @@ func (c *Client) IsHealthy() bool {
 	return true
 }
 
-func (c *Client) CreateDump() (resp *Task, err error) {
-	resp = &Task{}
+func (c *Client) CreateDump() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/dumps",
 		method:              http.MethodPost,
