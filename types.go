@@ -103,12 +103,29 @@ const (
 	TaskStatusFailed TaskStatus = "failed"
 )
 
-// Task indicate information about a task is returned for asynchronous method
+// Task indicate information about a task ressource
 //
 // Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html
 type Task struct {
 	Status     TaskStatus          `json:"status"`
 	UID        int64               `json:"uid,omitempty"`
+	TaskUID    int64               `json:"taskUid,omitempty"`
+	IndexUID   string              `json:"indexUid"`
+	Type       string              `json:"type"`
+	Error      meilisearchApiError `json:"error,omitempty"`
+	Duration   string              `json:"duration,omitempty"`
+	EnqueuedAt time.Time           `json:"enqueuedAt"`
+	StartedAt  time.Time           `json:"startedAt,omitempty"`
+	FinishedAt time.Time           `json:"finishedAt,omitempty"`
+	Details    Details             `json:"details,omitempty"`
+}
+
+
+// TaskInfo indicate Information of the regarding a task returned by asynchronous method
+//
+// Documentation: https://docs.meilisearch.com/reference/api/tasks.html#tasks
+type TaskInfo struct {
+	Status     TaskStatus          `json:"status"`
 	TaskUID    int64               `json:"taskUid,omitempty"`
 	IndexUID   string              `json:"indexUid"`
 	Type       string              `json:"type"`

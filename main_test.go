@@ -65,12 +65,12 @@ func cleanup(c ClientInterface) func() {
 	}
 }
 
-func testWaitForTask(t *testing.T, i *Index, u *Task) {
+func testWaitForTask(t *testing.T, i *Index, u *TaskInfo) {
 	_, err := i.WaitForTask(u.TaskUID)
 	require.NoError(t, err)
 }
 
-func testWaitForBatchTask(t *testing.T, i *Index, u []Task) {
+func testWaitForBatchTask(t *testing.T, i *Index, u []TaskInfo) {
 	for _, id := range u {
 		_, err := i.WaitForTask(id.TaskUID)
 		require.NoError(t, err)

@@ -20,7 +20,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 		documentsPtr interface{}
 	}
 	type resp struct {
-		wantResp     *Task
+		wantResp     *TaskInfo
 		documentsRes DocumentsResult
 	}
 	tests := []struct {
@@ -39,7 +39,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 				},
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -64,7 +64,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 				},
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -91,7 +91,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 				},
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -118,7 +118,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 				},
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -143,7 +143,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 				},
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -170,7 +170,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 				},
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -221,7 +221,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 		primaryKey   string
 	}
 	type resp struct {
-		wantResp     *Task
+		wantResp     *TaskInfo
 		documentsRes DocumentsResult
 	}
 	tests := []struct {
@@ -241,7 +241,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "key",
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -267,7 +267,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "key",
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -295,7 +295,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "key",
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -323,7 +323,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "key",
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -351,7 +351,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "key",
 			},
 			resp: resp{
-				wantResp: &Task{
+				wantResp: &TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
 					Type:    "documentAdditionOrUpdate",
@@ -412,7 +412,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 	testsNoKey := []struct {
 		name          string
 		args          argsNoKey
-		wantResp      []Task
+		wantResp      []TaskInfo
 		expectedError Error
 	}{
 		{
@@ -428,7 +428,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 				},
 				batchSize: 2,
 			},
-			wantResp: []Task{
+			wantResp: []TaskInfo{
 				{
 					TaskUID: 0,
 					Status:  "enqueued",
@@ -446,7 +446,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 	testsWithKey := []struct {
 		name          string
 		args          argsWithKey
-		wantResp      []Task
+		wantResp      []TaskInfo
 		expectedError Error
 	}{
 		{
@@ -463,7 +463,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 				batchSize:  2,
 				primaryKey: "ID",
 			},
-			wantResp: []Task{
+			wantResp: []TaskInfo{
 				{
 					TaskUID: 0,
 					Status:  "enqueued",
@@ -579,7 +579,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 	type testData struct {
 		name     string
 		args     args
-		wantResp *Task
+		wantResp *TaskInfo
 	}
 
 	tests := []testData{
@@ -590,7 +590,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 				client:    defaultClient,
 				documents: testCsvDocuments,
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 0,
 				Status:  "enqueued",
 				Type:    "documentAdditionOrUpdate",
@@ -619,7 +619,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp *Task
+				gotResp *TaskInfo
 				err     error
 			)
 
@@ -661,7 +661,7 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 	type testData struct {
 		name     string
 		args     args
-		wantResp []Task
+		wantResp []TaskInfo
 	}
 
 	tests := []testData{
@@ -673,7 +673,7 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 				batchSize: 2,
 				documents: testCsvDocuments,
 			},
-			wantResp: []Task{
+			wantResp: []TaskInfo{
 				{
 					TaskUID: 0,
 					Status:  "enqueued",
@@ -715,7 +715,7 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp []Task
+				gotResp []TaskInfo
 				err     error
 			)
 
@@ -782,7 +782,7 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 	type testData struct {
 		name     string
 		args     args
-		wantResp *Task
+		wantResp *TaskInfo
 	}
 
 	tests := []testData{
@@ -793,7 +793,7 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 				client:    defaultClient,
 				documents: testNdjsonDocuments,
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 0,
 				Status:  "enqueued",
 				Type:    "documentAdditionOrUpdate",
@@ -822,7 +822,7 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp *Task
+				gotResp *TaskInfo
 				err     error
 			)
 
@@ -864,7 +864,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 	type testData struct {
 		name     string
 		args     args
-		wantResp []Task
+		wantResp []TaskInfo
 	}
 
 	tests := []testData{
@@ -876,7 +876,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 				batchSize: 2,
 				documents: testNdjsonDocuments,
 			},
-			wantResp: []Task{
+			wantResp: []TaskInfo{
 				{
 					TaskUID: 0,
 					Status:  "enqueued",
@@ -918,7 +918,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp []Task
+				gotResp []TaskInfo
 				err     error
 			)
 
@@ -960,7 +960,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *Task
+		wantResp *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicDeleteAllDocuments",
@@ -968,7 +968,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 				UID:    "TestIndexBasicDeleteAllDocuments",
 				client: defaultClient,
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -980,7 +980,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 				UID:    "TestIndexDeleteAllDocumentsWithCustomClient",
 				client: customClient,
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 2,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1022,7 +1022,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *Task
+		wantResp *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicDeleteOneDocument",
@@ -1034,7 +1034,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"ID": "123", "Name": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1050,7 +1050,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"ID": "123", "Name": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1068,7 +1068,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"ID": "1", "Name": "Alice In Wonderland"},
 				},
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1084,7 +1084,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"BookID": 123, "Title": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1100,7 +1100,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"BookID": 123, "Title": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1118,7 +1118,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"BookID": 1, "Title": "Alice In Wonderland"},
 				},
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1164,7 +1164,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *Task
+		wantResp *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicDeleteDocument",
@@ -1176,7 +1176,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1192,7 +1192,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1210,7 +1210,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "1", Name: "Alice In Wonderland"},
 				},
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1228,7 +1228,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "1", Name: "Alice In Wonderland"},
 				},
 			},
-			wantResp: &Task{
+			wantResp: &TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1701,7 +1701,7 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 	testsNoKey := []struct {
 		name string
 		args argsNoKey
-		want []Task
+		want []TaskInfo
 	}{
 		{
 			name: "TestIndexBatchUpdateDocuments",
@@ -1714,7 +1714,7 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 				},
 				batchSize: 1,
 			},
-			want: []Task{
+			want: []TaskInfo{
 				{
 					TaskUID: 1,
 					Status:  "enqueued",
@@ -1732,7 +1732,7 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 	testsWithKey := []struct {
 		name string
 		args argsWithKey
-		want []Task
+		want []TaskInfo
 	}{
 		{
 			name: "TestIndexBatchUpdateDocuments",
@@ -1746,7 +1746,7 @@ func TestIndex_UpdateDocumentsInBatches(t *testing.T) {
 				batchSize:  1,
 				primaryKey: "book_id",
 			},
-			want: []Task{
+			want: []TaskInfo{
 				{
 					TaskUID: 1,
 					Status:  "enqueued",
