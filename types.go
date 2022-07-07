@@ -103,7 +103,7 @@ const (
 	TaskStatusFailed TaskStatus = "failed"
 )
 
-// Task indicate information about a task ressource
+// Task indicates information about a task resource
 //
 // Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html
 type Task struct {
