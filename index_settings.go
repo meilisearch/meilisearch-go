@@ -20,11 +20,11 @@ func (i Index) GetSettings() (resp *Settings, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateSettings(request *Settings) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateSettings(request *Settings) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings",
-		method:              http.MethodPost,
+		method:              http.MethodPatch,
 		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -37,8 +37,8 @@ func (i Index) UpdateSettings(request *Settings) (resp *Task, err error) {
 	return resp, nil
 }
 
-func (i Index) ResetSettings() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) ResetSettings() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings",
 		method:              http.MethodDelete,
@@ -69,11 +69,11 @@ func (i Index) GetRankingRules() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateRankingRules(request *[]string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateRankingRules(request *[]string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/ranking-rules",
-		method:              http.MethodPost,
+		method:              http.MethodPut,
 		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -86,8 +86,8 @@ func (i Index) UpdateRankingRules(request *[]string) (resp *Task, err error) {
 	return resp, nil
 }
 
-func (i Index) ResetRankingRules() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) ResetRankingRules() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/ranking-rules",
 		method:              http.MethodDelete,
@@ -119,11 +119,11 @@ func (i Index) GetDistinctAttribute() (resp *string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateDistinctAttribute(request string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateDistinctAttribute(request string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/distinct-attribute",
-		method:              http.MethodPost,
+		method:              http.MethodPut,
 		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -136,8 +136,8 @@ func (i Index) UpdateDistinctAttribute(request string) (resp *Task, err error) {
 	return resp, nil
 }
 
-func (i Index) ResetDistinctAttribute() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) ResetDistinctAttribute() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/distinct-attribute",
 		method:              http.MethodDelete,
@@ -168,11 +168,11 @@ func (i Index) GetSearchableAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateSearchableAttributes(request *[]string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateSearchableAttributes(request *[]string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/searchable-attributes",
-		method:              http.MethodPost,
+		method:              http.MethodPut,
 		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -185,8 +185,8 @@ func (i Index) UpdateSearchableAttributes(request *[]string) (resp *Task, err er
 	return resp, nil
 }
 
-func (i Index) ResetSearchableAttributes() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) ResetSearchableAttributes() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/searchable-attributes",
 		method:              http.MethodDelete,
@@ -217,11 +217,11 @@ func (i Index) GetDisplayedAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateDisplayedAttributes(request *[]string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateDisplayedAttributes(request *[]string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/displayed-attributes",
-		method:              http.MethodPost,
+		method:              http.MethodPut,
 		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -234,8 +234,8 @@ func (i Index) UpdateDisplayedAttributes(request *[]string) (resp *Task, err err
 	return resp, nil
 }
 
-func (i Index) ResetDisplayedAttributes() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) ResetDisplayedAttributes() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/displayed-attributes",
 		method:              http.MethodDelete,
@@ -266,11 +266,11 @@ func (i Index) GetStopWords() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateStopWords(request *[]string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateStopWords(request *[]string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/stop-words",
-		method:              http.MethodPost,
+		method:              http.MethodPut,
 		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -283,8 +283,8 @@ func (i Index) UpdateStopWords(request *[]string) (resp *Task, err error) {
 	return resp, nil
 }
 
-func (i Index) ResetStopWords() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) ResetStopWords() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/stop-words",
 		method:              http.MethodDelete,
@@ -315,11 +315,11 @@ func (i Index) GetSynonyms() (resp *map[string][]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateSynonyms(request *map[string][]string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateSynonyms(request *map[string][]string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/synonyms",
-		method:              http.MethodPost,
+		method:              http.MethodPut,
 		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -332,8 +332,8 @@ func (i Index) UpdateSynonyms(request *map[string][]string) (resp *Task, err err
 	return resp, nil
 }
 
-func (i Index) ResetSynonyms() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) ResetSynonyms() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/synonyms",
 		method:              http.MethodDelete,
@@ -364,11 +364,11 @@ func (i Index) GetFilterableAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateFilterableAttributes(request *[]string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateFilterableAttributes(request *[]string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/filterable-attributes",
-		method:              http.MethodPost,
+		method:              http.MethodPut,
 		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -381,8 +381,8 @@ func (i Index) UpdateFilterableAttributes(request *[]string) (resp *Task, err er
 	return resp, nil
 }
 
-func (i Index) ResetFilterableAttributes() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) ResetFilterableAttributes() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/filterable-attributes",
 		method:              http.MethodDelete,
@@ -413,11 +413,11 @@ func (i Index) GetSortableAttributes() (resp *[]string, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateSortableAttributes(request *[]string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateSortableAttributes(request *[]string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/sortable-attributes",
-		method:              http.MethodPost,
+		method:              http.MethodPut,
 		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -430,8 +430,8 @@ func (i Index) UpdateSortableAttributes(request *[]string) (resp *Task, err erro
 	return resp, nil
 }
 
-func (i Index) ResetSortableAttributes() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) ResetSortableAttributes() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/sortable-attributes",
 		method:              http.MethodDelete,
@@ -462,11 +462,11 @@ func (i Index) GetTypoTolerance() (resp *TypoTolerance, err error) {
 	return resp, nil
 }
 
-func (i Index) UpdateTypoTolerance(request *TypoTolerance) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateTypoTolerance(request *TypoTolerance) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/typo-tolerance",
-		method:              http.MethodPost,
+		method:              http.MethodPatch,
 		contentType:         contentTypeJSON,
 		withRequest:         &request,
 		withResponse:        resp,
@@ -479,8 +479,8 @@ func (i Index) UpdateTypoTolerance(request *TypoTolerance) (resp *Task, err erro
 	return resp, nil
 }
 
-func (i Index) ResetTypoTolerance() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) ResetTypoTolerance() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/settings/typo-tolerance",
 		method:              http.MethodDelete,

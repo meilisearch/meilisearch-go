@@ -24,14 +24,14 @@ type docTestBooks struct {
 }
 
 func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
-	list, err := client.GetAllIndexes()
+	list, err := client.GetAllIndexes(nil)
 	if err != nil {
 		return false, err
 	}
 
-	for _, index := range list {
+	for _, index := range list.Results {
 		task, _ := client.DeleteIndex(index.UID)
-		_, err := client.WaitForTask(task)
+		_, err := client.WaitForTask(task.TaskUID)
 		if err != nil {
 			return false, err
 		}
@@ -41,7 +41,7 @@ func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
 }
 
 func deleteAllKeys(client ClientInterface) (ok bool, err error) {
-	list, err := client.GetKeys()
+	list, err := client.GetKeys(nil)
 	if err != nil {
 		return false, err
 	}
@@ -65,26 +65,39 @@ func cleanup(c ClientInterface) func() {
 	}
 }
 
-func testWaitForTask(t *testing.T, i *Index, u *Task) {
-	_, err := i.WaitForTask(u)
+func testWaitForTask(t *testing.T, i *Index, u *TaskInfo) {
+	_, err := i.WaitForTask(u.TaskUID)
 	require.NoError(t, err)
 }
 
-func testWaitForBatchTask(t *testing.T, i *Index, u []Task) {
+func testWaitForBatchTask(t *testing.T, i *Index, u []TaskInfo) {
 	for _, id := range u {
-		_, err := i.WaitForTask(&id)
+		_, err := i.WaitForTask(id.TaskUID)
 		require.NoError(t, err)
 	}
 }
 
 func GetPrivateKey() (key string) {
-	list, err := defaultClient.GetKeys()
+	list, err := defaultClient.GetKeys(nil)
 	if err != nil {
 		return ""
 	}
 	for _, key := range list.Results {
-		if strings.Contains(key.Description, "Admin API Key") || (key.Description == "") {
+		if strings.Contains(key.Name, "Default Admin API Key") || (key.Description == "") {
 			return key.Key
+		}
+	}
+	return ""
+}
+
+func GetPrivateUIDKey() (key string) {
+	list, err := defaultClient.GetKeys(nil)
+	if err != nil {
+		return ""
+	}
+	for _, key := range list.Results {
+		if strings.Contains(key.Name, "Default Admin API Key") || (key.Description == "") {
+			return key.UID
 		}
 	}
 	return ""
@@ -100,7 +113,7 @@ func SetUpEmptyIndex(index *IndexConfig) (resp *Index, err error) {
 		fmt.Println(err)
 		return nil, err
 	}
-	finalTask, _ := client.WaitForTask(task)
+	finalTask, _ := client.WaitForTask(task.TaskUID)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -127,7 +140,7 @@ func SetUpBasicIndex(indexUID string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := index.WaitForTask(task)
+	finalTask, _ := index.WaitForTask(task.TaskUID)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -154,7 +167,7 @@ func SetUpIndexWithNestedFields(indexUID string) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := index.WaitForTask(task)
+	finalTask, _ := index.WaitForTask(task.TaskUID)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -194,7 +207,7 @@ func SetUpIndexForFaceting() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := index.WaitForTask(task)
+	finalTask, _ := index.WaitForTask(task.TaskUID)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}

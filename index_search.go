@@ -26,8 +26,8 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	if request.Limit != DefaultLimit {
 		searchPostRequestParams["limit"] = request.Limit
 	}
-	if request.Matches {
-		searchPostRequestParams["matches"] = request.Matches
+	if request.ShowMatchesPosition {
+		searchPostRequestParams["showMatchesPosition"] = request.ShowMatchesPosition
 	}
 	if request.Filter != nil {
 		searchPostRequestParams["filter"] = request.Filter
@@ -56,8 +56,8 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	if len(request.AttributesToHighlight) != 0 {
 		searchPostRequestParams["attributesToHighlight"] = request.AttributesToHighlight
 	}
-	if len(request.FacetsDistribution) != 0 {
-		searchPostRequestParams["facetsDistribution"] = request.FacetsDistribution
+	if len(request.Facets) != 0 {
+		searchPostRequestParams["facets"] = request.Facets
 	}
 	if len(request.Sort) != 0 {
 		searchPostRequestParams["sort"] = request.Sort
