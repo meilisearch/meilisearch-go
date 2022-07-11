@@ -429,7 +429,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetFilterableAttributes",
@@ -437,8 +437,8 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 		{
@@ -447,8 +447,8 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 	}
@@ -461,7 +461,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 
 			gotTask, err := i.ResetFilterableAttributes()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetFilterableAttributes()
@@ -479,7 +479,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -488,8 +488,8 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -499,8 +499,8 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -514,7 +514,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 
 			gotTask, err := i.ResetDisplayedAttributes()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetDisplayedAttributes()
@@ -532,7 +532,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetDistinctAttribute",
@@ -540,8 +540,8 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 		{
@@ -550,8 +550,8 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 	}
@@ -564,7 +564,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 
 			gotTask, err := i.ResetDistinctAttribute()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetDistinctAttribute()
@@ -582,7 +582,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -591,8 +591,8 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -602,8 +602,8 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -617,7 +617,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 
 			gotTask, err := i.ResetRankingRules()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetRankingRules()
@@ -635,7 +635,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -644,8 +644,8 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -655,8 +655,8 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -670,7 +670,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 
 			gotTask, err := i.ResetSearchableAttributes()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetSearchableAttributes()
@@ -688,7 +688,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *Settings
 	}{
 		{
@@ -697,8 +697,8 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -718,8 +718,8 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -743,7 +743,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 
 			gotTask, err := i.ResetSettings()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetSettings()
@@ -761,7 +761,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetStopWords",
@@ -769,8 +769,8 @@ func TestIndex_ResetStopWords(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 		{
@@ -779,8 +779,8 @@ func TestIndex_ResetStopWords(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 	}
@@ -793,7 +793,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 
 			gotTask, err := i.ResetStopWords()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetStopWords()
@@ -811,7 +811,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetSynonyms",
@@ -819,8 +819,8 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 		{
@@ -829,8 +829,8 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 	}
@@ -843,7 +843,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 
 			gotTask, err := i.ResetSynonyms()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetSynonyms()
@@ -861,7 +861,7 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetSortableAttributes",
@@ -869,8 +869,8 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 		{
@@ -879,8 +879,8 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 	}
@@ -893,7 +893,7 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 
 			gotTask, err := i.ResetSortableAttributes()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetSortableAttributes()
@@ -911,7 +911,7 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *TypoTolerance
 	}{
 		{
@@ -920,8 +920,8 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
 		},
@@ -931,8 +931,8 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
 		},
@@ -946,7 +946,7 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 
 			gotTask, err := i.ResetTypoTolerance()
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetTypoTolerance()
@@ -965,7 +965,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateFilterableAttributes",
@@ -976,8 +976,8 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 		{
@@ -989,8 +989,8 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 	}
@@ -1007,7 +1007,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 
 			gotTask, err := i.UpdateFilterableAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetFilterableAttributes()
@@ -1026,7 +1026,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -1038,8 +1038,8 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 					"book_id", "tag", "title",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -1052,8 +1052,8 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 					"book_id", "tag", "title",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -1071,7 +1071,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 
 			gotTask, err := i.UpdateDisplayedAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetDisplayedAttributes()
@@ -1090,7 +1090,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateDistinctAttribute",
@@ -1099,8 +1099,8 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 				client:  defaultClient,
 				request: "movie_id",
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 		{
@@ -1110,8 +1110,8 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 				client:  customClient,
 				request: "movie_id",
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 	}
@@ -1128,7 +1128,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 
 			gotTask, err := i.UpdateDistinctAttribute(tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetDistinctAttribute()
@@ -1147,7 +1147,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -1159,8 +1159,8 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"typo", "words",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -1173,8 +1173,8 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"typo", "words",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -1187,8 +1187,8 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"BookID:asc",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -1206,7 +1206,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 
 			gotTask, err := i.UpdateRankingRules(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetRankingRules()
@@ -1225,7 +1225,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -1237,8 +1237,8 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 					"title", "tag",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -1251,8 +1251,8 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 					"title", "tag",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -1270,7 +1270,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 
 			gotTask, err := i.UpdateSearchableAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSearchableAttributes()
@@ -1289,7 +1289,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *Settings
 	}{
 		{
@@ -1331,8 +1331,8 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1385,8 +1385,8 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1414,7 +1414,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 
 			gotTask, err := i.UpdateSettings(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSettings()
@@ -1436,7 +1436,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *Settings
 	}{
 		{
@@ -1488,8 +1488,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1552,8 +1552,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1616,8 +1616,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1680,8 +1680,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1744,8 +1744,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1808,8 +1808,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:      &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1872,8 +1872,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance: &defaultTypoTolerance,
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1968,8 +1968,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -1997,7 +1997,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 
 			gotTask, err := i.UpdateSettings(&tt.args.firstRequest)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSettings()
@@ -2006,7 +2006,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 
 			gotTask, err = i.UpdateSettings(&tt.args.secondRequest)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 
 			testWaitForTask(t, i, gotTask)
 
@@ -2026,7 +2026,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateStopWords",
@@ -2037,8 +2037,8 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 					"of", "the", "to",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 		{
@@ -2050,8 +2050,8 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 					"of", "the", "to",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 	}
@@ -2068,7 +2068,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 
 			gotTask, err := i.UpdateStopWords(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetStopWords()
@@ -2087,7 +2087,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateSynonyms",
@@ -2098,8 +2098,8 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 					"wolverine": {"logan", "xmen"},
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 		{
@@ -2111,8 +2111,8 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 					"wolverine": {"logan", "xmen"},
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 	}
@@ -2129,7 +2129,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 
 			gotTask, err := i.UpdateSynonyms(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSynonyms()
@@ -2148,7 +2148,7 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateSortableAttributes",
@@ -2159,8 +2159,8 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 		{
@@ -2172,8 +2172,8 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 		},
 	}
@@ -2190,7 +2190,7 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 
 			gotTask, err := i.UpdateSortableAttributes(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetSortableAttributes()
@@ -2209,7 +2209,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *Task
+		wantTask *TaskInfo
 		wantResp *TypoTolerance
 	}{
 		{
@@ -2227,8 +2227,8 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					DisableOnAttributes: []string{},
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
 		},
@@ -2247,8 +2247,8 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					DisableOnAttributes: []string{},
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
 		},
@@ -2269,8 +2269,8 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					DisableOnAttributes: []string{},
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
 		},
@@ -2291,8 +2291,8 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &Task{
-				UID: 1,
+			wantTask: &TaskInfo{
+				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
 		},
@@ -2310,7 +2310,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 
 			gotTask, err := i.UpdateTypoTolerance(&tt.args.request)
 			require.NoError(t, err)
-			require.GreaterOrEqual(t, gotTask.UID, tt.wantTask.UID)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetTypoTolerance()

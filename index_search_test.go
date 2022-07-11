@@ -36,10 +36,9 @@ func TestIndex_Search(t *testing.T) {
 						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           2,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -59,10 +58,9 @@ func TestIndex_Search(t *testing.T) {
 						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           2,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -81,10 +79,9 @@ func TestIndex_Search(t *testing.T) {
 						"book_id": float64(456), "title": "Le Petit Prince",
 					},
 				},
-				NbHits:           2,
-				Offset:           0,
-				Limit:            1,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              1,
 			},
 		},
 		{
@@ -103,10 +100,9 @@ func TestIndex_Search(t *testing.T) {
 						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 				},
-				NbHits:           20,
-				Offset:           0,
-				Limit:            1,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 20,
+				Offset:             0,
+				Limit:              1,
 			},
 		},
 		{
@@ -125,10 +121,9 @@ func TestIndex_Search(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           2,
-				Offset:           1,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 2,
+				Offset:             1,
+				Limit:              20,
 			},
 		},
 		{
@@ -150,10 +145,9 @@ func TestIndex_Search(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           2,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -176,10 +170,9 @@ func TestIndex_Search(t *testing.T) {
 						},
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -203,10 +196,9 @@ func TestIndex_Search(t *testing.T) {
 						},
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -229,10 +221,9 @@ func TestIndex_Search(t *testing.T) {
 						},
 					},
 				},
-				NbHits:           2,
-				Offset:           0,
-				Limit:            1,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              1,
 			},
 		},
 		{
@@ -257,20 +248,19 @@ func TestIndex_Search(t *testing.T) {
 						},
 					},
 				},
-				NbHits:           2,
-				Offset:           0,
-				Limit:            1,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              1,
 			},
 		},
 		{
-			name: "TestIndexSearchWithMatches",
+			name: "TestIndexSearchWithShowMatchesPosition",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "and",
 				request: SearchRequest{
-					Matches: true,
+					ShowMatchesPosition: true,
 				},
 			},
 			want: &SearchResponse{
@@ -288,10 +278,9 @@ func TestIndex_Search(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           4,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 4,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -308,10 +297,9 @@ func TestIndex_Search(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 	}
@@ -332,12 +320,10 @@ func TestIndex_Search(t *testing.T) {
 			if tt.want.Hits[0].(map[string]interface{})["_formatted"] != nil {
 				require.Equal(t, tt.want.Hits[0].(map[string]interface{})["_formatted"], got.Hits[0].(map[string]interface{})["_formatted"])
 			}
-			require.Equal(t, tt.want.NbHits, got.NbHits)
+			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
-			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
-			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
-			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
+			require.Equal(t, tt.want.FacetDistribution, got.FacetDistribution)
 		})
 	}
 }
@@ -357,13 +343,13 @@ func TestIndex_SearchFacets(t *testing.T) {
 		want *SearchResponse
 	}{
 		{
-			name: "TestIndexSearchWithFacetsDistribution",
+			name: "TestIndexSearchWithFacets",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "prince",
 				request: SearchRequest{
-					FacetsDistribution: []string{"*"},
+					Facets: []string{"*"},
 				},
 				filterableAttributes: []string{"tag"},
 			},
@@ -376,28 +362,26 @@ func TestIndex_SearchFacets(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           2,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
-				FacetsDistribution: map[string]interface{}(
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+				FacetDistribution: map[string]interface{}(
 					map[string]interface{}{
 						"tag": map[string]interface{}{
 							"Epic fantasy": float64(1),
 							"Tale":         float64(1),
 						},
 					}),
-				ExhaustiveFacetsCount: interface{}(false),
 			},
 		},
 		{
-			name: "TestIndexSearchWithFacetsDistributionWithCustomClient",
+			name: "TestIndexSearchWithFacetsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
 				client: customClient,
 				query:  "prince",
 				request: SearchRequest{
-					FacetsDistribution: []string{"*"},
+					Facets: []string{"*"},
 				},
 				filterableAttributes: []string{"tag"},
 			},
@@ -410,18 +394,16 @@ func TestIndex_SearchFacets(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           2,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
-				FacetsDistribution: map[string]interface{}(
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+				FacetDistribution: map[string]interface{}(
 					map[string]interface{}{
 						"tag": map[string]interface{}{
 							"Epic fantasy": float64(1),
 							"Tale":         float64(1),
 						},
 					}),
-				ExhaustiveFacetsCount: interface{}(false),
 			},
 		},
 	}
@@ -444,12 +426,10 @@ func TestIndex_SearchFacets(t *testing.T) {
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
 			}
-			require.Equal(t, tt.want.NbHits, got.NbHits)
+			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
-			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
-			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
-			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
+			require.Equal(t, tt.want.FacetDistribution, got.FacetDistribution)
 		})
 	}
 }
@@ -487,10 +467,9 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -512,10 +491,9 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -539,10 +517,9 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -568,10 +545,9 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -597,10 +573,9 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           2,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -628,10 +603,9 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 						"book_id": float64(204), "title": "Ulysses",
 					},
 				},
-				NbHits:           3,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 3,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -654,10 +628,9 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 						"book_id": float64(1), "title": "Alice In Wonderland",
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -686,10 +659,9 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           3,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 3,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -712,10 +684,9 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 						"book_id": float64(456), "title": "Le Petit Prince",
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -737,10 +708,9 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 						"book_id": float64(1032), "title": "Crime and Punishment",
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 	}
@@ -763,12 +733,10 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
 			}
-			require.Equal(t, tt.want.NbHits, got.NbHits)
+			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
-			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
-			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
-			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
+			require.Equal(t, tt.want.FacetDistribution, got.FacetDistribution)
 		})
 	}
 }
@@ -817,10 +785,9 @@ func TestIndex_SearchWithSort(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           4,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 4,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -853,10 +820,9 @@ func TestIndex_SearchWithSort(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           4,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 4,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -891,10 +857,9 @@ func TestIndex_SearchWithSort(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           4,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 4,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -929,10 +894,9 @@ func TestIndex_SearchWithSort(t *testing.T) {
 						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
 					},
 				},
-				NbHits:           4,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 4,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -968,10 +932,9 @@ func TestIndex_SearchWithSort(t *testing.T) {
 						"book_id": float64(7), "title": "Don Quixote",
 					},
 				},
-				NbHits:           20,
-				Offset:           0,
-				Limit:            4,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 20,
+				Offset:             0,
+				Limit:              4,
 			},
 		},
 	}
@@ -994,12 +957,10 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
 			}
-			require.Equal(t, tt.want.NbHits, got.NbHits)
+			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
-			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
-			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
-			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
+			require.Equal(t, tt.want.FacetDistribution, got.FacetDistribution)
 		})
 	}
 }
@@ -1037,10 +998,9 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 						},
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -1061,10 +1021,9 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 						},
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -1092,10 +1051,9 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 						},
 					},
 				},
-				NbHits:           2,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -1119,10 +1077,9 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 						},
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 		{
@@ -1153,10 +1110,9 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 						},
 					},
 				},
-				NbHits:           1,
-				Offset:           0,
-				Limit:            20,
-				ExhaustiveNbHits: false,
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 		},
 	}
@@ -1186,12 +1142,10 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 			for len := range got.Hits {
 				require.Equal(t, tt.want.Hits[len], got.Hits[len])
 			}
-			require.Equal(t, tt.want.NbHits, got.NbHits)
+			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
-			require.Equal(t, tt.want.ExhaustiveNbHits, got.ExhaustiveNbHits)
-			require.Equal(t, tt.want.FacetsDistribution, got.FacetsDistribution)
-			require.Equal(t, tt.want.ExhaustiveFacetsCount, got.ExhaustiveFacetsCount)
+			require.Equal(t, tt.want.FacetDistribution, got.FacetDistribution)
 		})
 	}
 }

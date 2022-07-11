@@ -99,11 +99,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(task.taskID)
+	fmt.Println(task.taskUID)
 }
 ```
 
-With the `taskID`, you can check the status (`enqueued`, `processing`, `succeeded` or `failed`) of your documents addition using the [task endpoint](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html#task-status).
+With the `taskUID`, you can check the status (`enqueued`, `processing`, `succeeded` or `failed`) of your documents addition using the [task endpoint](https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html#task-status).
 
 #### Basic Search <!-- omit in toc -->
 
@@ -219,7 +219,7 @@ searchRes, err := index.Search("wonder",
   ],
   "offset": 0,
   "limit": 20,
-  "nbHits": 1,
+  "estimatedTotalHits": 1,
   "processingTimeMs": 0,
   "query": "wonder"
 }
@@ -227,7 +227,7 @@ searchRes, err := index.Search("wonder",
 
 ## 🤖 Compatibility with Meilisearch
 
-This package only guarantees the compatibility with the [version v0.27.0 of Meilisearch](https://github.com/meilisearch/meilisearch/releases/tag/v0.27.0).
+This package only guarantees the compatibility with the [version v0.28.0 of Meilisearch](https://github.com/meilisearch/meilisearch/releases/tag/v0.28.0).
 
 ## 💡 Learn More
 
