@@ -26,6 +26,19 @@ type Index struct {
 	client     *Client
 }
 
+// Return of multiple indexes is wrap in a IndexesResults
+type IndexesResults struct {
+	Results []Index `json:"results"`
+	Offset  int64   `json:"offset"`
+	Limit   int64   `json:"limit"`
+	Total   int64   `json:"total"`
+}
+
+type IndexesQuery struct {
+	Limit  int64 `json:"limit,omitempty"`
+	Offset int64 `json:"offset,omitempty"`
+}
+
 // Settings is the type that represents the settings in Meilisearch
 type Settings struct {
 	RankingRules         []string            `json:"rankingRules,omitempty"`
@@ -90,12 +103,13 @@ const (
 	TaskStatusFailed TaskStatus = "failed"
 )
 
-// Task indicate information about a task is returned for asynchronous method
+// Task indicates information about a task resource
 //
 // Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html
 type Task struct {
 	Status     TaskStatus          `json:"status"`
-	UID        int64               `json:"uid"`
+	UID        int64               `json:"uid,omitempty"`
+	TaskUID    int64               `json:"taskUid,omitempty"`
 	IndexUID   string              `json:"indexUid"`
 	Type       string              `json:"type"`
 	Error      meilisearchApiError `json:"error,omitempty"`
@@ -104,6 +118,32 @@ type Task struct {
 	StartedAt  time.Time           `json:"startedAt,omitempty"`
 	FinishedAt time.Time           `json:"finishedAt,omitempty"`
 	Details    Details             `json:"details,omitempty"`
+}
+
+
+// TaskInfo indicates information regarding a task returned by an asynchronous method
+//
+// Documentation: https://docs.meilisearch.com/reference/api/tasks.html#tasks
+type TaskInfo struct {
+	Status     TaskStatus          `json:"status"`
+	TaskUID    int64               `json:"taskUid,omitempty"`
+	IndexUID   string              `json:"indexUid"`
+	Type       string              `json:"type"`
+	Error      meilisearchApiError `json:"error,omitempty"`
+	Duration   string              `json:"duration,omitempty"`
+	EnqueuedAt time.Time           `json:"enqueuedAt"`
+	StartedAt  time.Time           `json:"startedAt,omitempty"`
+	FinishedAt time.Time           `json:"finishedAt,omitempty"`
+	Details    Details             `json:"details,omitempty"`
+}
+
+// TasksQuery is the request body for list documents method
+type TasksQuery struct {
+	Limit    int64    `json:"limit,omitempty"`
+	From     int64    `json:"from,omitempty"`
+	IndexUID []string `json:"indexUid,omitempty"`
+	Status   []string `json:"status,omitempty"`
+	Type     []string `json:"type,omitempty"`
 }
 
 type Details struct {
@@ -121,16 +161,22 @@ type Details struct {
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
 }
 
-type ResultTask struct {
+// Return of multiple tasks is wrap in a TaskResult
+type TaskResult struct {
 	Results []Task `json:"results"`
+	Limit   int64  `json:"limit"`
+	From    int64  `json:"from"`
+	Next    int64  `json:"next"`
 }
 
 // Keys allow the user to connect to the Meilisearch instance
 //
 // Documentation: https://docs.meilisearch.com/learn/advanced/security.html#protecting-a-meilisearch-instance
 type Key struct {
+	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Key         string    `json:"key,omitempty"`
+	UID         string    `json:"uid,omitempty"`
 	Actions     []string  `json:"actions,omitempty"`
 	Indexes     []string  `json:"indexes,omitempty"`
 	CreatedAt   time.Time `json:"createdAt,omitempty"`
@@ -140,6 +186,7 @@ type Key struct {
 
 // This structure is used to send the exact ISO-8601 time format managed by Meilisearch
 type KeyParsed struct {
+	Name        string    `json:"name"`
 	Description string    `json:"description"`
 	Key         string    `json:"key,omitempty"`
 	Actions     []string  `json:"actions,omitempty"`
@@ -149,8 +196,23 @@ type KeyParsed struct {
 	ExpiresAt   *string   `json:"expiresAt"`
 }
 
-type ResultKey struct {
+// This structure is used to update a Key
+type KeyUpdate struct {
+	Name        string `json:"name,omitempty"`
+	Description string `json:"description,omitempty"`
+}
+
+// Return of multiple keys is wrap in a KeysResults
+type KeysResults struct {
 	Results []Key `json:"results"`
+	Offset  int64 `json:"offset"`
+	Limit   int64 `json:"limit"`
+	Total   int64 `json:"total"`
+}
+
+type KeysQuery struct {
+	Limit  int64 `json:"limit,omitempty"`
+	Offset int64 `json:"offset,omitempty"`
 }
 
 // Information to create a tenant token
@@ -165,8 +227,8 @@ type TenantTokenOptions struct {
 
 // Custom Claims structure to create a Tenant Token
 type TenantTokenClaims struct {
-	APIKeyPrefix string      `json:"apiKeyPrefix"`
-	SearchRules  interface{} `json:"searchRules"`
+	APIKeyUID   string      `json:"apiKeyUid"`
+	SearchRules interface{} `json:"searchRules"`
 	jwt.StandardClaims
 }
 
@@ -217,30 +279,40 @@ type SearchRequest struct {
 	HighlightPreTag       string
 	HighlightPostTag      string
 	Filter                interface{}
-	Matches               bool
-	FacetsDistribution    []string
+	ShowMatchesPosition   bool
+	Facets                []string
 	PlaceholderSearch     bool
 	Sort                  []string
 }
 
 // SearchResponse is the response body for search method
 type SearchResponse struct {
-	Hits                  []interface{} `json:"hits"`
-	NbHits                int64         `json:"nbHits"`
-	Offset                int64         `json:"offset"`
-	Limit                 int64         `json:"limit"`
-	ExhaustiveNbHits      bool          `json:"exhaustiveNbHits"`
-	ProcessingTimeMs      int64         `json:"processingTimeMs"`
-	Query                 string        `json:"query"`
-	FacetsDistribution    interface{}   `json:"facetsDistribution,omitempty"`
-	ExhaustiveFacetsCount interface{}   `json:"exhaustiveFacetsCount,omitempty"`
+	Hits               []interface{} `json:"hits"`
+	EstimatedTotalHits int64         `json:"estimatedTotalHits"`
+	Offset             int64         `json:"offset"`
+	Limit              int64         `json:"limit"`
+	ProcessingTimeMs   int64         `json:"processingTimeMs"`
+	Query              string        `json:"query"`
+	FacetDistribution  interface{}   `json:"facetDistribution,omitempty"`
 }
 
-// DocumentsRequest is the request body for list documents method
-type DocumentsRequest struct {
-	Offset               int64    `json:"offset,omitempty"`
-	Limit                int64    `json:"limit,omitempty"`
-	AttributesToRetrieve []string `json:"attributesToRetrieve,omitempty"`
+// DocumentQuery is the request body get one documents method
+type DocumentQuery struct {
+	Fields []string `json:"fields,omitempty"`
+}
+
+// DocumentsQuery is the request body for list documents method
+type DocumentsQuery struct {
+	Offset int64    `json:"offset,omitempty"`
+	Limit  int64    `json:"limit,omitempty"`
+	Fields []string `json:"fields,omitempty"`
+}
+
+type DocumentsResult struct {
+	Results []map[string]interface{} `json:"results"`
+	Limit   int64                    `json:"limit"`
+	Offset  int64                    `json:"offset"`
+	Total   int64                    `json:"total"`
 }
 
 // RawType is an alias for raw byte[]

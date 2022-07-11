@@ -15,14 +15,20 @@ import (
 	"github.com/pkg/errors"
 )
 
-func (i Index) GetDocument(identifier string, documentPtr interface{}) error {
+func (i Index) GetDocument(identifier string, request *DocumentQuery, documentPtr interface{}) error {
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents/" + identifier,
 		method:              http.MethodGet,
 		withRequest:         nil,
 		withResponse:        documentPtr,
+		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDocument",
+	}
+	if request != nil {
+		if len(request.Fields) != 0 {
+			req.withQueryParams["fields"] = strings.Join(request.Fields, ",")
+		}
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return err
@@ -30,7 +36,7 @@ func (i Index) GetDocument(identifier string, documentPtr interface{}) error {
 	return nil
 }
 
-func (i Index) GetDocuments(request *DocumentsRequest, resp interface{}) error {
+func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) error {
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents",
 		method:              http.MethodGet,
@@ -40,14 +46,16 @@ func (i Index) GetDocuments(request *DocumentsRequest, resp interface{}) error {
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDocuments",
 	}
-	if request.Limit != 0 {
-		req.withQueryParams["limit"] = strconv.FormatInt(request.Limit, 10)
-	}
-	if request.Offset != 0 {
-		req.withQueryParams["offset"] = strconv.FormatInt(request.Offset, 10)
-	}
-	if len(request.AttributesToRetrieve) != 0 {
-		req.withQueryParams["attributesToRetrieve"] = strings.Join(request.AttributesToRetrieve, ",")
+	if request != nil {
+		if request.Limit != 0 {
+			req.withQueryParams["limit"] = strconv.FormatInt(request.Limit, 10)
+		}
+		if request.Offset != 0 {
+			req.withQueryParams["offset"] = strconv.FormatInt(request.Offset, 10)
+		}
+		if len(request.Fields) != 0 {
+			req.withQueryParams["fields"] = strings.Join(request.Fields, ",")
+		}
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return err
@@ -55,8 +63,8 @@ func (i Index) GetDocuments(request *DocumentsRequest, resp interface{}) error {
 	return nil
 }
 
-func (i Index) addDocuments(documentsPtr interface{}, contentType string, primaryKey ...string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) addDocuments(documentsPtr interface{}, contentType string, primaryKey ...string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	endpoint := ""
 	if primaryKey == nil {
 		endpoint = "/indexes/" + i.UID + "/documents"
@@ -79,15 +87,15 @@ func (i Index) addDocuments(documentsPtr interface{}, contentType string, primar
 	return resp, nil
 }
 
-func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *Task, err error) {
+func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error) {
 	return i.addDocuments(documentsPtr, contentTypeJSON, primaryKey...)
 }
 
-func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []Task, err error) {
+func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	arr := reflect.ValueOf(documentsPtr)
 	lenDocs := arr.Len()
 	numBatches := int(math.Ceil(float64(lenDocs) / float64(batchSize)))
-	resp = make([]Task, numBatches)
+	resp = make([]TaskInfo, numBatches)
 
 	for j := 0; j < numBatches; j++ {
 		end := (j + 1) * batchSize
@@ -117,12 +125,12 @@ func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, pr
 	return resp, nil
 }
 
-func (i Index) AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *Task, err error) {
+func (i Index) AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
 	// []byte avoids JSON conversion in Client.sendRequest()
 	return i.addDocuments(documents, contentTypeCSV, primaryKey...)
 }
 
-func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...string) (resp *Task, err error) {
+func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
 	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
 	// read content to memory anyway because of problems with streamed bodies
 	data, err := ioutil.ReadAll(documents)
@@ -132,12 +140,12 @@ func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...stri
 	return i.addDocuments(data, contentTypeCSV, primaryKey...)
 }
 
-func (i Index) AddDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []Task, err error) {
+func (i Index) AddDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	// Reuse io.Reader implementation
 	return i.AddDocumentsCsvFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
 }
 
-func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []Task, err error) {
+func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	// Because of the possibility of multiline fields it's not safe to split
 	// into batches by lines, we'll have to parse the file and reassemble it
 	// into smaller parts. RFC 4180 compliant input with a header row is
@@ -147,12 +155,12 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 	// be added successfully.
 
 	var (
-		responses []Task
+		responses []TaskInfo
 		header    []string
 		records   [][]string
 	)
 
-	sendCsvRecords := func(records [][]string) (*Task, error) {
+	sendCsvRecords := func(records [][]string) (*TaskInfo, error) {
 		b := new(bytes.Buffer)
 		w := csv.NewWriter(b)
 		w.UseCRLF = true // Keep output RFC 4180 compliant
@@ -215,12 +223,12 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 	return responses, nil
 }
 
-func (i Index) AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *Task, err error) {
+func (i Index) AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
 	// []byte avoids JSON conversion in Client.sendRequest()
 	return i.addDocuments([]byte(documents), contentTypeNDJSON, primaryKey...)
 }
 
-func (i Index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...string) (resp *Task, err error) {
+func (i Index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
 	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
 	// read content to memory anyway because of problems with streamed bodies
 	data, err := ioutil.ReadAll(documents)
@@ -230,19 +238,19 @@ func (i Index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...s
 	return i.addDocuments(data, contentTypeNDJSON, primaryKey...)
 }
 
-func (i Index) AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []Task, err error) {
+func (i Index) AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	// Reuse io.Reader implementation
 	return i.AddDocumentsNdjsonFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
 }
 
-func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []Task, err error) {
+func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	// NDJSON files supposed to contain a valid JSON document in each line, so
 	// it's safe to split by lines.
 	// Lines are read and sent continuously to avoid reading all content into
 	// memory. However, this means that only part of the documents might be
 	// added successfully.
 
-	sendNdjsonLines := func(lines []string) (*Task, error) {
+	sendNdjsonLines := func(lines []string) (*TaskInfo, error) {
 		b := new(bytes.Buffer)
 		for _, line := range lines {
 			_, err := b.WriteString(line)
@@ -263,7 +271,7 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 	}
 
 	var (
-		responses []Task
+		responses []TaskInfo
 		lines     []string
 	)
 
@@ -303,8 +311,8 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 	return responses, nil
 }
 
-func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	endpoint := ""
 	if primaryKey == nil {
 		endpoint = "/indexes/" + i.UID + "/documents"
@@ -327,11 +335,11 @@ func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (
 	return resp, nil
 }
 
-func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []Task, err error) {
+func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	arr := reflect.ValueOf(documentsPtr)
 	lenDocs := arr.Len()
 	numBatches := int(math.Ceil(float64(lenDocs) / float64(batchSize)))
-	resp = make([]Task, numBatches)
+	resp = make([]TaskInfo, numBatches)
 
 	for j := 0; j < numBatches; j++ {
 		end := (j + 1) * batchSize
@@ -360,8 +368,8 @@ func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int,
 	return resp, nil
 }
 
-func (i Index) DeleteDocument(identifier string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) DeleteDocument(identifier string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents/" + identifier,
 		method:              http.MethodDelete,
@@ -376,8 +384,8 @@ func (i Index) DeleteDocument(identifier string) (resp *Task, err error) {
 	return resp, nil
 }
 
-func (i Index) DeleteDocuments(identifier []string) (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) DeleteDocuments(identifier []string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents/delete-batch",
 		method:              http.MethodPost,
@@ -393,8 +401,8 @@ func (i Index) DeleteDocuments(identifier []string) (resp *Task, err error) {
 	return resp, nil
 }
 
-func (i Index) DeleteAllDocuments() (resp *Task, err error) {
-	resp = &Task{}
+func (i Index) DeleteAllDocuments() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents",
 		method:              http.MethodDelete,

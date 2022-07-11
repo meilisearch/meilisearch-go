@@ -98,7 +98,7 @@ func TestClient_GetKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.client.GetKeys()
+			gotResp, err := tt.client.GetKeys(nil)
 			require.NoError(t, err)
 
 			gotKey, err := tt.client.GetKey(gotResp.Results[0].Key)
@@ -111,26 +111,56 @@ func TestClient_GetKey(t *testing.T) {
 }
 
 func TestClient_GetKeys(t *testing.T) {
+	type args struct {
+		client  *Client
+		request *KeysQuery
+	}
 	tests := []struct {
-		name   string
-		client *Client
+		name string
+		args args
 	}{
 		{
-			name:   "TestGetKeys",
-			client: defaultClient,
+			name: "TestBasicGetKeys",
+			args: args{
+				client:  defaultClient,
+				request: nil,
+			},
 		},
 		{
-			name:   "TestGetKeysWithCustomClient",
-			client: customClient,
+			name: "TestGetKeysWithCustomClient",
+			args: args{
+				client:  customClient,
+				request: nil,
+			},
+		},
+		{
+			name: "TestGetKeysWithEmptyParam",
+			args: args{
+				client:  defaultClient,
+				request: &KeysQuery{},
+			},
+		},
+		{
+			name: "TestGetKeysWithLimit",
+			args: args{
+				client: defaultClient,
+				request: &KeysQuery{
+					Limit: 1,
+				},
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.client.GetKeys()
+			gotResp, err := tt.args.client.GetKeys(tt.args.request)
 
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "GetKeys() should not return nil value")
-			require.GreaterOrEqual(t, len(gotResp.Results), 2)
+			if tt.args.request != nil && tt.args.request.Limit != 0 {
+				require.Equal(t, tt.args.request.Limit, int64(len(gotResp.Results)))
+			} else {
+				require.GreaterOrEqual(t, len(gotResp.Results), 2)
+			}
 		})
 	}
 }
@@ -170,6 +200,7 @@ func TestClient_CreateKey(t *testing.T) {
 			name:   "TestCreateKeyWithDescription",
 			client: defaultClient,
 			key: Key{
+				Name:        "TestCreateKeyWithDescription",
 				Description: "TestCreateKeyWithDescription",
 				Actions:     []string{"*"},
 				Indexes:     []string{"*"},
@@ -179,6 +210,7 @@ func TestClient_CreateKey(t *testing.T) {
 			name:   "TestCreateKeyWithActions",
 			client: defaultClient,
 			key: Key{
+				Name:        "TestCreateKeyWithActions",
 				Description: "TestCreateKeyWithActions",
 				Actions:     []string{"documents.add", "documents.delete"},
 				Indexes:     []string{"*"},
@@ -188,6 +220,7 @@ func TestClient_CreateKey(t *testing.T) {
 			name:   "TestCreateKeyWithIndexes",
 			client: defaultClient,
 			key: Key{
+				Name:        "TestCreateKeyWithIndexes",
 				Description: "TestCreateKeyWithIndexes",
 				Actions:     []string{"*"},
 				Indexes:     []string{"movies", "games"},
@@ -197,6 +230,7 @@ func TestClient_CreateKey(t *testing.T) {
 			name:   "TestCreateKeyWithAllOptions",
 			client: defaultClient,
 			key: Key{
+				Name:        "TestCreateKeyWithAllOptions",
 				Description: "TestCreateKeyWithAllOptions",
 				Actions:     []string{"documents.add", "documents.delete"},
 				Indexes:     []string{"movies", "games"},
@@ -241,8 +275,6 @@ func TestClient_UpdateKey(t *testing.T) {
 			},
 			keyToUpdate: Key{
 				Description: "TestUpdateKeyWithDescription",
-				Actions:     []string{"*"},
-				Indexes:     []string{"*"},
 			},
 		},
 		{
@@ -250,65 +282,32 @@ func TestClient_UpdateKey(t *testing.T) {
 			client: customClient,
 			keyToCreate: Key{
 				Actions: []string{"*"},
-				Indexes: []string{"*"},
+				Indexes: []string{"TestUpdateKeyWithCustomClientWithDescription"},
 			},
 			keyToUpdate: Key{
 				Description: "TestUpdateKeyWithCustomClientWithDescription",
-				Actions:     []string{"*"},
-				Indexes:     []string{"*"},
 			},
 		},
 		{
-			name:   "TestUpdateKeyWithExpirationAt",
+			name:   "TestUpdateKeyWithName",
 			client: defaultClient,
 			keyToCreate: Key{
 				Actions: []string{"*"},
-				Indexes: []string{"*"},
+				Indexes: []string{"TestUpdateKeyWithName"},
 			},
 			keyToUpdate: Key{
-				Actions:   []string{"*"},
-				Indexes:   []string{"*"},
-				ExpiresAt: time.Now().Add(time.Hour * 10),
+				Name: "TestUpdateKeyWithName",
 			},
 		},
 		{
-			name:   "TestUpdateKeyWithActions",
+			name:   "TestUpdateKeyWithNameAndAction",
 			client: defaultClient,
 			keyToCreate: Key{
-				Actions: []string{"*"},
+				Actions: []string{"search"},
 				Indexes: []string{"*"},
 			},
 			keyToUpdate: Key{
-				Description: "TestUpdateKeyWithActions",
-				Actions:     []string{"documents.add", "documents.delete"},
-				Indexes:     []string{"*"},
-			},
-		},
-		{
-			name:   "TestUpdateKeyWithIndexes",
-			client: defaultClient,
-			keyToCreate: Key{
-				Actions: []string{"*"},
-				Indexes: []string{"*"},
-			},
-			keyToUpdate: Key{
-				Description: "TestUpdateKeyWithIndexes",
-				Actions:     []string{"*"},
-				Indexes:     []string{"movies", "games"},
-			},
-		},
-		{
-			name:   "TestUpdateKeyWithAllOptions",
-			client: defaultClient,
-			keyToCreate: Key{
-				Actions: []string{"*"},
-				Indexes: []string{"*"},
-			},
-			keyToUpdate: Key{
-				Description: "TestUpdateKeyWithAllOptions",
-				Actions:     []string{"documents.add", "documents.delete"},
-				Indexes:     []string{"movies", "games"},
-				ExpiresAt:   time.Now().Add(time.Hour * 10),
+				Name: "TestUpdateKeyWithName",
 			},
 		},
 	}
@@ -346,8 +345,8 @@ func TestClient_UpdateKey(t *testing.T) {
 			if len(tt.keyToUpdate.Indexes) != 0 {
 				require.Equal(t, tt.keyToUpdate.Indexes, gotKey.Indexes)
 			}
-			if !tt.keyToUpdate.ExpiresAt.IsZero() {
-				require.Equal(t, tt.keyToUpdate.ExpiresAt.Format(Format), gotKey.ExpiresAt.Format(Format))
+			if tt.keyToUpdate.Description != "" {
+				require.Equal(t, tt.keyToUpdate.Name, gotKey.Name)
 			}
 		})
 	}
@@ -532,13 +531,13 @@ func TestClient_CreateDump(t *testing.T) {
 	tests := []struct {
 		name     string
 		client   *Client
-		wantResp *Dump
+		wantResp *Task
 	}{
 		{
 			name:   "TestCreateDump",
 			client: defaultClient,
-			wantResp: &Dump{
-				Status: "in_progress",
+			wantResp: &Task{
+				Status: "enqueued",
 			},
 		},
 	}
@@ -554,40 +553,11 @@ func TestClient_CreateDump(t *testing.T) {
 
 			// Waiting for CreateDump() to finished
 			for {
-				gotResp, _ := c.GetDumpStatus(gotResp.UID)
-				if gotResp.Status == "done" {
+				gotResp, _ := c.GetTask(gotResp.TaskUID)
+				if gotResp.Status == "succeeded" {
 					break
 				}
 			}
-		})
-	}
-}
-
-func TestClient_GetDumpStatus(t *testing.T) {
-	tests := []struct {
-		name     string
-		client   *Client
-		wantResp []DumpStatus
-		wantErr  bool
-	}{
-		{
-			name:     "TestGetDumpStatus",
-			client:   defaultClient,
-			wantResp: []DumpStatus{DumpStatusInProgress, DumpStatusFailed, DumpStatusDone},
-			wantErr:  false,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c := tt.client
-
-			dump, err := c.CreateDump()
-			require.NoError(t, err, "CreateDump() in TestGetDumpStatus error should be nil")
-
-			gotResp, err := c.GetDumpStatus(dump.UID)
-			require.NoError(t, err)
-			require.Contains(t, tt.wantResp, gotResp.Status, "GetDumpStatus() got response status %v", gotResp.Status)
-			require.NotEqual(t, "failed", gotResp.Status, "GetDumpStatus() response status should not be failed")
 		})
 	}
 }
@@ -596,7 +566,7 @@ func TestClient_GetTask(t *testing.T) {
 	type args struct {
 		UID      string
 		client   *Client
-		taskID   int64
+		taskUID  int64
 		document []docTest
 	}
 	tests := []struct {
@@ -606,9 +576,9 @@ func TestClient_GetTask(t *testing.T) {
 		{
 			name: "TestBasicGetTask",
 			args: args{
-				UID:    "TestBasicGetTask",
-				client: defaultClient,
-				taskID: 0,
+				UID:     "TestBasicGetTask",
+				client:  defaultClient,
+				taskUID: 0,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
@@ -617,9 +587,9 @@ func TestClient_GetTask(t *testing.T) {
 		{
 			name: "TestGetTaskWithCustomClient",
 			args: args{
-				UID:    "TestGetTaskWithCustomClient",
-				client: customClient,
-				taskID: 1,
+				UID:     "TestGetTaskWithCustomClient",
+				client:  customClient,
+				taskUID: 1,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
@@ -628,9 +598,9 @@ func TestClient_GetTask(t *testing.T) {
 		{
 			name: "TestGetTask",
 			args: args{
-				UID:    "TestGetTask",
-				client: defaultClient,
-				taskID: 2,
+				UID:     "TestGetTask",
+				client:  defaultClient,
+				taskUID: 2,
 				document: []docTest{
 					{ID: "456", Name: "Le Petit Prince"},
 					{ID: "1", Name: "Alice In Wonderland"},
@@ -650,14 +620,14 @@ func TestClient_GetTask(t *testing.T) {
 			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(task)
+			_, err = c.WaitForTask(task.TaskUID)
 			require.NoError(t, err)
 
-			gotResp, err := c.GetTask(task.UID)
+			gotResp, err := c.GetTask(task.TaskUID)
 			require.NoError(t, err)
 			require.NotNil(t, gotResp)
 			require.NotNil(t, gotResp.Details)
-			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskID)
+			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskUID)
 			require.Equal(t, tt.args.UID, gotResp.IndexUID)
 			require.Equal(t, TaskStatusSucceeded, gotResp.Status)
 			require.Equal(t, len(tt.args.document), gotResp.Details.ReceivedDocuments)
@@ -676,6 +646,7 @@ func TestClient_GetTasks(t *testing.T) {
 		UID      string
 		client   *Client
 		document []docTest
+		query    *TasksQuery
 	}
 	tests := []struct {
 		name string
@@ -689,6 +660,7 @@ func TestClient_GetTasks(t *testing.T) {
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
+				query: nil,
 			},
 		},
 		{
@@ -698,6 +670,61 @@ func TestClient_GetTasks(t *testing.T) {
 				client: customClient,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: nil,
+			},
+		},
+		{
+			name: "TestGetTasksWithLimit",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit: 1,
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithLimit",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit: 1,
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithFrom",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					From: 0,
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithParameters",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:    1,
+					From:     0,
+					IndexUID: []string{"indexUID"},
 				},
 			},
 		},
@@ -711,14 +738,24 @@ func TestClient_GetTasks(t *testing.T) {
 			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(task)
+			_, err = c.WaitForTask(task.TaskUID)
 			require.NoError(t, err)
 
-			gotResp, err := i.GetTasks()
+			gotResp, err := i.GetTasks(tt.args.query)
 			require.NoError(t, err)
 			require.NotNil(t, (*gotResp).Results[0].Status)
 			require.NotZero(t, (*gotResp).Results[0].UID)
 			require.NotNil(t, (*gotResp).Results[0].Type)
+			if tt.args.query != nil {
+				if tt.args.query.Limit != 0 {
+					require.Equal(t, tt.args.query.Limit, (*gotResp).Limit)
+				} else {
+					require.Equal(t, int64(20), (*gotResp).Limit)
+				}
+				if tt.args.query.From != 0 {
+					require.Equal(t, tt.args.query.From, (*gotResp).From)
+				}
+			}
 		})
 	}
 }
@@ -727,7 +764,7 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 	type args struct {
 		UID      string
 		client   *Client
-		taskID   *Task
+		taskUID  *Task
 		document []docTest
 	}
 	tests := []struct {
@@ -740,7 +777,7 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 			args: args{
 				UID:    "TestDefaultWaitForTask",
 				client: defaultClient,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 0,
 				},
 				document: []docTest{
@@ -756,7 +793,7 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 			args: args{
 				UID:    "TestDefaultWaitForTaskWithCustomClient",
 				client: customClient,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 0,
 				},
 				document: []docTest{
@@ -776,7 +813,7 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 			task, err := c.Index(tt.args.UID).AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			gotTask, err := c.WaitForTask(task)
+			gotTask, err := c.WaitForTask(task.TaskUID)
 			require.NoError(t, err)
 			require.Equal(t, tt.want, gotTask.Status)
 		})
@@ -789,7 +826,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 		client   *Client
 		interval time.Duration
 		timeout  time.Duration
-		taskID   *Task
+		taskUID  *Task
 		document []docTest
 	}
 	tests := []struct {
@@ -804,7 +841,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 				client:   defaultClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 0,
 				},
 				document: []docTest{
@@ -822,7 +859,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 				client:   customClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 0,
 				},
 				document: []docTest{
@@ -840,7 +877,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 				client:   defaultClient,
 				interval: time.Millisecond * 10,
 				timeout:  time.Second * 5,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 1,
 				},
 				document: []docTest{
@@ -858,7 +895,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 				client:   defaultClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Millisecond * 10,
-				taskID: &Task{
+				taskUID: &Task{
 					UID: 1,
 				},
 				document: []docTest{
@@ -881,7 +918,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
 			defer cancelFunc()
 
-			gotTask, err := c.WaitForTask(task, WaitParams{Context: ctx, Interval: tt.args.interval})
+			gotTask, err := c.WaitForTask(task.TaskUID, WaitParams{Context: ctx, Interval: tt.args.interval})
 			if tt.args.timeout < tt.args.interval {
 				require.Error(t, err)
 			} else {
@@ -917,8 +954,9 @@ func TestClient_ConnectionCloseByServer(t *testing.T) {
 
 func TestClient_GenerateTenantToken(t *testing.T) {
 	type args struct {
-		UID         string
+		IndexUID    string
 		client      *Client
+		APIKeyUID   string
 		searchRules map[string]interface{}
 		options     *TenantTokenOptions
 		filter      []string
@@ -932,8 +970,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestDefaultGenerateTenantToken",
 			args: args{
-				UID:    "TestDefaultGenerateTenantToken",
-				client: privateClient,
+				IndexUID:  "TestDefaultGenerateTenantToken",
+				client:    privateClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -946,8 +985,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithApiKey",
 			args: args{
-				UID:    "TestGenerateTenantTokenWithApiKey",
-				client: defaultClient,
+				IndexUID:  "TestGenerateTenantTokenWithApiKey",
+				client:    defaultClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -962,8 +1002,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithOnlyExpiresAt",
 			args: args{
-				UID:    "TestGenerateTenantTokenWithOnlyExpiresAt",
-				client: privateClient,
+				IndexUID:  "TestGenerateTenantTokenWithOnlyExpiresAt",
+				client:    privateClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -978,8 +1019,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
 			args: args{
-				UID:    "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
-				client: defaultClient,
+				IndexUID:  "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
+				client:    defaultClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -995,8 +1037,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithFilters",
 			args: args{
-				UID:    "indexUID",
-				client: privateClient,
+				IndexUID:  "indexUID",
+				client:    privateClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{
 						"filter": "book_id > 1000",
@@ -1013,8 +1056,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithFilterOnOneINdex",
 			args: args{
-				UID:    "indexUID",
-				client: privateClient,
+				IndexUID:  "indexUID",
+				client:    privateClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"indexUID": map[string]string{
 						"filter": "year > 2000",
@@ -1031,8 +1075,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithoutSearchRules",
 			args: args{
-				UID:         "TestGenerateTenantTokenWithoutSearchRules",
+				IndexUID:    "TestGenerateTenantTokenWithoutSearchRules",
 				client:      privateClient,
+				APIKeyUID:   GetPrivateUIDKey(),
 				searchRules: nil,
 				options:     nil,
 				filter:      nil,
@@ -1043,11 +1088,12 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithoutApiKey",
 			args: args{
-				UID: "TestGenerateTenantTokenWithoutApiKey",
+				IndexUID: "TestGenerateTenantTokenWithoutApiKey",
 				client: NewClient(ClientConfig{
 					Host:   "http://localhost:7700",
 					APIKey: "",
 				}),
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -1060,8 +1106,9 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithBadExpiresAt",
 			args: args{
-				UID:    "TestGenerateTenantTokenWithBadExpiresAt",
-				client: defaultClient,
+				IndexUID:  "TestGenerateTenantTokenWithBadExpiresAt",
+				client:    defaultClient,
+				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
 					"*": map[string]string{},
 				},
@@ -1073,13 +1120,43 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 			wantErr:    true,
 			wantFilter: false,
 		},
+		{
+			name: "TestGenerateTenantTokenWithBadAPIKeyUID",
+			args: args{
+				IndexUID:  "TestGenerateTenantTokenWithBadAPIKeyUID",
+				client:    defaultClient,
+				APIKeyUID: GetPrivateUIDKey() + "1234",
+				searchRules: map[string]interface{}{
+					"*": map[string]string{},
+				},
+				options: nil,
+				filter:  nil,
+			},
+			wantErr:    true,
+			wantFilter: false,
+		},
+		{
+			name: "TestGenerateTenantTokenWithEmptyAPIKeyUID",
+			args: args{
+				IndexUID:  "TestGenerateTenantTokenWithEmptyAPIKeyUID",
+				client:    defaultClient,
+				APIKeyUID: "",
+				searchRules: map[string]interface{}{
+					"*": map[string]string{},
+				},
+				options: nil,
+				filter:  nil,
+			},
+			wantErr:    true,
+			wantFilter: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			token, err := c.GenerateTenantToken(tt.args.searchRules, tt.args.options)
+			token, err := c.GenerateTenantToken(tt.args.APIKeyUID, tt.args.searchRules, tt.args.options)
 
 			if tt.wantErr {
 				require.Error(t, err)
@@ -1087,11 +1164,11 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 				require.NoError(t, err)
 
 				if tt.wantFilter {
-					gotTask, err := c.Index(tt.args.UID).UpdateFilterableAttributes(&tt.args.filter)
+					gotTask, err := c.Index(tt.args.IndexUID).UpdateFilterableAttributes(&tt.args.filter)
 					require.NoError(t, err, "UpdateFilterableAttributes() in TestGenerateTenantToken error should be nil")
-					testWaitForTask(t, c.Index(tt.args.UID), gotTask)
+					testWaitForTask(t, c.Index(tt.args.IndexUID), gotTask)
 				} else {
-					_, err := SetUpEmptyIndex(&IndexConfig{Uid: tt.args.UID})
+					_, err := SetUpEmptyIndex(&IndexConfig{Uid: tt.args.IndexUID})
 					require.NoError(t, err, "CreateIndex() in TestGenerateTenantToken error should be nil")
 				}
 
@@ -1100,7 +1177,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 					APIKey: token,
 				})
 
-				_, err = client.Index(tt.args.UID).Search("", &SearchRequest{})
+				_, err = client.Index(tt.args.IndexUID).Search("", &SearchRequest{})
 
 				require.NoError(t, err)
 			}
