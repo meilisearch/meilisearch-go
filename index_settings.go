@@ -494,3 +494,52 @@ func (i Index) ResetTypoTolerance() (resp *TaskInfo, err error) {
 	}
 	return resp, nil
 }
+
+func (i Index) GetPagination() (resp *Pagination, err error) {
+	resp = &Pagination{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/pagination",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetPagination",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) UpdatePagination(request *Pagination) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/pagination",
+		method:              http.MethodPatch,
+		contentType:         contentTypeJSON,
+		withRequest:         &request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdatePagination",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) ResetPagination() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/pagination",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetPagination",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

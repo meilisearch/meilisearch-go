@@ -50,6 +50,7 @@ type Settings struct {
 	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
 	TypoTolerance        *TypoTolerance      `json:"typoTolerance,omitempty"`
+	Pagination           *Pagination         `json:"pagination"`
 }
 
 // TypoTolerance is the type that represents the typo tolerance setting in Meilisearch
@@ -64,6 +65,11 @@ type TypoTolerance struct {
 type MinWordSizeForTypos struct {
 	OneTypo  int64 `json:"oneTypo,omitempty"`
 	TwoTypos int64 `json:"twoTypos,omitempty"`
+}
+
+// Pagination is the type that represents the pagination setting in Meilisearch
+type Pagination struct {
+	MaxTotalHits int64 `json:"maxTotalHits"`
 }
 
 // Version is the type that represents the versions in Meilisearch
@@ -119,7 +125,6 @@ type Task struct {
 	FinishedAt time.Time           `json:"finishedAt,omitempty"`
 	Details    Details             `json:"details,omitempty"`
 }
-
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
 //

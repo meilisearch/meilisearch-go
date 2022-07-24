@@ -231,6 +231,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 		{
@@ -249,6 +250,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 	}
@@ -415,6 +417,47 @@ func TestIndex_GetTypoTolerance(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotResp, err := i.GetTypoTolerance()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+		})
+	}
+}
+
+func TestIndex_GetPagination(t *testing.T) {
+	type args struct {
+		UID    string
+		client *Client
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantResp *Pagination
+	}{
+		{
+			name: "TestIndexBasicGetPagination",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+			},
+			wantResp: &defaultPagination,
+		},
+		{
+			name: "TestIndexGetPaginationWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customClient,
+			},
+			wantResp: &defaultPagination,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexForFaceting()
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := i.GetPagination()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -710,6 +753,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 		{
@@ -731,6 +775,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 	}
@@ -950,6 +995,59 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err := i.GetTypoTolerance()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+		})
+	}
+}
+
+func TestIndex_ResetPagination(t *testing.T) {
+	type args struct {
+		UID    string
+		client *Client
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantTask *TaskInfo
+		wantResp *Pagination
+	}{
+		{
+			name: "TestIndexBasicResetPagination",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &defaultPagination,
+		},
+		{
+			name: "TestIndexResetPaginationWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customClient,
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &defaultPagination,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexForFaceting()
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotTask, err := i.ResetPagination()
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
+			testWaitForTask(t, i, gotTask)
+
+			gotResp, err := i.GetPagination()
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -1329,6 +1427,9 @@ func TestIndex_UpdateSettings(t *testing.T) {
 						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
 					},
+					Pagination: &Pagination{
+						MaxTotalHits: 1200,
+					},
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1344,6 +1445,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 		{
@@ -1383,6 +1485,9 @@ func TestIndex_UpdateSettings(t *testing.T) {
 						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
 					},
+					Pagination: &Pagination{
+						MaxTotalHits: 1200,
+					},
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1398,6 +1503,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 	}
@@ -1466,6 +1572,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1486,6 +1593,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1501,6 +1609,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 		{
@@ -1530,6 +1639,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1550,6 +1660,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1565,6 +1676,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 		{
@@ -1594,6 +1706,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
 				},
 				secondRequest: Settings{
 					SearchableAttributes: []string{
@@ -1614,6 +1727,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1629,6 +1743,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 		{
@@ -1658,6 +1773,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
 				},
 				secondRequest: Settings{
 					DisplayedAttributes: []string{
@@ -1678,6 +1794,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1693,6 +1810,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 		{
@@ -1722,6 +1840,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
 				},
 				secondRequest: Settings{
 					StopWords: []string{
@@ -1742,6 +1861,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1757,6 +1877,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 		{
@@ -1786,6 +1907,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					SortableAttributes: []string{},
 					TypoTolerance:      &defaultTypoTolerance,
+					Pagination:         &defaultPagination,
 				},
 				secondRequest: Settings{
 					FilterableAttributes: []string{
@@ -1806,6 +1928,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					SortableAttributes: []string{},
 					TypoTolerance:      &defaultTypoTolerance,
+					Pagination:         &defaultPagination,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1821,6 +1944,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 		{
@@ -1850,6 +1974,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"title",
 					},
 					TypoTolerance: &defaultTypoTolerance,
+					Pagination:    &defaultPagination,
 				},
 				secondRequest: Settings{
 					SortableAttributes: []string{
@@ -1870,6 +1995,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"title",
 					},
 					TypoTolerance: &defaultTypoTolerance,
+					Pagination:    &defaultPagination,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1885,6 +2011,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 		{
@@ -1926,6 +2053,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
+					Pagination:           &defaultPagination,
 				},
 				secondRequest: Settings{
 					TypoTolerance: &TypoTolerance{
@@ -1966,6 +2094,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 							"year",
 						},
 					},
+					Pagination: &defaultPagination,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1981,6 +2110,74 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
+			},
+		},
+		{
+			name: "TestIndexUpdateJustPagination",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				firstRequest: Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					Pagination: &Pagination{
+						MaxTotalHits: 1200,
+					},
+				},
+				firstResponse: Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
+					Pagination: &Pagination{
+						MaxTotalHits: 1200,
+					},
+				},
+				secondRequest: Settings{
+					Pagination: &Pagination{
+						MaxTotalHits: 1200,
+					},
+				},
+				secondResponse: Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
+					Pagination: &Pagination{
+						MaxTotalHits: 1200,
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &Settings{
+				RankingRules:         defaultRankingRules,
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
+				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
 			},
 		},
 	}
@@ -2314,6 +2511,70 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			testWaitForTask(t, i, gotTask)
 
 			gotResp, err = i.GetTypoTolerance()
+			require.NoError(t, err)
+			require.Equal(t, &tt.args.request, gotResp)
+		})
+	}
+}
+
+func TestIndex_UpdatePagination(t *testing.T) {
+	type args struct {
+		UID     string
+		client  *Client
+		request Pagination
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantTask *TaskInfo
+		wantResp *Pagination
+	}{
+		{
+			name: "TestIndexBasicUpdatePagination",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: Pagination{
+					MaxTotalHits: 1200,
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &defaultPagination,
+		},
+		{
+			name: "TestIndexUpdatePaginationWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customClient,
+				request: Pagination{
+					MaxTotalHits: 1200,
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &defaultPagination,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexForFaceting()
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := i.GetPagination()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+
+			gotTask, err := i.UpdatePagination(&tt.args.request)
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
+			testWaitForTask(t, i, gotTask)
+
+			gotResp, err = i.GetPagination()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
