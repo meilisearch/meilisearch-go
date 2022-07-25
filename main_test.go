@@ -231,6 +231,9 @@ var (
 		DisableOnWords:      []string{},
 		DisableOnAttributes: []string{},
 	}
+	defaultPagination = Pagination{
+		MaxTotalHits: 1000,
+	}
 )
 
 var customClient = NewFastHTTPCustomClient(ClientConfig{
