@@ -51,6 +51,7 @@ type Settings struct {
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
 	TypoTolerance        *TypoTolerance      `json:"typoTolerance,omitempty"`
 	Pagination           *Pagination         `json:"pagination,omitempty"`
+	Faceting             *Faceting           `json:"faceting,omitempty"`
 }
 
 // TypoTolerance is the type that represents the typo tolerance setting in Meilisearch
@@ -70,6 +71,11 @@ type MinWordSizeForTypos struct {
 // Pagination is the type that represents the pagination setting in Meilisearch
 type Pagination struct {
 	MaxTotalHits int64 `json:"maxTotalHits"`
+}
+
+// Faceting is the type that represents the faceting setting in Meilisearch
+type Faceting struct {
+	MaxValuesPerFacet int64 `json:"maxValuesPerFacet"`
 }
 
 // Version is the type that represents the versions in Meilisearch

@@ -134,6 +134,9 @@ update_settings_1: |-
   		},
   		DisableOnAttributes: []string{"title"},
   	},
+    Faceting: &meilisearch.Faceting{
+      MaxValuesPerFacet: 200
+    },
   }
   client.Index("movies").UpdateSettings(&settings)
 reset_settings_1: |-
@@ -233,6 +236,14 @@ update_typo_tolerance_1: |-
   })
 reset_typo_tolerance_1: |-
   client.Index("books").ResetTypoTolerance()
+get_faceting_settings_1:
+  client.Index("books").GetFaceting()
+update_faceting_settings_1: |-
+  client.Index("books").UpdateFaceting(&meilisearch.Faceting{
+      MaxValuesPerFacet: 2,
+  })
+reset_faceting_settings_1: |-
+  client.Index("books").ResetFaceting()
 get_index_stats_1: |-
   client.Index("movies").GetStats()
 get_indexes_stats_1: |-
@@ -372,6 +383,10 @@ settings_guide_sortable_1: |-
     },
   }
   client.Index("books").UpdateSettings(&settings)
+settings_guide_faceting_1: |-
+  client.Index("movies").UpdateFaceting(&meilisearch.Faceting{
+    MaxValuesPerFacet: 5
+  })
 settings_guide_typo_tolerance_1: |-
   client.index("movies").UpdateTypoTolerance({
     MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
