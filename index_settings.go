@@ -543,3 +543,52 @@ func (i Index) ResetPagination() (resp *TaskInfo, err error) {
 	}
 	return resp, nil
 }
+
+func (i Index) GetFaceting() (resp *Faceting, err error) {
+	resp = &Faceting{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/faceting",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetFaceting",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) UpdateFaceting(request *Faceting) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/faceting",
+		method:              http.MethodPatch,
+		contentType:         contentTypeJSON,
+		withRequest:         &request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateFaceting",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) ResetFaceting() (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/faceting",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetFaceting",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

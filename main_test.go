@@ -234,6 +234,9 @@ var (
 	defaultPagination = Pagination{
 		MaxTotalHits: 1000,
 	}
+	defaultFaceting = Faceting{
+		MaxValuesPerFacet: 100,
+	}
 )
 
 var customClient = NewFastHTTPCustomClient(ClientConfig{
