@@ -1828,7 +1828,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo12(out *jwriter.Writ
 		}
 		(*in.TypoTolerance).MarshalEasyJSON(out)
 	}
-	{
+	if in.Pagination != nil {
 		const prefix string = ",\"pagination\":"
 		if first {
 			first = false
@@ -1836,11 +1836,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo12(out *jwriter.Writ
 		} else {
 			out.RawString(prefix)
 		}
-		if in.Pagination == nil {
-			out.RawString("null")
-		} else {
-			(*in.Pagination).MarshalEasyJSON(out)
-		}
+		(*in.Pagination).MarshalEasyJSON(out)
 	}
 	out.RawByte('}')
 }

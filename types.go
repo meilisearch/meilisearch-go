@@ -50,7 +50,7 @@ type Settings struct {
 	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
 	TypoTolerance        *TypoTolerance      `json:"typoTolerance,omitempty"`
-	Pagination           *Pagination         `json:"pagination"`
+	Pagination           *Pagination         `json:"pagination,omitempty"`
 }
 
 // TypoTolerance is the type that represents the typo tolerance setting in Meilisearch
