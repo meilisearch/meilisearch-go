@@ -128,14 +128,17 @@ update_settings_1: |-
   		"logan":     []string{"wolverine"},
   	},
   	TypoTolerance: &meilisearch.TypoTolerance{
-  		MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+  		MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
   			OneTypo:  8,
   			TwoTypos: 10,
   		},
   		DisableOnAttributes: []string{"title"},
   	},
+    Pagination: &meilisearch.Pagination{
+      MaxTotalHits: 5000,
+    },
     Faceting: &meilisearch.Faceting{
-      MaxValuesPerFacet: 200
+      MaxValuesPerFacet: 200,
     },
   }
   client.Index("movies").UpdateSettings(&settings)
@@ -228,7 +231,7 @@ get_typo_tolerance_1:
   client.Index("books").GetTypoTolerance()
 update_typo_tolerance_1: |-
   client.Index("books").UpdateTypoTolerance(&meilisearch.TypoTolerance{
-    MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+    MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
         OneTypo: 4,
         TwoTypos: 10,
       },
@@ -236,6 +239,14 @@ update_typo_tolerance_1: |-
   })
 reset_typo_tolerance_1: |-
   client.Index("books").ResetTypoTolerance()
+get_pagination_settings_1:
+  client.Index("books").GetPagination()
+update_pagination_settings_1: |-
+  client.Index("books").UpdatePagination(&meilisearch.Pagination{
+      MaxTotalHits: 100,
+  })
+reset_pagination_settings_1: |-
+  client.Index("books").ResetPagination()
 get_faceting_settings_1:
   client.Index("books").GetFaceting()
 update_faceting_settings_1: |-
@@ -383,13 +394,17 @@ settings_guide_sortable_1: |-
     },
   }
   client.Index("books").UpdateSettings(&settings)
+settings_guide_pagination_1: |-
+  client.Index("movies").UpdatePagination(&meilisearch.Pagination{
+    MaxTotalHits: 50,
+  })
 settings_guide_faceting_1: |-
   client.Index("movies").UpdateFaceting(&meilisearch.Faceting{
-    MaxValuesPerFacet: 5
+    MaxValuesPerFacet: 5,
   })
 settings_guide_typo_tolerance_1: |-
   client.index("movies").UpdateTypoTolerance({
-    MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+    MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
       TwoTypos: 12,
     },
     DisableOnAttributes: []string{"title"},
@@ -408,7 +423,7 @@ typo_tolerance_guide_3: |-
   })
 typo_tolerance_guide_4: |-
   client.index("movies").UpdateTypoTolerance({
-    MinWordSizeForTypos: meilisearch.MinWordSizeForTypo{
+    MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
       OneTypo: 4,
       TwoTypos: 10,
     },
