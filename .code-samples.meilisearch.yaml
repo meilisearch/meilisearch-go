@@ -6,7 +6,9 @@
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
-  client.GetAllIndexes(nil)
+  client.GetAllIndexes(&meilisearch.IndexesQuery{
+    Limit: 3,
+  })
 create_an_index_1: |-
   client.CreateIndex(&meilisearch.IndexConfig{
     Uid: "movies",
@@ -20,10 +22,12 @@ delete_an_index_1: |-
   client.Index("movies").Delete()
 get_one_document_1: |-
   var a interface{}
-  client.Index("movies").GetDocument("25684", nil, &a)
+  client.Index("movies").GetDocument("25684",&meilisearch.DocumentQuery{
+    Fields: []string{"id", "title", "poster", "release_date"},
+  }, &a)
 get_documents_1: |-
   var a []interface{}
-  client.Index("movies").GetDocuments(nil, &meilisearch.DocumentsRequest{
+  client.Index("movies").GetDocuments(nil, &meilisearch.DocumentsQuery{
     Limit: 2,
   }, &a)
 add_or_replace_documents_1: |-
@@ -63,12 +67,8 @@ get_task_1: |-
   client.GetTask(1);
 get_all_tasks_1: |-
   client.GetTasks(nil);
-get_task_by_index_1: |-
-  client.Index("movies").GetTask(1)
-get_all_tasks_by_index_1: |-
-  client.Index("movies").GetTasks(nil)
 get_one_key_1: |-
-  client.GetKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4")
+  client.GetKey("6062abda-a5aa-4414-ac91-ecd7944c0f8d")
 get_keys_1: |-
   client.GetKeys(nil)
 create_a_key_1: |-
@@ -79,14 +79,14 @@ create_a_key_1: |-
     ExpiresAt: time.Date(2042, time.April, 02, 0, 42, 42, 0, time.UTC),
   })
 update_a_key_1: |-
-  client.UpdateKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4", &meilisearch.Key{
+  client.UpdateKey("6062abda-a5aa-4414-ac91-ecd7944c0f8d", &meilisearch.Key{
     Description: "Manage documents: Products/Reviews API key",
     Actions: []string{"documents.add", "document.delete"},
     Indexes: []string{"products", "reviews"},
     ExpiresAt: time.Date(2042, time.April, 02, 0, 42, 42, 0, time.UTC),
   })
 delete_a_key_1: |-
-  client.DeleteKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4")
+  client.DeleteKey("6062abda-a5aa-4414-ac91-ecd7944c0f8d")
 get_settings_1: |-
   client.Index("movies").GetSettings()
 update_settings_1: |-
@@ -326,7 +326,7 @@ search_parameter_guide_highlight_tag_1: |-
     HighlightPreTag: "<span class=\"highlight\">",
     HighlightPostTag: "</span>",
   })
-search_parameter_guide_matches_1: |-
+search_parameter_guide_show_matches_position_1: |-
   resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
     ShowMatchesPosition:    true,
   })
@@ -464,7 +464,7 @@ documents_guide_add_movie_1: |-
   }
   client.Index("movies").AddDocuments(documents)
 getting_started_check_task_status: |-
-  client.Index("movies").GetTask(0)
+  client.GetTask(0)
 getting_started_add_documents_md: |-
   ```bash
   go get -u github.com/meilisearch/meilisearch-go
@@ -606,7 +606,7 @@ faceted_search_filter_1: |-
       []string{"director = \"Jordan Peele\""},
     },
   })
-faceted_search_facets_distribution_1: |-
+faceted_search_facets_1: |-
   resp, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
     Facets: []string{
       "genres",
@@ -718,7 +718,7 @@ security_guide_update_key_1: |-
     APIKey: "masterKey",
   })
 
-  client.UpdateKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4", &meilisearch.Key{
+  client.UpdateKey("74c9c733-3368-4738-bbe5-1d18a5fecb37", &meilisearch.Key{
     Indexes: []string{"doctors"},
   })
 security_guide_create_key_1: |-
@@ -744,7 +744,7 @@ security_guide_delete_key_1: |-
     Host: "http://127.0.0.1:7700",
     APIKey: "masterKey",
   })
-  client.DeleteKey("d0552b41536279a0ad88bd595327b96f01176a60c2243e906c52ac02375f9bc4");
+  client.DeleteKey("74c9c733-3368-4738-bbe5-1d18a5fecb37");
 authorization_header_1: |-
   client := meilisearch.NewClient(meilisearch.ClientConfig{
     Host: "http://127.0.0.1:7700",
@@ -769,3 +769,24 @@ tenant_token_guide_search_sdk_1: |-
     APIKey: token,
   })
   frontEndClient.Index("patient_medical_records").Search("blood test", &meilisearch.SearchRequest{});
+get_all_tasks_filtering_1: |-
+  client.Index("movies").GetTasks(nil);
+  // OR
+  client.GetTasks(&TasksQuery{
+    IndexUID: []string{"movies"},
+  });
+get_all_tasks_filtering_2: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    Status: []string{"succeeded", "failed"},
+    Type: []string{"documentAdditionOrUpdate"},
+  });
+get_all_tasks_paginating_1: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    Limit: 2,
+    From: 10,
+  });
+get_all_tasks_paginating_2: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    Limit: 2,
+    From: 8,
+  });
