@@ -594,7 +594,7 @@ getting_started_communicating_with_a_protected_instance: |-
   })
 
   resp, err := client.Index("movies").Search("", &meilisearch.SearchRequest{})
-faceted_search_PLEASE_UPDATE_ME>>>>>>>>>>>>>update_settings_1: |-
+faceted_search_update_settings_1: |-
   resp, err := client.Index("movies").UpdateFilterableAttributes(&[]string{
     "director",
     "genres",
@@ -772,21 +772,21 @@ tenant_token_guide_search_sdk_1: |-
 get_all_tasks_filtering_1: |-
   client.Index("movies").GetTasks(nil);
   // OR
-  client.Index("movies").GetTasks(&TasksQuery{
+  client.GetTasks(&TasksQuery{
     IndexUID: []string{"movies"},
   });
 get_all_tasks_filtering_2: |-
-  client.Index("movies").GetTasks(&meilisearch.TasksQuery{
+  client.GetTasks(&meilisearch.TasksQuery{
     Status: []string{"succeeded", "failed"},
     Type: []string{"documentAdditionOrUpdate"},
   });
 get_all_tasks_paginating_1: |-
-  client.Index("movies").GetTasks(&meilisearch.TasksQuery{
+  client.GetTasks(&meilisearch.TasksQuery{
     Limit: 2,
     From: 10,
   });
 get_all_tasks_paginating_2: |-
-  client.Index("movies").GetTasks(&meilisearch.TasksQuery{
+  client.GetTasks(&meilisearch.TasksQuery{
     Limit: 2,
     From: 8,
   });
