@@ -1,5 +1,8 @@
 version: "3.8"
 
+volumes:
+  gopkg:
+
 services:
   package:
     build: .
@@ -13,6 +16,7 @@ services:
     links:
       - meilisearch
     volumes:
+      - gopkg:/go/pkg/mod
       - ./:/home/package
 
   meilisearch:
