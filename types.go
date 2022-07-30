@@ -297,6 +297,13 @@ type SearchRequest struct {
 }
 
 // SearchResponse is the response body for search method
+type DefaultSearchResponse struct {
+	EstimatedTotalHits int64  `json:"estimatedTotalHits"`
+	Offset             int64  `json:"offset"`
+	Limit              int64  `json:"limit"`
+	ProcessingTimeMs   int64  `json:"processingTimeMs"`
+	Query              string `json:"query"`
+}
 type SearchResponse struct {
 	Hits               []interface{} `json:"hits"`
 	EstimatedTotalHits int64         `json:"estimatedTotalHits"`

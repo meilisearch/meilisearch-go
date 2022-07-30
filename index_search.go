@@ -11,9 +11,7 @@ const (
 	DefaultLimit int64 = 20
 )
 
-func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, error) {
-	resp := &SearchResponse{}
-
+func (i Index) Search(query string, request *SearchRequest, resp *interface{}) (*interface{}, error) {
 	searchPostRequestParams := map[string]interface{}{}
 
 	if request.Limit == 0 {
