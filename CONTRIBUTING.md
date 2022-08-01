@@ -26,7 +26,16 @@ First of all, thank you for contributing to Meilisearch! The goal of this docume
 
 ## Development Workflow
 
-### Install Dependencies <!-- omit in TOC -->
+### Setup <!-- omit in TOC -->
+
+You can set up your local environment natively or using `docker`, check out the [`docker-compose.yml`](/docker-compose.yml).
+
+Example of running all the checks with docker:
+```bash
+docker-compose run --rm package bash -c "go get && golangci-lint run -v && go test -v"
+```
+
+To install dependencies:
 
 ```bash
 go get -v -t -d ./...
