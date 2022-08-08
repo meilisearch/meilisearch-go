@@ -3,8 +3,6 @@
 # the documentation on build
 # You can read more on https://github.com/meilisearch/documentation/tree/master/.vuepress/code-samples
 ---
-getting_started_typo_tolerance: |-
-
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
@@ -229,6 +227,12 @@ update_sortable_attributes_1: |-
   client.Index("books").UpdateSortableAttributes(&sortableAttributes)
 reset_sortable_attributes_1: |-
   client.Index("books").ResetSortableAttributes()
+getting_started_typo_tolerance: |-
+  client.index("movies").UpdateTypoTolerance({
+    MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
+      OneTypo: 4,
+    },
+  })
 get_typo_tolerance_1:
   client.Index("books").GetTypoTolerance()
 update_typo_tolerance_1: |-
