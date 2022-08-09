@@ -249,22 +249,6 @@ func (c *Client) CreateDump() (resp *TaskInfo, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetDumpStatus(dumpUID string) (resp *Dump, err error) {
-	resp = &Dump{}
-	req := internalRequest{
-		endpoint:            "/dumps/" + dumpUID + "/status",
-		method:              http.MethodGet,
-		withRequest:         nil,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetDumpStatus",
-	}
-	if err := c.executeRequest(req); err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
 func (c *Client) GetTask(taskUID int64) (resp *Task, err error) {
 	resp = &Task{}
 	req := internalRequest{
