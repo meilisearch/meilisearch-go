@@ -71,6 +71,10 @@ get_one_key_1: |-
   client.GetKey("6062abda-a5aa-4414-ac91-ecd7944c0f8d")
 get_keys_1: |-
   client.GetKeys(nil)
+get_all_keys: |-
+  client.GetKeys(&meilisearch.KeysQuery{
+    Limit: 3
+  });
 create_a_key_1: |-
   client.CreateKey(&meilisearch.Key{
     Description: "Add documents: Products API key",
