@@ -9,7 +9,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/valyala/fasthttp"
 )
 
@@ -365,8 +365,8 @@ func (c *Client) GenerateTenantToken(APIKeyUID string, SearchRules map[string]in
 	// Create the claims
 	claims := TenantTokenClaims{}
 	if Options != nil && !Options.ExpiresAt.IsZero() {
-		claims.StandardClaims = jwt.StandardClaims{
-			ExpiresAt: Options.ExpiresAt.Unix(),
+		claims.RegisteredClaims = jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(Options.ExpiresAt),
 		}
 	}
 	claims.APIKeyUID = APIKeyUID

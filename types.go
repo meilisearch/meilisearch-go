@@ -3,7 +3,7 @@ package meilisearch
 import (
 	"time"
 
-	"github.com/golang-jwt/jwt"
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/valyala/fasthttp"
 )
 
@@ -240,7 +240,7 @@ type TenantTokenOptions struct {
 type TenantTokenClaims struct {
 	APIKeyUID   string      `json:"apiKeyUid"`
 	SearchRules interface{} `json:"searchRules"`
-	jwt.StandardClaims
+	jwt.RegisteredClaims
 }
 
 //

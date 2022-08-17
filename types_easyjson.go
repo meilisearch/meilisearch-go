@@ -4,6 +4,7 @@ package meilisearch
 
 import (
 	json "encoding/json"
+	_v4 "github.com/golang-jwt/jwt/v4"
 	easyjson "github.com/mailru/easyjson"
 	jlexer "github.com/mailru/easyjson/jlexer"
 	jwriter "github.com/mailru/easyjson/jwriter"
@@ -430,20 +431,52 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo4(in *jlexer.Lexer, 
 			} else {
 				out.SearchRules = in.Interface()
 			}
-		case "aud":
-			out.Audience = string(in.String())
-		case "exp":
-			out.ExpiresAt = int64(in.Int64())
-		case "jti":
-			out.Id = string(in.String())
-		case "iat":
-			out.IssuedAt = int64(in.Int64())
 		case "iss":
 			out.Issuer = string(in.String())
-		case "nbf":
-			out.NotBefore = int64(in.Int64())
 		case "sub":
 			out.Subject = string(in.String())
+		case "aud":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.Audience).UnmarshalJSON(data))
+			}
+		case "exp":
+			if in.IsNull() {
+				in.Skip()
+				out.ExpiresAt = nil
+			} else {
+				if out.ExpiresAt == nil {
+					out.ExpiresAt = new(_v4.NumericDate)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.ExpiresAt).UnmarshalJSON(data))
+				}
+			}
+		case "nbf":
+			if in.IsNull() {
+				in.Skip()
+				out.NotBefore = nil
+			} else {
+				if out.NotBefore == nil {
+					out.NotBefore = new(_v4.NumericDate)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.NotBefore).UnmarshalJSON(data))
+				}
+			}
+		case "iat":
+			if in.IsNull() {
+				in.Skip()
+				out.IssuedAt = nil
+			} else {
+				if out.IssuedAt == nil {
+					out.IssuedAt = new(_v4.NumericDate)
+				}
+				if data := in.Raw(); in.Ok() {
+					in.AddError((*out.IssuedAt).UnmarshalJSON(data))
+				}
+			}
+		case "jti":
+			out.ID = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -474,40 +507,40 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo4(out *jwriter.Write
 			out.Raw(json.Marshal(in.SearchRules))
 		}
 	}
-	if in.Audience != "" {
-		const prefix string = ",\"aud\":"
-		out.RawString(prefix)
-		out.String(string(in.Audience))
-	}
-	if in.ExpiresAt != 0 {
-		const prefix string = ",\"exp\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.ExpiresAt))
-	}
-	if in.Id != "" {
-		const prefix string = ",\"jti\":"
-		out.RawString(prefix)
-		out.String(string(in.Id))
-	}
-	if in.IssuedAt != 0 {
-		const prefix string = ",\"iat\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.IssuedAt))
-	}
 	if in.Issuer != "" {
 		const prefix string = ",\"iss\":"
 		out.RawString(prefix)
 		out.String(string(in.Issuer))
 	}
-	if in.NotBefore != 0 {
-		const prefix string = ",\"nbf\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.NotBefore))
-	}
 	if in.Subject != "" {
 		const prefix string = ",\"sub\":"
 		out.RawString(prefix)
 		out.String(string(in.Subject))
+	}
+	if len(in.Audience) != 0 {
+		const prefix string = ",\"aud\":"
+		out.RawString(prefix)
+		out.Raw((in.Audience).MarshalJSON())
+	}
+	if in.ExpiresAt != nil {
+		const prefix string = ",\"exp\":"
+		out.RawString(prefix)
+		out.Raw((*in.ExpiresAt).MarshalJSON())
+	}
+	if in.NotBefore != nil {
+		const prefix string = ",\"nbf\":"
+		out.RawString(prefix)
+		out.Raw((*in.NotBefore).MarshalJSON())
+	}
+	if in.IssuedAt != nil {
+		const prefix string = ",\"iat\":"
+		out.RawString(prefix)
+		out.Raw((*in.IssuedAt).MarshalJSON())
+	}
+	if in.ID != "" {
+		const prefix string = ",\"jti\":"
+		out.RawString(prefix)
+		out.String(string(in.ID))
 	}
 	out.RawByte('}')
 }
