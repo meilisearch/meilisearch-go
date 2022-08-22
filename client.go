@@ -385,7 +385,7 @@ func (c *Client) GenerateTenantToken(APIKeyUID string, SearchRules map[string]in
 // and transform the Key structure into a KeyParsed structure to send the time format
 // managed by Meilisearch
 func convertKeyToParsedKey(key Key) (resp KeyParsed) {
-	resp = KeyParsed{Description: key.Description, Actions: key.Actions, Indexes: key.Indexes}
+	resp = KeyParsed{Description: key.Description, Key: key.Key, Actions: key.Actions, Indexes: key.Indexes}
 
 	// Convert time.Time to *string to feat the exact ISO-8601
 	// format of Meilisearch
