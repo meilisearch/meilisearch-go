@@ -2855,8 +2855,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo20(in *jlexer.Lexer,
 			out.Name = string(in.String())
 		case "description":
 			out.Description = string(in.String())
-		case "key":
-			out.Key = string(in.String())
+		case "uid":
+			out.UID = string(in.String())
 		case "actions":
 			if in.IsNull() {
 				in.Skip()
@@ -2945,10 +2945,10 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo20(out *jwriter.Writ
 		out.RawString(prefix)
 		out.String(string(in.Description))
 	}
-	if in.Key != "" {
-		const prefix string = ",\"key\":"
+	if in.UID != "" {
+		const prefix string = ",\"uid\":"
 		out.RawString(prefix)
-		out.String(string(in.Key))
+		out.String(string(in.UID))
 	}
 	if len(in.Actions) != 0 {
 		const prefix string = ",\"actions\":"
