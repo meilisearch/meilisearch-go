@@ -227,11 +227,22 @@ func TestClient_CreateKey(t *testing.T) {
 			},
 		},
 		{
+			name:   "TestCreateKeyWithUID",
+			client: defaultClient,
+			key: Key{
+				Name:    "TestCreateKeyWithUID",
+				UID:     "9aec34f4-e44c-4917-86c2-9c9403abb3b6",
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+		},
+		{
 			name:   "TestCreateKeyWithAllOptions",
 			client: defaultClient,
 			key: Key{
 				Name:        "TestCreateKeyWithAllOptions",
 				Description: "TestCreateKeyWithAllOptions",
+				UID:         "9aec34f4-e44c-4917-86c2-9c9403abb3b6",
 				Actions:     []string{"documents.add", "documents.delete"},
 				Indexes:     []string{"movies", "games"},
 				ExpiresAt:   time.Now().Add(time.Hour * 10),
@@ -249,7 +260,11 @@ func TestClient_CreateKey(t *testing.T) {
 
 			gotKey, err := c.GetKey(gotResp.Key)
 			require.NoError(t, err)
+			require.Equal(t, tt.key.Name, gotKey.Name)
 			require.Equal(t, tt.key.Description, gotKey.Description)
+			if tt.key.UID != "" {
+				require.Equal(t, tt.key.UID, gotKey.UID)
+			}
 			require.Equal(t, tt.key.Actions, gotKey.Actions)
 			require.Equal(t, tt.key.Indexes, gotKey.Indexes)
 			if !tt.key.ExpiresAt.IsZero() {

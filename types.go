@@ -199,7 +199,7 @@ type Key struct {
 type KeyParsed struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
-	Key         string    `json:"key,omitempty"`
+	UID         string    `json:"uid,omitempty"`
 	Actions     []string  `json:"actions,omitempty"`
 	Indexes     []string  `json:"indexes,omitempty"`
 	CreatedAt   time.Time `json:"createdAt,omitempty"`
