@@ -47,6 +47,9 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	if request.HighlightPostTag != "" {
 		searchPostRequestParams["highlightPostTag"] = request.HighlightPostTag
 	}
+	if request.MatchingStrategy != "" {
+		searchPostRequestParams["matchingStrategy"] = request.MatchingStrategy
+	}
 	if len(request.AttributesToRetrieve) != 0 {
 		searchPostRequestParams["attributesToRetrieve"] = request.AttributesToRetrieve
 	}
