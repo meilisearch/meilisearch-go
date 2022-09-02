@@ -2181,6 +2181,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo14(in *jlexer.Lexer,
 			out.HighlightPreTag = string(in.String())
 		case "HighlightPostTag":
 			out.HighlightPostTag = string(in.String())
+		case "MatchingStrategy":
+			out.MatchingStrategy = string(in.String())
 		case "Filter":
 			if m, ok := out.Filter.(easyjson.Unmarshaler); ok {
 				m.UnmarshalEasyJSON(in)
@@ -2330,6 +2332,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo14(out *jwriter.Writ
 		const prefix string = ",\"HighlightPostTag\":"
 		out.RawString(prefix)
 		out.String(string(in.HighlightPostTag))
+	}
+	{
+		const prefix string = ",\"MatchingStrategy\":"
+		out.RawString(prefix)
+		out.String(string(in.MatchingStrategy))
 	}
 	{
 		const prefix string = ",\"Filter\":"
