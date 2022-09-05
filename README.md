@@ -99,7 +99,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	fmt.Println(task.taskUID)
+	fmt.Println(task.TaskUID)
 }
 ```
 
