@@ -413,26 +413,26 @@ settings_guide_faceting_1: |-
     MaxValuesPerFacet: 5,
   })
 settings_guide_typo_tolerance_1: |-
-  client.index("movies").UpdateTypoTolerance({
+  client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
     MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
       TwoTypos: 12,
     },
     DisableOnAttributes: []string{"title"},
   })
 typo_tolerance_guide_1: |-
-  client.index("movies").UpdateTypoTolerance({
+  client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
     Enabled: false,
   })
 typo_tolerance_guide_2: |-
-  client.index("movies").UpdateTypoTolerance({
+  client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
     DisableOnAttributes: []string{"title"},
   })
 typo_tolerance_guide_3: |-
-  client.index("movies").UpdateTypoTolerance({
+  client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
     DisableOnWords: []string{"shrek"},
   })
 typo_tolerance_guide_4: |-
-  client.index("movies").UpdateTypoTolerance({
+  client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
     MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
       OneTypo: 4,
       TwoTypos: 10,
