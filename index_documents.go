@@ -384,7 +384,7 @@ func (i Index) DeleteDocument(identifier string) (resp *TaskInfo, err error) {
 	return resp, nil
 }
 
-func (i Index) DeleteDocuments(identifier []string) (resp *TaskInfo, err error) {
+func (i Index) DeleteDocumentsInBatch(identifier []string) (resp *TaskInfo, err error) {
 	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents/delete-batch",
@@ -393,7 +393,7 @@ func (i Index) DeleteDocuments(identifier []string) (resp *TaskInfo, err error) 
 		withRequest:         identifier,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "DeleteDocuments",
+		functionName:        "DeleteDocumentsInBatch",
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
@@ -401,7 +401,7 @@ func (i Index) DeleteDocuments(identifier []string) (resp *TaskInfo, err error) 
 	return resp, nil
 }
 
-func (i Index) DeleteAllDocuments() (resp *TaskInfo, err error) {
+func (i Index) DeleteDocuments() (resp *TaskInfo, err error) {
 	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents",
@@ -409,7 +409,7 @@ func (i Index) DeleteAllDocuments() (resp *TaskInfo, err error) {
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "DeleteAllDocuments",
+		functionName:        "DeleteDocuments",
 	}
 	if err = i.client.executeRequest(req); err != nil {
 		return nil, err

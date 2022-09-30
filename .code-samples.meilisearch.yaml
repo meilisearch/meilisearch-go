@@ -6,7 +6,7 @@
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
-  client.GetAllIndexes(&meilisearch.IndexesQuery{
+  client.GetIndexes(&meilisearch.IndexesQuery{
     Limit: 3,
   })
 create_an_index_1: |-
@@ -51,11 +51,11 @@ add_or_update_documents_1: |-
   }
   client.Index("movies").UpdateDocuments(documents)
 delete_all_documents_1: |-
-  client.Index("movies").DeleteAllDocuments()
+  client.Index("movies").DeleteDocuments()
 delete_one_document_1: |-
   client.Index("movies").DeleteDocument("25684")
 delete_documents_1: |-
-  client.Index("movies").DeleteDocuments([]string{
+  client.Index("movies").DeleteDocumentsInBatch([]string{
     "23488",
     "153738",
     "437035",
@@ -268,7 +268,7 @@ reset_faceting_settings_1: |-
 get_index_stats_1: |-
   client.Index("movies").GetStats()
 get_indexes_stats_1: |-
-  client.GetAllStats()
+  client.GetStats()
 get_health_1: |-
   client.Health()
 get_version_1: |-

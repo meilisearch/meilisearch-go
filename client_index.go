@@ -50,7 +50,7 @@ func (c *Client) CreateIndex(config *IndexConfig) (resp *TaskInfo, err error) {
 	return resp, nil
 }
 
-func (c *Client) GetAllIndexes(param *IndexesQuery) (resp *IndexesResults, err error) {
+func (c *Client) GetIndexes(param *IndexesQuery) (resp *IndexesResults, err error) {
 	resp = &IndexesResults{}
 	req := internalRequest{
 		endpoint:            "/indexes",
@@ -59,7 +59,7 @@ func (c *Client) GetAllIndexes(param *IndexesQuery) (resp *IndexesResults, err e
 		withResponse:        &resp,
 		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetAllIndexes",
+		functionName:        "GetIndexes",
 	}
 	if param != nil && param.Limit != 0 {
 		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
@@ -73,7 +73,7 @@ func (c *Client) GetAllIndexes(param *IndexesQuery) (resp *IndexesResults, err e
 	return resp, nil
 }
 
-func (c *Client) GetAllRawIndexes(param *IndexesQuery) (resp map[string]interface{}, err error) {
+func (c *Client) GetRawIndexes(param *IndexesQuery) (resp map[string]interface{}, err error) {
 	resp = map[string]interface{}{}
 	req := internalRequest{
 		endpoint:            "/indexes",
@@ -82,7 +82,7 @@ func (c *Client) GetAllRawIndexes(param *IndexesQuery) (resp map[string]interfac
 		withResponse:        &resp,
 		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetAllRawIndexes",
+		functionName:        "GetRawIndexes",
 	}
 	if param != nil && param.Limit != 0 {
 		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)

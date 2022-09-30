@@ -37,8 +37,8 @@ type ClientInterface interface {
 	Index(uid string) *Index
 	GetIndex(indexID string) (resp *Index, err error)
 	GetRawIndex(uid string) (resp map[string]interface{}, err error)
-	GetAllIndexes(param *IndexesQuery) (resp *IndexesResults, err error)
-	GetAllRawIndexes(param *IndexesQuery) (resp map[string]interface{}, err error)
+	GetIndexes(param *IndexesQuery) (resp *IndexesResults, err error)
+	GetRawIndexes(param *IndexesQuery) (resp map[string]interface{}, err error)
 	CreateIndex(config *IndexConfig) (resp *TaskInfo, err error)
 	DeleteIndex(uid string) (resp *TaskInfo, err error)
 	CreateKey(request *Key) (resp *Key, err error)
@@ -46,7 +46,7 @@ type ClientInterface interface {
 	GetKeys(param *KeysQuery) (resp *KeysResults, err error)
 	UpdateKey(keyOrUID string, request *Key) (resp *Key, err error)
 	DeleteKey(keyOrUID string) (resp bool, err error)
-	GetAllStats() (resp *Stats, err error)
+	GetStats() (resp *Stats, err error)
 	CreateDump() (resp *TaskInfo, err error)
 	Version() (*Version, error)
 	GetVersion() (resp *Version, err error)
@@ -103,7 +103,7 @@ func (c *Client) GetVersion() (resp *Version, err error) {
 	return c.Version()
 }
 
-func (c *Client) GetAllStats() (resp *Stats, err error) {
+func (c *Client) GetStats() (resp *Stats, err error) {
 	resp = &Stats{}
 	req := internalRequest{
 		endpoint:            "/stats",
@@ -111,7 +111,7 @@ func (c *Client) GetAllStats() (resp *Stats, err error) {
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "GetAllStats",
+		functionName:        "GetStats",
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err

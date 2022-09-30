@@ -32,7 +32,7 @@ func getenv(key, fallback string) string {
 }
 
 func deleteAllIndexes(client ClientInterface) (ok bool, err error) {
-	list, err := client.GetAllIndexes(nil)
+	list, err := client.GetIndexes(nil)
 	if err != nil {
 		return false, err
 	}
