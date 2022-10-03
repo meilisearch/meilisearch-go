@@ -55,7 +55,7 @@ delete_all_documents_1: |-
 delete_one_document_1: |-
   client.Index("movies").DeleteDocument("25684")
 delete_documents_1: |-
-  client.Index("movies").DeleteDocumentsInBatch([]string{
+  client.Index("movies").DeleteDocuments([]string{
     "23488",
     "153738",
     "437035",
