@@ -1167,7 +1167,7 @@ func TestIndex_DeleteDocumentsInBatch(t *testing.T) {
 		wantResp *TaskInfo
 	}{
 		{
-			name: "TestIndexBasicDeleteDocumentInBatch",
+			name: "TestIndexBasicDeleteDocument",
 			args: args{
 				UID:        "1",
 				client:     defaultClient,
