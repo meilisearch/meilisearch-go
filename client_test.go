@@ -59,25 +59,25 @@ func TestClient_TimeoutError(t *testing.T) {
 	}
 }
 
-func TestClient_GetAllStats(t *testing.T) {
+func TestClient_GetStats(t *testing.T) {
 	tests := []struct {
 		name   string
 		client *Client
 	}{
 		{
-			name:   "TestGetAllStats",
+			name:   "TestGetStats",
 			client: defaultClient,
 		},
 		{
-			name:   "TestGetAllStatsWithCustomClient",
+			name:   "TestGetStatsWithCustomClient",
 			client: customClient,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.client.GetAllStats()
+			gotResp, err := tt.client.GetStats()
 			require.NoError(t, err)
-			require.NotNil(t, gotResp, "GetAllStats() should not return nil value")
+			require.NotNil(t, gotResp, "GetStats() should not return nil value")
 		})
 	}
 }
