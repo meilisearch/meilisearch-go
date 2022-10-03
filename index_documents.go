@@ -393,7 +393,7 @@ func (i Index) DeleteDocumentsInBatch(identifier []string) (resp *TaskInfo, err 
 		withRequest:         identifier,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "DeleteDocumentsInBatch",
+		functionName:        "DeleteDocuments",
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
