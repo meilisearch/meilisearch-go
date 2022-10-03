@@ -965,7 +965,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 		{
 			name: "TestIndexBasicDeleteAllDocuments",
 			args: args{
-				UID:    "TestIndexBasicDeleteDocuments",
+				UID:    "TestIndexBasicDeleteAllDocuments",
 				client: defaultClient,
 			},
 			wantResp: &TaskInfo{
