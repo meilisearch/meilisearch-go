@@ -409,7 +409,7 @@ func (i Index) DeleteAllDocuments() (resp *TaskInfo, err error) {
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        "DeleteDocuments",
+		functionName:        "DeleteAllDocuments",
 	}
 	if err = i.client.executeRequest(req); err != nil {
 		return nil, err
