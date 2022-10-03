@@ -233,7 +233,7 @@ func TestClient_DeleteIndex(t *testing.T) {
 	}
 }
 
-func TestClient_GetAllIndexes(t *testing.T) {
+func TestClient_GetIndexes(t *testing.T) {
 	type args struct {
 		uid     []string
 		request *IndexesQuery
@@ -245,7 +245,7 @@ func TestClient_GetAllIndexes(t *testing.T) {
 		wantResp *IndexesResults
 	}{
 		{
-			name:   "TestGetAllIndexesOnNoIndexes",
+			name:   "TestGetIndexesOnNoIndexes",
 			client: defaultClient,
 			args: args{
 				uid:     []string{},
@@ -258,16 +258,16 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestBasicGetAllIndexes",
+			name:   "TestBasicGetIndexes",
 			client: defaultClient,
 			args: args{
-				uid:     []string{"TestBasicGetAllIndexes"},
+				uid:     []string{"TestBasicGetIndexes"},
 				request: nil,
 			},
 			wantResp: &IndexesResults{
 				Results: []Index{
 					{
-						UID: "TestBasicGetAllIndexes",
+						UID: "TestBasicGetIndexes",
 					},
 				},
 				Offset: 0,
@@ -276,16 +276,16 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestGetAllIndexesWithCustomClient",
+			name:   "TestGetIndexesWithCustomClient",
 			client: customClient,
 			args: args{
-				uid:     []string{"TestGetAllIndexesWithCustomClient"},
+				uid:     []string{"TestGetIndexesWithCustomClient"},
 				request: nil,
 			},
 			wantResp: &IndexesResults{
 				Results: []Index{
 					{
-						UID: "TestGetAllIndexesWithCustomClient",
+						UID: "TestGetIndexesWithCustomClient",
 					},
 				},
 				Offset: 0,
@@ -294,26 +294,26 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestGetAllIndexesOnMultipleIndex",
+			name:   "TestGetIndexesOnMultipleIndex",
 			client: defaultClient,
 			args: args{
 				uid: []string{
-					"TestGetAllIndexesOnMultipleIndex_1",
-					"TestGetAllIndexesOnMultipleIndex_2",
-					"TestGetAllIndexesOnMultipleIndex_3",
+					"TestGetIndexesOnMultipleIndex_1",
+					"TestGetIndexesOnMultipleIndex_2",
+					"TestGetIndexesOnMultipleIndex_3",
 				},
 				request: nil,
 			},
 			wantResp: &IndexesResults{
 				Results: []Index{
 					{
-						UID: "TestGetAllIndexesOnMultipleIndex_1",
+						UID: "TestGetIndexesOnMultipleIndex_1",
 					},
 					{
-						UID: "TestGetAllIndexesOnMultipleIndex_2",
+						UID: "TestGetIndexesOnMultipleIndex_2",
 					},
 					{
-						UID: "TestGetAllIndexesOnMultipleIndex_3",
+						UID: "TestGetIndexesOnMultipleIndex_3",
 					},
 				},
 				Offset: 0,
@@ -322,28 +322,28 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestGetAllIndexesOnMultipleIndexWithPrimaryKey",
+			name:   "TestGetIndexesOnMultipleIndexWithPrimaryKey",
 			client: defaultClient,
 			args: args{
 				uid: []string{
-					"TestGetAllIndexesOnMultipleIndexWithPrimaryKey_1",
-					"TestGetAllIndexesOnMultipleIndexWithPrimaryKey_2",
-					"TestGetAllIndexesOnMultipleIndexWithPrimaryKey_3",
+					"TestGetIndexesOnMultipleIndexWithPrimaryKey_1",
+					"TestGetIndexesOnMultipleIndexWithPrimaryKey_2",
+					"TestGetIndexesOnMultipleIndexWithPrimaryKey_3",
 				},
 				request: nil,
 			},
 			wantResp: &IndexesResults{
 				Results: []Index{
 					{
-						UID:        "TestGetAllIndexesOnMultipleIndexWithPrimaryKey_1",
+						UID:        "TestGetIndexesOnMultipleIndexWithPrimaryKey_1",
 						PrimaryKey: "PrimaryKey1",
 					},
 					{
-						UID:        "TestGetAllIndexesOnMultipleIndexWithPrimaryKey_2",
+						UID:        "TestGetIndexesOnMultipleIndexWithPrimaryKey_2",
 						PrimaryKey: "PrimaryKey2",
 					},
 					{
-						UID:        "TestGetAllIndexesOnMultipleIndexWithPrimaryKey_3",
+						UID:        "TestGetIndexesOnMultipleIndexWithPrimaryKey_3",
 						PrimaryKey: "PrimaryKey3",
 					},
 				},
@@ -353,13 +353,13 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestGetAllIndexesWithLimit",
+			name:   "TestGetIndexesWithLimit",
 			client: defaultClient,
 			args: args{
 				uid: []string{
-					"TestGetAllIndexesWithLimit_1",
-					"TestGetAllIndexesWithLimit_2",
-					"TestGetAllIndexesWithLimit_3",
+					"TestGetIndexesWithLimit_1",
+					"TestGetIndexesWithLimit_2",
+					"TestGetIndexesWithLimit_3",
 				},
 				request: &IndexesQuery{
 					Limit: 1,
@@ -368,7 +368,7 @@ func TestClient_GetAllIndexes(t *testing.T) {
 			wantResp: &IndexesResults{
 				Results: []Index{
 					{
-						UID: "TestGetAllIndexesWithLimit_1",
+						UID: "TestGetIndexesWithLimit_1",
 					},
 				},
 				Offset: 0,
@@ -384,9 +384,9 @@ func TestClient_GetAllIndexes(t *testing.T) {
 
 			for _, uid := range tt.args.uid {
 				_, err := SetUpEmptyIndex(&IndexConfig{Uid: uid})
-				require.NoError(t, err, "CreateIndex() in TestGetAllIndexes error should be nil")
+				require.NoError(t, err, "CreateIndex() in TestGetIndexes error should be nil")
 			}
-			gotResp, err := c.GetAllIndexes(tt.args.request)
+			gotResp, err := c.GetIndexes(tt.args.request)
 			require.NoError(t, err)
 			require.Equal(t, len(tt.wantResp.Results), len(gotResp.Results))
 			for i := range gotResp.Results {
@@ -399,7 +399,7 @@ func TestClient_GetAllIndexes(t *testing.T) {
 	}
 }
 
-func TestClient_GetAllRawIndexes(t *testing.T) {
+func TestClient_GetRawIndexes(t *testing.T) {
 	type args struct {
 		uid     []string
 		request *IndexesQuery
@@ -411,7 +411,7 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 		wantResp map[string]interface{}
 	}{
 		{
-			name:   "TestGetAllRawIndexesOnNoIndexes",
+			name:   "TestGetRawIndexesOnNoIndexes",
 			client: defaultClient,
 			args: args{
 				uid:     []string{},
@@ -425,16 +425,16 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestBasicGetAllRawIndexes",
+			name:   "TestBasicGetRawIndexes",
 			client: defaultClient,
 			args: args{
-				uid:     []string{"TestBasicGetAllRawIndexes"},
+				uid:     []string{"TestBasicGetRawIndexes"},
 				request: nil,
 			},
 			wantResp: map[string]interface{}{
 				"results": []map[string]string{
 					{
-						"uid": "TestBasicGetAllRawIndexes",
+						"uid": "TestBasicGetRawIndexes",
 					},
 				},
 				"offset": float64(0),
@@ -443,16 +443,16 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestGetAllRawIndexesWithCustomClient",
+			name:   "TestGetRawIndexesWithCustomClient",
 			client: customClient,
 			args: args{
-				uid:     []string{"TestGetAllRawIndexesWithCustomClient"},
+				uid:     []string{"TestGetRawIndexesWithCustomClient"},
 				request: nil,
 			},
 			wantResp: map[string]interface{}{
 				"results": []map[string]string{
 					{
-						"uid": "TestGetAllRawIndexesWithCustomClient",
+						"uid": "TestGetRawIndexesWithCustomClient",
 					},
 				},
 				"offset": float64(0),
@@ -461,26 +461,26 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestGetAllRawIndexesOnMultipleIndex",
+			name:   "TestGetRawIndexesOnMultipleIndex",
 			client: defaultClient,
 			args: args{
 				uid: []string{
-					"TestGetAllRawIndexesOnMultipleIndex_1",
-					"TestGetAllRawIndexesOnMultipleIndex_2",
-					"TestGetAllRawIndexesOnMultipleIndex_3",
+					"TestGetRawIndexesOnMultipleIndex_1",
+					"TestGetRawIndexesOnMultipleIndex_2",
+					"TestGetRawIndexesOnMultipleIndex_3",
 				},
 				request: nil,
 			},
 			wantResp: map[string]interface{}{
 				"results": []map[string]string{
 					{
-						"uid": "TestGetAllRawIndexesOnMultipleIndex_1",
+						"uid": "TestGetRawIndexesOnMultipleIndex_1",
 					},
 					{
-						"uid": "TestGetAllRawIndexesOnMultipleIndex_2",
+						"uid": "TestGetRawIndexesOnMultipleIndex_2",
 					},
 					{
-						"uid": "TestGetAllRawIndexesOnMultipleIndex_3",
+						"uid": "TestGetRawIndexesOnMultipleIndex_3",
 					},
 				},
 				"offset": float64(0),
@@ -489,28 +489,28 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey",
+			name:   "TestGetRawIndexesOnMultipleIndexWithPrimaryKey",
 			client: defaultClient,
 			args: args{
 				uid: []string{
-					"TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey_1",
-					"TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey_2",
-					"TestGetAllRawIndexesOnMultipleIndexWithPrimaryKey_3",
+					"TestGetRawIndexesOnMultipleIndexWithPrimaryKey_1",
+					"TestGetRawIndexesOnMultipleIndexWithPrimaryKey_2",
+					"TestGetRawIndexesOnMultipleIndexWithPrimaryKey_3",
 				},
 				request: nil,
 			},
 			wantResp: map[string]interface{}{
 				"results": []map[string]string{
 					{
-						"uid":        "TestGetAllRawIndexesOnMultipleIndex_1",
+						"uid":        "TestGetRawIndexesOnMultipleIndex_1",
 						"primaryKey": "PrimaryKey1",
 					},
 					{
-						"uid":        "TestGetAllRawIndexesOnMultipleIndex_2",
+						"uid":        "TestGetRawIndexesOnMultipleIndex_2",
 						"primaryKey": "PrimaryKey2",
 					},
 					{
-						"uid":        "TestGetAllRawIndexesOnMultipleIndex_3",
+						"uid":        "TestGetRawIndexesOnMultipleIndex_3",
 						"primaryKey": "PrimaryKey3",
 					},
 				},
@@ -520,13 +520,13 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			},
 		},
 		{
-			name:   "TestGetAllRawIndexesWithLimit",
+			name:   "TestGetRawIndexesWithLimit",
 			client: defaultClient,
 			args: args{
 				uid: []string{
-					"TestGetAllRawIndexesWithLimit_1",
-					"TestGetAllRawIndexesWithLimit_2",
-					"TestGetAllRawIndexesWithLimit_3",
+					"TestGetRawIndexesWithLimit_1",
+					"TestGetRawIndexesWithLimit_2",
+					"TestGetRawIndexesWithLimit_3",
 				},
 				request: &IndexesQuery{
 					Limit: 1,
@@ -535,7 +535,7 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 			wantResp: map[string]interface{}{
 				"results": []map[string]interface{}{
 					{
-						"uid": "TestGetAllIndexesWithLimit_1",
+						"uid": "TestGetIndexesWithLimit_1",
 					},
 				},
 				"lenResults": 1,
@@ -552,9 +552,9 @@ func TestClient_GetAllRawIndexes(t *testing.T) {
 
 			for _, uid := range tt.args.uid {
 				_, err := SetUpEmptyIndex(&IndexConfig{Uid: uid})
-				require.NoError(t, err, "CreateIndex() in TestGetAllRawIndexes error should be nil")
+				require.NoError(t, err, "CreateIndex() in TestGetRawIndexes error should be nil")
 			}
-			gotResp, err := c.GetAllRawIndexes(tt.args.request)
+			gotResp, err := c.GetRawIndexes(tt.args.request)
 
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp["limit"], gotResp["limit"])
