@@ -384,7 +384,7 @@ func (i Index) DeleteDocument(identifier string) (resp *TaskInfo, err error) {
 	return resp, nil
 }
 
-func (i Index) DeleteDocumentsInBatch(identifier []string) (resp *TaskInfo, err error) {
+func (i Index) DeleteDocuments(identifier []string) (resp *TaskInfo, err error) {
 	resp = &TaskInfo{}
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents/delete-batch",
