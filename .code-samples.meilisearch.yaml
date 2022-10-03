@@ -6,7 +6,7 @@
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
-  client.GetAllIndexes(&meilisearch.IndexesQuery{
+  client.GetIndexes(&meilisearch.IndexesQuery{
     Limit: 3,
   })
 create_an_index_1: |-
@@ -268,7 +268,7 @@ reset_faceting_settings_1: |-
 get_index_stats_1: |-
   client.Index("movies").GetStats()
 get_indexes_stats_1: |-
-  client.GetAllStats()
+  client.GetStats()
 get_health_1: |-
   client.Health()
 get_version_1: |-
