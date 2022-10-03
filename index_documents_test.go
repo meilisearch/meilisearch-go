@@ -963,7 +963,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 		wantResp *TaskInfo
 	}{
 		{
-			name: "TestIndexBasicDeleteDocuments",
+			name: "TestIndexBasicDeleteAllDocuments",
 			args: args{
 				UID:    "TestIndexBasicDeleteDocuments",
 				client: defaultClient,
