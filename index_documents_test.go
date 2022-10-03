@@ -975,7 +975,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexDeleteDocumentsWithCustomClient",
+			name: "TestIndexDeleteAllDocumentsWithCustomClient",
 			args: args{
 				UID:    "TestIndexDeleteDocumentsWithCustomClient",
 				client: customClient,
