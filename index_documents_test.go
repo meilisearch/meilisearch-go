@@ -1154,7 +1154,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 	}
 }
 
-func TestIndex_DeleteDocumentsInBatch(t *testing.T) {
+func TestIndex_DeleteDocuments(t *testing.T) {
 	type args struct {
 		UID          string
 		client       *Client
