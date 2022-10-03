@@ -1217,7 +1217,7 @@ func TestIndex_DeleteDocumentsInBatch(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexBasicDeleteDocumentInBatch",
+			name: "TestIndexBasicDeleteDocument",
 			args: args{
 				UID:        "4",
 				client:     defaultClient,
