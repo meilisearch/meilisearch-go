@@ -952,7 +952,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 	}
 }
 
-func TestIndex_DeleteDocuments(t *testing.T) {
+func TestIndex_DeleteAllDocuments(t *testing.T) {
 	type args struct {
 		UID    string
 		client *Client
