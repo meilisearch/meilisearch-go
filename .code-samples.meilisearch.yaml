@@ -51,7 +51,7 @@ add_or_update_documents_1: |-
   }
   client.Index("movies").UpdateDocuments(documents)
 delete_all_documents_1: |-
-  client.Index("movies").DeleteDocuments()
+  client.Index("movies").DeleteAllDocuments()
 delete_one_document_1: |-
   client.Index("movies").DeleteDocument("25684")
 delete_documents_1: |-
