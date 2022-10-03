@@ -1183,7 +1183,7 @@ func TestIndex_DeleteDocumentsInBatch(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexDeleteDocumentInBatchWithCustomClient",
+			name: "TestIndexDeleteDocumentWithCustomClient",
 			args: args{
 				UID:        "2",
 				client:     customClient,
