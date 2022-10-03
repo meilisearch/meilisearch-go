@@ -994,7 +994,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			SetUpBasicIndex(tt.args.UID)
-			gotResp, err := i.DeleteDocuments()
+			gotResp, err := i.DeleteAllDocuments()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 			require.Equal(t, tt.wantResp.Status, gotResp.Status)
