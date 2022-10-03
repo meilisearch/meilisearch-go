@@ -1246,7 +1246,7 @@ func TestIndex_DeleteDocumentsInBatch(t *testing.T) {
 
 			testWaitForTask(t, i, gotAddResp)
 
-			gotResp, err := i.DeleteDocumentsInBatch(tt.args.identifier)
+			gotResp, err := i.DeleteDocuments(tt.args.identifier)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 			require.Equal(t, tt.wantResp.Status, gotResp.Status)
