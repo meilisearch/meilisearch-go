@@ -227,6 +227,16 @@ func TestClient_CreateKey(t *testing.T) {
 			},
 		},
 		{
+			name:   "TestCreateKeyWithWildcardedAction",
+			client: defaultClient,
+			key: Key{
+				Name:        "TestCreateKeyWithWildcardedAction",
+				Description: "TestCreateKeyWithWildcardedAction",
+				Actions:     []string{"documents.*"},
+				Indexes:     []string{"movies", "games"},
+			},
+		},
+		{
 			name:   "TestCreateKeyWithUID",
 			client: defaultClient,
 			key: Key{

@@ -267,6 +267,7 @@ type SearchRequest struct {
 	AttributesToHighlight []string
 	HighlightPreTag       string
 	HighlightPostTag      string
+	MatchingStrategy      string
 	Filter                interface{}
 	ShowMatchesPosition   bool
 	Facets                []string

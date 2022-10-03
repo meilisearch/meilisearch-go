@@ -302,6 +302,55 @@ func TestIndex_Search(t *testing.T) {
 				Limit:              20,
 			},
 		},
+		{
+			name: "TestIndexSearchWithCustomMatchingStrategyAll",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "le prince",
+				request: SearchRequest{
+					Limit:                 10,
+					AttributesToRetrieve: []string{"book_id","title"},
+					MatchingStrategy:      "all",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+				},
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              10,
+			},
+		},
+		{
+			name: "TestIndexSearchWithCustomMatchingStrategyLast",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "prince",
+				request: SearchRequest{
+					Limit:                 10,
+					AttributesToRetrieve: []string{"book_id","title"},
+					MatchingStrategy:      "last",
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              10,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
