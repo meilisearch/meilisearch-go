@@ -35,8 +35,8 @@ type IndexInterface interface {
 	GetDocument(uid string, request *DocumentQuery, documentPtr interface{}) error
 	GetDocuments(param *DocumentsQuery, resp *DocumentsResult) error
 	DeleteDocument(uid string) (resp *TaskInfo, err error)
-	DeleteDocumentsInBatch(uid []string) (resp *TaskInfo, err error)
-	DeleteDocuments() (resp *TaskInfo, err error)
+	DeleteDocuments(uid []string) (resp *TaskInfo, err error)
+	DeleteAllDocuments() (resp *TaskInfo, err error)
 	Search(query string, request *SearchRequest) (*SearchResponse, error)
 
 	GetTask(taskUID int64) (resp *Task, err error)
