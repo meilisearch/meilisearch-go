@@ -2911,7 +2911,15 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo20(in *jlexer.Lexer,
 				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
 			}
 		case "expiresAt":
-			out.ExpiresAt = string(in.String())
+			if in.IsNull() {
+				in.Skip()
+				out.ExpiresAt = nil
+			} else {
+				if out.ExpiresAt == nil {
+					out.ExpiresAt = new(string)
+				}
+				*out.ExpiresAt = string(in.String())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -2982,7 +2990,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo20(out *jwriter.Writ
 	{
 		const prefix string = ",\"expiresAt\":"
 		out.RawString(prefix)
-		out.String(string(in.ExpiresAt))
+		if in.ExpiresAt == nil {
+			out.RawString("null")
+		} else {
+			out.String(string(*in.ExpiresAt))
+		}
 	}
 	out.RawByte('}')
 }

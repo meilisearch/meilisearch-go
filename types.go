@@ -204,7 +204,7 @@ type KeyParsed struct {
 	Indexes     []string  `json:"indexes,omitempty"`
 	CreatedAt   time.Time `json:"createdAt,omitempty"`
 	UpdatedAt   time.Time `json:"updatedAt,omitempty"`
-	ExpiresAt   string    `json:"expiresAt"`
+	ExpiresAt   *string   `json:"expiresAt"`
 }
 
 // This structure is used to update a Key
