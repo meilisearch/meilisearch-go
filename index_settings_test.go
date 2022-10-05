@@ -223,7 +223,7 @@ func TestIndex_GetSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -243,7 +243,7 @@ func TestIndex_GetSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -788,7 +788,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -811,7 +811,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -1497,7 +1497,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute: (*string)(nil),
+					DistinctAttribute: "",
 					SearchableAttributes: []string{
 						"title", "tag",
 					},
@@ -1538,7 +1538,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -1559,7 +1559,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute: (*string)(nil),
+					DistinctAttribute: "",
 					SearchableAttributes: []string{
 						"title", "tag",
 					},
@@ -1600,7 +1600,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -1668,7 +1668,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -1690,7 +1690,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -1709,7 +1709,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -1738,7 +1738,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -1760,7 +1760,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -1779,7 +1779,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -1808,7 +1808,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute: (*string)(nil),
+					DistinctAttribute: "",
 					SearchableAttributes: []string{
 						"tag",
 					},
@@ -1830,7 +1830,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute: (*string)(nil),
+					DistinctAttribute: "",
 					SearchableAttributes: []string{
 						"title",
 					},
@@ -1849,7 +1849,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -1878,7 +1878,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes: []string{
 						"book_id", "tag", "title",
@@ -1900,7 +1900,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes: []string{
 						"book_id", "tag",
@@ -1919,7 +1919,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -1948,7 +1948,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords: []string{
@@ -1970,7 +1970,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords: []string{
@@ -1989,7 +1989,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -2018,7 +2018,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -2040,7 +2040,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -2059,7 +2059,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -2088,7 +2088,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -2110,7 +2110,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -2129,7 +2129,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -2164,7 +2164,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -2202,7 +2202,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -2231,7 +2231,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -2260,7 +2260,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -2282,7 +2282,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -2301,7 +2301,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
@@ -2330,7 +2330,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -2352,7 +2352,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					RankingRules: []string{
 						"typo", "words",
 					},
-					DistinctAttribute:    (*string)(nil),
+					DistinctAttribute:    "",
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
@@ -2371,7 +2371,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
-				DistinctAttribute:    (*string)(nil),
+				DistinctAttribute:    "",
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},

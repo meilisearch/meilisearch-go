@@ -42,7 +42,7 @@ type IndexesQuery struct {
 // Settings is the type that represents the settings in Meilisearch
 type Settings struct {
 	RankingRules         []string            `json:"rankingRules,omitempty"`
-	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
+	DistinctAttribute    string              `json:"distinctAttribute,omitempty"`
 	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
 	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
 	StopWords            []string            `json:"stopWords,omitempty"`
@@ -163,7 +163,7 @@ type Details struct {
 	DeletedDocuments     int                 `json:"deletedDocuments,omitempty"`
 	PrimaryKey           string              `json:"primaryKey,omitempty"`
 	RankingRules         []string            `json:"rankingRules,omitempty"`
-	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
+	DistinctAttribute    string              `json:"distinctAttribute,omitempty"`
 	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
 	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
 	StopWords            []string            `json:"stopWords,omitempty"`
@@ -204,7 +204,7 @@ type KeyParsed struct {
 	Indexes     []string  `json:"indexes,omitempty"`
 	CreatedAt   time.Time `json:"createdAt,omitempty"`
 	UpdatedAt   time.Time `json:"updatedAt,omitempty"`
-	ExpiresAt   *string   `json:"expiresAt"`
+	ExpiresAt   string    `json:"expiresAt"`
 }
 
 // This structure is used to update a Key

@@ -1497,15 +1497,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo12(in *jlexer.Lexer,
 				in.Delim(']')
 			}
 		case "distinctAttribute":
-			if in.IsNull() {
-				in.Skip()
-				out.DistinctAttribute = nil
-			} else {
-				if out.DistinctAttribute == nil {
-					out.DistinctAttribute = new(string)
-				}
-				*out.DistinctAttribute = string(in.String())
-			}
+			out.DistinctAttribute = string(in.String())
 		case "searchableAttributes":
 			if in.IsNull() {
 				in.Skip()
@@ -1721,7 +1713,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo12(out *jwriter.Writ
 			out.RawByte(']')
 		}
 	}
-	if in.DistinctAttribute != nil {
+	if in.DistinctAttribute != "" {
 		const prefix string = ",\"distinctAttribute\":"
 		if first {
 			first = false
@@ -1729,7 +1721,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo12(out *jwriter.Writ
 		} else {
 			out.RawString(prefix)
 		}
-		out.String(string(*in.DistinctAttribute))
+		out.String(string(in.DistinctAttribute))
 	}
 	if len(in.SearchableAttributes) != 0 {
 		const prefix string = ",\"searchableAttributes\":"
@@ -2919,15 +2911,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo20(in *jlexer.Lexer,
 				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
 			}
 		case "expiresAt":
-			if in.IsNull() {
-				in.Skip()
-				out.ExpiresAt = nil
-			} else {
-				if out.ExpiresAt == nil {
-					out.ExpiresAt = new(string)
-				}
-				*out.ExpiresAt = string(in.String())
-			}
+			out.ExpiresAt = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -2998,11 +2982,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo20(out *jwriter.Writ
 	{
 		const prefix string = ",\"expiresAt\":"
 		out.RawString(prefix)
-		if in.ExpiresAt == nil {
-			out.RawString("null")
-		} else {
-			out.String(string(*in.ExpiresAt))
-		}
+		out.String(string(in.ExpiresAt))
 	}
 	out.RawByte('}')
 }
@@ -4069,15 +4049,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo30(in *jlexer.Lexer,
 				in.Delim(']')
 			}
 		case "distinctAttribute":
-			if in.IsNull() {
-				in.Skip()
-				out.DistinctAttribute = nil
-			} else {
-				if out.DistinctAttribute == nil {
-					out.DistinctAttribute = new(string)
-				}
-				*out.DistinctAttribute = string(in.String())
-			}
+			out.DistinctAttribute = string(in.String())
 		case "searchableAttributes":
 			if in.IsNull() {
 				in.Skip()
@@ -4303,7 +4275,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 			out.RawByte(']')
 		}
 	}
-	if in.DistinctAttribute != nil {
+	if in.DistinctAttribute != "" {
 		const prefix string = ",\"distinctAttribute\":"
 		if first {
 			first = false
@@ -4311,7 +4283,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 		} else {
 			out.RawString(prefix)
 		}
-		out.String(string(*in.DistinctAttribute))
+		out.String(string(in.DistinctAttribute))
 	}
 	if len(in.SearchableAttributes) != 0 {
 		const prefix string = ",\"searchableAttributes\":"

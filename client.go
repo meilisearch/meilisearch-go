@@ -392,7 +392,7 @@ func convertKeyToParsedKey(key Key) (resp KeyParsed) {
 	if !key.ExpiresAt.IsZero() {
 		const Format = "2006-01-02T15:04:05"
 		timeParsedToString := key.ExpiresAt.Format(Format)
-		resp.ExpiresAt = &timeParsedToString
+		resp.ExpiresAt = timeParsedToString
 	}
 	return resp
 }
