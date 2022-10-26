@@ -1,10 +1,79 @@
 package meilisearch
 
 import (
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/require"
 )
+
+func TestIndex_SearchRaw(t *testing.T) {
+	type args struct {
+		UID        string
+		PrimaryKey string
+		client     *Client
+		query      string
+		request    SearchRequest
+	}
+
+	tests := []struct {
+		name string
+		args args
+		want *SearchResponse
+	}{
+		{
+			name: "TestIndexBasicSearch",
+			args: args{
+				UID:     "indexUID",
+				client:  defaultClient,
+				query:   "prince",
+				request: SearchRequest{},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexForFaceting()
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotRaw, err := i.SearchRaw(tt.args.query, &tt.args.request)
+			require.NoError(t, err)
+
+			// Unmarshall the raw response from SearchRaw into a SearchResponse
+			var got SearchResponse
+			err = json.Unmarshal(*gotRaw, &got)
+			require.NoError(t, err, "error unmarshalling raw got SearchResponse")
+
+			require.Equal(t, len(tt.want.Hits), len(got.Hits))
+			for len := range got.Hits {
+				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
+				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+			}
+			if tt.want.Hits[0].(map[string]interface{})["_formatted"] != nil {
+				require.Equal(t, tt.want.Hits[0].(map[string]interface{})["_formatted"], got.Hits[0].(map[string]interface{})["_formatted"])
+			}
+			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
+			require.Equal(t, tt.want.Offset, got.Offset)
+			require.Equal(t, tt.want.Limit, got.Limit)
+			require.Equal(t, tt.want.FacetDistribution, got.FacetDistribution)
+		})
+	}
+}
 
 func TestIndex_Search(t *testing.T) {
 	type args struct {
@@ -309,9 +378,9 @@ func TestIndex_Search(t *testing.T) {
 				client: defaultClient,
 				query:  "le prince",
 				request: SearchRequest{
-					Limit:                 10,
-					AttributesToRetrieve: []string{"book_id","title"},
-					MatchingStrategy:      "all",
+					Limit:                10,
+					AttributesToRetrieve: []string{"book_id", "title"},
+					MatchingStrategy:     "all",
 				},
 			},
 			want: &SearchResponse{
@@ -332,9 +401,9 @@ func TestIndex_Search(t *testing.T) {
 				client: defaultClient,
 				query:  "prince",
 				request: SearchRequest{
-					Limit:                 10,
-					AttributesToRetrieve: []string{"book_id","title"},
-					MatchingStrategy:      "last",
+					Limit:                10,
+					AttributesToRetrieve: []string{"book_id", "title"},
+					MatchingStrategy:     "last",
 				},
 			},
 			want: &SearchResponse{
