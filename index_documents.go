@@ -5,7 +5,6 @@ import (
 	"bytes"
 	"encoding/csv"
 	"io"
-	"io/ioutil"
 	"math"
 	"net/http"
 	"reflect"
@@ -133,7 +132,7 @@ func (i Index) AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *Ta
 func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
 	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
 	// read content to memory anyway because of problems with streamed bodies
-	data, err := ioutil.ReadAll(documents)
+	data, err := io.ReadAll(documents)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not read documents")
 	}
@@ -231,7 +230,7 @@ func (i Index) AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp 
 func (i Index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
 	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
 	// read content to memory anyway because of problems with streamed bodies
-	data, err := ioutil.ReadAll(documents)
+	data, err := io.ReadAll(documents)
 	if err != nil {
 		return nil, errors.Wrap(err, "could not read documents")
 	}
