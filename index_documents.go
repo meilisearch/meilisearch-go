@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"bytes"
 	"encoding/csv"
+	"fmt"
 	"io"
 	"io/ioutil"
 	"math"
@@ -11,8 +12,6 @@ import (
 	"reflect"
 	"strconv"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 func (i Index) GetDocument(identifier string, request *DocumentQuery, documentPtr interface{}) error {
@@ -135,7 +134,7 @@ func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...stri
 	// read content to memory anyway because of problems with streamed bodies
 	data, err := ioutil.ReadAll(documents)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not read documents")
+		return nil, fmt.Errorf("could not read documents: %w", err)
 	}
 	return i.addDocuments(data, contentTypeCSV, primaryKey...)
 }
@@ -166,7 +165,7 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 		w.UseCRLF = true // Keep output RFC 4180 compliant
 		err := w.WriteAll(records)
 		if err != nil {
-			return nil, errors.Wrap(err, "could not write CSV records")
+			return nil, fmt.Errorf("could not write CSV records: %w", err)
 		}
 
 		resp, err := i.AddDocumentsCsv(b.Bytes(), primaryKey...)
@@ -184,7 +183,7 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 			break
 		}
 		if err != nil {
-			return nil, errors.Wrap(err, "could not read CSV record")
+			return nil, fmt.Errorf("could not read CSV record: %w", err)
 		}
 
 		// Store first record as header
@@ -233,7 +232,7 @@ func (i Index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...s
 	// read content to memory anyway because of problems with streamed bodies
 	data, err := ioutil.ReadAll(documents)
 	if err != nil {
-		return nil, errors.Wrap(err, "could not read documents")
+		return nil, fmt.Errorf("could not read documents: %w", err)
 	}
 	return i.addDocuments(data, contentTypeNDJSON, primaryKey...)
 }
@@ -255,11 +254,11 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 		for _, line := range lines {
 			_, err := b.WriteString(line)
 			if err != nil {
-				return nil, errors.Wrap(err, "could not write NDJSON line")
+				return nil, fmt.Errorf("could not write NDJSON line: %w", err)
 			}
 			err = b.WriteByte('\n')
 			if err != nil {
-				return nil, errors.Wrap(err, "could not write NDJSON line")
+				return nil, fmt.Errorf("could not write NDJSON line: %w", err)
 			}
 		}
 
@@ -296,7 +295,7 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 		}
 	}
 	if err := scanner.Err(); err != nil {
-		return nil, errors.Wrap(err, "could not read NDJSON")
+		return nil, fmt.Errorf("could not read NDJSON: %w", err)
 	}
 
 	// Send remaining records as the last batch if there is any
