@@ -24,17 +24,17 @@
 
 **Meilisearch Go** is the Meilisearch API client for Go developers.
 
-**Meilisearch** is an open-source search engine. [Discover what Meilisearch is!](https://github.com/meilisearch/Meilisearch)
+**Meilisearch** is an open-source search engine. [Learn more about Meilisearch.](https://github.com/meilisearch/Meilisearch)
 
 ## Table of Contents <!-- omit in toc -->
 
 - [🎃 Hacktoberfest](#-hacktoberfest)
 - [📖 Documentation](#-documentation)
 - [🔧 Installation](#-installation)
-- [🚀 Getting Started](#-getting-started)
+- [🚀 Getting started](#-getting-started)
 - [🤖 Compatibility with Meilisearch](#-compatibility-with-meilisearch)
-- [💡 Learn More](#-learn-more)
-- [⚙️ Development Workflow and Contributing](#️-development-workflow-and-contributing)
+- [💡 Learn more](#-learn-more)
+- [⚙️ Contributing](#️-contributing)
 
 ## 🎃 Hacktoberfest
 
@@ -46,7 +46,10 @@ You’d like to contribute? Don’t hesitate to check out our [contributing guid
 
 ## 📖 Documentation
 
-See our [Documentation](https://docs.meilisearch.com/learn/tutorials/getting_started.html) or our [API References](https://docs.meilisearch.com/reference/api/).
+This readme contains all the documentation you need to start using this Meilisearch SDK.
+
+For general information on how to use Meilisearch—such as our API reference, tutorials, guides, and in-depth articles—refer to our [main documentation website](https://docs.meilisearch.com/).
+
 
 ## 🔧 Installation
 
@@ -71,7 +74,7 @@ curl -L https://install.meilisearch.com | sh
 
 NB: you can also download Meilisearch from **Homebrew** or **APT** or even run it using **Docker**.
 
-## 🚀 Getting Started
+## 🚀 Getting started
 
 #### Add documents <!-- omit in toc -->
 
@@ -238,16 +241,16 @@ searchRes, err := index.Search("wonder",
 
 This package only guarantees the compatibility with the [version v0.29.0 of Meilisearch](https://github.com/meilisearch/meilisearch/releases/tag/v0.29.0).
 
-## 💡 Learn More
+## 💡 Learn more
 
-The following sections may interest you:
+The following sections in our main documentation website may interest you:
 
 - **Manipulate documents**: see the [API references](https://docs.meilisearch.com/reference/api/documents.html) or read more about [documents](https://docs.meilisearch.com/learn/core_concepts/documents.html).
 - **Search**: see the [API references](https://docs.meilisearch.com/reference/api/search.html) or follow our guide on [search parameters](https://docs.meilisearch.com/reference/features/search_parameters.html).
 - **Manage the indexes**: see the [API references](https://docs.meilisearch.com/reference/api/indexes.html) or read more about [indexes](https://docs.meilisearch.com/learn/core_concepts/indexes.html).
 - **ClientConfigure the index settings**: see the [API references](https://docs.meilisearch.com/reference/api/settings.html) or follow our guide on [settings parameters](https://docs.meilisearch.com/reference/features/settings.html).
 
-## ⚙️ Development Workflow and Contributing
+## ⚙️ Contributing
 
 Any new contribution is more than welcome in this project!
 

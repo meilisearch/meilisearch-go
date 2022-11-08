@@ -340,6 +340,14 @@ search_parameter_guide_show_matches_position_1: |-
   resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
     ShowMatchesPosition:    true,
   })
+search_parameter_guide_matching_strategy_1: |-
+  resp, err := client.Index("movies").Search("big fat liar", &meilisearch.SearchRequest{
+    MatchingStrategy:    "last",
+  })
+search_parameter_guide_matching_strategy_2: |-
+  resp, err := client.Index("movies").Search("big fat liar", &meilisearch.SearchRequest{
+    MatchingStrategy:    "all",
+  })
 settings_guide_synonyms_1: |-
   settings := meilisearch.Settings{
     Synonyms: map[string][]string{
@@ -441,10 +449,10 @@ typo_tolerance_guide_4: |-
 add_movies_json_1: |-
   import (
     "encoding/json"
-    "io/ioutil"
+    "os"
   )
 
-  file, _ := ioutil.ReadFile("movies.json")
+  file, _ := os.ReadFile("movies.json")
 
   var movies interface{}
   json.Unmarshal([]byte(file), &movies)
@@ -486,7 +494,7 @@ getting_started_add_documents_md: |-
   import (
     "os"
     "encoding/json"
-    "io/ioutil"
+    "io"
 
     "github.com/meilisearch/meilisearch-go"
   )
@@ -499,7 +507,7 @@ getting_started_add_documents_md: |-
     jsonFile, _ := os.Open("movies.json")
     defer jsonFile.Close()
 
-    byteValue, _ := ioutil.ReadAll(jsonFile)
+    byteValue, _ := io.ReadAll(jsonFile)
     var movies []map[string]interface{}
     json.Unmarshal(byteValue, &movies)
 
@@ -526,7 +534,7 @@ getting_started_add_meteorites: |-
     jsonFile, _ := os.Open("meteorites.json")
     defer jsonFile.Close()
 
-    byteValue, _ := ioutil.ReadAll(jsonFile)
+    byteValue, _ := io.ReadAll(jsonFile)
     var meteorites []map[string]interface{}
     json.Unmarshal(byteValue, &meteorites)
 
