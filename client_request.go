@@ -6,7 +6,6 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/pkg/errors"
 	"github.com/valyala/fasthttp"
 
 	"encoding/json"
@@ -75,7 +74,7 @@ func (c *Client) sendRequest(req *internalRequest, internalError *Error, respons
 	// Setup URL
 	requestURL, err := url.Parse(c.config.Host + req.endpoint)
 	if err != nil {
-		return errors.Wrap(err, "unable to parse url")
+		return fmt.Errorf("unable to parse url: %w", err)
 	}
 
 	// Build query parameters

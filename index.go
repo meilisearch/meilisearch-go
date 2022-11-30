@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
@@ -38,6 +39,7 @@ type IndexInterface interface {
 	DeleteDocuments(uid []string) (resp *TaskInfo, err error)
 	DeleteAllDocuments() (resp *TaskInfo, err error)
 	Search(query string, request *SearchRequest) (*SearchResponse, error)
+	SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error)
 
 	GetTask(taskUID int64) (resp *Task, err error)
 	GetTasks(param *TasksQuery) (resp *TaskResult, err error)

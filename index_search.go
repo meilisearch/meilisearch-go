@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"encoding/json"
 	"net/http"
 )
 
@@ -11,60 +12,40 @@ const (
 	DefaultLimit int64 = 20
 )
 
-func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, error) {
-	resp := &SearchResponse{}
-
-	searchPostRequestParams := make(map[string]interface{}, 14)
+func (i Index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error) {
+	resp := &json.RawMessage{}
 
 	if request.Limit == 0 {
 		request.Limit = DefaultLimit
 	}
 
-	if !request.PlaceholderSearch {
-		searchPostRequestParams["q"] = query
+	searchPostRequestParams := searchPostRequestParams(query, request)
+
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/search",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         searchPostRequestParams,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "SearchRaw",
 	}
-	if request.Limit != DefaultLimit {
-		searchPostRequestParams["limit"] = request.Limit
+
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, err
 	}
-	if request.ShowMatchesPosition {
-		searchPostRequestParams["showMatchesPosition"] = request.ShowMatchesPosition
+
+	return resp, nil
+}
+
+func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, error) {
+	resp := &SearchResponse{}
+
+	if request.Limit == 0 {
+		request.Limit = DefaultLimit
 	}
-	if request.Filter != nil {
-		searchPostRequestParams["filter"] = request.Filter
-	}
-	if request.Offset != 0 {
-		searchPostRequestParams["offset"] = request.Offset
-	}
-	if request.CropLength != 0 {
-		searchPostRequestParams["cropLength"] = request.CropLength
-	}
-	if request.CropMarker != "" {
-		searchPostRequestParams["cropMarker"] = request.CropMarker
-	}
-	if request.HighlightPreTag != "" {
-		searchPostRequestParams["highlightPreTag"] = request.HighlightPreTag
-	}
-	if request.HighlightPostTag != "" {
-		searchPostRequestParams["highlightPostTag"] = request.HighlightPostTag
-	}
-	if request.MatchingStrategy != "" {
-		searchPostRequestParams["matchingStrategy"] = request.MatchingStrategy
-	}
-	if len(request.AttributesToRetrieve) != 0 {
-		searchPostRequestParams["attributesToRetrieve"] = request.AttributesToRetrieve
-	}
-	if len(request.AttributesToCrop) != 0 {
-		searchPostRequestParams["attributesToCrop"] = request.AttributesToCrop
-	}
-	if len(request.AttributesToHighlight) != 0 {
-		searchPostRequestParams["attributesToHighlight"] = request.AttributesToHighlight
-	}
-	if len(request.Facets) != 0 {
-		searchPostRequestParams["facets"] = request.Facets
-	}
-	if len(request.Sort) != 0 {
-		searchPostRequestParams["sort"] = request.Sort
-	}
+
+	searchPostRequestParams := searchPostRequestParams(query, request)
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/search",
@@ -81,4 +62,56 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	}
 
 	return resp, nil
+}
+
+func searchPostRequestParams(query string, request *SearchRequest) map[string]interface{} {
+	params := make(map[string]interface{}, 14)
+
+	if !request.PlaceholderSearch {
+		params["q"] = query
+	}
+	if request.Limit != DefaultLimit {
+		params["limit"] = request.Limit
+	}
+	if request.ShowMatchesPosition {
+		params["showMatchesPosition"] = request.ShowMatchesPosition
+	}
+	if request.Filter != nil {
+		params["filter"] = request.Filter
+	}
+	if request.Offset != 0 {
+		params["offset"] = request.Offset
+	}
+	if request.CropLength != 0 {
+		params["cropLength"] = request.CropLength
+	}
+	if request.CropMarker != "" {
+		params["cropMarker"] = request.CropMarker
+	}
+	if request.HighlightPreTag != "" {
+		params["highlightPreTag"] = request.HighlightPreTag
+	}
+	if request.HighlightPostTag != "" {
+		params["highlightPostTag"] = request.HighlightPostTag
+	}
+	if request.MatchingStrategy != "" {
+		params["matchingStrategy"] = request.MatchingStrategy
+	}
+	if len(request.AttributesToRetrieve) != 0 {
+		params["attributesToRetrieve"] = request.AttributesToRetrieve
+	}
+	if len(request.AttributesToCrop) != 0 {
+		params["attributesToCrop"] = request.AttributesToCrop
+	}
+	if len(request.AttributesToHighlight) != 0 {
+		params["attributesToHighlight"] = request.AttributesToHighlight
+	}
+	if len(request.Facets) != 0 {
+		params["facets"] = request.Facets
+	}
+	if len(request.Sort) != 0 {
+		params["sort"] = request.Sort
+	}
+
+	return params
 }

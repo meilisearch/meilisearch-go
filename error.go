@@ -4,8 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"strings"
-
-	"github.com/pkg/errors"
 )
 
 // ErrCode are all possible errors found during requests
@@ -118,7 +116,7 @@ func (e Error) Error() string {
 		"link":               e.MeilisearchApiError.Link,
 	})
 	if e.OriginError != nil {
-		return errors.Wrap(e.OriginError, message).Error()
+		return fmt.Sprintf("%s: %s", message, e.OriginError.Error())
 	}
 
 	return message
