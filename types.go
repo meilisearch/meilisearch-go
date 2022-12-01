@@ -130,31 +130,35 @@ type Task struct {
 	StartedAt  time.Time           `json:"startedAt,omitempty"`
 	FinishedAt time.Time           `json:"finishedAt,omitempty"`
 	Details    Details             `json:"details,omitempty"`
+	CanceledBy int64               `json:"canceledBy,omitempty"`
 }
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
 //
 // Documentation: https://docs.meilisearch.com/reference/api/tasks.html#tasks
 type TaskInfo struct {
-	Status     TaskStatus          `json:"status"`
-	TaskUID    int64               `json:"taskUid,omitempty"`
-	IndexUID   string              `json:"indexUid"`
-	Type       string              `json:"type"`
-	Error      meilisearchApiError `json:"error,omitempty"`
-	Duration   string              `json:"duration,omitempty"`
-	EnqueuedAt time.Time           `json:"enqueuedAt"`
-	StartedAt  time.Time           `json:"startedAt,omitempty"`
-	FinishedAt time.Time           `json:"finishedAt,omitempty"`
-	Details    Details             `json:"details,omitempty"`
+	Status     TaskStatus `json:"status"`
+	TaskUID    int64      `json:"taskUid,omitempty"`
+	IndexUID   string     `json:"indexUid"`
+	Type       string     `json:"type"`
+	EnqueuedAt time.Time  `json:"enqueuedAt"`
 }
 
 // TasksQuery is the request body for list documents method
 type TasksQuery struct {
-	Limit    int64    `json:"limit,omitempty"`
-	From     int64    `json:"from,omitempty"`
-	IndexUID []string `json:"indexUid,omitempty"`
-	Status   []string `json:"status,omitempty"`
-	Type     []string `json:"type,omitempty"`
+	UIDs             []string  `json:"uids,omitempty"`
+	Limit            int64     `json:"limit,omitempty"`
+	From             int64     `json:"from,omitempty"`
+	IndexUIDs        []string  `json:"indexUids,omitempty"`
+	Statuses         []string  `json:"statuses,omitempty"`
+	Types            []string  `json:"types,omitempty"`
+	CanceledBy       int64     `json:"canceledBy,omitempty"`
+	BeforeEnqueuedAt time.Time `json:"beforeEnqueuedAt,omitempty"`
+	AfterEnqueuedAt  time.Time `json:"afterEnqueuedAt,omitempty"`
+	BeforeStartedAt  time.Time `json:"beforeStartedAt,omitempty"`
+	AfterStartedAt   time.Time `json:"afterStartedAt,omitempty"`
+	BeforeFinishedAt time.Time `json:"beforeFinishedAt,omitempty"`
+	AfterFinishedAt  time.Time `json:"afterFinishedAt,omitempty"`
 }
 
 type Details struct {

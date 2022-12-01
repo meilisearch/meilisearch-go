@@ -283,14 +283,14 @@ func (c *Client) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 		if param.From != 0 {
 			req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
 		}
-		if len(param.Status) != 0 {
-			req.withQueryParams["status"] = strings.Join(param.Status, ",")
+		if len(param.Statuses) != 0 {
+			req.withQueryParams["statuses"] = strings.Join(param.Statuses, ",")
 		}
-		if len(param.Type) != 0 {
-			req.withQueryParams["type"] = strings.Join(param.Type, ",")
+		if len(param.Types) != 0 {
+			req.withQueryParams["types"] = strings.Join(param.Types, ",")
 		}
-		if len(param.IndexUID) != 0 {
-			req.withQueryParams["indexUid"] = strings.Join(param.IndexUID, ",")
+		if len(param.IndexUIDs) != 0 {
+			req.withQueryParams["indexUids"] = strings.Join(param.IndexUIDs, ",")
 		}
 	}
 	if err := c.executeRequest(req); err != nil {
