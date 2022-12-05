@@ -283,9 +283,13 @@ func Test_deleteAllIndexes(t *testing.T) {
 	_, _ = deleteAllIndexes(defaultClient)
 
 	for _, uid := range indexUIDs {
-		_, err := defaultClient.CreateIndex(&IndexConfig{
+		task, err := defaultClient.CreateIndex(&IndexConfig{
 			Uid: uid,
 		})
+		if err != nil {
+			t.Fatal(err)
+		}
+		_, err = defaultClient.WaitForTask(task.TaskUID)
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -295,10 +299,10 @@ func Test_deleteAllIndexes(t *testing.T) {
 
 	for _, uid := range indexUIDs {
 		resp, err := defaultClient.GetIndex(uid)
-		if err == nil {
-			t.Fatal(err)
-		}
 		if resp != nil {
+			t.Fatal(resp)
+		}
+		if err == nil {
 			t.Fatal("deleteAllIndexes: One or more indexes were not deleted")
 		}
 	}
