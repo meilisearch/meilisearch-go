@@ -278,6 +278,8 @@ type SearchRequest struct {
 	Facets                []string
 	PlaceholderSearch     bool
 	Sort                  []string
+	HitsPerPage           int64
+	Page                  int64
 }
 
 // SearchResponse is the response body for search method
@@ -289,6 +291,10 @@ type SearchResponse struct {
 	ProcessingTimeMs   int64         `json:"processingTimeMs"`
 	Query              string        `json:"query"`
 	FacetDistribution  interface{}   `json:"facetDistribution,omitempty"`
+	TotalHits          int64         `json:"totalHits"`
+	HitsPerPage        int64         `json:"hitsPerPage"`
+	Page               int64         `json:"page"`
+	TotalPages         int64         `json:"totalPages"`
 }
 
 // DocumentQuery is the request body get one documents method
