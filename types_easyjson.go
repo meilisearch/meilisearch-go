@@ -2144,17 +2144,17 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo13(out *jwriter.Writ
 			out.RawByte(']')
 		}
 	}
-	{
+	if in.EstimatedTotalHits != 0 {
 		const prefix string = ",\"estimatedTotalHits\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.EstimatedTotalHits))
 	}
-	{
+	if in.Offset != 0 {
 		const prefix string = ",\"offset\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.Offset))
 	}
-	{
+	if in.Limit != 0 {
 		const prefix string = ",\"limit\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.Limit))
@@ -2180,22 +2180,22 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo13(out *jwriter.Writ
 			out.Raw(json.Marshal(in.FacetDistribution))
 		}
 	}
-	{
+	if in.TotalHits != 0 {
 		const prefix string = ",\"totalHits\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.TotalHits))
 	}
-	{
+	if in.HitsPerPage != 0 {
 		const prefix string = ",\"hitsPerPage\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.HitsPerPage))
 	}
-	{
+	if in.Page != 0 {
 		const prefix string = ",\"page\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.Page))
 	}
-	{
+	if in.TotalPages != 0 {
 		const prefix string = ",\"totalPages\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.TotalPages))

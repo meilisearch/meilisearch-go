@@ -285,16 +285,16 @@ type SearchRequest struct {
 // SearchResponse is the response body for search method
 type SearchResponse struct {
 	Hits               []interface{} `json:"hits"`
-	EstimatedTotalHits int64         `json:"estimatedTotalHits"`
-	Offset             int64         `json:"offset"`
-	Limit              int64         `json:"limit"`
+	EstimatedTotalHits int64         `json:"estimatedTotalHits,omitempty"`
+	Offset             int64         `json:"offset,omitempty"`
+	Limit              int64         `json:"limit,omitempty"`
 	ProcessingTimeMs   int64         `json:"processingTimeMs"`
 	Query              string        `json:"query"`
 	FacetDistribution  interface{}   `json:"facetDistribution,omitempty"`
-	TotalHits          int64         `json:"totalHits"`
-	HitsPerPage        int64         `json:"hitsPerPage"`
-	Page               int64         `json:"page"`
-	TotalPages         int64         `json:"totalPages"`
+	TotalHits          int64         `json:"totalHits,omitempty"`
+	HitsPerPage        int64         `json:"hitsPerPage,omitempty"`
+	Page               int64         `json:"page,omitempty"`
+	TotalPages         int64         `json:"totalPages,omitempty"`
 }
 
 // DocumentQuery is the request body get one documents method
