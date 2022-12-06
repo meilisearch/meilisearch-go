@@ -762,8 +762,8 @@ func TestClient_GetTasks(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 				query: &TasksQuery{
-					Limit:     1,
-					UIDs: []string{"1"},
+					Limit: 1,
+					UIDs:  []int64{1},
 				},
 			},
 		},
@@ -776,7 +776,7 @@ func TestClient_GetTasks(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 				query: &TasksQuery{
-					Limit:     1,
+					Limit:            1,
 					BeforeEnqueuedAt: time.Now(),
 				},
 			},
@@ -790,8 +790,8 @@ func TestClient_GetTasks(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 				query: &TasksQuery{
-					Limit:     1,
-					CanceledBy: 1,
+					Limit:      1,
+					CanceledBy: []int64{1},
 				},
 			},
 		},

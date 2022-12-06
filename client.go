@@ -277,27 +277,14 @@ func (c *Client) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 		functionName:        "GetTasks",
 	}
 	if param != nil {
-		if param.Limit != 0 {
-			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
-		}
-		if param.From != 0 {
-			req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
-		}
-		if len(param.Statuses) != 0 {
-			req.withQueryParams["statuses"] = strings.Join(param.Statuses, ",")
-		}
-		if len(param.Types) != 0 {
-			req.withQueryParams["types"] = strings.Join(param.Types, ",")
-		}
-		if len(param.IndexUIDs) != 0 {
-			req.withQueryParams["indexUids"] = strings.Join(param.IndexUIDs, ",")
-		}
+		encodeTasksQuery(param, &req)
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
 	}
 	return resp, nil
 }
+
 
 // WaitForTask waits for a task to be processed
 //
@@ -390,9 +377,7 @@ func convertKeyToParsedKey(key Key) (resp KeyParsed) {
 	// Convert time.Time to *string to feat the exact ISO-8601
 	// format of Meilisearch
 	if !key.ExpiresAt.IsZero() {
-		const Format = "2006-01-02T15:04:05"
-		timeParsedToString := key.ExpiresAt.Format(Format)
-		resp.ExpiresAt = &timeParsedToString
+		resp.ExpiresAt = formatDate(key.ExpiresAt, true)
 	}
 	return resp
 }
@@ -400,4 +385,52 @@ func convertKeyToParsedKey(key Key) (resp KeyParsed) {
 func IsValidUUID(uuid string) bool {
 	r := regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
 	return r.MatchString(uuid)
+}
+
+func encodeTasksQuery(param *TasksQuery, req *internalRequest) {
+	if param.Limit != 0 {
+		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+	}
+	if param.From != 0 {
+		req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
+	}
+	if len(param.Statuses) != 0 {
+		req.withQueryParams["statuses"] = strings.Join(param.Statuses, ",")
+	}
+	if len(param.Types) != 0 {
+		req.withQueryParams["types"] = strings.Join(param.Types, ",")
+	}
+	if len(param.IndexUIDs) != 0 {
+		req.withQueryParams["indexUids"] = strings.Join(param.IndexUIDs, ",")
+	}
+	if len(param.UIDs) != 0 {
+		req.withQueryParams["uids"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(param.UIDs)), ","), "[]")
+	}
+	if len(param.CanceledBy) != 0 {
+		req.withQueryParams["canceledBy"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(param.CanceledBy)), ","), "[]")
+	}
+	if !param.BeforeEnqueuedAt.IsZero() {
+		req.withQueryParams["beforeEnqueuedAt"] = *formatDate(param.BeforeEnqueuedAt, false)
+	}
+	if !param.AfterEnqueuedAt.IsZero() {
+		req.withQueryParams["afterEnqueuedAt"] = *formatDate(param.AfterEnqueuedAt, false)
+	}
+	if !param.BeforeStartedAt.IsZero() {
+		req.withQueryParams["beforeStartedAt"] = *formatDate(param.BeforeStartedAt, false)
+	}
+	if !param.AfterStartedAt.IsZero() {
+		req.withQueryParams["afterStartedAt"] = *formatDate(param.AfterStartedAt, false)
+	}
+	if !param.BeforeFinishedAt.IsZero() {
+		req.withQueryParams["beforeFinishedAt"] = *formatDate(param.BeforeFinishedAt, false)
+	}
+	if !param.AfterFinishedAt.IsZero() {
+		req.withQueryParams["afterFinishedAt"] = *formatDate(param.AfterFinishedAt, false)
+	}
+}
+
+func formatDate(date time.Time, key bool) *string {
+	const format = "2006-01-02T15:04:05Z"
+	timeParsedToString := date.Format(format)
+	return &timeParsedToString
 }
