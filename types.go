@@ -35,8 +35,8 @@ type IndexesResults struct {
 }
 
 type IndexesQuery struct {
-	Limit  int64 `json:"limit,omitempty"`
-	Offset int64 `json:"offset,omitempty"`
+	Limit  int64
+	Offset int64
 }
 
 // Settings is the type that represents the settings in Meilisearch
@@ -150,11 +150,19 @@ type TaskInfo struct {
 
 // TasksQuery is the request body for list documents method
 type TasksQuery struct {
-	Limit    int64    `json:"limit,omitempty"`
-	From     int64    `json:"from,omitempty"`
-	IndexUID []string `json:"indexUid,omitempty"`
-	Status   []string `json:"status,omitempty"`
-	Type     []string `json:"type,omitempty"`
+	UIDS             []int64
+	Limit            int64
+	From             int64
+	IndexUIDS        []string
+	Statuses         []string
+	Types            []string
+	CanceledBy       []int64
+	BeforeEnqueuedAt time.Time
+	AfterEnqueuedAt  time.Time
+	BeforeStartedAt  time.Time
+	AfterStartedAt   time.Time
+	BeforeFinishedAt time.Time
+	AfterFinishedAt  time.Time
 }
 
 type Details struct {
@@ -164,9 +172,6 @@ type Details struct {
 	PrimaryKey           string              `json:"primaryKey,omitempty"`
 	RankingRules         []string            `json:"rankingRules,omitempty"`
 	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
-	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
-	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
-	StopWords            []string            `json:"stopWords,omitempty"`
 	Synonyms             map[string][]string `json:"synonyms,omitempty"`
 	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
@@ -222,8 +227,8 @@ type KeysResults struct {
 }
 
 type KeysQuery struct {
-	Limit  int64 `json:"limit,omitempty"`
-	Offset int64 `json:"offset,omitempty"`
+	Limit  int64
+	Offset int64
 }
 
 // Information to create a tenant token

@@ -791,7 +791,7 @@ get_all_tasks_filtering_1: |-
   client.Index("movies").GetTasks(nil);
   // OR
   client.GetTasks(&TasksQuery{
-    IndexUID: []string{"movies"},
+    IndexUIDs: []string{"movies"},
   });
 get_all_tasks_filtering_2: |-
   client.GetTasks(&meilisearch.TasksQuery{
