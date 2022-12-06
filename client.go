@@ -285,7 +285,6 @@ func (c *Client) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 	return resp, nil
 }
 
-
 // WaitForTask waits for a task to be processed
 //
 // The function will check by regular interval provided in parameter interval
@@ -400,11 +399,11 @@ func encodeTasksQuery(param *TasksQuery, req *internalRequest) {
 	if len(param.Types) != 0 {
 		req.withQueryParams["types"] = strings.Join(param.Types, ",")
 	}
-	if len(param.IndexUIDs) != 0 {
-		req.withQueryParams["indexUids"] = strings.Join(param.IndexUIDs, ",")
+	if len(param.IndexUIDS) != 0 {
+		req.withQueryParams["indexUids"] = strings.Join(param.IndexUIDS, ",")
 	}
-	if len(param.UIDs) != 0 {
-		req.withQueryParams["uids"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(param.UIDs)), ","), "[]")
+	if len(param.UIDS) != 0 {
+		req.withQueryParams["uids"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(param.UIDS)), ","), "[]")
 	}
 	if len(param.CanceledBy) != 0 {
 		req.withQueryParams["canceledBy"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(param.CanceledBy)), ","), "[]")

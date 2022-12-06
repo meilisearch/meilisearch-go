@@ -189,9 +189,9 @@ func (i Index) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 		if len(param.Types) != 0 {
 			req.withQueryParams["types"] = strings.Join(param.Types, ",")
 		}
-		if len(param.IndexUIDs) != 0 {
-			param.IndexUIDs = append(param.IndexUIDs, i.UID)
-			req.withQueryParams["indexUids"] = strings.Join(param.IndexUIDs, ",")
+		if len(param.IndexUIDS) != 0 {
+			param.IndexUIDS = append(param.IndexUIDS, i.UID)
+			req.withQueryParams["indexUids"] = strings.Join(param.IndexUIDS, ",")
 		} else {
 			req.withQueryParams["indexUids"] = i.UID
 		}

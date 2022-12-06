@@ -150,10 +150,10 @@ type TaskInfo struct {
 
 // TasksQuery is the request body for list documents method
 type TasksQuery struct {
-	UIDs             []int64
+	UIDS             []int64
 	Limit            int64
 	From             int64
-	IndexUIDs        []string
+	IndexUIDS        []string
 	Statuses         []string
 	Types            []string
 	CanceledBy       []int64

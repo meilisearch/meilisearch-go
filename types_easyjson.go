@@ -587,25 +587,25 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo5(in *jlexer.Lexer, 
 			continue
 		}
 		switch key {
-		case "UIDs":
+		case "UIDS":
 			if in.IsNull() {
 				in.Skip()
-				out.UIDs = nil
+				out.UIDS = nil
 			} else {
 				in.Delim('[')
-				if out.UIDs == nil {
+				if out.UIDS == nil {
 					if !in.IsDelim(']') {
-						out.UIDs = make([]int64, 0, 8)
+						out.UIDS = make([]int64, 0, 8)
 					} else {
-						out.UIDs = []int64{}
+						out.UIDS = []int64{}
 					}
 				} else {
-					out.UIDs = (out.UIDs)[:0]
+					out.UIDS = (out.UIDS)[:0]
 				}
 				for !in.IsDelim(']') {
 					var v7 int64
 					v7 = int64(in.Int64())
-					out.UIDs = append(out.UIDs, v7)
+					out.UIDS = append(out.UIDS, v7)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -614,25 +614,25 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo5(in *jlexer.Lexer, 
 			out.Limit = int64(in.Int64())
 		case "From":
 			out.From = int64(in.Int64())
-		case "IndexUIDs":
+		case "IndexUIDS":
 			if in.IsNull() {
 				in.Skip()
-				out.IndexUIDs = nil
+				out.IndexUIDS = nil
 			} else {
 				in.Delim('[')
-				if out.IndexUIDs == nil {
+				if out.IndexUIDS == nil {
 					if !in.IsDelim(']') {
-						out.IndexUIDs = make([]string, 0, 4)
+						out.IndexUIDS = make([]string, 0, 4)
 					} else {
-						out.IndexUIDs = []string{}
+						out.IndexUIDS = []string{}
 					}
 				} else {
-					out.IndexUIDs = (out.IndexUIDs)[:0]
+					out.IndexUIDS = (out.IndexUIDS)[:0]
 				}
 				for !in.IsDelim(']') {
 					var v8 string
 					v8 = string(in.String())
-					out.IndexUIDs = append(out.IndexUIDs, v8)
+					out.IndexUIDS = append(out.IndexUIDS, v8)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -745,13 +745,13 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo5(out *jwriter.Write
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"UIDs\":"
+		const prefix string = ",\"UIDS\":"
 		out.RawString(prefix[1:])
-		if in.UIDs == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+		if in.UIDS == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v12, v13 := range in.UIDs {
+			for v12, v13 := range in.UIDS {
 				if v12 > 0 {
 					out.RawByte(',')
 				}
@@ -771,13 +771,13 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo5(out *jwriter.Write
 		out.Int64(int64(in.From))
 	}
 	{
-		const prefix string = ",\"IndexUIDs\":"
+		const prefix string = ",\"IndexUIDS\":"
 		out.RawString(prefix)
-		if in.IndexUIDs == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+		if in.IndexUIDS == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 			out.RawString("null")
 		} else {
 			out.RawByte('[')
-			for v14, v15 := range in.IndexUIDs {
+			for v14, v15 := range in.IndexUIDS {
 				if v14 > 0 {
 					out.RawByte(',')
 				}
