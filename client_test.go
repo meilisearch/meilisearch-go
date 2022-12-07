@@ -2,6 +2,8 @@ package meilisearch
 
 import (
 	"context"
+	"strings"
+
 	"sync"
 	"testing"
 	"time"
@@ -655,8 +657,8 @@ func TestClient_GetTask(t *testing.T) {
 			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskUID)
 			require.Equal(t, tt.args.UID, gotResp.IndexUID)
 			require.Equal(t, TaskStatusSucceeded, gotResp.Status)
-			require.Equal(t, len(tt.args.document), gotResp.Details.ReceivedDocuments)
-			require.Equal(t, len(tt.args.document), gotResp.Details.IndexedDocuments)
+			require.Equal(t, int64(len(tt.args.document)), gotResp.Details.ReceivedDocuments)
+			require.Equal(t, int64(len(tt.args.document)), gotResp.Details.IndexedDocuments)
 
 			// Make sure that timestamps are also retrieved
 			require.NotZero(t, gotResp.EnqueuedAt)
@@ -823,6 +825,134 @@ func TestClient_GetTasks(t *testing.T) {
 					require.Equal(t, tt.args.query.From, (*gotResp).From)
 				}
 			}
+		})
+	}
+}
+
+func TestClient_CancelTasks(t *testing.T) {
+	type args struct {
+		UID    string
+		client *Client
+		query  *TasksQuery
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "TestBasicCancelTasks",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &TasksQuery{
+					Statuses: []string{"succeeded"},
+				},
+			},
+			want: "?statuses=succeeded",
+		},
+		{
+			name: "TestCancelTasksWithIndexUidFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &TasksQuery{
+					IndexUIDS: []string{"0"},
+				},
+			},
+			want: "?indexUids=0",
+		},
+		{
+			name: "TestCancelTasksWithMultipleIndexUidsFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &TasksQuery{
+					IndexUIDS: []string{"0", "1"},
+				},
+			},
+			want: "?indexUids=0%2C1",
+		},
+		{
+			name: "TestCancelTasksWithUidFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &TasksQuery{
+					UIDS: []int64{0},
+				},
+			},
+			want: "?uids=0",
+		},
+		{
+			name: "TestCancelTasksWithMultipleUidsFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &TasksQuery{
+					UIDS: []int64{0, 1},
+				},
+			},
+			want: "?uids=0%2C1",
+		},
+		{
+			name: "TestCancelTasksWithDateFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &TasksQuery{
+					BeforeEnqueuedAt: time.Now(),
+				},
+			},
+			want: strings.NewReplacer(":", "%3A").Replace("?beforeEnqueuedAt=" + time.Now().Format("2006-01-02T15:04:05Z")),
+		},
+		{
+			name: "TestCancelTasksWithCanceledByFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &TasksQuery{
+					CanceledBy: []int64{1},
+				},
+			},
+			want: "?canceledBy=1",
+		},
+		{
+			name: "TestCancelTasksWithParameters",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &TasksQuery{
+					Statuses:        []string{"enqueued"},
+					IndexUIDS:       []string{"indexUID"},
+					UIDS:            []int64{1},
+					AfterEnqueuedAt: time.Now(),
+				},
+			},
+			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&uids=1",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := c.CancelTasks(tt.args.query)
+			require.NoError(t, err)
+
+			_, err = c.WaitForTask(gotResp.TaskUID)
+			require.NoError(t, err)
+
+			gotTask, err := c.GetTask(gotResp.TaskUID)
+			require.NoError(t, err)
+
+			require.NotNil(t, gotResp.Status)
+			require.NotNil(t, gotResp.Type)
+			require.NotNil(t, gotResp.TaskUID)
+			require.NotNil(t, gotResp.EnqueuedAt)
+			require.Equal(t, "", gotResp.IndexUID)
+			require.Equal(t, "taskCancelation", gotResp.Type)
+			require.Equal(t, tt.want, gotTask.Details.OriginalFilter)
 		})
 	}
 }

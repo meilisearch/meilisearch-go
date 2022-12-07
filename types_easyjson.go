@@ -1036,24 +1036,10 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo7(in *jlexer.Lexer, 
 			out.IndexUID = string(in.String())
 		case "type":
 			out.Type = string(in.String())
-		case "error":
-			easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo8(in, &out.Error)
-		case "duration":
-			out.Duration = string(in.String())
 		case "enqueuedAt":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.EnqueuedAt).UnmarshalJSON(data))
 			}
-		case "startedAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.StartedAt).UnmarshalJSON(data))
-			}
-		case "finishedAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.FinishedAt).UnmarshalJSON(data))
-			}
-		case "details":
-			(out.Details).UnmarshalEasyJSON(in)
 		default:
 			in.SkipRecursive()
 		}
@@ -1073,7 +1059,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo7(out *jwriter.Write
 		out.RawString(prefix[1:])
 		out.String(string(in.Status))
 	}
-	if in.TaskUID != 0 {
+	{
 		const prefix string = ",\"taskUid\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.TaskUID))
@@ -1088,35 +1074,10 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo7(out *jwriter.Write
 		out.RawString(prefix)
 		out.String(string(in.Type))
 	}
-	if true {
-		const prefix string = ",\"error\":"
-		out.RawString(prefix)
-		easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo8(out, in.Error)
-	}
-	if in.Duration != "" {
-		const prefix string = ",\"duration\":"
-		out.RawString(prefix)
-		out.String(string(in.Duration))
-	}
 	{
 		const prefix string = ",\"enqueuedAt\":"
 		out.RawString(prefix)
 		out.Raw((in.EnqueuedAt).MarshalJSON())
-	}
-	if true {
-		const prefix string = ",\"startedAt\":"
-		out.RawString(prefix)
-		out.Raw((in.StartedAt).MarshalJSON())
-	}
-	if true {
-		const prefix string = ",\"finishedAt\":"
-		out.RawString(prefix)
-		out.Raw((in.FinishedAt).MarshalJSON())
-	}
-	if true {
-		const prefix string = ",\"details\":"
-		out.RawString(prefix)
-		(in.Details).MarshalEasyJSON(out)
 	}
 	out.RawByte('}')
 }
@@ -1144,7 +1105,156 @@ func (v *TaskInfo) UnmarshalJSON(data []byte) error {
 func (v *TaskInfo) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo7(l, v)
 }
-func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo8(in *jlexer.Lexer, out *meilisearchApiError) {
+func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo8(in *jlexer.Lexer, out *Task) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "status":
+			out.Status = TaskStatus(in.String())
+		case "uid":
+			out.UID = int64(in.Int64())
+		case "taskUid":
+			out.TaskUID = int64(in.Int64())
+		case "indexUid":
+			out.IndexUID = string(in.String())
+		case "type":
+			out.Type = string(in.String())
+		case "error":
+			easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo9(in, &out.Error)
+		case "duration":
+			out.Duration = string(in.String())
+		case "enqueuedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.EnqueuedAt).UnmarshalJSON(data))
+			}
+		case "startedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.StartedAt).UnmarshalJSON(data))
+			}
+		case "finishedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.FinishedAt).UnmarshalJSON(data))
+			}
+		case "details":
+			(out.Details).UnmarshalEasyJSON(in)
+		case "canceledBy":
+			out.CanceledBy = int64(in.Int64())
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo8(out *jwriter.Writer, in Task) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"status\":"
+		out.RawString(prefix[1:])
+		out.String(string(in.Status))
+	}
+	if in.UID != 0 {
+		const prefix string = ",\"uid\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.UID))
+	}
+	if in.TaskUID != 0 {
+		const prefix string = ",\"taskUid\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.TaskUID))
+	}
+	{
+		const prefix string = ",\"indexUid\":"
+		out.RawString(prefix)
+		out.String(string(in.IndexUID))
+	}
+	{
+		const prefix string = ",\"type\":"
+		out.RawString(prefix)
+		out.String(string(in.Type))
+	}
+	if true {
+		const prefix string = ",\"error\":"
+		out.RawString(prefix)
+		easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo9(out, in.Error)
+	}
+	if in.Duration != "" {
+		const prefix string = ",\"duration\":"
+		out.RawString(prefix)
+		out.String(string(in.Duration))
+	}
+	{
+		const prefix string = ",\"enqueuedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.EnqueuedAt).MarshalJSON())
+	}
+	if true {
+		const prefix string = ",\"startedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.StartedAt).MarshalJSON())
+	}
+	if true {
+		const prefix string = ",\"finishedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.FinishedAt).MarshalJSON())
+	}
+	if true {
+		const prefix string = ",\"details\":"
+		out.RawString(prefix)
+		(in.Details).MarshalEasyJSON(out)
+	}
+	if in.CanceledBy != 0 {
+		const prefix string = ",\"canceledBy\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.CanceledBy))
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v Task) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo8(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v Task) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo8(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *Task) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo8(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *Task) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo8(l, v)
+}
+func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo9(in *jlexer.Lexer, out *meilisearchApiError) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
 		if isTopLevel {
@@ -1181,7 +1291,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo8(in *jlexer.Lexer, 
 		in.Consumed()
 	}
 }
-func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo8(out *jwriter.Writer, in meilisearchApiError) {
+func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo9(out *jwriter.Writer, in meilisearchApiError) {
 	out.RawByte('{')
 	first := true
 	_ = first
@@ -1206,148 +1316,6 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo8(out *jwriter.Write
 		out.String(string(in.Link))
 	}
 	out.RawByte('}')
-}
-func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo9(in *jlexer.Lexer, out *Task) {
-	isTopLevel := in.IsStart()
-	if in.IsNull() {
-		if isTopLevel {
-			in.Consumed()
-		}
-		in.Skip()
-		return
-	}
-	in.Delim('{')
-	for !in.IsDelim('}') {
-		key := in.UnsafeFieldName(false)
-		in.WantColon()
-		if in.IsNull() {
-			in.Skip()
-			in.WantComma()
-			continue
-		}
-		switch key {
-		case "status":
-			out.Status = TaskStatus(in.String())
-		case "uid":
-			out.UID = int64(in.Int64())
-		case "taskUid":
-			out.TaskUID = int64(in.Int64())
-		case "indexUid":
-			out.IndexUID = string(in.String())
-		case "type":
-			out.Type = string(in.String())
-		case "error":
-			easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo8(in, &out.Error)
-		case "duration":
-			out.Duration = string(in.String())
-		case "enqueuedAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.EnqueuedAt).UnmarshalJSON(data))
-			}
-		case "startedAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.StartedAt).UnmarshalJSON(data))
-			}
-		case "finishedAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.FinishedAt).UnmarshalJSON(data))
-			}
-		case "details":
-			(out.Details).UnmarshalEasyJSON(in)
-		default:
-			in.SkipRecursive()
-		}
-		in.WantComma()
-	}
-	in.Delim('}')
-	if isTopLevel {
-		in.Consumed()
-	}
-}
-func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo9(out *jwriter.Writer, in Task) {
-	out.RawByte('{')
-	first := true
-	_ = first
-	{
-		const prefix string = ",\"status\":"
-		out.RawString(prefix[1:])
-		out.String(string(in.Status))
-	}
-	if in.UID != 0 {
-		const prefix string = ",\"uid\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.UID))
-	}
-	if in.TaskUID != 0 {
-		const prefix string = ",\"taskUid\":"
-		out.RawString(prefix)
-		out.Int64(int64(in.TaskUID))
-	}
-	{
-		const prefix string = ",\"indexUid\":"
-		out.RawString(prefix)
-		out.String(string(in.IndexUID))
-	}
-	{
-		const prefix string = ",\"type\":"
-		out.RawString(prefix)
-		out.String(string(in.Type))
-	}
-	if true {
-		const prefix string = ",\"error\":"
-		out.RawString(prefix)
-		easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo8(out, in.Error)
-	}
-	if in.Duration != "" {
-		const prefix string = ",\"duration\":"
-		out.RawString(prefix)
-		out.String(string(in.Duration))
-	}
-	{
-		const prefix string = ",\"enqueuedAt\":"
-		out.RawString(prefix)
-		out.Raw((in.EnqueuedAt).MarshalJSON())
-	}
-	if true {
-		const prefix string = ",\"startedAt\":"
-		out.RawString(prefix)
-		out.Raw((in.StartedAt).MarshalJSON())
-	}
-	if true {
-		const prefix string = ",\"finishedAt\":"
-		out.RawString(prefix)
-		out.Raw((in.FinishedAt).MarshalJSON())
-	}
-	if true {
-		const prefix string = ",\"details\":"
-		out.RawString(prefix)
-		(in.Details).MarshalEasyJSON(out)
-	}
-	out.RawByte('}')
-}
-
-// MarshalJSON supports json.Marshaler interface
-func (v Task) MarshalJSON() ([]byte, error) {
-	w := jwriter.Writer{}
-	easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo9(&w, v)
-	return w.Buffer.BuildBytes(), w.Error
-}
-
-// MarshalEasyJSON supports easyjson.Marshaler interface
-func (v Task) MarshalEasyJSON(w *jwriter.Writer) {
-	easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo9(w, v)
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (v *Task) UnmarshalJSON(data []byte) error {
-	r := jlexer.Lexer{Data: data}
-	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo9(&r, v)
-	return r.Error()
-}
-
-// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
-func (v *Task) UnmarshalEasyJSON(l *jlexer.Lexer) {
-	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo9(l, v)
 }
 func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo10(in *jlexer.Lexer, out *StatsIndex) {
 	isTopLevel := in.IsStart()
@@ -4143,13 +4111,15 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo30(in *jlexer.Lexer,
 		}
 		switch key {
 		case "receivedDocuments":
-			out.ReceivedDocuments = int(in.Int())
+			out.ReceivedDocuments = int64(in.Int64())
 		case "indexedDocuments":
-			out.IndexedDocuments = int(in.Int())
+			out.IndexedDocuments = int64(in.Int64())
 		case "deletedDocuments":
-			out.DeletedDocuments = int(in.Int())
+			out.DeletedDocuments = int64(in.Int64())
 		case "primaryKey":
 			out.PrimaryKey = string(in.String())
+		case "providedIds":
+			out.ProvidedIds = int64(in.Int64())
 		case "rankingRules":
 			if in.IsNull() {
 				in.Skip()
@@ -4183,6 +4153,75 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo30(in *jlexer.Lexer,
 				}
 				*out.DistinctAttribute = string(in.String())
 			}
+		case "searchableAttributes":
+			if in.IsNull() {
+				in.Skip()
+				out.SearchableAttributes = nil
+			} else {
+				in.Delim('[')
+				if out.SearchableAttributes == nil {
+					if !in.IsDelim(']') {
+						out.SearchableAttributes = make([]string, 0, 4)
+					} else {
+						out.SearchableAttributes = []string{}
+					}
+				} else {
+					out.SearchableAttributes = (out.SearchableAttributes)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v100 string
+					v100 = string(in.String())
+					out.SearchableAttributes = append(out.SearchableAttributes, v100)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "displayedAttributes":
+			if in.IsNull() {
+				in.Skip()
+				out.DisplayedAttributes = nil
+			} else {
+				in.Delim('[')
+				if out.DisplayedAttributes == nil {
+					if !in.IsDelim(']') {
+						out.DisplayedAttributes = make([]string, 0, 4)
+					} else {
+						out.DisplayedAttributes = []string{}
+					}
+				} else {
+					out.DisplayedAttributes = (out.DisplayedAttributes)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v101 string
+					v101 = string(in.String())
+					out.DisplayedAttributes = append(out.DisplayedAttributes, v101)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "stopWords":
+			if in.IsNull() {
+				in.Skip()
+				out.StopWords = nil
+			} else {
+				in.Delim('[')
+				if out.StopWords == nil {
+					if !in.IsDelim(']') {
+						out.StopWords = make([]string, 0, 4)
+					} else {
+						out.StopWords = []string{}
+					}
+				} else {
+					out.StopWords = (out.StopWords)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v102 string
+					v102 = string(in.String())
+					out.StopWords = append(out.StopWords, v102)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
 		case "synonyms":
 			if in.IsNull() {
 				in.Skip()
@@ -4196,30 +4235,30 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo30(in *jlexer.Lexer,
 				for !in.IsDelim('}') {
 					key := string(in.String())
 					in.WantColon()
-					var v100 []string
+					var v103 []string
 					if in.IsNull() {
 						in.Skip()
-						v100 = nil
+						v103 = nil
 					} else {
 						in.Delim('[')
-						if v100 == nil {
+						if v103 == nil {
 							if !in.IsDelim(']') {
-								v100 = make([]string, 0, 4)
+								v103 = make([]string, 0, 4)
 							} else {
-								v100 = []string{}
+								v103 = []string{}
 							}
 						} else {
-							v100 = (v100)[:0]
+							v103 = (v103)[:0]
 						}
 						for !in.IsDelim(']') {
-							var v101 string
-							v101 = string(in.String())
-							v100 = append(v100, v101)
+							var v104 string
+							v104 = string(in.String())
+							v103 = append(v103, v104)
 							in.WantComma()
 						}
 						in.Delim(']')
 					}
-					(out.Synonyms)[key] = v100
+					(out.Synonyms)[key] = v103
 					in.WantComma()
 				}
 				in.Delim('}')
@@ -4240,9 +4279,9 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo30(in *jlexer.Lexer,
 					out.FilterableAttributes = (out.FilterableAttributes)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v102 string
-					v102 = string(in.String())
-					out.FilterableAttributes = append(out.FilterableAttributes, v102)
+					var v105 string
+					v105 = string(in.String())
+					out.FilterableAttributes = append(out.FilterableAttributes, v105)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -4263,13 +4302,51 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo30(in *jlexer.Lexer,
 					out.SortableAttributes = (out.SortableAttributes)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v103 string
-					v103 = string(in.String())
-					out.SortableAttributes = append(out.SortableAttributes, v103)
+					var v106 string
+					v106 = string(in.String())
+					out.SortableAttributes = append(out.SortableAttributes, v106)
 					in.WantComma()
 				}
 				in.Delim(']')
 			}
+		case "typoTolerance":
+			if in.IsNull() {
+				in.Skip()
+				out.TypoTolerance = nil
+			} else {
+				if out.TypoTolerance == nil {
+					out.TypoTolerance = new(TypoTolerance)
+				}
+				(*out.TypoTolerance).UnmarshalEasyJSON(in)
+			}
+		case "pagination":
+			if in.IsNull() {
+				in.Skip()
+				out.Pagination = nil
+			} else {
+				if out.Pagination == nil {
+					out.Pagination = new(Pagination)
+				}
+				(*out.Pagination).UnmarshalEasyJSON(in)
+			}
+		case "faceting":
+			if in.IsNull() {
+				in.Skip()
+				out.Faceting = nil
+			} else {
+				if out.Faceting == nil {
+					out.Faceting = new(Faceting)
+				}
+				(*out.Faceting).UnmarshalEasyJSON(in)
+			}
+		case "matchedTasks":
+			out.MatchedTasks = int64(in.Int64())
+		case "canceledTasks":
+			out.CanceledTasks = int64(in.Int64())
+		case "deletedTasks":
+			out.DeletedTasks = int64(in.Int64())
+		case "originalFilter":
+			out.OriginalFilter = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -4288,7 +4365,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 		const prefix string = ",\"receivedDocuments\":"
 		first = false
 		out.RawString(prefix[1:])
-		out.Int(int(in.ReceivedDocuments))
+		out.Int64(int64(in.ReceivedDocuments))
 	}
 	if in.IndexedDocuments != 0 {
 		const prefix string = ",\"indexedDocuments\":"
@@ -4298,7 +4375,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 		} else {
 			out.RawString(prefix)
 		}
-		out.Int(int(in.IndexedDocuments))
+		out.Int64(int64(in.IndexedDocuments))
 	}
 	if in.DeletedDocuments != 0 {
 		const prefix string = ",\"deletedDocuments\":"
@@ -4308,7 +4385,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 		} else {
 			out.RawString(prefix)
 		}
-		out.Int(int(in.DeletedDocuments))
+		out.Int64(int64(in.DeletedDocuments))
 	}
 	if in.PrimaryKey != "" {
 		const prefix string = ",\"primaryKey\":"
@@ -4320,6 +4397,16 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 		}
 		out.String(string(in.PrimaryKey))
 	}
+	if in.ProvidedIds != 0 {
+		const prefix string = ",\"providedIds\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int64(int64(in.ProvidedIds))
+	}
 	if len(in.RankingRules) != 0 {
 		const prefix string = ",\"rankingRules\":"
 		if first {
@@ -4330,11 +4417,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 		}
 		{
 			out.RawByte('[')
-			for v104, v105 := range in.RankingRules {
-				if v104 > 0 {
+			for v107, v108 := range in.RankingRules {
+				if v107 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v105))
+				out.String(string(v108))
 			}
 			out.RawByte(']')
 		}
@@ -4349,6 +4436,63 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 		}
 		out.String(string(*in.DistinctAttribute))
 	}
+	if len(in.SearchableAttributes) != 0 {
+		const prefix string = ",\"searchableAttributes\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v109, v110 := range in.SearchableAttributes {
+				if v109 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v110))
+			}
+			out.RawByte(']')
+		}
+	}
+	if len(in.DisplayedAttributes) != 0 {
+		const prefix string = ",\"displayedAttributes\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v111, v112 := range in.DisplayedAttributes {
+				if v111 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v112))
+			}
+			out.RawByte(']')
+		}
+	}
+	if len(in.StopWords) != 0 {
+		const prefix string = ",\"stopWords\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		{
+			out.RawByte('[')
+			for v113, v114 := range in.StopWords {
+				if v113 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v114))
+			}
+			out.RawByte(']')
+		}
+	}
 	if len(in.Synonyms) != 0 {
 		const prefix string = ",\"synonyms\":"
 		if first {
@@ -4359,24 +4503,24 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 		}
 		{
 			out.RawByte('{')
-			v106First := true
-			for v106Name, v106Value := range in.Synonyms {
-				if v106First {
-					v106First = false
+			v115First := true
+			for v115Name, v115Value := range in.Synonyms {
+				if v115First {
+					v115First = false
 				} else {
 					out.RawByte(',')
 				}
-				out.String(string(v106Name))
+				out.String(string(v115Name))
 				out.RawByte(':')
-				if v106Value == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+				if v115Value == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
 					out.RawString("null")
 				} else {
 					out.RawByte('[')
-					for v107, v108 := range v106Value {
-						if v107 > 0 {
+					for v116, v117 := range v115Value {
+						if v116 > 0 {
 							out.RawByte(',')
 						}
-						out.String(string(v108))
+						out.String(string(v117))
 					}
 					out.RawByte(']')
 				}
@@ -4394,11 +4538,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 		}
 		{
 			out.RawByte('[')
-			for v109, v110 := range in.FilterableAttributes {
-				if v109 > 0 {
+			for v118, v119 := range in.FilterableAttributes {
+				if v118 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v110))
+				out.String(string(v119))
 			}
 			out.RawByte(']')
 		}
@@ -4413,14 +4557,84 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo30(out *jwriter.Writ
 		}
 		{
 			out.RawByte('[')
-			for v111, v112 := range in.SortableAttributes {
-				if v111 > 0 {
+			for v120, v121 := range in.SortableAttributes {
+				if v120 > 0 {
 					out.RawByte(',')
 				}
-				out.String(string(v112))
+				out.String(string(v121))
 			}
 			out.RawByte(']')
 		}
+	}
+	if in.TypoTolerance != nil {
+		const prefix string = ",\"typoTolerance\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.TypoTolerance).MarshalEasyJSON(out)
+	}
+	if in.Pagination != nil {
+		const prefix string = ",\"pagination\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.Pagination).MarshalEasyJSON(out)
+	}
+	if in.Faceting != nil {
+		const prefix string = ",\"faceting\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		(*in.Faceting).MarshalEasyJSON(out)
+	}
+	if in.MatchedTasks != 0 {
+		const prefix string = ",\"matchedTasks\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int64(int64(in.MatchedTasks))
+	}
+	if in.CanceledTasks != 0 {
+		const prefix string = ",\"canceledTasks\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int64(int64(in.CanceledTasks))
+	}
+	if in.DeletedTasks != 0 {
+		const prefix string = ",\"deletedTasks\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Int64(int64(in.DeletedTasks))
+	}
+	if in.OriginalFilter != "" {
+		const prefix string = ",\"originalFilter\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.OriginalFilter))
 	}
 	out.RawByte('}')
 }

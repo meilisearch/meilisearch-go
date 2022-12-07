@@ -54,6 +54,7 @@ type ClientInterface interface {
 	IsHealthy() bool
 	GetTask(taskUID int64) (resp *Task, err error)
 	GetTasks(param *TasksQuery) (resp *TaskResult, err error)
+	CancelTasks(param *TasksQuery) (resp *TaskInfo, err error)
 	WaitForTask(taskUID int64, options ...WaitParams) (*Task, error)
 	GenerateTenantToken(APIKeyUID string, searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
 }
@@ -275,6 +276,26 @@ func (c *Client) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetTasks",
+	}
+	if param != nil {
+		encodeTasksQuery(param, &req)
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) CancelTasks(param *TasksQuery) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/tasks/cancel",
+		method:              http.MethodPost,
+		withRequest:         nil,
+		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "CancelTasks",
 	}
 	if param != nil {
 		encodeTasksQuery(param, &req)

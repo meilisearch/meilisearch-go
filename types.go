@@ -130,22 +130,18 @@ type Task struct {
 	StartedAt  time.Time           `json:"startedAt,omitempty"`
 	FinishedAt time.Time           `json:"finishedAt,omitempty"`
 	Details    Details             `json:"details,omitempty"`
+	CanceledBy int64               `json:"canceledBy,omitempty"`
 }
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
 //
 // Documentation: https://docs.meilisearch.com/reference/api/tasks.html#tasks
 type TaskInfo struct {
-	Status     TaskStatus          `json:"status"`
-	TaskUID    int64               `json:"taskUid,omitempty"`
-	IndexUID   string              `json:"indexUid"`
-	Type       string              `json:"type"`
-	Error      meilisearchApiError `json:"error,omitempty"`
-	Duration   string              `json:"duration,omitempty"`
-	EnqueuedAt time.Time           `json:"enqueuedAt"`
-	StartedAt  time.Time           `json:"startedAt,omitempty"`
-	FinishedAt time.Time           `json:"finishedAt,omitempty"`
-	Details    Details             `json:"details,omitempty"`
+	Status     TaskStatus `json:"status"`
+	TaskUID    int64      `json:"taskUid"`
+	IndexUID   string     `json:"indexUid"`
+	Type       string     `json:"type"`
+	EnqueuedAt time.Time  `json:"enqueuedAt"`
 }
 
 // TasksQuery is the request body for list documents method
@@ -166,15 +162,26 @@ type TasksQuery struct {
 }
 
 type Details struct {
-	ReceivedDocuments    int                 `json:"receivedDocuments,omitempty"`
-	IndexedDocuments     int                 `json:"indexedDocuments,omitempty"`
-	DeletedDocuments     int                 `json:"deletedDocuments,omitempty"`
+	ReceivedDocuments    int64               `json:"receivedDocuments,omitempty"`
+	IndexedDocuments     int64               `json:"indexedDocuments,omitempty"`
+	DeletedDocuments     int64               `json:"deletedDocuments,omitempty"`
 	PrimaryKey           string              `json:"primaryKey,omitempty"`
+	ProvidedIds          int64               `json:"providedIds,omitempty"`
 	RankingRules         []string            `json:"rankingRules,omitempty"`
 	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
+	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
+	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
+	StopWords            []string            `json:"stopWords,omitempty"`
 	Synonyms             map[string][]string `json:"synonyms,omitempty"`
 	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
+	TypoTolerance        *TypoTolerance      `json:"typoTolerance,omitempty"`
+	Pagination           *Pagination         `json:"pagination,omitempty"`
+	Faceting             *Faceting           `json:"faceting,omitempty"`
+	MatchedTasks         int64               `json:"matchedTasks,omitempty"`
+	CanceledTasks        int64               `json:"canceledTasks,omitempty"`
+	DeletedTasks         int64               `json:"deletedTasks,omitempty"`
+	OriginalFilter       string              `json:"originalFilter,omitempty"`
 }
 
 // Return of multiple tasks is wrap in a TaskResult
