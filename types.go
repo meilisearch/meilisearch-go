@@ -173,6 +173,21 @@ type CancelTasksQuery struct {
 	AfterStartedAt   time.Time
 }
 
+// DeleteTasksQuery is a list of filter available to send as query parameters
+type DeleteTasksQuery struct {
+	UIDS             []int64
+	IndexUIDS        []string
+	Statuses         []string
+	Types            []string
+	CanceledBy       []int64
+	BeforeEnqueuedAt time.Time
+	AfterEnqueuedAt  time.Time
+	BeforeStartedAt  time.Time
+	AfterStartedAt   time.Time
+	BeforeFinishedAt time.Time
+	AfterFinishedAt  time.Time
+}
+
 type Details struct {
 	ReceivedDocuments    int64               `json:"receivedDocuments,omitempty"`
 	IndexedDocuments     int64               `json:"indexedDocuments,omitempty"`
