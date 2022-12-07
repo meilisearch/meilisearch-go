@@ -957,6 +957,63 @@ func TestClient_CancelTasks(t *testing.T) {
 	}
 }
 
+func TestClient_SwapIndexes(t *testing.T) {
+	type args struct {
+		UID    string
+		client *Client
+		query  []SwapIndexesParams
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "TestBasicSwapIndexes",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: []SwapIndexesParams{
+					{Indexes: []string{"IndexA", "IndexB"}},
+				},
+			},
+		},
+		{
+			name: "TestSwapIndexesWithMultipleIndexes",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: []SwapIndexesParams{
+					{Indexes: []string{"IndexA", "IndexB"}},
+					{Indexes: []string{"Index1", "Index2"}},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := c.SwapIndexes(tt.args.query)
+			require.NoError(t, err)
+
+			_, err = c.WaitForTask(gotResp.TaskUID)
+			require.NoError(t, err)
+
+			gotTask, err := c.GetTask(gotResp.TaskUID)
+			require.NoError(t, err)
+
+			require.NotNil(t, gotResp.Status)
+			require.NotNil(t, gotResp.Type)
+			require.NotNil(t, gotResp.TaskUID)
+			require.NotNil(t, gotResp.EnqueuedAt)
+			require.Equal(t, "", gotResp.IndexUID)
+			require.Equal(t, "indexSwap", gotResp.Type)
+			require.Equal(t, tt.args.query, gotTask.Details.Swaps)
+		})
+	}
+}
+
 func TestClient_DefaultWaitForTask(t *testing.T) {
 	type args struct {
 		UID      string

@@ -182,6 +182,7 @@ type Details struct {
 	CanceledTasks        int64               `json:"canceledTasks,omitempty"`
 	DeletedTasks         int64               `json:"deletedTasks,omitempty"`
 	OriginalFilter       string              `json:"originalFilter,omitempty"`
+	Swaps                []SwapIndexesParams `json:"swaps,omitempty"`
 }
 
 // Return of multiple tasks is wrap in a TaskResult
@@ -315,6 +316,10 @@ type DocumentsResult struct {
 	Limit   int64                    `json:"limit"`
 	Offset  int64                    `json:"offset"`
 	Total   int64                    `json:"total"`
+}
+
+type SwapIndexesParams struct {
+	Indexes []string `json:"indexes"`
 }
 
 // RawType is an alias for raw byte[]
