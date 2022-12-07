@@ -3,42 +3,6 @@
 # the documentation on build
 # You can read more on https://github.com/meilisearch/documentation/tree/master/.vuepress/code-samples
 ---
-async_guide_filter_by_date_1: |-
-  with filter: { afterEnqueuedAt=2020-10-11T11:49:53.000Z }
-
-async_guide_multiple_filters_1: |-
-  with filter: { indexUids: movies, types: ["documentAdditionOrUpdate","documentDeletion"], statuses: ["processing"] }
-
-async_guide_filter_by_ids_1: |-
-  with filter: { uids: [5, 10, 13] }
-
-async_guide_filter_by_statuses_1: |-
-  with filter: { statuses: ["failed", "canceled"] }
-
-async_guide_filter_by_types_1: |-
-  with filter: { types: ["dumpCreation", "indexSwap"] }
-
-async_guide_filter_by_index_uids_1: |-
-  with filter: { indexUids: ["movies"] }
-
-delete_tasks_1: |-
-  with filter: { uids: [1, 2] }
-
-cancel_tasks_1: |-
-  with filter: { uids: [1,2] }
-
-async_guide_canceled_by: |-
-  with filter: { canceledBy: [9] }
-
-swap_indexes_1: |-
-  with data: { indexes: [ "indexA", "indexB"], indexes: [ "indexX", "indexY" ] }
-
-search_parameter_guide_hitsperpage_1: |-
-  with queryparams: { "q": "", "hitsPerPage": 15 }
-
-search_parameter_guide_page_1: |-
-  with queryparams: { "q": "", "page": 2 }
-
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
@@ -56,6 +20,11 @@ delete_an_index_1: |-
   client.DeleteIndex("movies")
   // OR
   client.Index("movies").Delete()
+swap_indexes_1: |-
+  client.SwapIndexes([]SwapIndexesParams{
+    {Indexes: []string{"indexA", "indexB"}},
+    {Indexes: []string{"indexX", "indexY"}},
+  })
 get_one_document_1: |-
   var a interface{}
   client.Index("movies").GetDocument("25684",&meilisearch.DocumentQuery{
@@ -99,10 +68,58 @@ delete_documents_1: |-
   })
 search_post_1: |-
   client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
+delete_tasks_1: |-
+  client.DeleteTaks(&meilisearch.TasksQuery{
+    UIDS: []int64{1, 2},
+  });
+cancel_tasks_1: |-
+  client.CanlelTaks(&meilisearch.TasksQuery{
+    UIDS: []int64{1, 2},
+  });
 get_task_1: |-
   client.GetTask(1);
 get_all_tasks_1: |-
   client.GetTasks(nil);
+get_all_tasks_paginating_1: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    Limit: 2,
+    From: 10,
+  });
+get_all_tasks_paginating_2: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    Limit: 2,
+    From: 8,
+  });
+async_guide_filter_by_date_1: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+   AfterEnqueuedAt: time.Date(2020, time.October, 11, 11, 49, 53, 0, time.UTC),
+  })
+async_guide_multiple_filters_1: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    IndexUIDS: []string{"movie"},
+    Types:     []string{"documentAdditionOrUpdate", "documentDeletion"},
+    Statuses:  []string{"processing"},
+  })
+async_guide_filter_by_ids_1: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    UIDS: []int64{5, 10, 13},
+  })
+async_guide_filter_by_statuses_1: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    Statuses: []string{"failed", "canceled"},
+  })
+async_guide_filter_by_types_1: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    Types: []string{"dumpCreation", "indexSwap"},
+  })
+async_guide_filter_by_index_uids_1: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    IndexUIDS: []string{"movie"},
+  })
+async_guide_canceled_by: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    CanceledBy: []int64{9},
+  })
 get_one_key_1: |-
   client.GetKey("6062abda-a5aa-4414-ac91-ecd7944c0f8d")
 get_keys_1: |-
@@ -132,48 +149,48 @@ get_settings_1: |-
 update_settings_1: |-
   distinctAttribute := "movie_id"
   settings := meilisearch.Settings{
-  	RankingRules: []string{
-  		"words",
-  		"typo",
-  		"proximity",
-  		"attribute",
-  		"sort",
-  		"exactness",
-  		"release_date:desc",
-  		"rank:desc",
-  	},
-  	DistinctAttribute: &distinctAttribute,
-  	SearchableAttributes: []string{
-  		"title",
-  		"overview",
-  		"genres",
-  	},
-  	DisplayedAttributes: []string{
-  		"title",
-  		"overview",
-  		"genres",
-  		"release_date",
-  	},
-  	StopWords: []string{
-  		"the",
-  		"a",
-  		"an",
-  	},
-  	SortableAttributes: []string{
-  		"title",
-  		"release_date",
-  	},
-  	Synonyms: map[string][]string{
-  		"wolverine": []string{"xmen", "logan"},
-  		"logan":     []string{"wolverine"},
-  	},
-  	TypoTolerance: &meilisearch.TypoTolerance{
-  		MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
-  			OneTypo:  8,
-  			TwoTypos: 10,
-  		},
-  		DisableOnAttributes: []string{"title"},
-  	},
+    RankingRules: []string{
+      "words",
+      "typo",
+      "proximity",
+      "attribute",
+      "sort",
+      "exactness",
+      "release_date:desc",
+      "rank:desc",
+    },
+    DistinctAttribute: &distinctAttribute,
+    SearchableAttributes: []string{
+      "title",
+      "overview",
+      "genres",
+    },
+    DisplayedAttributes: []string{
+      "title",
+      "overview",
+      "genres",
+      "release_date",
+    },
+    StopWords: []string{
+      "the",
+      "a",
+      "an",
+    },
+    SortableAttributes: []string{
+      "title",
+      "release_date",
+    },
+    Synonyms: map[string][]string{
+      "wolverine": []string{"xmen", "logan"},
+      "logan":     []string{"wolverine"},
+    },
+    TypoTolerance: &meilisearch.TypoTolerance{
+      MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
+        OneTypo:  8,
+        TwoTypos: 10,
+      },
+      DisableOnAttributes: []string{"title"},
+    },
     Pagination: &meilisearch.Pagination{
       MaxTotalHits: 5000,
     },
@@ -383,6 +400,14 @@ search_parameter_guide_matching_strategy_1: |-
 search_parameter_guide_matching_strategy_2: |-
   resp, err := client.Index("movies").Search("big fat liar", &meilisearch.SearchRequest{
     MatchingStrategy:    "all",
+  })
+search_parameter_guide_hitsperpage_1: |-
+  client.Index("movies").Search("", &meilisearch.SearchRequest{
+    HitsPerPage: 15,
+  })
+search_parameter_guide_page_1: |-
+  client.Index("movies").Search("q", &meilisearch.SearchRequest{
+    Page: 2,
   })
 settings_guide_synonyms_1: |-
   settings := meilisearch.Settings{
@@ -823,24 +848,3 @@ tenant_token_guide_search_sdk_1: |-
     APIKey: token,
   })
   frontEndClient.Index("patient_medical_records").Search("blood test", &meilisearch.SearchRequest{});
->>>>>>>>>>> REMOVE_ME get_all_tasks_filtering_1: |-
-  client.Index("movies").GetTasks(nil);
-  // OR
-  client.GetTasks(&TasksQuery{
-    IndexUID: []string{"movies"},
-  });
->>>>>>>>>>> REMOVE_ME get_all_tasks_filtering_2: |-
-  client.GetTasks(&meilisearch.TasksQuery{
-    Status: []string{"succeeded", "failed"},
-    Type: []string{"documentAdditionOrUpdate"},
-  });
-get_all_tasks_paginating_1: |-
-  client.GetTasks(&meilisearch.TasksQuery{
-    Limit: 2,
-    From: 10,
-  });
-get_all_tasks_paginating_2: |-
-  client.GetTasks(&meilisearch.TasksQuery{
-    Limit: 2,
-    From: 8,
-  });
