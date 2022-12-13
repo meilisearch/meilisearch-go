@@ -144,7 +144,7 @@ type TaskInfo struct {
 	EnqueuedAt time.Time  `json:"enqueuedAt"`
 }
 
-// TasksQuery is the request body for list documents method
+// TasksQuery is a list of filter available to send as query parameters
 type TasksQuery struct {
 	UIDS             []int64
 	Limit            int64
@@ -159,6 +159,18 @@ type TasksQuery struct {
 	AfterStartedAt   time.Time
 	BeforeFinishedAt time.Time
 	AfterFinishedAt  time.Time
+}
+
+// CancelTasksQuery is a list of filter available to send as query parameters
+type CancelTasksQuery struct {
+	UIDS             []int64
+	IndexUIDS        []string
+	Statuses         []string
+	Types            []string
+	BeforeEnqueuedAt time.Time
+	AfterEnqueuedAt  time.Time
+	BeforeStartedAt  time.Time
+	AfterStartedAt   time.Time
 }
 
 type Details struct {

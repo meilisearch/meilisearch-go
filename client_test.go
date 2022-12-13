@@ -833,7 +833,7 @@ func TestClient_CancelTasks(t *testing.T) {
 	type args struct {
 		UID    string
 		client *Client
-		query  *TasksQuery
+		query  *CancelTasksQuery
 	}
 	tests := []struct {
 		name string
@@ -841,11 +841,20 @@ func TestClient_CancelTasks(t *testing.T) {
 		want string
 	}{
 		{
-			name: "TestBasicCancelTasks",
+			name: "TestCancelTasksWithNoFilters",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
-				query: &TasksQuery{
+				query:  nil,
+			},
+			want: "",
+		},
+		{
+			name: "TestCancelTasksWithStatutes",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &CancelTasksQuery{
 					Statuses: []string{"succeeded"},
 				},
 			},
@@ -856,7 +865,7 @@ func TestClient_CancelTasks(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
-				query: &TasksQuery{
+				query: &CancelTasksQuery{
 					IndexUIDS: []string{"0"},
 				},
 			},
@@ -867,7 +876,7 @@ func TestClient_CancelTasks(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
-				query: &TasksQuery{
+				query: &CancelTasksQuery{
 					IndexUIDS: []string{"0", "1"},
 				},
 			},
@@ -878,7 +887,7 @@ func TestClient_CancelTasks(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
-				query: &TasksQuery{
+				query: &CancelTasksQuery{
 					UIDS: []int64{0},
 				},
 			},
@@ -889,7 +898,7 @@ func TestClient_CancelTasks(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
-				query: &TasksQuery{
+				query: &CancelTasksQuery{
 					UIDS: []int64{0, 1},
 				},
 			},
@@ -900,29 +909,18 @@ func TestClient_CancelTasks(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
-				query: &TasksQuery{
+				query: &CancelTasksQuery{
 					BeforeEnqueuedAt: time.Now(),
 				},
 			},
 			want: strings.NewReplacer(":", "%3A").Replace("?beforeEnqueuedAt=" + time.Now().Format("2006-01-02T15:04:05Z")),
 		},
 		{
-			name: "TestCancelTasksWithCanceledByFilter",
-			args: args{
-				UID:    "indexUID",
-				client: defaultClient,
-				query: &TasksQuery{
-					CanceledBy: []int64{1},
-				},
-			},
-			want: "?canceledBy=1",
-		},
-		{
 			name: "TestCancelTasksWithParameters",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
-				query: &TasksQuery{
+				query: &CancelTasksQuery{
 					Statuses:        []string{"enqueued"},
 					IndexUIDS:       []string{"indexUID"},
 					UIDS:            []int64{1},
@@ -938,21 +936,27 @@ func TestClient_CancelTasks(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			gotResp, err := c.CancelTasks(tt.args.query)
-			require.NoError(t, err)
+			if tt.args.query == nil {
+				require.Error(t, err)
+				require.Equal(t, "missing_task_filters",
+					err.(*Error).MeilisearchApiError.Code)
+			} else {
+				require.NoError(t, err)
 
-			_, err = c.WaitForTask(gotResp.TaskUID)
-			require.NoError(t, err)
+				_, err = c.WaitForTask(gotResp.TaskUID)
+				require.NoError(t, err)
 
-			gotTask, err := c.GetTask(gotResp.TaskUID)
-			require.NoError(t, err)
+				gotTask, err := c.GetTask(gotResp.TaskUID)
+				require.NoError(t, err)
 
-			require.NotNil(t, gotResp.Status)
-			require.NotNil(t, gotResp.Type)
-			require.NotNil(t, gotResp.TaskUID)
-			require.NotNil(t, gotResp.EnqueuedAt)
-			require.Equal(t, "", gotResp.IndexUID)
-			require.Equal(t, "taskCancelation", gotResp.Type)
-			require.Equal(t, tt.want, gotTask.Details.OriginalFilter)
+				require.NotNil(t, gotResp.Status)
+				require.NotNil(t, gotResp.Type)
+				require.NotNil(t, gotResp.TaskUID)
+				require.NotNil(t, gotResp.EnqueuedAt)
+				require.Equal(t, "", gotResp.IndexUID)
+				require.Equal(t, "taskCancelation", gotResp.Type)
+				require.Equal(t, tt.want, gotTask.Details.OriginalFilter)
+			}
 		})
 	}
 }
