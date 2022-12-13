@@ -73,7 +73,7 @@ delete_tasks_1: |-
     UIDS: []int64{1, 2},
   });
 cancel_tasks_1: |-
-  client.CanlelTaks(&meilisearch.TasksQuery{
+  client.CancelTasks(&meilisearch.TasksQuery{
     UIDS: []int64{1, 2},
   });
 get_task_1: |-
