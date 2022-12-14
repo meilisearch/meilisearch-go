@@ -55,7 +55,7 @@ type ClientInterface interface {
 	GetTask(taskUID int64) (resp *Task, err error)
 	GetTasks(param *TasksQuery) (resp *TaskResult, err error)
 	CancelTasks(param *CancelTasksQuery) (resp *TaskInfo, err error)
-  DeleteTasks(param *DeleteTasksQuery) (resp *TaskInfo, err error)
+	DeleteTasks(param *DeleteTasksQuery) (resp *TaskInfo, err error)
 	SwapIndexes(param []SwapIndexesParams) (resp *TaskInfo, err error)
 	WaitForTask(taskUID int64, options ...WaitParams) (*Task, error)
 	GenerateTenantToken(APIKeyUID string, searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
