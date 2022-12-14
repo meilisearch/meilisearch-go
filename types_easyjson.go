@@ -4802,6 +4802,314 @@ func (v *Details) UnmarshalJSON(data []byte) error {
 func (v *Details) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo31(l, v)
 }
+func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo31(in *jlexer.Lexer, out *DeleteTasksQuery) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "UIDS":
+			if in.IsNull() {
+				in.Skip()
+				out.UIDS = nil
+			} else {
+				in.Delim('[')
+				if out.UIDS == nil {
+					if !in.IsDelim(']') {
+						out.UIDS = make([]int64, 0, 8)
+					} else {
+						out.UIDS = []int64{}
+					}
+				} else {
+					out.UIDS = (out.UIDS)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v122 int64
+					v122 = int64(in.Int64())
+					out.UIDS = append(out.UIDS, v122)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "IndexUIDS":
+			if in.IsNull() {
+				in.Skip()
+				out.IndexUIDS = nil
+			} else {
+				in.Delim('[')
+				if out.IndexUIDS == nil {
+					if !in.IsDelim(']') {
+						out.IndexUIDS = make([]string, 0, 4)
+					} else {
+						out.IndexUIDS = []string{}
+					}
+				} else {
+					out.IndexUIDS = (out.IndexUIDS)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v123 string
+					v123 = string(in.String())
+					out.IndexUIDS = append(out.IndexUIDS, v123)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "Statuses":
+			if in.IsNull() {
+				in.Skip()
+				out.Statuses = nil
+			} else {
+				in.Delim('[')
+				if out.Statuses == nil {
+					if !in.IsDelim(']') {
+						out.Statuses = make([]string, 0, 4)
+					} else {
+						out.Statuses = []string{}
+					}
+				} else {
+					out.Statuses = (out.Statuses)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v124 string
+					v124 = string(in.String())
+					out.Statuses = append(out.Statuses, v124)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "Types":
+			if in.IsNull() {
+				in.Skip()
+				out.Types = nil
+			} else {
+				in.Delim('[')
+				if out.Types == nil {
+					if !in.IsDelim(']') {
+						out.Types = make([]string, 0, 4)
+					} else {
+						out.Types = []string{}
+					}
+				} else {
+					out.Types = (out.Types)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v125 string
+					v125 = string(in.String())
+					out.Types = append(out.Types, v125)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "CanceledBy":
+			if in.IsNull() {
+				in.Skip()
+				out.CanceledBy = nil
+			} else {
+				in.Delim('[')
+				if out.CanceledBy == nil {
+					if !in.IsDelim(']') {
+						out.CanceledBy = make([]int64, 0, 8)
+					} else {
+						out.CanceledBy = []int64{}
+					}
+				} else {
+					out.CanceledBy = (out.CanceledBy)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v126 int64
+					v126 = int64(in.Int64())
+					out.CanceledBy = append(out.CanceledBy, v126)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "BeforeEnqueuedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.BeforeEnqueuedAt).UnmarshalJSON(data))
+			}
+		case "AfterEnqueuedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.AfterEnqueuedAt).UnmarshalJSON(data))
+			}
+		case "BeforeStartedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.BeforeStartedAt).UnmarshalJSON(data))
+			}
+		case "AfterStartedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.AfterStartedAt).UnmarshalJSON(data))
+			}
+		case "BeforeFinishedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.BeforeFinishedAt).UnmarshalJSON(data))
+			}
+		case "AfterFinishedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.AfterFinishedAt).UnmarshalJSON(data))
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo31(out *jwriter.Writer, in DeleteTasksQuery) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"UIDS\":"
+		out.RawString(prefix[1:])
+		if in.UIDS == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v127, v128 := range in.UIDS {
+				if v127 > 0 {
+					out.RawByte(',')
+				}
+				out.Int64(int64(v128))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"IndexUIDS\":"
+		out.RawString(prefix)
+		if in.IndexUIDS == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v129, v130 := range in.IndexUIDS {
+				if v129 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v130))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"Statuses\":"
+		out.RawString(prefix)
+		if in.Statuses == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v131, v132 := range in.Statuses {
+				if v131 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v132))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"Types\":"
+		out.RawString(prefix)
+		if in.Types == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v133, v134 := range in.Types {
+				if v133 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v134))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"CanceledBy\":"
+		out.RawString(prefix)
+		if in.CanceledBy == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v135, v136 := range in.CanceledBy {
+				if v135 > 0 {
+					out.RawByte(',')
+				}
+				out.Int64(int64(v136))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"BeforeEnqueuedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.BeforeEnqueuedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"AfterEnqueuedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.AfterEnqueuedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"BeforeStartedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.BeforeStartedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"AfterStartedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.AfterStartedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"BeforeFinishedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.BeforeFinishedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"AfterFinishedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.AfterFinishedAt).MarshalJSON())
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v DeleteTasksQuery) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo31(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v DeleteTasksQuery) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo31(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *DeleteTasksQuery) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo31(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *DeleteTasksQuery) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo31(l, v)
+}
 func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo32(in *jlexer.Lexer, out *CreateIndexRequest) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
@@ -4939,4 +5247,255 @@ func (v *Client) UnmarshalJSON(data []byte) error {
 // UnmarshalEasyJSON supports easyjson.Unmarshaler interface
 func (v *Client) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo33(l, v)
+}
+func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo34(in *jlexer.Lexer, out *CancelTasksQuery) {
+	isTopLevel := in.IsStart()
+	if in.IsNull() {
+		if isTopLevel {
+			in.Consumed()
+		}
+		in.Skip()
+		return
+	}
+	in.Delim('{')
+	for !in.IsDelim('}') {
+		key := in.UnsafeFieldName(false)
+		in.WantColon()
+		if in.IsNull() {
+			in.Skip()
+			in.WantComma()
+			continue
+		}
+		switch key {
+		case "UIDS":
+			if in.IsNull() {
+				in.Skip()
+				out.UIDS = nil
+			} else {
+				in.Delim('[')
+				if out.UIDS == nil {
+					if !in.IsDelim(']') {
+						out.UIDS = make([]int64, 0, 8)
+					} else {
+						out.UIDS = []int64{}
+					}
+				} else {
+					out.UIDS = (out.UIDS)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v137 int64
+					v137 = int64(in.Int64())
+					out.UIDS = append(out.UIDS, v137)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "IndexUIDS":
+			if in.IsNull() {
+				in.Skip()
+				out.IndexUIDS = nil
+			} else {
+				in.Delim('[')
+				if out.IndexUIDS == nil {
+					if !in.IsDelim(']') {
+						out.IndexUIDS = make([]string, 0, 4)
+					} else {
+						out.IndexUIDS = []string{}
+					}
+				} else {
+					out.IndexUIDS = (out.IndexUIDS)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v138 string
+					v138 = string(in.String())
+					out.IndexUIDS = append(out.IndexUIDS, v138)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "Statuses":
+			if in.IsNull() {
+				in.Skip()
+				out.Statuses = nil
+			} else {
+				in.Delim('[')
+				if out.Statuses == nil {
+					if !in.IsDelim(']') {
+						out.Statuses = make([]string, 0, 4)
+					} else {
+						out.Statuses = []string{}
+					}
+				} else {
+					out.Statuses = (out.Statuses)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v139 string
+					v139 = string(in.String())
+					out.Statuses = append(out.Statuses, v139)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "Types":
+			if in.IsNull() {
+				in.Skip()
+				out.Types = nil
+			} else {
+				in.Delim('[')
+				if out.Types == nil {
+					if !in.IsDelim(']') {
+						out.Types = make([]string, 0, 4)
+					} else {
+						out.Types = []string{}
+					}
+				} else {
+					out.Types = (out.Types)[:0]
+				}
+				for !in.IsDelim(']') {
+					var v140 string
+					v140 = string(in.String())
+					out.Types = append(out.Types, v140)
+					in.WantComma()
+				}
+				in.Delim(']')
+			}
+		case "BeforeEnqueuedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.BeforeEnqueuedAt).UnmarshalJSON(data))
+			}
+		case "AfterEnqueuedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.AfterEnqueuedAt).UnmarshalJSON(data))
+			}
+		case "BeforeStartedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.BeforeStartedAt).UnmarshalJSON(data))
+			}
+		case "AfterStartedAt":
+			if data := in.Raw(); in.Ok() {
+				in.AddError((out.AfterStartedAt).UnmarshalJSON(data))
+			}
+		default:
+			in.SkipRecursive()
+		}
+		in.WantComma()
+	}
+	in.Delim('}')
+	if isTopLevel {
+		in.Consumed()
+	}
+}
+func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo34(out *jwriter.Writer, in CancelTasksQuery) {
+	out.RawByte('{')
+	first := true
+	_ = first
+	{
+		const prefix string = ",\"UIDS\":"
+		out.RawString(prefix[1:])
+		if in.UIDS == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v141, v142 := range in.UIDS {
+				if v141 > 0 {
+					out.RawByte(',')
+				}
+				out.Int64(int64(v142))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"IndexUIDS\":"
+		out.RawString(prefix)
+		if in.IndexUIDS == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v143, v144 := range in.IndexUIDS {
+				if v143 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v144))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"Statuses\":"
+		out.RawString(prefix)
+		if in.Statuses == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v145, v146 := range in.Statuses {
+				if v145 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v146))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"Types\":"
+		out.RawString(prefix)
+		if in.Types == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
+			out.RawString("null")
+		} else {
+			out.RawByte('[')
+			for v147, v148 := range in.Types {
+				if v147 > 0 {
+					out.RawByte(',')
+				}
+				out.String(string(v148))
+			}
+			out.RawByte(']')
+		}
+	}
+	{
+		const prefix string = ",\"BeforeEnqueuedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.BeforeEnqueuedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"AfterEnqueuedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.AfterEnqueuedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"BeforeStartedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.BeforeStartedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"AfterStartedAt\":"
+		out.RawString(prefix)
+		out.Raw((in.AfterStartedAt).MarshalJSON())
+	}
+	out.RawByte('}')
+}
+
+// MarshalJSON supports json.Marshaler interface
+func (v CancelTasksQuery) MarshalJSON() ([]byte, error) {
+	w := jwriter.Writer{}
+	easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo34(&w, v)
+	return w.Buffer.BuildBytes(), w.Error
+}
+
+// MarshalEasyJSON supports easyjson.Marshaler interface
+func (v CancelTasksQuery) MarshalEasyJSON(w *jwriter.Writer) {
+	easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo34(w, v)
+}
+
+// UnmarshalJSON supports json.Unmarshaler interface
+func (v *CancelTasksQuery) UnmarshalJSON(data []byte) error {
+	r := jlexer.Lexer{Data: data}
+	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo34(&r, v)
+	return r.Error()
+}
+
+// UnmarshalEasyJSON supports easyjson.Unmarshaler interface
+func (v *CancelTasksQuery) UnmarshalEasyJSON(l *jlexer.Lexer) {
+	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo34(l, v)
 }
