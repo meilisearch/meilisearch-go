@@ -851,6 +851,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
 				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
 			}
+			require.Equal(t, tt.args.query, got.Query)
 			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
@@ -1264,6 +1265,138 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
 			require.Equal(t, tt.want.FacetDistribution, got.FacetDistribution)
+		})
+	}
+}
+
+func TestIndex_SearchWithPagination(t *testing.T) {
+	type args struct {
+		UID        string
+		PrimaryKey string
+		client     *Client
+		query      string
+		request    SearchRequest
+	}
+	tests := []struct {
+		name string
+		args args
+		want *SearchResponse
+	}{
+		{
+			name: "TestIndexBasicSearchWithHitsPerPage",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "and",
+				request: SearchRequest{
+					HitsPerPage: 10,
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(123), "title": "Pride and Prejudice",
+					},
+					map[string]interface{}{
+						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(1032), "title": "Crime and Punishment",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				HitsPerPage: 10,
+				Page:        1,
+				TotalHits:   4,
+				TotalPages:  1,
+			},
+		},
+		{
+			name: "TestIndexBasicSearchWithPage",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "and",
+				request: SearchRequest{
+					Page: 1,
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(123), "title": "Pride and Prejudice",
+					},
+					map[string]interface{}{
+						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(1032), "title": "Crime and Punishment",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				HitsPerPage: 20,
+				Page:        1,
+				TotalHits:   4,
+				TotalPages:  1,
+			},
+		},
+		{
+			name: "TestIndexBasicSearchWithPageAndHitsPerPage",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "and",
+				request: SearchRequest{
+					HitsPerPage: 10,
+					Page:        1,
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(123), "title": "Pride and Prejudice",
+					},
+					map[string]interface{}{
+						"book_id": float64(730), "title": "War and Peace",
+					},
+					map[string]interface{}{
+						"book_id": float64(1032), "title": "Crime and Punishment",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				HitsPerPage: 10,
+				Page:        1,
+				TotalHits:   4,
+				TotalPages:  1,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			SetUpIndexForFaceting()
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			got, err := i.Search(tt.args.query, &tt.args.request)
+			require.NoError(t, err)
+			require.Equal(t, len(tt.want.Hits), len(got.Hits))
+
+			for len := range got.Hits {
+				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
+				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+			}
+			require.Equal(t, tt.args.query, got.Query)
+			require.Equal(t, tt.want.HitsPerPage, got.HitsPerPage)
+			require.Equal(t, tt.want.Page, got.Page)
+			require.Equal(t, tt.want.TotalHits, got.TotalHits)
+			require.Equal(t, tt.want.TotalPages, got.TotalPages)
 		})
 	}
 }
