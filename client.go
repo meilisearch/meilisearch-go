@@ -54,6 +54,9 @@ type ClientInterface interface {
 	IsHealthy() bool
 	GetTask(taskUID int64) (resp *Task, err error)
 	GetTasks(param *TasksQuery) (resp *TaskResult, err error)
+	CancelTasks(param *CancelTasksQuery) (resp *TaskInfo, err error)
+	DeleteTasks(param *DeleteTasksQuery) (resp *TaskInfo, err error)
+	SwapIndexes(param []SwapIndexesParams) (resp *TaskInfo, err error)
 	WaitForTask(taskUID int64, options ...WaitParams) (*Task, error)
 	GenerateTenantToken(APIKeyUID string, searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
 }
@@ -278,6 +281,86 @@ func (c *Client) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 	}
 	if param != nil {
 		encodeTasksQuery(param, &req)
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) CancelTasks(param *CancelTasksQuery) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/tasks/cancel",
+		method:              http.MethodPost,
+		withRequest:         nil,
+		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "CancelTasks",
+	}
+	if param != nil {
+		paramToSend := &TasksQuery{
+			UIDS:             param.UIDS,
+			IndexUIDS:        param.IndexUIDS,
+			Statuses:         param.Statuses,
+			Types:            param.Types,
+			BeforeEnqueuedAt: param.BeforeEnqueuedAt,
+			AfterEnqueuedAt:  param.AfterEnqueuedAt,
+			BeforeStartedAt:  param.BeforeStartedAt,
+			AfterStartedAt:   param.AfterStartedAt,
+		}
+		encodeTasksQuery(paramToSend, &req)
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) DeleteTasks(param *DeleteTasksQuery) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/tasks",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "DeleteTasks",
+	}
+	if param != nil {
+		paramToSend := &TasksQuery{
+			UIDS:             param.UIDS,
+			IndexUIDS:        param.IndexUIDS,
+			Statuses:         param.Statuses,
+			Types:            param.Types,
+			CanceledBy:       param.CanceledBy,
+			BeforeEnqueuedAt: param.BeforeEnqueuedAt,
+			AfterEnqueuedAt:  param.AfterEnqueuedAt,
+			BeforeStartedAt:  param.BeforeStartedAt,
+			AfterStartedAt:   param.AfterStartedAt,
+			BeforeFinishedAt: param.BeforeFinishedAt,
+			AfterFinishedAt:  param.AfterFinishedAt,
+		}
+		encodeTasksQuery(paramToSend, &req)
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) SwapIndexes(param []SwapIndexesParams) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/swap-indexes",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         param,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "SwapIndexes",
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
