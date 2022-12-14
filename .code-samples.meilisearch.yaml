@@ -69,7 +69,7 @@ delete_documents_1: |-
 search_post_1: |-
   client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
 delete_tasks_1: |-
-  client.DeleteTaks(&meilisearch.TasksQuery{
+  client.DeleteTaks(&meilisearch.DeleteTasksQuery{
     UIDS: []int64{1, 2},
   });
 cancel_tasks_1: |-
