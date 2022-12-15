@@ -275,14 +275,14 @@ func TestMain(m *testing.M) {
 }
 
 func Test_deleteAllIndexes(t *testing.T) {
-	indexUIDs := []string{
+	indexUIDS := []string{
 		"Test_deleteAllIndexes",
 		"Test_deleteAllIndexes2",
 		"Test_deleteAllIndexes3",
 	}
 	_, _ = deleteAllIndexes(defaultClient)
 
-	for _, uid := range indexUIDs {
+	for _, uid := range indexUIDS {
 		task, err := defaultClient.CreateIndex(&IndexConfig{
 			Uid: uid,
 		})
@@ -297,7 +297,7 @@ func Test_deleteAllIndexes(t *testing.T) {
 
 	_, _ = deleteAllIndexes(defaultClient)
 
-	for _, uid := range indexUIDs {
+	for _, uid := range indexUIDS {
 		resp, err := defaultClient.GetIndex(uid)
 		if resp != nil {
 			t.Fatal(resp)

@@ -2,6 +2,8 @@ package meilisearch
 
 import (
 	"context"
+	"strings"
+
 	"sync"
 	"testing"
 	"time"
@@ -655,8 +657,8 @@ func TestClient_GetTask(t *testing.T) {
 			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskUID)
 			require.Equal(t, tt.args.UID, gotResp.IndexUID)
 			require.Equal(t, TaskStatusSucceeded, gotResp.Status)
-			require.Equal(t, len(tt.args.document), gotResp.Details.ReceivedDocuments)
-			require.Equal(t, len(tt.args.document), gotResp.Details.IndexedDocuments)
+			require.Equal(t, int64(len(tt.args.document)), gotResp.Details.ReceivedDocuments)
+			require.Equal(t, int64(len(tt.args.document)), gotResp.Details.IndexedDocuments)
 
 			// Make sure that timestamps are also retrieved
 			require.NotZero(t, gotResp.EnqueuedAt)
@@ -747,9 +749,51 @@ func TestClient_GetTasks(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 				query: &TasksQuery{
-					Limit:    1,
-					From:     0,
-					IndexUID: []string{"indexUID"},
+					Limit:     1,
+					From:      0,
+					IndexUIDS: []string{"indexUID"},
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithUidFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit: 1,
+					UIDS:  []int64{1},
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithDateFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:            1,
+					BeforeEnqueuedAt: time.Now(),
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithCanceledByFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:      1,
+					CanceledBy: []int64{1},
 				},
 			},
 		},
@@ -781,6 +825,324 @@ func TestClient_GetTasks(t *testing.T) {
 					require.Equal(t, tt.args.query.From, (*gotResp).From)
 				}
 			}
+		})
+	}
+}
+
+func TestClient_CancelTasks(t *testing.T) {
+	type args struct {
+		UID    string
+		client *Client
+		query  *CancelTasksQuery
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "TestCancelTasksWithNoFilters",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  nil,
+			},
+			want: "",
+		},
+		{
+			name: "TestCancelTasksWithStatutes",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &CancelTasksQuery{
+					Statuses: []string{"succeeded"},
+				},
+			},
+			want: "?statuses=succeeded",
+		},
+		{
+			name: "TestCancelTasksWithIndexUidFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &CancelTasksQuery{
+					IndexUIDS: []string{"0"},
+				},
+			},
+			want: "?indexUids=0",
+		},
+		{
+			name: "TestCancelTasksWithMultipleIndexUidsFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &CancelTasksQuery{
+					IndexUIDS: []string{"0", "1"},
+				},
+			},
+			want: "?indexUids=0%2C1",
+		},
+		{
+			name: "TestCancelTasksWithUidFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &CancelTasksQuery{
+					UIDS: []int64{0},
+				},
+			},
+			want: "?uids=0",
+		},
+		{
+			name: "TestCancelTasksWithMultipleUidsFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &CancelTasksQuery{
+					UIDS: []int64{0, 1},
+				},
+			},
+			want: "?uids=0%2C1",
+		},
+		{
+			name: "TestCancelTasksWithDateFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &CancelTasksQuery{
+					BeforeEnqueuedAt: time.Now(),
+				},
+			},
+			want: strings.NewReplacer(":", "%3A").Replace("?beforeEnqueuedAt=" + time.Now().Format("2006-01-02T15:04:05Z")),
+		},
+		{
+			name: "TestCancelTasksWithParameters",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &CancelTasksQuery{
+					Statuses:        []string{"enqueued"},
+					IndexUIDS:       []string{"indexUID"},
+					UIDS:            []int64{1},
+					AfterEnqueuedAt: time.Now(),
+				},
+			},
+			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&uids=1",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := c.CancelTasks(tt.args.query)
+			if tt.args.query == nil {
+				require.Error(t, err)
+				require.Equal(t, "missing_task_filters",
+					err.(*Error).MeilisearchApiError.Code)
+			} else {
+				require.NoError(t, err)
+
+				_, err = c.WaitForTask(gotResp.TaskUID)
+				require.NoError(t, err)
+
+				gotTask, err := c.GetTask(gotResp.TaskUID)
+				require.NoError(t, err)
+
+				require.NotNil(t, gotResp.Status)
+				require.NotNil(t, gotResp.Type)
+				require.NotNil(t, gotResp.TaskUID)
+				require.NotNil(t, gotResp.EnqueuedAt)
+				require.Equal(t, "", gotResp.IndexUID)
+				require.Equal(t, "taskCancelation", gotResp.Type)
+				require.Equal(t, tt.want, gotTask.Details.OriginalFilter)
+			}
+		})
+	}
+}
+
+func TestClient_DeleteTasks(t *testing.T) {
+	type args struct {
+		UID    string
+		client *Client
+		query  *DeleteTasksQuery
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "TestBasicDeleteTasks",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &DeleteTasksQuery{
+					Statuses: []string{"enqueued"},
+				},
+			},
+			want: "?statuses=enqueued",
+		},
+		{
+			name: "TestDeleteTasksWithUidFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &DeleteTasksQuery{
+					UIDS: []int64{1},
+				},
+			},
+			want: "?uids=1",
+		},
+		{
+			name: "TestDeleteTasksWithMultipleUidsFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &DeleteTasksQuery{
+					UIDS: []int64{0, 1},
+				},
+			},
+			want: "?uids=0%2C1",
+		},
+		{
+			name: "TestDeleteTasksWithIndexUidFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &DeleteTasksQuery{
+					IndexUIDS: []string{"0"},
+				},
+			},
+			want: "?indexUids=0",
+		},
+		{
+			name: "TestDeleteTasksWithMultipleIndexUidsFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &DeleteTasksQuery{
+					IndexUIDS: []string{"0", "1"},
+				},
+			},
+			want: "?indexUids=0%2C1",
+		},
+		{
+			name: "TestDeleteTasksWithDateFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &DeleteTasksQuery{
+					BeforeEnqueuedAt: time.Now(),
+				},
+			},
+			want: strings.NewReplacer(":", "%3A").Replace("?beforeEnqueuedAt=" + time.Now().Format("2006-01-02T15:04:05Z")),
+		},
+		{
+			name: "TestDeleteTasksWithCanceledByFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &DeleteTasksQuery{
+					CanceledBy: []int64{1},
+				},
+			},
+			want: "?canceledBy=1",
+		},
+		{
+			name: "TestDeleteTasksWithParameters",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: &DeleteTasksQuery{
+					Statuses:        []string{"enqueued"},
+					IndexUIDS:       []string{"indexUID"},
+					UIDS:            []int64{1},
+					AfterEnqueuedAt: time.Now(),
+				},
+			},
+			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&uids=1",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := c.DeleteTasks(tt.args.query)
+			require.NoError(t, err)
+
+			_, err = c.WaitForTask(gotResp.TaskUID)
+			require.NoError(t, err)
+
+			gotTask, err := c.GetTask(gotResp.TaskUID)
+			require.NoError(t, err)
+
+			require.NotNil(t, gotResp.Status)
+			require.NotNil(t, gotResp.Type)
+			require.NotNil(t, gotResp.TaskUID)
+			require.NotNil(t, gotResp.EnqueuedAt)
+			require.Equal(t, "", gotResp.IndexUID)
+			require.Equal(t, "taskDeletion", gotResp.Type)
+			require.NotNil(t, gotTask.Details.OriginalFilter)
+			require.Equal(t, tt.want, gotTask.Details.OriginalFilter)
+		})
+	}
+}
+
+func TestClient_SwapIndexes(t *testing.T) {
+	type args struct {
+		UID    string
+		client *Client
+		query  []SwapIndexesParams
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "TestBasicSwapIndexes",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: []SwapIndexesParams{
+					{Indexes: []string{"IndexA", "IndexB"}},
+				},
+			},
+		},
+		{
+			name: "TestSwapIndexesWithMultipleIndexes",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query: []SwapIndexesParams{
+					{Indexes: []string{"IndexA", "IndexB"}},
+					{Indexes: []string{"Index1", "Index2"}},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := c.SwapIndexes(tt.args.query)
+			require.NoError(t, err)
+
+			_, err = c.WaitForTask(gotResp.TaskUID)
+			require.NoError(t, err)
+
+			gotTask, err := c.GetTask(gotResp.TaskUID)
+			require.NoError(t, err)
+
+			require.NotNil(t, gotResp.Status)
+			require.NotNil(t, gotResp.Type)
+			require.NotNil(t, gotResp.TaskUID)
+			require.NotNil(t, gotResp.EnqueuedAt)
+			require.Equal(t, "", gotResp.IndexUID)
+			require.Equal(t, "indexSwap", gotResp.Type)
+			require.Equal(t, tt.args.query, gotTask.Details.Swaps)
 		})
 	}
 }
@@ -979,7 +1341,7 @@ func TestClient_ConnectionCloseByServer(t *testing.T) {
 
 func TestClient_GenerateTenantToken(t *testing.T) {
 	type args struct {
-		IndexUID    string
+		IndexUIDS   string
 		client      *Client
 		APIKeyUID   string
 		searchRules map[string]interface{}
@@ -995,7 +1357,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestDefaultGenerateTenantToken",
 			args: args{
-				IndexUID:  "TestDefaultGenerateTenantToken",
+				IndexUIDS: "TestDefaultGenerateTenantToken",
 				client:    privateClient,
 				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
@@ -1010,7 +1372,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithApiKey",
 			args: args{
-				IndexUID:  "TestGenerateTenantTokenWithApiKey",
+				IndexUIDS: "TestGenerateTenantTokenWithApiKey",
 				client:    defaultClient,
 				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
@@ -1027,7 +1389,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithOnlyExpiresAt",
 			args: args{
-				IndexUID:  "TestGenerateTenantTokenWithOnlyExpiresAt",
+				IndexUIDS: "TestGenerateTenantTokenWithOnlyExpiresAt",
 				client:    privateClient,
 				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
@@ -1044,7 +1406,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
 			args: args{
-				IndexUID:  "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
+				IndexUIDS: "TestGenerateTenantTokenWithApiKeyAndExpiresAt",
 				client:    defaultClient,
 				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
@@ -1062,7 +1424,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithFilters",
 			args: args{
-				IndexUID:  "indexUID",
+				IndexUIDS: "indexUID",
 				client:    privateClient,
 				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
@@ -1081,7 +1443,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithFilterOnOneINdex",
 			args: args{
-				IndexUID:  "indexUID",
+				IndexUIDS: "indexUID",
 				client:    privateClient,
 				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
@@ -1100,7 +1462,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithoutSearchRules",
 			args: args{
-				IndexUID:    "TestGenerateTenantTokenWithoutSearchRules",
+				IndexUIDS:   "TestGenerateTenantTokenWithoutSearchRules",
 				client:      privateClient,
 				APIKeyUID:   GetPrivateUIDKey(),
 				searchRules: nil,
@@ -1113,7 +1475,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithoutApiKey",
 			args: args{
-				IndexUID: "TestGenerateTenantTokenWithoutApiKey",
+				IndexUIDS: "TestGenerateTenantTokenWithoutApiKey",
 				client: NewClient(ClientConfig{
 					Host:   getenv("MEILISEARCH_URL", "http://localhost:7700"),
 					APIKey: "",
@@ -1131,7 +1493,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithBadExpiresAt",
 			args: args{
-				IndexUID:  "TestGenerateTenantTokenWithBadExpiresAt",
+				IndexUIDS: "TestGenerateTenantTokenWithBadExpiresAt",
 				client:    defaultClient,
 				APIKeyUID: GetPrivateUIDKey(),
 				searchRules: map[string]interface{}{
@@ -1148,7 +1510,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithBadAPIKeyUID",
 			args: args{
-				IndexUID:  "TestGenerateTenantTokenWithBadAPIKeyUID",
+				IndexUIDS: "TestGenerateTenantTokenWithBadAPIKeyUID",
 				client:    defaultClient,
 				APIKeyUID: GetPrivateUIDKey() + "1234",
 				searchRules: map[string]interface{}{
@@ -1163,7 +1525,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 		{
 			name: "TestGenerateTenantTokenWithEmptyAPIKeyUID",
 			args: args{
-				IndexUID:  "TestGenerateTenantTokenWithEmptyAPIKeyUID",
+				IndexUIDS: "TestGenerateTenantTokenWithEmptyAPIKeyUID",
 				client:    defaultClient,
 				APIKeyUID: "",
 				searchRules: map[string]interface{}{
@@ -1189,11 +1551,11 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 				require.NoError(t, err)
 
 				if tt.wantFilter {
-					gotTask, err := c.Index(tt.args.IndexUID).UpdateFilterableAttributes(&tt.args.filter)
+					gotTask, err := c.Index(tt.args.IndexUIDS).UpdateFilterableAttributes(&tt.args.filter)
 					require.NoError(t, err, "UpdateFilterableAttributes() in TestGenerateTenantToken error should be nil")
-					testWaitForTask(t, c.Index(tt.args.IndexUID), gotTask)
+					testWaitForTask(t, c.Index(tt.args.IndexUIDS), gotTask)
 				} else {
-					_, err := SetUpEmptyIndex(&IndexConfig{Uid: tt.args.IndexUID})
+					_, err := SetUpEmptyIndex(&IndexConfig{Uid: tt.args.IndexUIDS})
 					require.NoError(t, err, "CreateIndex() in TestGenerateTenantToken error should be nil")
 				}
 
@@ -1202,7 +1564,7 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 					APIKey: token,
 				})
 
-				_, err = client.Index(tt.args.IndexUID).Search("", &SearchRequest{})
+				_, err = client.Index(tt.args.IndexUIDS).Search("", &SearchRequest{})
 
 				require.NoError(t, err)
 			}
