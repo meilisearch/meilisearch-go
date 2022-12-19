@@ -54,6 +54,9 @@ type ClientInterface interface {
 	IsHealthy() bool
 	GetTask(taskUID int64) (resp *Task, err error)
 	GetTasks(param *TasksQuery) (resp *TaskResult, err error)
+	CancelTasks(param *CancelTasksQuery) (resp *TaskInfo, err error)
+	DeleteTasks(param *DeleteTasksQuery) (resp *TaskInfo, err error)
+	SwapIndexes(param []SwapIndexesParams) (resp *TaskInfo, err error)
 	WaitForTask(taskUID int64, options ...WaitParams) (*Task, error)
 	GenerateTenantToken(APIKeyUID string, searchRules map[string]interface{}, options *TenantTokenOptions) (resp string, err error)
 }
@@ -277,21 +280,87 @@ func (c *Client) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 		functionName:        "GetTasks",
 	}
 	if param != nil {
-		if param.Limit != 0 {
-			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+		encodeTasksQuery(param, &req)
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) CancelTasks(param *CancelTasksQuery) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/tasks/cancel",
+		method:              http.MethodPost,
+		withRequest:         nil,
+		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "CancelTasks",
+	}
+	if param != nil {
+		paramToSend := &TasksQuery{
+			UIDS:             param.UIDS,
+			IndexUIDS:        param.IndexUIDS,
+			Statuses:         param.Statuses,
+			Types:            param.Types,
+			BeforeEnqueuedAt: param.BeforeEnqueuedAt,
+			AfterEnqueuedAt:  param.AfterEnqueuedAt,
+			BeforeStartedAt:  param.BeforeStartedAt,
+			AfterStartedAt:   param.AfterStartedAt,
 		}
-		if param.From != 0 {
-			req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
+		encodeTasksQuery(paramToSend, &req)
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) DeleteTasks(param *DeleteTasksQuery) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/tasks",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "DeleteTasks",
+	}
+	if param != nil {
+		paramToSend := &TasksQuery{
+			UIDS:             param.UIDS,
+			IndexUIDS:        param.IndexUIDS,
+			Statuses:         param.Statuses,
+			Types:            param.Types,
+			CanceledBy:       param.CanceledBy,
+			BeforeEnqueuedAt: param.BeforeEnqueuedAt,
+			AfterEnqueuedAt:  param.AfterEnqueuedAt,
+			BeforeStartedAt:  param.BeforeStartedAt,
+			AfterStartedAt:   param.AfterStartedAt,
+			BeforeFinishedAt: param.BeforeFinishedAt,
+			AfterFinishedAt:  param.AfterFinishedAt,
 		}
-		if len(param.Status) != 0 {
-			req.withQueryParams["status"] = strings.Join(param.Status, ",")
-		}
-		if len(param.Type) != 0 {
-			req.withQueryParams["type"] = strings.Join(param.Type, ",")
-		}
-		if len(param.IndexUID) != 0 {
-			req.withQueryParams["indexUid"] = strings.Join(param.IndexUID, ",")
-		}
+		encodeTasksQuery(paramToSend, &req)
+	}
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (c *Client) SwapIndexes(param []SwapIndexesParams) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:            "/swap-indexes",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         param,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "SwapIndexes",
 	}
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
@@ -390,9 +459,7 @@ func convertKeyToParsedKey(key Key) (resp KeyParsed) {
 	// Convert time.Time to *string to feat the exact ISO-8601
 	// format of Meilisearch
 	if !key.ExpiresAt.IsZero() {
-		const Format = "2006-01-02T15:04:05"
-		timeParsedToString := key.ExpiresAt.Format(Format)
-		resp.ExpiresAt = &timeParsedToString
+		resp.ExpiresAt = formatDate(key.ExpiresAt, true)
 	}
 	return resp
 }
@@ -400,4 +467,52 @@ func convertKeyToParsedKey(key Key) (resp KeyParsed) {
 func IsValidUUID(uuid string) bool {
 	r := regexp.MustCompile("^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[8|9|aA|bB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$")
 	return r.MatchString(uuid)
+}
+
+func encodeTasksQuery(param *TasksQuery, req *internalRequest) {
+	if param.Limit != 0 {
+		req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+	}
+	if param.From != 0 {
+		req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
+	}
+	if len(param.Statuses) != 0 {
+		req.withQueryParams["statuses"] = strings.Join(param.Statuses, ",")
+	}
+	if len(param.Types) != 0 {
+		req.withQueryParams["types"] = strings.Join(param.Types, ",")
+	}
+	if len(param.IndexUIDS) != 0 {
+		req.withQueryParams["indexUids"] = strings.Join(param.IndexUIDS, ",")
+	}
+	if len(param.UIDS) != 0 {
+		req.withQueryParams["uids"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(param.UIDS)), ","), "[]")
+	}
+	if len(param.CanceledBy) != 0 {
+		req.withQueryParams["canceledBy"] = strings.Trim(strings.Join(strings.Fields(fmt.Sprint(param.CanceledBy)), ","), "[]")
+	}
+	if !param.BeforeEnqueuedAt.IsZero() {
+		req.withQueryParams["beforeEnqueuedAt"] = *formatDate(param.BeforeEnqueuedAt, false)
+	}
+	if !param.AfterEnqueuedAt.IsZero() {
+		req.withQueryParams["afterEnqueuedAt"] = *formatDate(param.AfterEnqueuedAt, false)
+	}
+	if !param.BeforeStartedAt.IsZero() {
+		req.withQueryParams["beforeStartedAt"] = *formatDate(param.BeforeStartedAt, false)
+	}
+	if !param.AfterStartedAt.IsZero() {
+		req.withQueryParams["afterStartedAt"] = *formatDate(param.AfterStartedAt, false)
+	}
+	if !param.BeforeFinishedAt.IsZero() {
+		req.withQueryParams["beforeFinishedAt"] = *formatDate(param.BeforeFinishedAt, false)
+	}
+	if !param.AfterFinishedAt.IsZero() {
+		req.withQueryParams["afterFinishedAt"] = *formatDate(param.AfterFinishedAt, false)
+	}
+}
+
+func formatDate(date time.Time, key bool) *string {
+	const format = "2006-01-02T15:04:05Z"
+	timeParsedToString := date.Format(format)
+	return &timeParsedToString
 }

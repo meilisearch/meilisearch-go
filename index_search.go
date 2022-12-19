@@ -85,6 +85,12 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	if request.CropLength != 0 {
 		params["cropLength"] = request.CropLength
 	}
+	if request.HitsPerPage != 0 {
+		params["hitsPerPage"] = request.HitsPerPage
+	}
+	if request.Page != 0 {
+		params["page"] = request.Page
+	}
 	if request.CropMarker != "" {
 		params["cropMarker"] = request.CropMarker
 	}

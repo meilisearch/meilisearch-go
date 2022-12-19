@@ -848,3 +848,13 @@ tenant_token_guide_search_sdk_1: |-
     APIKey: token,
   })
   frontEndClient.Index("patient_medical_records").Search("blood test", &meilisearch.SearchRequest{});
+get_all_tasks_paginating_1: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    Limit: 2,
+    From: 10,
+  });
+get_all_tasks_paginating_2: |-
+  client.GetTasks(&meilisearch.TasksQuery{
+    Limit: 2,
+    From: 8,
+  });
