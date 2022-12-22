@@ -290,7 +290,7 @@ getting_started_typo_tolerance: |-
       OneTypo: 4,
     },
   })
-get_typo_tolerance_1:
+get_typo_tolerance_1: |-
   client.Index("books").GetTypoTolerance()
 update_typo_tolerance_1: |-
   client.Index("books").UpdateTypoTolerance(&meilisearch.TypoTolerance{
@@ -302,7 +302,7 @@ update_typo_tolerance_1: |-
   })
 reset_typo_tolerance_1: |-
   client.Index("books").ResetTypoTolerance()
-get_pagination_settings_1:
+get_pagination_settings_1: |-
   client.Index("books").GetPagination()
 update_pagination_settings_1: |-
   client.Index("books").UpdatePagination(&meilisearch.Pagination{
@@ -310,7 +310,7 @@ update_pagination_settings_1: |-
   })
 reset_pagination_settings_1: |-
   client.Index("books").ResetPagination()
-get_faceting_settings_1:
+get_faceting_settings_1: |-
   client.Index("books").GetFaceting()
 update_faceting_settings_1: |-
   client.Index("books").UpdateFaceting(&meilisearch.Faceting{
@@ -588,18 +588,18 @@ getting_started_search_md: |-
 
   [About this SDK](https://github.com/meilisearch/meilisearch-go/)
 getting_started_add_meteorites: |-
-    client := meilisearch.NewClient(meilisearch.ClientConfig{
-      Host: "http://localhost:7700",
-    })
+  client := meilisearch.NewClient(meilisearch.ClientConfig{
+    Host: "http://localhost:7700",
+  })
 
-    jsonFile, _ := os.Open("meteorites.json")
-    defer jsonFile.Close()
+  jsonFile, _ := os.Open("meteorites.json")
+  defer jsonFile.Close()
 
-    byteValue, _ := io.ReadAll(jsonFile)
-    var meteorites []map[string]interface{}
-    json.Unmarshal(byteValue, &meteorites)
+  byteValue, _ := io.ReadAll(jsonFile)
+  var meteorites []map[string]interface{}
+  json.Unmarshal(byteValue, &meteorites)
 
-    client.Index("meteorites").AddDocuments(meteorites)
+  client.Index("meteorites").AddDocuments(meteorites)
 getting_started_update_ranking_rules: |-
   rankingRules := []string{
     "exactness",
@@ -848,13 +848,3 @@ tenant_token_guide_search_sdk_1: |-
     APIKey: token,
   })
   frontEndClient.Index("patient_medical_records").Search("blood test", &meilisearch.SearchRequest{});
-get_all_tasks_paginating_1: |-
-  client.GetTasks(&meilisearch.TasksQuery{
-    Limit: 2,
-    From: 10,
-  });
-get_all_tasks_paginating_2: |-
-  client.GetTasks(&meilisearch.TasksQuery{
-    Limit: 2,
-    From: 8,
-  });
