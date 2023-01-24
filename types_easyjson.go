@@ -4035,7 +4035,15 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo29(in *jlexer.Lexer,
 		case "offset":
 			out.Offset = int64(in.Int64())
 		case "limit":
-			out.Limit = int64(in.Int64())
+			if in.IsNull() {
+				in.Skip()
+				out.Limit = nil
+			} else {
+				if out.Limit == nil {
+					out.Limit = new(int64)
+				}
+				*out.Limit = int64(in.Int64())
+			}
 		case "fields":
 			if in.IsNull() {
 				in.Skip()
@@ -4079,7 +4087,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo29(out *jwriter.Writ
 		out.RawString(prefix[1:])
 		out.Int64(int64(in.Offset))
 	}
-	if in.Limit != 0 {
+	if in.Limit != nil {
 		const prefix string = ",\"limit\":"
 		if first {
 			first = false
@@ -4087,7 +4095,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo29(out *jwriter.Writ
 		} else {
 			out.RawString(prefix)
 		}
-		out.Int64(int64(in.Limit))
+		out.Int64(int64(*in.Limit))
 	}
 	if len(in.Fields) != 0 {
 		const prefix string = ",\"fields\":"
