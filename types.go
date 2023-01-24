@@ -340,7 +340,7 @@ type DocumentQuery struct {
 // DocumentsQuery is the request body for list documents method
 type DocumentsQuery struct {
 	Offset int64    `json:"offset,omitempty"`
-	Limit  int64    `json:"limit,omitempty"`
+	Limit  *int64   `json:"limit,omitempty"`
 	Fields []string `json:"fields,omitempty"`
 }
 
