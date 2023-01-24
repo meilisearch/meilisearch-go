@@ -45,8 +45,8 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 		functionName:        "GetDocuments",
 	}
 	if request != nil {
-		if request.Limit != 0 {
-			req.withQueryParams["limit"] = strconv.FormatInt(request.Limit, 10)
+		if *request.Limit != 0 {
+			req.withQueryParams["limit"] = strconv.FormatInt(*request.Limit, 10)
 		}
 		if request.Offset != 0 {
 			req.withQueryParams["offset"] = strconv.FormatInt(request.Offset, 10)
@@ -413,4 +413,9 @@ func (i Index) DeleteAllDocuments() (resp *TaskInfo, err error) {
 		return nil, err
 	}
 	return resp, nil
+}
+
+// Helper function to create a pointer to int64
+func int64p(i int64) *int64 {
+	return &i
 }
