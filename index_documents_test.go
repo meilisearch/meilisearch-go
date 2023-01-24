@@ -205,7 +205,7 @@ func TestIndex_AddDocuments(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 			var documents DocumentsResult
 			err = i.GetDocuments(&DocumentsQuery{
-				Limit: 3,
+				Limit: int64p(3),
 			}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.resp.documentsRes, documents)
@@ -386,7 +386,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{Limit: 3}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: int64p(3)}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.resp.documentsRes, documents)
 		})
@@ -499,7 +499,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 
 			var documents DocumentsResult
 			err = i.GetDocuments(&DocumentsQuery{
-				Limit: 4,
+				Limit: int64p(4),
 			}, &documents)
 
 			require.NoError(t, err)
@@ -528,7 +528,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 
 			var documents DocumentsResult
 			err = i.GetDocuments(&DocumentsQuery{
-				Limit: 4,
+				Limit: int64p(4),
 			}, &documents)
 
 			require.NoError(t, err)
@@ -1004,7 +1004,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{Limit: 5}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: int64p(5)}, &documents)
 			require.NoError(t, err)
 			require.Empty(t, documents.Results)
 		})
@@ -1401,7 +1401,7 @@ func TestIndex_GetDocuments(t *testing.T) {
 				UID:    "TestIndexGetDocumentsWithNoExistingDocument",
 				client: defaultClient,
 				request: &DocumentsQuery{
-					Limit: 3,
+					Limit: int64p(3),
 				},
 				resp: &DocumentsResult{},
 			},
@@ -1427,7 +1427,7 @@ func TestIndex_GetDocuments(t *testing.T) {
 
 			err := i.GetDocuments(tt.args.request, tt.args.resp)
 			require.NoError(t, err)
-			if tt.args.request != nil && tt.args.request.Limit != 0 {
+			if tt.args.request != nil && *tt.args.request.Limit != 0 {
 				require.Equal(t, tt.args.request.Limit, int64(len(tt.args.resp.Results)))
 			} else {
 				require.Equal(t, 6, len(tt.args.resp.Results))
