@@ -45,7 +45,7 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 		functionName:        "GetDocuments",
 	}
 	if request != nil {
-		if *request.Limit != 0 {
+		if request.Limit != nil {
 			req.withQueryParams["limit"] = strconv.FormatInt(*request.Limit, 10)
 		}
 		if request.Offset != 0 {
