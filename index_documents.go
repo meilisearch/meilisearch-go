@@ -310,6 +310,10 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 }
 
 func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error) {
+	return i.updateDocuments(documentsPtr, contentTypeJSON, primaryKey...)
+}
+
+func (i Index) updateDocuments(documentsPtr interface{}, contentType string, primaryKey ...string) (resp *TaskInfo, err error) {
 	resp = &TaskInfo{}
 	endpoint := ""
 	if primaryKey == nil {
@@ -321,7 +325,7 @@ func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (
 	req := internalRequest{
 		endpoint:            endpoint,
 		method:              http.MethodPut,
-		contentType:         contentTypeJSON,
+		contentType:         contentType,
 		withRequest:         documentsPtr,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
