@@ -370,6 +370,10 @@ func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int,
 	return resp, nil
 }
 
+func (i Index) UpdateDocumentsCsv(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
+	return i.updateDocuments(documents, contentTypeJSON, primaryKey...)
+}
+
 func (i Index) DeleteDocument(identifier string) (resp *TaskInfo, err error) {
 	resp = &TaskInfo{}
 	req := internalRequest{

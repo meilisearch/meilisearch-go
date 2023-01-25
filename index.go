@@ -34,6 +34,7 @@ type IndexInterface interface {
 	AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error)
 	UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error)
 	UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []TaskInfo, err error)
+	UpdateDocumentsCsv(documents []byte, primaryKey ...string) (resp *TaskInfo, err error)
 	GetDocument(uid string, request *DocumentQuery, documentPtr interface{}) error
 	GetDocuments(param *DocumentsQuery, resp *DocumentsResult) error
 	DeleteDocument(uid string) (resp *TaskInfo, err error)
