@@ -374,6 +374,10 @@ func (i Index) UpdateDocumentsCsv(documents []byte, primaryKey ...string) (resp 
 	return i.updateDocuments(documents, contentTypeJSON, primaryKey...)
 }
 
+func (i Index) UpdateDocumentsNdjson(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
+	return i.updateDocuments(documents, contentTypeNDJSON, primaryKey...)
+}
+
 func (i Index) DeleteDocument(identifier string) (resp *TaskInfo, err error) {
 	resp = &TaskInfo{}
 	req := internalRequest{
