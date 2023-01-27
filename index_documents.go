@@ -374,6 +374,89 @@ func (i Index) UpdateDocumentsCsv(documents []byte, primaryKey ...string) (resp 
 	return i.updateDocuments(documents, contentTypeJSON, primaryKey...)
 }
 
+func (i Index) UpdateDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
+	// Reuse io.Reader implementation
+	return i.updateDocumentsCsvFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
+}
+
+func (i Index) updateDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
+	// Because of the possibility of multiline fields it's not safe to split
+	// into batches by lines, we'll have to parse the file and reassemble it
+	// into smaller parts. RFC 4180 compliant input with a header row is
+	// expected.
+	// Records are read and sent continuously to avoid reading all content
+	// into memory. However, this means that only part of the documents might
+	// be added successfully.
+
+	var (
+		responses []TaskInfo
+		header    []string
+		records   [][]string
+	)
+
+	sendCsvRecords := func(records [][]string) (*TaskInfo, error) {
+		b := new(bytes.Buffer)
+		w := csv.NewWriter(b)
+		w.UseCRLF = true // Keep output RFC 4180 compliant
+		err := w.WriteAll(records)
+		if err != nil {
+			return nil, fmt.Errorf("could not write CSV records: %w", err)
+		}
+
+		resp, err := i.UpdateDocumentsCsv(b.Bytes(), primaryKey...)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	}
+
+	r := csv.NewReader(documents)
+	for {
+		// Read CSV record (empty lines and comments are already skipped by csv.Reader)
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("could not write CSV record: %w", err)
+		}
+
+		// Store first record as header
+		if header == nil {
+			header = record
+			continue
+		}
+
+		// Add header record to every batch
+		if len(records) == 0 {
+			records = append(records, header)
+		}
+
+		records = append(records, record)
+
+		// After reaching batchSize (not counting the header record) assemble a CSV file and send records
+		if len(records) == batchSize+1 {
+			resp, err := sendCsvRecords(records)
+			if err != nil {
+				return nil, err
+			}
+			responses = append(responses, *resp)
+			records = nil
+		}
+	}
+
+	// Send remaining records as the last batch if there is any
+	if len(records) > 0 {
+		resp, err := sendCsvRecords(records)
+		if err != nil {
+			return nil, err
+		}
+		responses = append(responses, *resp)
+	}
+
+	return responses, nil
+}
+
 func (i Index) UpdateDocumentsNdjson(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
 	return i.updateDocuments(documents, contentTypeNDJSON, primaryKey...)
 }
