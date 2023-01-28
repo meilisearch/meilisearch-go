@@ -37,6 +37,7 @@ type IndexInterface interface {
 	UpdateDocumentsCsv(documents []byte, primaryKey ...string) (resp *TaskInfo, err error)
 	UpdateDocumentsCsvInBatches(documents []byte, batchsize int, primaryKey ...string) (resp []TaskInfo, err error)
 	UpdateDocumentsNdjson(documents []byte, primaryKey ...string) (resp *TaskInfo, err error)
+	UpdateDocumentsNdjsonInBatches(documents []byte, batchsize int, primaryKey ...string) (resp []TaskInfo, err error)
 	GetDocument(uid string, request *DocumentQuery, documentPtr interface{}) error
 	GetDocuments(param *DocumentsQuery, resp *DocumentsResult) error
 	DeleteDocument(uid string) (resp *TaskInfo, err error)

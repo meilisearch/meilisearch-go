@@ -461,6 +461,78 @@ func (i Index) UpdateDocumentsNdjson(documents []byte, primaryKey ...string) (re
 	return i.updateDocuments(documents, contentTypeNDJSON, primaryKey...)
 }
 
+func (i Index) UpdateDocumentsNdjsonInBatches(documents []byte, batchsize int, primaryKey ...string) (resp []TaskInfo, err error) {
+	return i.updateDocumentsNdjsonFromReaderInBatches(bytes.NewReader(documents), batchsize, primaryKey...)
+}
+
+func (i Index) updateDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
+	// NDJSON files supposed to contain a valid JSON document in each line, so
+	// it's safe to split by lines.
+	// Lines are read and sent continuously to avoid reading all content into
+	// memory. However, this means that only part of the documents might be
+	// added successfully.
+
+	sendNdjsonLines := func(lines []string) (*TaskInfo, error) {
+		b := new(bytes.Buffer)
+		for _, line := range lines {
+			_, err := b.WriteString(line)
+			if err != nil {
+				return nil, fmt.Errorf("Could not write NDJSON line: %w", err)
+			}
+			err = b.WriteByte('\n')
+			if err != nil {
+				return nil, fmt.Errorf("Could not write NDJSON line: %w", err)
+			}
+		}
+
+		resp, err := i.UpdateDocumentsNdjson(b.Bytes(), primaryKey...)
+		if err != nil {
+			return nil, err
+		}
+		return resp, nil
+	}
+
+	var (
+		responses []TaskInfo
+		lines     []string
+	)
+
+	scanner := bufio.NewScanner(documents)
+	for scanner.Scan() {
+		line := strings.TrimSpace(scanner.Text())
+
+		// Skip empty lines (NDJSON might not allow this, but just to be sure)
+		if line == "" {
+			continue
+		}
+
+		lines = append(lines, line)
+		// After reaching batchSize send NDJSON lines
+		if len(lines) == batchSize {
+			resp, err := sendNdjsonLines(lines)
+			if err != nil {
+				return nil, err
+			}
+			responses = append(responses, *resp)
+			lines = nil
+		}
+	}
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("Could not read NDJSON: %w", err)
+	}
+
+	// Send remaining records as the last batch if there is any
+	if len(lines) > 0 {
+		resp, err := sendNdjsonLines(lines)
+		if err != nil {
+			return nil, err
+		}
+		responses = append(responses, *resp)
+	}
+
+	return responses, nil
+}
+
 func (i Index) DeleteDocument(identifier string) (resp *TaskInfo, err error) {
 	resp = &TaskInfo{}
 	req := internalRequest{
