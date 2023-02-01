@@ -3,35 +3,6 @@
 # the documentation on build
 # You can read more on https://github.com/meilisearch/documentation/tree/master/.vuepress/code-samples
 ---
-getting_started_faceting: |-
-  client.index("movies").updateFaceting({ maxValuesPerFacet: 2 })
-getting_started_pagination: |-
-  client.index("movies").updatePagination({ maxTotalHits: 500 })
-synonyms_guide_1: |-
-  client.index('movies').updateSynonyms({
-    "great": ["fantastic"],
-    "fantastic": ["great"]
-  })
-date_guide_index_1: |-
-  const games = require('./games.json')
-  client.index('games').addDocuments(games).then((res) => console.log(res))
-date_guide_filterable_attributes_1: |-
-  client.index('games').updateFilterableAttributes({
-    filterableAttributes: ['release_timestamp'] 
-  })
-date_guide_filter_1: |-
-  client.index('games').search('', {
-    filter: 'release_timestamp >= 1514761200 AND release_timestamp < 1672527600'
-  })
-date_guide_sortable_attributes_1: |-
-  client.index('games').updateSortableAttributes({
-    sortableAttributes: ['release_timestamp'] 
-  })
-date_guide_sort_1: |-
-  client.index('games').search('', {
-    sort: ['release_timestamp:desc'],
-  })
-
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
@@ -702,6 +673,14 @@ getting_started_communicating_with_a_protected_instance: |-
   })
 
   resp, err := client.Index("movies").Search("", &meilisearch.SearchRequest{})
+getting_started_faceting: |-
+  client.Index("movies").UpdateFaceting(&meilisearch.Faceting{
+      MaxValuesPerFacet: 2,
+  })
+getting_started_pagination: |-
+  client.Index("movies").UpdatePagination(&meilisearch.Pagination{
+      MaxTotalHits: 500,
+  })
 faceted_search_update_settings_1: |-
   resp, err := client.Index("movies").UpdateFilterableAttributes(&[]string{
     "director",
@@ -877,3 +856,34 @@ tenant_token_guide_search_sdk_1: |-
     APIKey: token,
   })
   frontEndClient.Index("patient_medical_records").Search("blood test", &meilisearch.SearchRequest{});
+synonyms_guide_1: |-
+  synonyms := map[string][]string{
+    "great":      []string{"fantastic"},
+    "fantastic":  []string{"great"},
+  }
+  client.Index("movies").UpdateSynonyms(&synonyms)
+date_guide_Index_1: |-
+  jsonFile, _ := os.Open("games.json")
+  defer jsonFile.Close()
+
+  byteValue, _ := io.ReadAll(jsonFile)
+  var games []map[string]interface{}
+  json.Unmarshal(byteValue, &games)
+
+  client.Index("games").AddDocuments(games)
+date_guide_filterable_attributes_1: |-
+  filterableAttributes := []string{"release_timestamp"}
+  client.Index("games").UpdateFilterableAttributes(&filterableAttributes)
+date_guide_filter_1: |-
+  client.Index("games").Search("", &meilisearch.SearchRequest{
+    Filter: "release_timestamp >= 1514761200 AND release_timestamp < 1672527600",
+  })
+date_guide_sortable_attributes_1: |-
+  sortableAttributes := []string{"release_timestamp","author"}
+  client.Index("games").UpdateSortableAttributes(&sortableAttributes)
+date_guide_sort_1: |-
+  client.Index("games").Search("", &meilisearch.SearchRequest{
+    Sort: []string{
+      "release_timestamp:desc",
+    },
+  })
