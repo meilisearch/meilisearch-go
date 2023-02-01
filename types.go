@@ -237,14 +237,12 @@ type Key struct {
 
 // This structure is used to send the exact ISO-8601 time format managed by Meilisearch
 type KeyParsed struct {
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	UID         string    `json:"uid,omitempty"`
-	Actions     []string  `json:"actions,omitempty"`
-	Indexes     []string  `json:"indexes,omitempty"`
-	CreatedAt   time.Time `json:"createdAt,omitempty"`
-	UpdatedAt   time.Time `json:"updatedAt,omitempty"`
-	ExpiresAt   *string   `json:"expiresAt"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	UID         string   `json:"uid,omitempty"`
+	Actions     []string `json:"actions,omitempty"`
+	Indexes     []string `json:"indexes,omitempty"`
+	ExpiresAt   *string  `json:"expiresAt"`
 }
 
 // This structure is used to update a Key
