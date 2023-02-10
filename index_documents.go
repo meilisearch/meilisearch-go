@@ -143,6 +143,23 @@ func (i Index) AddDocumentsCsvInBatches(documents []byte, batchSize int, primary
 	return i.AddDocumentsCsvFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
 }
 
+func sendCsvRecords(documentsCsvFunc func, records [][]string, primaryKey ...string) (*TaskInfo, error) {
+	b := new(bytes.Buffer)
+	w := csv.NewWriter(b)
+	w.UseCRLF = true
+
+	err := w.WriteAll(records)
+	if err != nil {
+		return nil, fmt.Errorf("could not write CSV records: %w", err)
+	}
+
+	resp, err := documentsCsvFunc(b.Bytes(), primaryKey...)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	// Because of the possibility of multiline fields it's not safe to split
 	// into batches by lines, we'll have to parse the file and reassemble it
@@ -157,22 +174,6 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 		header    []string
 		records   [][]string
 	)
-
-	sendCsvRecords := func(records [][]string) (*TaskInfo, error) {
-		b := new(bytes.Buffer)
-		w := csv.NewWriter(b)
-		w.UseCRLF = true // Keep output RFC 4180 compliant
-		err := w.WriteAll(records)
-		if err != nil {
-			return nil, fmt.Errorf("could not write CSV records: %w", err)
-		}
-
-		resp, err := i.AddDocumentsCsv(b.Bytes(), primaryKey...)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
-	}
 
 	r := csv.NewReader(documents)
 	for {
@@ -200,7 +201,7 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 
 		// After reaching batchSize (not counting the header record) assemble a CSV file and send records
 		if len(records) == batchSize+1 {
-			resp, err := sendCsvRecords(records)
+			resp, err := sendCsvRecords(i.AddDocumentsCsv, records, primaryKey...)
 			if err != nil {
 				return nil, err
 			}
@@ -394,22 +395,6 @@ func (i Index) updateDocumentsCsvFromReaderInBatches(documents io.Reader, batchS
 		records   [][]string
 	)
 
-	sendCsvRecords := func(records [][]string) (*TaskInfo, error) {
-		b := new(bytes.Buffer)
-		w := csv.NewWriter(b)
-		w.UseCRLF = true // Keep output RFC 4180 compliant
-		err := w.WriteAll(records)
-		if err != nil {
-			return nil, fmt.Errorf("could not write CSV records: %w", err)
-		}
-
-		resp, err := i.UpdateDocumentsCsv(b.Bytes(), primaryKey...)
-		if err != nil {
-			return nil, err
-		}
-		return resp, nil
-	}
-
 	r := csv.NewReader(documents)
 	for {
 		// Read CSV record (empty lines and comments are already skipped by csv.Reader)
@@ -436,7 +421,7 @@ func (i Index) updateDocumentsCsvFromReaderInBatches(documents io.Reader, batchS
 
 		// After reaching batchSize (not counting the header record) assemble a CSV file and send records
 		if len(records) == batchSize+1 {
-			resp, err := sendCsvRecords(records)
+			resp, err := sendCsvRecords(i.UpdateDocumentsCsv, records, primaryKey...)
 			if err != nil {
 				return nil, err
 			}
