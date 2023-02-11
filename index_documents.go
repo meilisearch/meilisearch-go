@@ -372,7 +372,7 @@ func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int,
 }
 
 func (i Index) UpdateDocumentsCsv(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
-	return i.updateDocuments(documents, contentTypeJSON, primaryKey...)
+	return i.updateDocuments(documents, contentTypeCSV, primaryKey...)
 }
 
 func (i Index) UpdateDocumentsCsvFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
