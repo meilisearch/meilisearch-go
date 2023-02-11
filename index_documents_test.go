@@ -1996,3 +1996,84 @@ func TestIndex_UpdateDocumentsCsvInBatches(t *testing.T) {
 		testUpdateDocumentsCsvInBatches(t, tt, true)
 	}
 }
+
+func TestIndex_UpdateDocumentsNdjson(t *testing.T) {
+	type args struct {
+		UID       string
+		client    *Client
+		documents []byte
+	}
+	type testData struct {
+		name     string
+		args     args
+		wantResp *TaskInfo
+	}
+
+	tests := []testData{
+		{
+			name: "TestIndexBasic",
+			args: args{
+				UID:       "ndjson",
+				client:    defaultClient,
+				documents: testNdjsonDocuments,
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    "documentAdditionOrUpdate",
+			},
+		},
+	}
+
+	testUpdateDocumentsNdjson := func(t *testing.T, tt testData, testReader bool) {
+		name := tt.name + "UpdateDocumentsNdjson"
+		if testReader {
+			name += "FromReader"
+		}
+
+		uid := tt.args.UID
+		if testReader {
+			uid += "-reader"
+		} else {
+			uid += "-string"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(uid)
+			t.Cleanup(cleanup(c))
+
+			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
+
+			var (
+				gotResp *TaskInfo
+				err     error
+			)
+
+			if testReader {
+				gotResp, err = i.UpdateDocumentsNdjsonFromReader(bytes.NewReader(tt.args.documents))
+			} else {
+				gotResp, err = i.UpdateDocumentsNdjson(tt.args.documents)
+			}
+
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
+			require.Equal(t, tt.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.wantResp.Type, gotResp.Type)
+			require.NotZero(t, gotResp.EnqueuedAt)
+
+			testWaitForTask(t, i, gotResp)
+
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, wantDocs, documents.Results)
+		})
+	}
+
+	for _, tt := range tests {
+		// Test both the string and io.Reader receiving versions
+		testUpdateDocumentsNdjson(t, tt, false)
+		testUpdateDocumentsNdjson(t, tt, true)
+	}
+}
