@@ -143,7 +143,7 @@ func (i Index) AddDocumentsCsvInBatches(documents []byte, batchSize int, primary
 	return i.AddDocumentsCsvFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
 }
 
-func sendCsvRecords(documentsCsvFunc func, records [][]string, primaryKey ...string) (*TaskInfo, error) {
+func sendCsvRecords(documentsCsvFunc func(recs []byte, pk ...string) (resp *TaskInfo, err error), records [][]string, primaryKey ...string) (*TaskInfo, error) {
 	b := new(bytes.Buffer)
 	w := csv.NewWriter(b)
 	w.UseCRLF = true
@@ -212,7 +212,7 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 
 	// Send remaining records as the last batch if there is any
 	if len(records) > 0 {
-		resp, err := sendCsvRecords(records)
+		resp, err := sendCsvRecords(i.AddDocumentsCsv, records, primaryKey...)
 		if err != nil {
 			return nil, err
 		}
@@ -432,7 +432,7 @@ func (i Index) updateDocumentsCsvFromReaderInBatches(documents io.Reader, batchS
 
 	// Send remaining records as the last batch if there is any
 	if len(records) > 0 {
-		resp, err := sendCsvRecords(records)
+		resp, err := sendCsvRecords(i.UpdateDocumentsCsv, records, primaryKey...)
 		if err != nil {
 			return nil, err
 		}
