@@ -13,6 +13,23 @@ import (
 	"strings"
 )
 
+func sendCsvRecords(documentsCsvFunc func(recs []byte, pk ...string) (resp *TaskInfo, err error), records [][]string, primaryKey ...string) (*TaskInfo, error) {
+	b := new(bytes.Buffer)
+	w := csv.NewWriter(b)
+	w.UseCRLF = true
+
+	err := w.WriteAll(records)
+	if err != nil {
+		return nil, fmt.Errorf("could not write CSV records: %w", err)
+	}
+
+	resp, err := documentsCsvFunc(b.Bytes(), primaryKey...)
+	if err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (i Index) GetDocument(identifier string, request *DocumentQuery, documentPtr interface{}) error {
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents/" + identifier,
@@ -141,23 +158,6 @@ func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...stri
 func (i Index) AddDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	// Reuse io.Reader implementation
 	return i.AddDocumentsCsvFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
-}
-
-func sendCsvRecords(documentsCsvFunc func(recs []byte, pk ...string) (resp *TaskInfo, err error), records [][]string, primaryKey ...string) (*TaskInfo, error) {
-	b := new(bytes.Buffer)
-	w := csv.NewWriter(b)
-	w.UseCRLF = true
-
-	err := w.WriteAll(records)
-	if err != nil {
-		return nil, fmt.Errorf("could not write CSV records: %w", err)
-	}
-
-	resp, err := documentsCsvFunc(b.Bytes(), primaryKey...)
-	if err != nil {
-		return nil, err
-	}
-	return resp, nil
 }
 
 func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
