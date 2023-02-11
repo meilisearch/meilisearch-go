@@ -456,6 +456,16 @@ func (i Index) UpdateDocumentsNdjson(documents []byte, primaryKey ...string) (re
 	return i.updateDocuments(documents, contentTypeNDJSON, primaryKey...)
 }
 
+func (i Index) UpdateDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
+	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
+	// read content to memory anyway because of problems with streamed bodies
+	data, err := io.ReadAll(documents)
+	if err != nil {
+		return nil, fmt.Errorf("could not read documents: %w", err)
+	}
+	return i.updateDocuments(data, contentTypeNDJSON, primaryKey...)
+}
+
 func (i Index) UpdateDocumentsNdjsonInBatches(documents []byte, batchsize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	return i.updateDocumentsNdjsonFromReaderInBatches(bytes.NewReader(documents), batchsize, primaryKey...)
 }
