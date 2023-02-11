@@ -387,10 +387,10 @@ func (i Index) UpdateDocumentsCsvFromReader(documents io.Reader, primaryKey ...s
 
 func (i Index) UpdateDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	// Reuse io.Reader implementation
-	return i.updateDocumentsCsvFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
+	return i.UpdateDocumentsCsvFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
 }
 
-func (i Index) updateDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
+func (i Index) UpdateDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	// Because of the possibility of multiline fields it's not safe to split
 	// into batches by lines, we'll have to parse the file and reassemble it
 	// into smaller parts. RFC 4180 compliant input with a header row is
