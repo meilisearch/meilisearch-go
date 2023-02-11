@@ -375,6 +375,16 @@ func (i Index) UpdateDocumentsCsv(documents []byte, primaryKey ...string) (resp 
 	return i.updateDocuments(documents, contentTypeJSON, primaryKey...)
 }
 
+func (i Index) UpdateDocumentsCsvFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
+	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
+	// read content to memory anyway because of problems with streamed bodies
+	data, err := io.ReadAll(documents)
+	if err != nil {
+		return nil, fmt.Errorf("could not read documents: %w", err)
+	}
+	return i.updateDocuments(data, contentTypeCSV, primaryKey...)
+}
+
 func (i Index) UpdateDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
 	// Reuse io.Reader implementation
 	return i.updateDocumentsCsvFromReaderInBatches(bytes.NewReader(documents), batchSize, primaryKey...)
