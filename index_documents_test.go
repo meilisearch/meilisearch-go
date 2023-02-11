@@ -1898,3 +1898,101 @@ func TestIndex_UpdateDocumentsCsv(t *testing.T) {
 		testUpdateDocumentsCsv(t, tt, true)
 	}
 }
+
+func TestIndex_UpdateDocumentsCsvInBatches(t *testing.T) {
+	type args struct {
+		UID       string
+		client    *Client
+		batchSize int
+		documents []byte
+	}
+	type testData struct {
+		name     string
+		args     args
+		wantResp []TaskInfo
+	}
+
+	tests := []testData{
+		{
+			name: "TestIndexBasic",
+			args: args{
+				UID:       "csvbatch",
+				client:    defaultClient,
+				batchSize: 2,
+				documents: testCsvDocuments,
+			},
+			wantResp: []TaskInfo{
+				{
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
+				},
+				{
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
+				},
+				{
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    "documentAdditionOrUpdate",
+				},
+			},
+		},
+	}
+
+	testUpdateDocumentsCsvInBatches := func(t *testing.T, tt testData, testReader bool) {
+		name := tt.name + "UpdateDocumentsCsv"
+		if testReader {
+			name += "FromReader"
+		}
+		name += "InBatches"
+
+		uid := tt.args.UID
+		if testReader {
+			uid += "-reader"
+		} else {
+			uid += "-string"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(uid)
+			t.Cleanup(cleanup(c))
+
+			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
+
+			var (
+				gotResp []TaskInfo
+				err     error
+			)
+
+			if testReader {
+				gotResp, err = i.UpdateDocumentsCsvFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize)
+			} else {
+				gotResp, err = i.UpdateDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize)
+			}
+
+			require.NoError(t, err)
+			for i := 0; i < 2; i++ {
+				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
+				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+				require.NotZero(t, gotResp[i].EnqueuedAt)
+			}
+
+			testWaitForBatchTask(t, i, gotResp)
+
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, wantDocs, documents.Results)
+		})
+	}
+
+	for _, tt := range tests {
+		// Test both the string and io.Reader receiving versions
+		testUpdateDocumentsCsvInBatches(t, tt, false)
+		testUpdateDocumentsCsvInBatches(t, tt, true)
+	}
+}
