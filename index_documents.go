@@ -62,6 +62,40 @@ func (i Index) saveDocuments(documentsPtr interface{}, contentType string, httpM
 	return resp, nil
 }
 
+func (i Index) saveDocumentsInBatches(documentsPtr interface{}, batchSize int, documentFunc func(documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error), primaryKey ...string) (resp []TaskInfo, err error) {
+	arr := reflect.ValueOf(documentsPtr)
+	lenDocs := arr.Len()
+	numBatches := int(math.Ceil(float64(lenDocs) / float64(batchSize)))
+	resp = make([]TaskInfo, numBatches)
+
+	for j := 0; j < numBatches; j++ {
+		end := (j + 1) * batchSize
+		if end > lenDocs {
+			end = lenDocs
+		}
+
+		batch := arr.Slice(j*batchSize, end).Interface()
+
+		if primaryKey != nil {
+			respID, err := documentFunc(batch, primaryKey[0])
+			if err != nil {
+				return nil, err
+			}
+
+			resp[j] = *respID
+		} else {
+			respID, err := documentFunc(batch)
+			if err != nil {
+				return nil, err
+			}
+
+			resp[j] = *respID
+		}
+	}
+
+	return resp, nil
+}
+
 func (i Index) GetDocument(identifier string, request *DocumentQuery, documentPtr interface{}) error {
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents/" + identifier,
@@ -115,37 +149,7 @@ func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (res
 }
 
 func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
-	arr := reflect.ValueOf(documentsPtr)
-	lenDocs := arr.Len()
-	numBatches := int(math.Ceil(float64(lenDocs) / float64(batchSize)))
-	resp = make([]TaskInfo, numBatches)
-
-	for j := 0; j < numBatches; j++ {
-		end := (j + 1) * batchSize
-		if end > lenDocs {
-			end = lenDocs
-		}
-
-		batch := arr.Slice(j*batchSize, end).Interface()
-
-		if primaryKey != nil {
-			respID, err := i.AddDocuments(batch, primaryKey[0])
-			if err != nil {
-				return nil, err
-			}
-
-			resp[j] = *respID
-		} else {
-			respID, err := i.AddDocuments(batch)
-			if err != nil {
-				return nil, err
-			}
-
-			resp[j] = *respID
-		}
-	}
-
-	return resp, nil
+	return i.saveDocumentsInBatches(documentsPtr, batchSize, i.AddDocuments, primaryKey...)
 }
 
 func (i Index) AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
@@ -323,36 +327,7 @@ func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (
 }
 
 func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
-	arr := reflect.ValueOf(documentsPtr)
-	lenDocs := arr.Len()
-	numBatches := int(math.Ceil(float64(lenDocs) / float64(batchSize)))
-	resp = make([]TaskInfo, numBatches)
-
-	for j := 0; j < numBatches; j++ {
-		end := (j + 1) * batchSize
-		if end > lenDocs {
-			end = lenDocs
-		}
-
-		batch := arr.Slice(j*batchSize, end).Interface()
-		if primaryKey != nil {
-			respID, err := i.UpdateDocuments(batch, primaryKey[0])
-			if err != nil {
-				return nil, err
-			}
-
-			resp[j] = *respID
-		} else {
-			respID, err := i.UpdateDocuments(batch)
-			if err != nil {
-				return nil, err
-			}
-
-			resp[j] = *respID
-		}
-	}
-
-	return resp, nil
+	return i.saveDocumentsInBatches(documentsPtr, batchSize, i.UpdateDocuments, primaryKey...)
 }
 
 func (i Index) UpdateDocumentsCsv(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
