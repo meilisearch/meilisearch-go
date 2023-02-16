@@ -62,6 +62,68 @@ func (i Index) saveDocuments(documentsPtr interface{}, contentType string, httpM
 	return resp, nil
 }
 
+func (i Index) saveDocumentsFromReaderInBatches(documents io.Reader, batchSize int, documentsCsvFunc func(recs []byte, pk ...string) (resp *TaskInfo, err error), primaryKey ...string) (resp []TaskInfo, err error) {
+	// Because of the possibility of multiline fields it's not safe to split
+	// into batches by lines, we'll have to parse the file and reassemble it
+	// into smaller parts. RFC 4180 compliant input with a header row is
+	// expected.
+	// Records are read and sent continuously to avoid reading all content
+	// into memory. However, this means that only part of the documents might
+	// be added successfully.
+
+	var (
+		responses []TaskInfo
+		header    []string
+		records   [][]string
+	)
+
+	r := csv.NewReader(documents)
+	for {
+		// Read CSV record (empty lines and comments are already skipped by csv.Reader)
+		record, err := r.Read()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			return nil, fmt.Errorf("could not read CSV record: %w", err)
+		}
+
+		// Store first record as header
+		if header == nil {
+			header = record
+			continue
+		}
+
+		// Add header record to every batch
+		if len(records) == 0 {
+			records = append(records, header)
+		}
+
+		records = append(records, record)
+
+		// After reaching batchSize (not counting the header record) assemble a CSV file and send records
+		if len(records) == batchSize+1 {
+			resp, err := sendCsvRecords(documentsCsvFunc, records, primaryKey...)
+			if err != nil {
+				return nil, err
+			}
+			responses = append(responses, *resp)
+			records = nil
+		}
+	}
+
+	// Send remaining records as the last batch if there is any
+	if len(records) > 0 {
+		resp, err := sendCsvRecords(documentsCsvFunc, records, primaryKey...)
+		if err != nil {
+			return nil, err
+		}
+		responses = append(responses, *resp)
+	}
+
+	return responses, nil
+}
+
 func (i Index) saveDocumentsInBatches(documentsPtr interface{}, batchSize int, documentFunc func(documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error), primaryKey ...string) (resp []TaskInfo, err error) {
 	arr := reflect.ValueOf(documentsPtr)
 	lenDocs := arr.Len()
@@ -173,65 +235,7 @@ func (i Index) AddDocumentsCsvInBatches(documents []byte, batchSize int, primary
 }
 
 func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
-	// Because of the possibility of multiline fields it's not safe to split
-	// into batches by lines, we'll have to parse the file and reassemble it
-	// into smaller parts. RFC 4180 compliant input with a header row is
-	// expected.
-	// Records are read and sent continuously to avoid reading all content
-	// into memory. However, this means that only part of the documents might
-	// be added successfully.
-
-	var (
-		responses []TaskInfo
-		header    []string
-		records   [][]string
-	)
-
-	r := csv.NewReader(documents)
-	for {
-		// Read CSV record (empty lines and comments are already skipped by csv.Reader)
-		record, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return nil, fmt.Errorf("could not read CSV record: %w", err)
-		}
-
-		// Store first record as header
-		if header == nil {
-			header = record
-			continue
-		}
-
-		// Add header record to every batch
-		if len(records) == 0 {
-			records = append(records, header)
-		}
-
-		records = append(records, record)
-
-		// After reaching batchSize (not counting the header record) assemble a CSV file and send records
-		if len(records) == batchSize+1 {
-			resp, err := sendCsvRecords(i.AddDocumentsCsv, records, primaryKey...)
-			if err != nil {
-				return nil, err
-			}
-			responses = append(responses, *resp)
-			records = nil
-		}
-	}
-
-	// Send remaining records as the last batch if there is any
-	if len(records) > 0 {
-		resp, err := sendCsvRecords(i.AddDocumentsCsv, records, primaryKey...)
-		if err != nil {
-			return nil, err
-		}
-		responses = append(responses, *resp)
-	}
-
-	return responses, nil
+	return i.saveDocumentsFromReaderInBatches(documents, batchSize, i.AddDocumentsCsv, primaryKey...)
 }
 
 func (i Index) AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
@@ -350,65 +354,7 @@ func (i Index) UpdateDocumentsCsvInBatches(documents []byte, batchSize int, prim
 }
 
 func (i Index) UpdateDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
-	// Because of the possibility of multiline fields it's not safe to split
-	// into batches by lines, we'll have to parse the file and reassemble it
-	// into smaller parts. RFC 4180 compliant input with a header row is
-	// expected.
-	// Records are read and sent continuously to avoid reading all content
-	// into memory. However, this means that only part of the documents might
-	// be added successfully.
-
-	var (
-		responses []TaskInfo
-		header    []string
-		records   [][]string
-	)
-
-	r := csv.NewReader(documents)
-	for {
-		// Read CSV record (empty lines and comments are already skipped by csv.Reader)
-		record, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			return nil, fmt.Errorf("could not write CSV record: %w", err)
-		}
-
-		// Store first record as header
-		if header == nil {
-			header = record
-			continue
-		}
-
-		// Add header record to every batch
-		if len(records) == 0 {
-			records = append(records, header)
-		}
-
-		records = append(records, record)
-
-		// After reaching batchSize (not counting the header record) assemble a CSV file and send records
-		if len(records) == batchSize+1 {
-			resp, err := sendCsvRecords(i.UpdateDocumentsCsv, records, primaryKey...)
-			if err != nil {
-				return nil, err
-			}
-			responses = append(responses, *resp)
-			records = nil
-		}
-	}
-
-	// Send remaining records as the last batch if there is any
-	if len(records) > 0 {
-		resp, err := sendCsvRecords(i.UpdateDocumentsCsv, records, primaryKey...)
-		if err != nil {
-			return nil, err
-		}
-		responses = append(responses, *resp)
-	}
-
-	return responses, nil
+	return i.saveDocumentsFromReaderInBatches(documents, batchSize, i.UpdateDocumentsCsv, primaryKey...)
 }
 
 func (i Index) UpdateDocumentsNdjson(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
