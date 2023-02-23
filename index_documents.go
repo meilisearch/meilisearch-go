@@ -30,38 +30,6 @@ func sendCsvRecords(documentsCsvFunc func(recs []byte, pk ...string) (resp *Task
 	return resp, nil
 }
 
-func (i Index) saveDocuments(documentsPtr interface{}, contentType string, httpMethod string, primaryKey ...string) (resp *TaskInfo, err error) {
-	resp = &TaskInfo{}
-	endpoint := ""
-	if primaryKey == nil {
-		endpoint = "/indexes/" + i.UID + "/documents"
-	} else {
-		i.PrimaryKey = primaryKey[0] //nolint:golint,staticcheck
-		endpoint = "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey[0]
-	}
-
-	function := ""
-	if httpMethod == http.MethodPost {
-		function = "Add"
-	} else if httpMethod == http.MethodPut {
-		function = "Update"
-	}
-
-	req := internalRequest{
-		endpoint:            endpoint,
-		method:              httpMethod,
-		contentType:         contentType,
-		withRequest:         documentsPtr,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusAccepted},
-		functionName:        function + "Documents",
-	}
-	if err = i.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-	return resp, nil
-}
-
 func (i Index) saveDocumentsFromReaderInBatches(documents io.Reader, batchSize int, documentsCsvFunc func(recs []byte, pk ...string) (resp *TaskInfo, err error), primaryKey ...string) (resp []TaskInfo, err error) {
 	// Because of the possibility of multiline fields it's not safe to split
 	// into batches by lines, we'll have to parse the file and reassemble it
@@ -206,8 +174,32 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 	return nil
 }
 
+func (i Index) addDocuments(documentsPtr interface{}, contentType string, primaryKey ...string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	endpoint := ""
+	if primaryKey == nil {
+		endpoint = "/indexes/" + i.UID + "/documents"
+	} else {
+		i.PrimaryKey = primaryKey[0] //nolint:golint,staticcheck
+		endpoint = "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey[0]
+	}
+	req := internalRequest{
+		endpoint:            endpoint,
+		method:              http.MethodPost,
+		contentType:         contentType,
+		withRequest:         documentsPtr,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "AddDocuments",
+	}
+	if err = i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (i Index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error) {
-	return i.saveDocuments(documentsPtr, contentTypeJSON, http.MethodPost, primaryKey...)
+	return i.addDocuments(documentsPtr, contentTypeJSON, primaryKey...)
 }
 
 func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
@@ -216,7 +208,7 @@ func (i Index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, pr
 
 func (i Index) AddDocumentsCsv(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
 	// []byte avoids JSON conversion in Client.sendRequest()
-	return i.saveDocuments(documents, contentTypeCSV, http.MethodPost, primaryKey...)
+	return i.addDocuments(documents, contentTypeCSV, primaryKey...)
 }
 
 func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
@@ -226,7 +218,7 @@ func (i Index) AddDocumentsCsvFromReader(documents io.Reader, primaryKey ...stri
 	if err != nil {
 		return nil, fmt.Errorf("could not read documents: %w", err)
 	}
-	return i.saveDocuments(data, contentTypeCSV, http.MethodPost, primaryKey...)
+	return i.addDocuments(data, contentTypeCSV, primaryKey...)
 }
 
 func (i Index) AddDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
@@ -240,7 +232,7 @@ func (i Index) AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize
 
 func (i Index) AddDocumentsNdjson(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
 	// []byte avoids JSON conversion in Client.sendRequest()
-	return i.saveDocuments([]byte(documents), contentTypeNDJSON, http.MethodPost, primaryKey...)
+	return i.addDocuments([]byte(documents), contentTypeNDJSON, primaryKey...)
 }
 
 func (i Index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
@@ -250,7 +242,7 @@ func (i Index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...s
 	if err != nil {
 		return nil, fmt.Errorf("could not read documents: %w", err)
 	}
-	return i.saveDocuments(data, contentTypeNDJSON, http.MethodPost, primaryKey...)
+	return i.addDocuments(data, contentTypeNDJSON, primaryKey...)
 }
 
 func (i Index) AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
@@ -326,8 +318,32 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 	return responses, nil
 }
 
+func (i Index) updateDocuments(documentsPtr interface{}, contentType string, primaryKey ...string) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	endpoint := ""
+	if primaryKey == nil {
+		endpoint = "/indexes/" + i.UID + "/documents"
+	} else {
+		i.PrimaryKey = primaryKey[0] //nolint:golint,staticcheck
+		endpoint = "/indexes/" + i.UID + "/documents?primaryKey=" + primaryKey[0]
+	}
+	req := internalRequest{
+		endpoint:            endpoint,
+		method:              http.MethodPut,
+		contentType:         contentType,
+		withRequest:         documentsPtr,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateDocuments",
+	}
+	if err = i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (i Index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error) {
-	return i.saveDocuments(documentsPtr, contentTypeJSON, http.MethodPut, primaryKey...)
+	return i.updateDocuments(documentsPtr, contentTypeJSON, primaryKey...)
 }
 
 func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
@@ -335,7 +351,7 @@ func (i Index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int,
 }
 
 func (i Index) UpdateDocumentsCsv(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
-	return i.saveDocuments(documents, contentTypeCSV, http.MethodPut, primaryKey...)
+	return i.updateDocuments(documents, contentTypeCSV, primaryKey...)
 }
 
 func (i Index) UpdateDocumentsCsvFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
@@ -345,7 +361,7 @@ func (i Index) UpdateDocumentsCsvFromReader(documents io.Reader, primaryKey ...s
 	if err != nil {
 		return nil, fmt.Errorf("could not read documents: %w", err)
 	}
-	return i.saveDocuments(data, contentTypeCSV, http.MethodPut, primaryKey...)
+	return i.updateDocuments(data, contentTypeCSV, primaryKey...)
 }
 
 func (i Index) UpdateDocumentsCsvInBatches(documents []byte, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
@@ -358,7 +374,7 @@ func (i Index) UpdateDocumentsCsvFromReaderInBatches(documents io.Reader, batchS
 }
 
 func (i Index) UpdateDocumentsNdjson(documents []byte, primaryKey ...string) (resp *TaskInfo, err error) {
-	return i.saveDocuments(documents, contentTypeNDJSON, http.MethodPut, primaryKey...)
+	return i.updateDocuments(documents, contentTypeNDJSON, primaryKey...)
 }
 
 func (i Index) UpdateDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
@@ -368,7 +384,7 @@ func (i Index) UpdateDocumentsNdjsonFromReader(documents io.Reader, primaryKey .
 	if err != nil {
 		return nil, fmt.Errorf("could not read documents: %w", err)
 	}
-	return i.saveDocuments(data, contentTypeNDJSON, http.MethodPut, primaryKey...)
+	return i.updateDocuments(data, contentTypeNDJSON, primaryKey...)
 }
 
 func (i Index) UpdateDocumentsNdjsonInBatches(documents []byte, batchsize int, primaryKey ...string) (resp []TaskInfo, err error) {
