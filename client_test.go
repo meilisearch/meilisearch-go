@@ -1317,9 +1317,7 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 }
 
 func TestClient_ConnectionCloseByServer(t *testing.T) {
-	t.Skip("Skip until <https://github.com/meilisearch/meilisearch/pull/2471> merged.")
-
-	meili := NewClient(ClientConfig{Host: "http://localhost:7700"})
+	meili := NewClient(ClientConfig{Host: getenv("MEILISEARCH_URL", "http://localhost:7700")})
 
 	// Simulate 10 clients sending requests.
 	g := sync.WaitGroup{}

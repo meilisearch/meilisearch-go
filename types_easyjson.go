@@ -3129,14 +3129,6 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo21(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
-		case "createdAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.CreatedAt).UnmarshalJSON(data))
-			}
-		case "updatedAt":
-			if data := in.Raw(); in.Ok() {
-				in.AddError((out.UpdatedAt).UnmarshalJSON(data))
-			}
 		case "expiresAt":
 			if in.IsNull() {
 				in.Skip()
@@ -3203,16 +3195,6 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo21(out *jwriter.Writ
 			}
 			out.RawByte(']')
 		}
-	}
-	if true {
-		const prefix string = ",\"createdAt\":"
-		out.RawString(prefix)
-		out.Raw((in.CreatedAt).MarshalJSON())
-	}
-	if true {
-		const prefix string = ",\"updatedAt\":"
-		out.RawString(prefix)
-		out.Raw((in.UpdatedAt).MarshalJSON())
 	}
 	{
 		const prefix string = ",\"expiresAt\":"
