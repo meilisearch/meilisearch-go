@@ -1427,8 +1427,8 @@ func TestIndex_GetDocuments(t *testing.T) {
 
 			err := i.GetDocuments(tt.args.request, tt.args.resp)
 			require.NoError(t, err)
-			if tt.args.request != nil && *tt.args.request.Limit != 0 {
-				require.Equal(t, tt.args.request.Limit, int64(len(tt.args.resp.Results)))
+			if tt.args.request != nil && tt.args.request.Limit != nil && *tt.args.request.Limit != 0 {
+				require.Equal(t, *tt.args.request.Limit, int64(len(tt.args.resp.Results)))
 			} else {
 				require.Equal(t, 6, len(tt.args.resp.Results))
 			}
