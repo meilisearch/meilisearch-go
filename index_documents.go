@@ -106,7 +106,7 @@ func (i Index) saveDocumentsInBatches(documentsPtr interface{}, batchSize int, d
 
 		batch := arr.Slice(j*batchSize, end).Interface()
 
-		if primaryKey != nil {
+		if len(primaryKey) != 0 {
 			respID, err := documentFunc(batch, primaryKey[0])
 			if err != nil {
 				return nil, err
@@ -177,7 +177,7 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 func (i Index) addDocuments(documentsPtr interface{}, contentType string, primaryKey ...string) (resp *TaskInfo, err error) {
 	resp = &TaskInfo{}
 	endpoint := ""
-	if primaryKey == nil {
+	if len(primaryKey) == 0 {
 		endpoint = "/indexes/" + i.UID + "/documents"
 	} else {
 		i.PrimaryKey = primaryKey[0] //nolint:golint,staticcheck
@@ -321,7 +321,7 @@ func (i Index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchS
 func (i Index) updateDocuments(documentsPtr interface{}, contentType string, primaryKey ...string) (resp *TaskInfo, err error) {
 	resp = &TaskInfo{}
 	endpoint := ""
-	if primaryKey == nil {
+	if len(primaryKey) == 0 {
 		endpoint = "/indexes/" + i.UID + "/documents"
 	} else {
 		i.PrimaryKey = primaryKey[0] //nolint:golint,staticcheck
