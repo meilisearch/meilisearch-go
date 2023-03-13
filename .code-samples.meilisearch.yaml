@@ -3,6 +3,12 @@
 # the documentation on build
 # You can read more on https://github.com/meilisearch/documentation/tree/master/.vuepress/code-samples
 ---
+filtering_guide_nested_1: |-
+  with data: { "index": "movies", "q": "thriller", "filter": "rating.users >= 90" }
+
+sorting_guide_sort_nested_1: |-
+  with data: { "index": "books", "q": "science fiction", "sort": ["rating.users:asc"] }
+
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
@@ -326,16 +332,16 @@ get_health_1: |-
   client.Health()
 get_version_1: |-
   client.GetVersion()
-distinct_attribute_guide_1: |-
+>>>>>>>>>>>>>>>> UPDATE_ME distinct_attribute_guide_1 (use distinct attribute route): |-
   client.Index("jackets").UpdateDistinctAttribute("product_id")
-field_properties_guide_searchable_1: |-
+>>>>>>>>>>>>>>>> UPDATE_ME field_properties_guide_searchable_1 (use searchable attribute route): |-
   searchableAttributes := []string{
     "title",
     "overview",
     "genres",
   }
   client.Index("movies").UpdateSearchableAttributes(&searchableAttributes)
-field_properties_guide_displayed_1: |-
+>>>>>>>>>>>>>>>> UPDATE_ME field_properties_guide_displayed_1 (use displayed attribute route): |-
   displayedAttributes := []string{
     "title",
     "overview",
@@ -409,7 +415,7 @@ search_parameter_guide_page_1: |-
   client.Index("movies").Search("q", &meilisearch.SearchRequest{
     Page: 2,
   })
-settings_guide_synonyms_1: |-
+>>>>>>>>>>> REMOVE_ME settings_guide_synonyms_1: |-
   settings := meilisearch.Settings{
     Synonyms: map[string][]string{
       "sweater": []string{"jumper"},
@@ -417,7 +423,7 @@ settings_guide_synonyms_1: |-
     },
   }
   client.Index("tops").UpdateSettings(&settings)
-settings_guide_stop_words_1: |-
+>>>>>>>>>>> REMOVE_ME settings_guide_stop_words_1: |-
   settings := meilisearch.Settings{
     StopWords: []string{
       "the",
@@ -426,7 +432,7 @@ settings_guide_stop_words_1: |-
     },
   }
   client.Index("movies").UpdateSettings(&settings)
-settings_guide_ranking_rules_1: |-
+>>>>>>>>>>> REMOVE_ME settings_guide_ranking_rules_1: |-
   settings := meilisearch.Settings{
     RankingRules: []string{
       "words",
@@ -440,13 +446,13 @@ settings_guide_ranking_rules_1: |-
     },
   }
   client.Index("movies").UpdateSettings(&settings)
-settings_guide_distinct_1: |-
+>>>>>>>>>>> REMOVE_ME settings_guide_distinct_1: |-
   distinctAttribute := "product_id"
   settings := meilisearch.Settings{
     DistinctAttribute: &distinctAttribute,
   }
   client.Index("jackets").UpdateSettings(&settings)
-settings_guide_searchable_1: |-
+>>>>>>>>>>> REMOVE_ME settings_guide_searchable_1: |-
   settings := meilisearch.Settings{
     SearchableAttributes: []string{
       "title",
@@ -455,7 +461,7 @@ settings_guide_searchable_1: |-
     },
   }
   client.Index("movies").UpdateSettings(&settings)
-settings_guide_displayed_1: |-
+>>>>>>>>>>> REMOVE_ME settings_guide_displayed_1: |-
   settings := meilisearch.Settings{
     DisplayedAttributes: []string{
       "title",
@@ -465,7 +471,7 @@ settings_guide_displayed_1: |-
     },
   }
   client.Index("movies").UpdateSettings(&settings)
-settings_guide_sortable_1: |-
+>>>>>>>>>>> REMOVE_ME settings_guide_sortable_1: |-
   settings := meilisearch.Settings{
     SortableAttributes: []string{
       "price",
@@ -473,15 +479,15 @@ settings_guide_sortable_1: |-
     },
   }
   client.Index("books").UpdateSettings(&settings)
-settings_guide_pagination_1: |-
+>>>>>>>>>>> REMOVE_ME settings_guide_pagination_1: |-
   client.Index("movies").UpdatePagination(&meilisearch.Pagination{
     MaxTotalHits: 50,
   })
-settings_guide_faceting_1: |-
+>>>>>>>>>>> REMOVE_ME settings_guide_faceting_1: |-
   client.Index("movies").UpdateFaceting(&meilisearch.Faceting{
     MaxValuesPerFacet: 5,
   })
-settings_guide_typo_tolerance_1: |-
+>>>>>>>>>>> REMOVE_ME settings_guide_typo_tolerance_1: |-
   client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
     MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
       TwoTypos: 12,
