@@ -328,6 +328,7 @@ type SearchResponse struct {
 	HitsPerPage        int64         `json:"hitsPerPage,omitempty"`
 	Page               int64         `json:"page,omitempty"`
 	TotalPages         int64         `json:"totalPages,omitempty"`
+	FacetStats         interface{}   `json:"facetStats,omitempty"`
 }
 
 // DocumentQuery is the request body get one documents method
