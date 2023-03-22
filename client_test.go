@@ -2,8 +2,8 @@ package meilisearch
 
 import (
 	"context"
+	"reflect"
 	"strings"
-
 	"sync"
 	"testing"
 	"time"
@@ -1565,6 +1565,147 @@ func TestClient_GenerateTenantToken(t *testing.T) {
 				_, err = client.Index(tt.args.IndexUIDS).Search("", &SearchRequest{})
 
 				require.NoError(t, err)
+			}
+		})
+	}
+}
+
+func TestClient_MultiSearch(t *testing.T) {
+	type args struct {
+		client  *Client
+		queries *MultiSearchRequest
+		UIDS    []string
+	}
+	tests := []struct {
+		name    string
+		args    args
+		want    *MultiSearchResponse
+		wantErr bool
+	}{
+		{
+			name: "TestClientMultiSearchOneIndex",
+			args: args{
+				client: defaultClient,
+				queries: &MultiSearchRequest{
+					[]SearchRequest{
+						{
+							IndexUid: "TestClientMultiSearchOneIndex",
+							Query:    "wonder",
+						},
+					},
+				},
+				UIDS: []string{"TestClientMultiSearchOneIndex"},
+			},
+			want: &MultiSearchResponse{
+				Results: []SearchResponse{
+					{
+						Hits: []interface{}{
+							map[string]interface{}{
+								"book_id": float64(1),
+								"title":   "Alice In Wonderland",
+							},
+						},
+						EstimatedTotalHits: 1,
+						Offset:             0,
+						Limit:              20,
+						Query:              "wonder",
+						IndexUid:           "TestClientMultiSearchOneIndex",
+					},
+				},
+			},
+		},
+		{
+			name: "TestClientMultiSearchOnTwoIndexes",
+			args: args{
+				client: defaultClient,
+				queries: &MultiSearchRequest{
+					[]SearchRequest{
+						{
+							IndexUid: "TestClientMultiSearchOnTwoIndexes1",
+							Query:    "wonder",
+						},
+						{
+							IndexUid: "TestClientMultiSearchOnTwoIndexes2",
+							Query:    "prince",
+						},
+					},
+				},
+				UIDS: []string{"TestClientMultiSearchOnTwoIndexes1", "TestClientMultiSearchOnTwoIndexes2"},
+			},
+			want: &MultiSearchResponse{
+				Results: []SearchResponse{
+					{
+						Hits: []interface{}{
+							map[string]interface{}{
+								"book_id": float64(1),
+								"title":   "Alice In Wonderland",
+							},
+						},
+						EstimatedTotalHits: 1,
+						Offset:             0,
+						Limit:              20,
+						Query:              "wonder",
+						IndexUid:           "TestClientMultiSearchOnTwoIndexes1",
+					},
+					{
+						Hits: []interface{}{
+							map[string]interface{}{
+								"book_id": float64(456),
+								"title":   "Le Petit Prince",
+							},
+							map[string]interface{}{
+								"book_id": float64(4),
+								"title":   "Harry Potter and the Half-Blood Prince",
+							},
+						},
+						EstimatedTotalHits: 2,
+						Offset:             0,
+						Limit:              20,
+						Query:              "prince",
+						IndexUid:           "TestClientMultiSearchOnTwoIndexes2",
+					},
+				},
+			},
+		},
+		{
+			name: "TestClientMultiSearchNoIndex",
+			args: args{
+				client: defaultClient,
+				queries: &MultiSearchRequest{
+					[]SearchRequest{
+						{
+							Query: "",
+						},
+					},
+				},
+				UIDS: []string{"TestClientMultiSearchNoIndex"},
+			},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			for _, UID := range tt.args.UIDS {
+				SetUpBasicIndex(UID)
+			}
+			c := tt.args.client
+			t.Cleanup(cleanup(c))
+
+			got, err := c.MultiSearch(tt.args.queries)
+
+			if tt.wantErr {
+				require.Error(t, err)
+			} else {
+				for i := 0; i < len(tt.want.Results); i++ {
+					if !reflect.DeepEqual(got.Results[i].Hits, tt.want.Results[i].Hits) {
+						t.Errorf("Client.MultiSearch() = %v, want %v", got.Results[i].Hits, tt.want.Results[i].Hits)
+					}
+					require.Equal(t, tt.want.Results[i].EstimatedTotalHits, got.Results[i].EstimatedTotalHits)
+					require.Equal(t, tt.want.Results[i].Offset, got.Results[i].Offset)
+					require.Equal(t, tt.want.Results[i].Limit, got.Results[i].Limit)
+					require.Equal(t, tt.want.Results[i].Query, got.Results[i].Query)
+					require.Equal(t, tt.want.Results[i].IndexUid, got.Results[i].IndexUid)
+				}
 			}
 		})
 	}

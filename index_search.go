@@ -65,10 +65,13 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 }
 
 func searchPostRequestParams(query string, request *SearchRequest) map[string]interface{} {
-	params := make(map[string]interface{}, 14)
+	params := make(map[string]interface{}, 16)
 
 	if !request.PlaceholderSearch {
 		params["q"] = query
+	}
+	if request.IndexUid != "" {
+		params["indexUid"] = request.IndexUid
 	}
 	if request.Limit != DefaultLimit {
 		params["limit"] = request.Limit
