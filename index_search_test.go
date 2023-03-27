@@ -524,6 +524,45 @@ func TestIndex_SearchFacets(t *testing.T) {
 					}),
 			},
 		},
+		{
+			name: "TestIndexSearchWithFacetsAndFacetsStats",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "prince",
+				request: SearchRequest{
+					Facets: []string{"book_id"},
+				},
+				filterableAttributes: []string{"book_id"},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+				FacetDistribution: map[string]interface{}(
+					map[string]interface{}{
+						"book_id": map[string]interface{}{
+							"4":   float64(1),
+							"456": float64(1),
+						},
+					}),
+				FacetStats: map[string]interface{}(
+					map[string]interface{}{
+						"book_id": map[string]interface{}{
+							"max": float64(456),
+							"min": float64(4),
+						},
+					}),
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -548,6 +587,9 @@ func TestIndex_SearchFacets(t *testing.T) {
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
 			require.Equal(t, tt.want.FacetDistribution, got.FacetDistribution)
+			if tt.want.FacetStats != nil {
+				require.Equal(t, tt.want.FacetStats, got.FacetStats)
+			}
 		})
 	}
 }

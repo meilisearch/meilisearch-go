@@ -2174,6 +2174,14 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo14(in *jlexer.Lexer,
 			out.Page = int64(in.Int64())
 		case "totalPages":
 			out.TotalPages = int64(in.Int64())
+		case "facetStats":
+			if m, ok := out.FacetStats.(easyjson.Unmarshaler); ok {
+				m.UnmarshalEasyJSON(in)
+			} else if m, ok := out.FacetStats.(json.Unmarshaler); ok {
+				_ = m.UnmarshalJSON(in.Raw())
+			} else {
+				out.FacetStats = in.Interface()
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -2265,6 +2273,17 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo14(out *jwriter.Writ
 		const prefix string = ",\"totalPages\":"
 		out.RawString(prefix)
 		out.Int64(int64(in.TotalPages))
+	}
+	if in.FacetStats != nil {
+		const prefix string = ",\"facetStats\":"
+		out.RawString(prefix)
+		if m, ok := in.FacetStats.(easyjson.Marshaler); ok {
+			m.MarshalEasyJSON(out)
+		} else if m, ok := in.FacetStats.(json.Marshaler); ok {
+			out.Raw(m.MarshalJSON())
+		} else {
+			out.Raw(json.Marshal(in.FacetStats))
+		}
 	}
 	out.RawByte('}')
 }
