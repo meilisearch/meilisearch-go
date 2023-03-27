@@ -354,6 +354,11 @@ type DocumentsQuery struct {
 	Fields []string `json:"fields,omitempty"`
 }
 
+type CsvDocumentsQuery struct {
+	PrimaryKey   string `json:"primaryKey,omitempty"`
+	CsvDelimiter string `json:"csvDelimiter,omitempty"`
+}
+
 type DocumentsResult struct {
 	Results []map[string]interface{} `json:"results"`
 	Limit   int64                    `json:"limit"`
