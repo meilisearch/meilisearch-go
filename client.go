@@ -256,20 +256,20 @@ func (c *Client) CreateDump() (resp *TaskInfo, err error) {
 func (c *Client) MultiSearch(queries *MultiSearchRequest) (*MultiSearchResponse, error) {
 	resp := &MultiSearchResponse{}
 
-	searchPostQueriesRequestParams := make(map[string][]map[string]interface{}, 1)
+	searchPostQueries := make(map[string][]map[string]interface{}, 1)
 
 	for i := 0; i < len(queries.Queries); i++ {
 		if queries.Queries[i].Limit == 0 {
 			queries.Queries[i].Limit = DefaultLimit
 		}
-		searchPostQueriesRequestParams["queries"] = append(searchPostQueriesRequestParams["queries"], searchPostRequestParams(queries.Queries[i].Query, &queries.Queries[i]))
+		searchPostQueries["queries"] = append(searchPostQueries["queries"], searchPostRequestParams(queries.Queries[i].Query, &queries.Queries[i]))
 	}
 
 	req := internalRequest{
 		endpoint:            "/multi-search",
 		method:              http.MethodPost,
 		contentType:         contentTypeJSON,
-		withRequest:         searchPostQueriesRequestParams,
+		withRequest:         searchPostQueries,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "MultiSearch",
