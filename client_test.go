@@ -861,7 +861,7 @@ func TestClient_CancelTasks(t *testing.T) {
 			want: "?statuses=succeeded",
 		},
 		{
-			name: "TestCancelTasksWithIndexUidFilter",
+			name: "TestCancelTasksWithIndexUIDFilter",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
@@ -872,7 +872,7 @@ func TestClient_CancelTasks(t *testing.T) {
 			want: "?indexUids=0",
 		},
 		{
-			name: "TestCancelTasksWithMultipleIndexUidsFilter",
+			name: "TestCancelTasksWithMultipleIndexUIDsFilter",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
@@ -1006,7 +1006,7 @@ func TestClient_DeleteTasks(t *testing.T) {
 			want: "?uids=0%2C1",
 		},
 		{
-			name: "TestDeleteTasksWithIndexUidFilter",
+			name: "TestDeleteTasksWithIndexUIDFilter",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
@@ -1017,7 +1017,7 @@ func TestClient_DeleteTasks(t *testing.T) {
 			want: "?indexUids=0",
 		},
 		{
-			name: "TestDeleteTasksWithMultipleIndexUidsFilter",
+			name: "TestDeleteTasksWithMultipleIndexUIDsFilter",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
@@ -1589,7 +1589,7 @@ func TestClient_MultiSearch(t *testing.T) {
 				queries: &MultiSearchRequest{
 					[]SearchRequest{
 						{
-							IndexUid: "TestClientMultiSearchOneIndex",
+							IndexUID: "TestClientMultiSearchOneIndex",
 							Query:    "wonder",
 						},
 					},
@@ -1609,7 +1609,7 @@ func TestClient_MultiSearch(t *testing.T) {
 						Offset:             0,
 						Limit:              20,
 						Query:              "wonder",
-						IndexUid:           "TestClientMultiSearchOneIndex",
+						IndexUID:           "TestClientMultiSearchOneIndex",
 					},
 				},
 			},
@@ -1621,11 +1621,11 @@ func TestClient_MultiSearch(t *testing.T) {
 				queries: &MultiSearchRequest{
 					[]SearchRequest{
 						{
-							IndexUid: "TestClientMultiSearchOnTwoIndexes1",
+							IndexUID: "TestClientMultiSearchOnTwoIndexes1",
 							Query:    "wonder",
 						},
 						{
-							IndexUid: "TestClientMultiSearchOnTwoIndexes2",
+							IndexUID: "TestClientMultiSearchOnTwoIndexes2",
 							Query:    "prince",
 						},
 					},
@@ -1645,7 +1645,7 @@ func TestClient_MultiSearch(t *testing.T) {
 						Offset:             0,
 						Limit:              20,
 						Query:              "wonder",
-						IndexUid:           "TestClientMultiSearchOnTwoIndexes1",
+						IndexUID:           "TestClientMultiSearchOnTwoIndexes1",
 					},
 					{
 						Hits: []interface{}{
@@ -1662,7 +1662,7 @@ func TestClient_MultiSearch(t *testing.T) {
 						Offset:             0,
 						Limit:              20,
 						Query:              "prince",
-						IndexUid:           "TestClientMultiSearchOnTwoIndexes2",
+						IndexUID:           "TestClientMultiSearchOnTwoIndexes2",
 					},
 				},
 			},
@@ -1704,7 +1704,7 @@ func TestClient_MultiSearch(t *testing.T) {
 					require.Equal(t, tt.want.Results[i].Offset, got.Results[i].Offset)
 					require.Equal(t, tt.want.Results[i].Limit, got.Results[i].Limit)
 					require.Equal(t, tt.want.Results[i].Query, got.Results[i].Query)
-					require.Equal(t, tt.want.Results[i].IndexUid, got.Results[i].IndexUid)
+					require.Equal(t, tt.want.Results[i].IndexUID, got.Results[i].IndexUID)
 				}
 			}
 		})
