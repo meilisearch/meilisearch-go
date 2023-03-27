@@ -44,6 +44,9 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	if request.Limit == 0 {
 		request.Limit = DefaultLimit
 	}
+	if request.IndexUID != "" {
+		request.IndexUID = ""
+	}
 
 	searchPostRequestParams := searchPostRequestParams(query, request)
 
@@ -70,8 +73,8 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	if !request.PlaceholderSearch {
 		params["q"] = query
 	}
-	if request.IndexUid != "" {
-		params["indexUid"] = request.IndexUid
+	if request.IndexUID != "" {
+		params["indexUid"] = request.IndexUID
 	}
 	if request.Limit != DefaultLimit {
 		params["limit"] = request.Limit

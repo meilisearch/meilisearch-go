@@ -2183,7 +2183,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo14(in *jlexer.Lexer,
 				out.FacetStats = in.Interface()
 			}
 		case "indexUid":
-			out.IndexUid = string(in.String())
+			out.IndexUID = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -2287,10 +2287,10 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo14(out *jwriter.Writ
 			out.Raw(json.Marshal(in.FacetStats))
 		}
 	}
-	if in.IndexUid != "" {
+	if in.IndexUID != "" {
 		const prefix string = ",\"indexUid\":"
 		out.RawString(prefix)
-		out.String(string(in.IndexUid))
+		out.String(string(in.IndexUID))
 	}
 	out.RawByte('}')
 }
@@ -2482,8 +2482,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo15(in *jlexer.Lexer,
 			out.HitsPerPage = int64(in.Int64())
 		case "Page":
 			out.Page = int64(in.Int64())
-		case "IndexUid":
-			out.IndexUid = string(in.String())
+		case "IndexUID":
+			out.IndexUID = string(in.String())
 		case "Query":
 			out.Query = string(in.String())
 		default:
@@ -2647,9 +2647,9 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo15(out *jwriter.Writ
 		out.Int64(int64(in.Page))
 	}
 	{
-		const prefix string = ",\"IndexUid\":"
+		const prefix string = ",\"IndexUID\":"
 		out.RawString(prefix)
-		out.String(string(in.IndexUid))
+		out.String(string(in.IndexUID))
 	}
 	{
 		const prefix string = ",\"Query\":"

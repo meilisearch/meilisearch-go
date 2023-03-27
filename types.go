@@ -313,7 +313,7 @@ type SearchRequest struct {
 	Sort                  []string
 	HitsPerPage           int64
 	Page                  int64
-	IndexUid              string
+	IndexUID              string
 	Query                 string
 }
 
@@ -335,7 +335,7 @@ type SearchResponse struct {
 	Page               int64         `json:"page,omitempty"`
 	TotalPages         int64         `json:"totalPages,omitempty"`
 	FacetStats         interface{}   `json:"facetStats,omitempty"`
-	IndexUid           string        `json:"indexUid,omitempty"`
+	IndexUID           string        `json:"indexUid,omitempty"`
 }
 
 type MultiSearchResponse struct {
