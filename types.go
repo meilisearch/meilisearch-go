@@ -313,6 +313,12 @@ type SearchRequest struct {
 	Sort                  []string
 	HitsPerPage           int64
 	Page                  int64
+	IndexUID              string
+	Query                 string
+}
+
+type MultiSearchRequest struct {
+	Queries []SearchRequest `json:"queries"`
 }
 
 // SearchResponse is the response body for search method
@@ -329,6 +335,11 @@ type SearchResponse struct {
 	Page               int64         `json:"page,omitempty"`
 	TotalPages         int64         `json:"totalPages,omitempty"`
 	FacetStats         interface{}   `json:"facetStats,omitempty"`
+	IndexUID           string        `json:"indexUid,omitempty"`
+}
+
+type MultiSearchResponse struct {
+	Results []SearchResponse `json:"results"`
 }
 
 // DocumentQuery is the request body get one documents method
