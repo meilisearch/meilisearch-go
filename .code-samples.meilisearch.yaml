@@ -3,12 +3,6 @@
 # the documentation on build
 # You can read more on https://github.com/meilisearch/documentation/tree/master/.vuepress/code-samples
 ---
-filtering_guide_nested_1: |-
-  with data: { "index": "movies", "q": "thriller", "filter": "rating.users >= 90" }
-
-sorting_guide_sort_nested_1: |-
-  with data: { "index": "books", "q": "science fiction", "sort": ["rating.users:asc"] }
-
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
@@ -332,16 +326,16 @@ get_health_1: |-
   client.Health()
 get_version_1: |-
   client.GetVersion()
->>>>>>>>>>>>>>>> UPDATE_ME distinct_attribute_guide_1 (use distinct attribute route): |-
+distinct_attribute_guide_1: |-
   client.Index("jackets").UpdateDistinctAttribute("product_id")
->>>>>>>>>>>>>>>> UPDATE_ME field_properties_guide_searchable_1 (use searchable attribute route): |-
+field_properties_guide_searchable_1: |-
   searchableAttributes := []string{
     "title",
     "overview",
     "genres",
   }
   client.Index("movies").UpdateSearchableAttributes(&searchableAttributes)
->>>>>>>>>>>>>>>> UPDATE_ME field_properties_guide_displayed_1 (use displayed attribute route): |-
+field_properties_guide_displayed_1: |-
   displayedAttributes := []string{
     "title",
     "overview",
@@ -360,6 +354,10 @@ filtering_guide_2: |-
 filtering_guide_3: |-
   resp, err := client.Index("movies").Search("Planet of the Apes", &meilisearch.SearchRequest{
     Filter: "rating >= 3 AND (NOT director = \"Tim Burton\")",
+  })
+filtering_guide_nested_1: |-
+  resp, err := client.Index("movie_ratings").Search("thriller", &meilisearch.SearchRequest{
+    Filter: "rating.users >= 90",
   })
 search_parameter_guide_query_1: |-
   resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{})
@@ -414,85 +412,6 @@ search_parameter_guide_hitsperpage_1: |-
 search_parameter_guide_page_1: |-
   client.Index("movies").Search("q", &meilisearch.SearchRequest{
     Page: 2,
-  })
->>>>>>>>>>> REMOVE_ME settings_guide_synonyms_1: |-
-  settings := meilisearch.Settings{
-    Synonyms: map[string][]string{
-      "sweater": []string{"jumper"},
-      "jumper":     []string{"sweater"},
-    },
-  }
-  client.Index("tops").UpdateSettings(&settings)
->>>>>>>>>>> REMOVE_ME settings_guide_stop_words_1: |-
-  settings := meilisearch.Settings{
-    StopWords: []string{
-      "the",
-      "a",
-      "an",
-    },
-  }
-  client.Index("movies").UpdateSettings(&settings)
->>>>>>>>>>> REMOVE_ME settings_guide_ranking_rules_1: |-
-  settings := meilisearch.Settings{
-    RankingRules: []string{
-      "words",
-      "typo",
-      "proximity",
-      "attribute",
-      "sort",
-      "exactness",
-      "release_date:asc",
-      "rank:desc",
-    },
-  }
-  client.Index("movies").UpdateSettings(&settings)
->>>>>>>>>>> REMOVE_ME settings_guide_distinct_1: |-
-  distinctAttribute := "product_id"
-  settings := meilisearch.Settings{
-    DistinctAttribute: &distinctAttribute,
-  }
-  client.Index("jackets").UpdateSettings(&settings)
->>>>>>>>>>> REMOVE_ME settings_guide_searchable_1: |-
-  settings := meilisearch.Settings{
-    SearchableAttributes: []string{
-      "title",
-      "overview",
-      "genres",
-    },
-  }
-  client.Index("movies").UpdateSettings(&settings)
->>>>>>>>>>> REMOVE_ME settings_guide_displayed_1: |-
-  settings := meilisearch.Settings{
-    DisplayedAttributes: []string{
-      "title",
-      "overview",
-      "genres",
-      "release_date",
-    },
-  }
-  client.Index("movies").UpdateSettings(&settings)
->>>>>>>>>>> REMOVE_ME settings_guide_sortable_1: |-
-  settings := meilisearch.Settings{
-    SortableAttributes: []string{
-      "price",
-      "author",
-    },
-  }
-  client.Index("books").UpdateSettings(&settings)
->>>>>>>>>>> REMOVE_ME settings_guide_pagination_1: |-
-  client.Index("movies").UpdatePagination(&meilisearch.Pagination{
-    MaxTotalHits: 50,
-  })
->>>>>>>>>>> REMOVE_ME settings_guide_faceting_1: |-
-  client.Index("movies").UpdateFaceting(&meilisearch.Faceting{
-    MaxValuesPerFacet: 5,
-  })
->>>>>>>>>>> REMOVE_ME settings_guide_typo_tolerance_1: |-
-  client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
-    MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
-      TwoTypos: 12,
-    },
-    DisableOnAttributes: []string{"title"},
   })
 typo_tolerance_guide_1: |-
   client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
@@ -742,6 +661,12 @@ sorting_guide_sort_parameter_2: |-
   resp, err := client.Index("books").Search("butler", &meilisearch.SearchRequest{
     Sort: []string{
       "author:desc",
+    },
+  })
+sorting_guide_sort_nested_1: |-
+  resp, err := client.Index("books").Search("science fiction", &meilisearch.SearchRequest{
+    Sort: []string{
+      "rating.users:asc",
     },
   })
 search_parameter_guide_sort_1: |-
