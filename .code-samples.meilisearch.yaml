@@ -3,68 +3,6 @@
 # the documentation on build
 # You can read more on https://github.com/meilisearch/documentation/tree/master/.vuepress/code-samples
 ---
-multi_search_1: |-
-  see cURL: https://github.com/meilisearch/documentation/blob/5ec3df3844f603f0958d91a0c5cfc38bc57656af/.code-samples.meilisearch.yaml#L996-L1017
-  multi-search with data: { "queries": [
-      {
-        "indexUid": "movies",
-        "q": "pooh",
-        "limit": 5
-      },
-      {
-        "indexUid": "movies",
-        "q": "nemo",
-        "limit": 5
-      },
-      {
-        "indexUid": "movie_ratings",
-        "q": "us"
-      }
-    ]
-  }
-faceted_search_update_settings_1: |-
-  See cURL: https://github.com/meilisearch/documentation/blob/5ec3df3844f603f0958d91a0c5cfc38bc57656af/.code-samples.meilisearch.yaml#L1018-L1024
-  on the books index: Add "genres", "rating", "language" as filterable attributes
-faceted_search_1: |-
-  See cURL: https://github.com/meilisearch/documentation/blob/5ec3df3844f603f0958d91a0c5cfc38bc57656af/.code-samples.meilisearch.yaml#L1025-L1034
-  Search books index with data: {
-      "q": "classic",
-        "facets": [
-        "genres", "rating", "language"
-      ]
-    }
-search_parameter_guide_facet_stats_1: |-
-  See cURL: https://github.com/meilisearch/documentation/blob/5ec3df3844f603f0958d91a0c5cfc38bc57656af/.code-samples.meilisearch.yaml#L1035-L1042
-  search movie_ratings index with data: '{
-      "q": "Batman",
-      "facets": ["genres", "rating"]
-    }
-faceted_search_2: |-
-  see cURL: https://github.com/meilisearch/documentation/blob/5ec3df3844f603f0958d91a0c5cfc38bc57656af/.code-samples.meilisearch.yaml#L1043-L1065
-  multi-search with data: {
-      "queries": [
-        {
-          "indexUid": "books",
-          "facets": ["language", "genres", "author", "format"],
-          "filter": [["language = English", "language = French"], ["genres = Fiction"]]
-        },
-        {
-          "indexUid": "books",
-          "facets": ["language"],
-          "filter": [["genres = Fiction"]]
-        },
-        {
-          "indexUid": "books",
-          "facets": ["genres"],
-          "filter": [["language = English", "language = French"]]
-        }
-      ]
-    }
-geosearch_guide_filter_usage_3: |-
-  see cURL: https://github.com/meilisearch/documentation/blob/c8ab47d004753ce2241a756eff14ade448d70a93/.code-samples.meilisearch.yaml#L696-L700
-  Search on `restaurants` with data:
-    '{ "filter": "_geoBoundingBox([45.494181, 9.179175], [45.449484, 9.214024])" }'          
-
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
@@ -130,6 +68,25 @@ delete_documents_1: |-
   })
 search_post_1: |-
   client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
+multi_search_1: |-
+  client.MultiSearch(&MultiSearchRequest{
+    Queries: []SearchRequest{
+      {
+        IndexUID: "movies",
+        Query:    "pooh",
+        Limit:    5,
+      },
+      {
+        IndexUID: "movies",
+        Query:    "nemo",
+        Limit:    5,
+      },
+      {
+        IndexUID: "movie_ratings",
+        Query:    "us",
+      },
+    },
+  })
 delete_tasks_1: |-
   client.DeleteTaks(&meilisearch.DeleteTasksQuery{
     UIDS: []int64{1, 2},
@@ -471,6 +428,19 @@ search_parameter_guide_page_1: |-
   client.Index("movies").Search("q", &meilisearch.SearchRequest{
     Page: 2,
   })
+search_parameter_guide_sort_1: |-
+  resp, err := client.Index("books").Search("science fiction", &meilisearch.SearchRequest{
+    Sort: []string{
+      "price:asc",
+    },
+  })
+search_parameter_guide_facet_stats_1: |-
+  resp, err := client.Index("movie_ratings").Search("Batman", &meilisearch.SearchRequest{
+    Facets: []string{
+      "genres",
+      "rating",
+    },
+  })
 settings_guide_synonyms_1: |-
   settings := meilisearch.Settings{
     Synonyms: map[string][]string{
@@ -768,6 +738,60 @@ faceted_search_walkthrough_filter_1: |-
       []string{"director = \"Jordan Peele\""},
     },
   })
+faceted_search_update_settings_1: |-
+  filterableAttributes := []string{
+    "genres",
+    "rating",
+    "language",
+  }
+  client.Index("books").UpdateFilterableAttributes(&filterableAttributes)
+faceted_search_1: |-
+  resp, err := client.Index("books").Search("classic", &meilisearch.SearchRequest{
+    Facets: []string{
+      "genres",
+      "rating",
+      "language",
+    },
+  })
+faceted_search_2: |-
+  client.MultiSearch(&MultiSearchRequest{
+    Queries: []SearchRequest{
+      {
+        IndexUID: "books",
+        Query:    "pooh",
+        Facets: []string{
+          "language",
+          "genres",
+          "author",
+          "format",
+        },
+        Filter: [][]string{
+          []string{"language = English", "language = French"},
+          []string{"genres = Fiction"},
+        },
+      },
+      {
+        IndexUID: "books",
+        Query:    "nemo",
+        Facets: []string{
+          "language",
+        },
+        Filter: [][]string{
+          []string{"genres = Fiction"},
+        },
+      },
+      {
+        IndexUID: "books",
+        Query:    "us",
+        Facets: []string{
+          "genres",
+        },
+        Filter: [][]string{
+          []string{"language = English", "language = French"},
+        },
+      },
+    },
+  })
 post_dump_1: |-
   resp, err := client.CreateDump()
 phrase_search_1: |-
@@ -800,12 +824,6 @@ sorting_guide_sort_parameter_2: |-
       "author:desc",
     },
   })
-search_parameter_guide_sort_1: |-
-  resp, err := client.Index("books").Search("science fiction", &meilisearch.SearchRequest{
-    Sort: []string{
-      "price:asc",
-    },
-  })
 geosearch_guide_filter_settings_1: |-
   filterableAttributes := []string{
     "_geo",
@@ -836,6 +854,10 @@ geosearch_guide_sort_usage_2: |-
       "_geoPoint(48.8561446,2.2978204):asc",
       "rating:desc",
     },
+  })
+geosearch_guide_filter_usage_3: |-
+  client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Filter: "_geoBoundingBox([45.494181, 9.179175], [45.449484, 9.214024])",
   })
 primary_field_guide_create_index_primary_key: |-
   client.CreateIndex(&meilisearch.IndexConfig{
