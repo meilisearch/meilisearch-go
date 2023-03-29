@@ -68,6 +68,25 @@ delete_documents_1: |-
   })
 search_post_1: |-
   client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
+multi_search_1: |-
+  client.MultiSearch(&MultiSearchRequest{
+    Queries: []SearchRequest{
+      {
+        IndexUID: "movies",
+        Query:    "pooh",
+        Limit:    5,
+      },
+      {
+        IndexUID: "movies",
+        Query:    "nemo",
+        Limit:    5,
+      },
+      {
+        IndexUID: "movie_ratings",
+        Query:    "us",
+      },
+    },
+  })
 delete_tasks_1: |-
   client.DeleteTaks(&meilisearch.DeleteTasksQuery{
     UIDS: []int64{1, 2},
@@ -606,7 +625,7 @@ getting_started_pagination: |-
   client.Index("movies").UpdatePagination(&meilisearch.Pagination{
       MaxTotalHits: 500,
   })
-faceted_search_update_settings_1: |-
+filtering_update_settings_1: |-
   resp, err := client.Index("movies").UpdateFilterableAttributes(&[]string{
     "director",
     "genres",
@@ -629,6 +648,60 @@ faceted_search_walkthrough_filter_1: |-
     Filter: [][]string{
       []string{"genres = Horror", "genres = Mystery"},
       []string{"director = \"Jordan Peele\""},
+    },
+  })
+faceted_search_update_settings_1: |-
+  filterableAttributes := []string{
+    "genres",
+    "rating",
+    "language",
+  }
+  client.Index("books").UpdateFilterableAttributes(&filterableAttributes)
+faceted_search_1: |-
+  resp, err := client.Index("books").Search("classic", &meilisearch.SearchRequest{
+    Facets: []string{
+      "genres",
+      "rating",
+      "language",
+    },
+  })
+faceted_search_2: |-
+  client.MultiSearch(&MultiSearchRequest{
+    Queries: []SearchRequest{
+      {
+        IndexUID: "books",
+        Query:    "pooh",
+        Facets: []string{
+          "language",
+          "genres",
+          "author",
+          "format",
+        },
+        Filter: [][]string{
+          []string{"language = English", "language = French"},
+          []string{"genres = Fiction"},
+        },
+      },
+      {
+        IndexUID: "books",
+        Query:    "nemo",
+        Facets: []string{
+          "language",
+        },
+        Filter: [][]string{
+          []string{"genres = Fiction"},
+        },
+      },
+      {
+        IndexUID: "books",
+        Query:    "us",
+        Facets: []string{
+          "genres",
+        },
+        Filter: [][]string{
+          []string{"language = English", "language = French"},
+        },
+      },
     },
   })
 post_dump_1: |-
@@ -705,6 +778,10 @@ geosearch_guide_sort_usage_2: |-
       "_geoPoint(48.8561446,2.2978204):asc",
       "rating:desc",
     },
+  })
+geosearch_guide_filter_usage_3: |-
+  client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Filter: "_geoBoundingBox([45.494181, 9.179175], [45.449484, 9.214024])",
   })
 primary_field_guide_create_index_primary_key: |-
   client.CreateIndex(&meilisearch.IndexConfig{
