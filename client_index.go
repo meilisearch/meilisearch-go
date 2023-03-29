@@ -70,6 +70,11 @@ func (c *Client) GetIndexes(param *IndexesQuery) (resp *IndexesResults, err erro
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
 	}
+
+	for i := range resp.Results {
+		resp.Results[i].client = c
+	}
+
 	return resp, nil
 }
 
