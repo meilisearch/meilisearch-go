@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-var NoLimit int64 = math.MinInt
+var NoLimit int64 = math.MinInt64
 
 func (i Index) GetDocument(identifier string, request *DocumentQuery, documentPtr interface{}) error {
 	req := internalRequest{
