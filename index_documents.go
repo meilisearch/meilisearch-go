@@ -13,6 +13,8 @@ import (
 	"strings"
 )
 
+var NoLimit int64 = math.MinInt
+
 func (i Index) GetDocument(identifier string, request *DocumentQuery, documentPtr interface{}) error {
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents/" + identifier,
@@ -45,8 +47,8 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 		functionName:        "GetDocuments",
 	}
 	if request != nil {
-		if request.Limit != nil {
-			req.withQueryParams["limit"] = strconv.FormatInt(*request.Limit, 10)
+		if request.Limit != NoLimit {
+			req.withQueryParams["limit"] = strconv.FormatInt(request.Limit, 10)
 		}
 		if request.Offset != 0 {
 			req.withQueryParams["offset"] = strconv.FormatInt(request.Offset, 10)
@@ -413,9 +415,4 @@ func (i Index) DeleteAllDocuments() (resp *TaskInfo, err error) {
 		return nil, err
 	}
 	return resp, nil
-}
-
-// Helper function to create a pointer to int64
-func int64p(i int64) *int64 {
-	return &i
 }
