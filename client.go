@@ -42,6 +42,7 @@ type ClientInterface interface {
 	CreateIndex(config *IndexConfig) (resp *TaskInfo, err error)
 	DeleteIndex(uid string) (resp *TaskInfo, err error)
 	CreateKey(request *Key) (resp *Key, err error)
+	MultiSearch(queries *MultiSearchRequest) (*MultiSearchResponse, error)
 	GetKey(identifier string) (resp *Key, err error)
 	GetKeys(param *KeysQuery) (resp *KeysResults, err error)
 	UpdateKey(keyOrUID string, request *Key) (resp *Key, err error)
@@ -249,6 +250,35 @@ func (c *Client) CreateDump() (resp *TaskInfo, err error) {
 	if err := c.executeRequest(req); err != nil {
 		return nil, err
 	}
+	return resp, nil
+}
+
+func (c *Client) MultiSearch(queries *MultiSearchRequest) (*MultiSearchResponse, error) {
+	resp := &MultiSearchResponse{}
+
+	searchPostQueries := make(map[string][]map[string]interface{}, 1)
+
+	for i := 0; i < len(queries.Queries); i++ {
+		if queries.Queries[i].Limit == 0 {
+			queries.Queries[i].Limit = DefaultLimit
+		}
+		searchPostQueries["queries"] = append(searchPostQueries["queries"], searchPostRequestParams(queries.Queries[i].Query, &queries.Queries[i]))
+	}
+
+	req := internalRequest{
+		endpoint:            "/multi-search",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         searchPostQueries,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "MultiSearch",
+	}
+
+	if err := c.executeRequest(req); err != nil {
+		return nil, err
+	}
+
 	return resp, nil
 }
 
