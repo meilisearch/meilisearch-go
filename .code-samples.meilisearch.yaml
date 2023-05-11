@@ -68,6 +68,25 @@ delete_documents_1: |-
   })
 search_post_1: |-
   client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
+multi_search_1: |-
+  client.MultiSearch(&MultiSearchRequest{
+    Queries: []SearchRequest{
+      {
+        IndexUID: "movies",
+        Query:    "pooh",
+        Limit:    5,
+      },
+      {
+        IndexUID: "movies",
+        Query:    "nemo",
+        Limit:    5,
+      },
+      {
+        IndexUID: "movie_ratings",
+        Query:    "us",
+      },
+    },
+  })
 delete_tasks_1: |-
   client.DeleteTaks(&meilisearch.DeleteTasksQuery{
     UIDS: []int64{1, 2},
@@ -355,6 +374,10 @@ filtering_guide_3: |-
   resp, err := client.Index("movies").Search("Planet of the Apes", &meilisearch.SearchRequest{
     Filter: "rating >= 3 AND (NOT director = \"Tim Burton\")",
   })
+filtering_guide_nested_1: |-
+  resp, err := client.Index("movie_ratings").Search("thriller", &meilisearch.SearchRequest{
+    Filter: "rating.users >= 90",
+  })
 search_parameter_guide_query_1: |-
   resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{})
 search_parameter_guide_offset_1: |-
@@ -408,85 +431,6 @@ search_parameter_guide_hitsperpage_1: |-
 search_parameter_guide_page_1: |-
   client.Index("movies").Search("q", &meilisearch.SearchRequest{
     Page: 2,
-  })
-settings_guide_synonyms_1: |-
-  settings := meilisearch.Settings{
-    Synonyms: map[string][]string{
-      "sweater": []string{"jumper"},
-      "jumper":     []string{"sweater"},
-    },
-  }
-  client.Index("tops").UpdateSettings(&settings)
-settings_guide_stop_words_1: |-
-  settings := meilisearch.Settings{
-    StopWords: []string{
-      "the",
-      "a",
-      "an",
-    },
-  }
-  client.Index("movies").UpdateSettings(&settings)
-settings_guide_ranking_rules_1: |-
-  settings := meilisearch.Settings{
-    RankingRules: []string{
-      "words",
-      "typo",
-      "proximity",
-      "attribute",
-      "sort",
-      "exactness",
-      "release_date:asc",
-      "rank:desc",
-    },
-  }
-  client.Index("movies").UpdateSettings(&settings)
-settings_guide_distinct_1: |-
-  distinctAttribute := "product_id"
-  settings := meilisearch.Settings{
-    DistinctAttribute: &distinctAttribute,
-  }
-  client.Index("jackets").UpdateSettings(&settings)
-settings_guide_searchable_1: |-
-  settings := meilisearch.Settings{
-    SearchableAttributes: []string{
-      "title",
-      "overview",
-      "genres",
-    },
-  }
-  client.Index("movies").UpdateSettings(&settings)
-settings_guide_displayed_1: |-
-  settings := meilisearch.Settings{
-    DisplayedAttributes: []string{
-      "title",
-      "overview",
-      "genres",
-      "release_date",
-    },
-  }
-  client.Index("movies").UpdateSettings(&settings)
-settings_guide_sortable_1: |-
-  settings := meilisearch.Settings{
-    SortableAttributes: []string{
-      "price",
-      "author",
-    },
-  }
-  client.Index("books").UpdateSettings(&settings)
-settings_guide_pagination_1: |-
-  client.Index("movies").UpdatePagination(&meilisearch.Pagination{
-    MaxTotalHits: 50,
-  })
-settings_guide_faceting_1: |-
-  client.Index("movies").UpdateFaceting(&meilisearch.Faceting{
-    MaxValuesPerFacet: 5,
-  })
-settings_guide_typo_tolerance_1: |-
-  client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
-    MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
-      TwoTypos: 12,
-    },
-    DisableOnAttributes: []string{"title"},
   })
 typo_tolerance_guide_1: |-
   client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
@@ -681,7 +625,7 @@ getting_started_pagination: |-
   client.Index("movies").UpdatePagination(&meilisearch.Pagination{
       MaxTotalHits: 500,
   })
-faceted_search_update_settings_1: |-
+filtering_update_settings_1: |-
   resp, err := client.Index("movies").UpdateFilterableAttributes(&[]string{
     "director",
     "genres",
@@ -704,6 +648,60 @@ faceted_search_walkthrough_filter_1: |-
     Filter: [][]string{
       []string{"genres = Horror", "genres = Mystery"},
       []string{"director = \"Jordan Peele\""},
+    },
+  })
+faceted_search_update_settings_1: |-
+  filterableAttributes := []string{
+    "genres",
+    "rating",
+    "language",
+  }
+  client.Index("books").UpdateFilterableAttributes(&filterableAttributes)
+faceted_search_1: |-
+  resp, err := client.Index("books").Search("classic", &meilisearch.SearchRequest{
+    Facets: []string{
+      "genres",
+      "rating",
+      "language",
+    },
+  })
+faceted_search_2: |-
+  client.MultiSearch(&MultiSearchRequest{
+    Queries: []SearchRequest{
+      {
+        IndexUID: "books",
+        Query:    "pooh",
+        Facets: []string{
+          "language",
+          "genres",
+          "author",
+          "format",
+        },
+        Filter: [][]string{
+          []string{"language = English", "language = French"},
+          []string{"genres = Fiction"},
+        },
+      },
+      {
+        IndexUID: "books",
+        Query:    "nemo",
+        Facets: []string{
+          "language",
+        },
+        Filter: [][]string{
+          []string{"genres = Fiction"},
+        },
+      },
+      {
+        IndexUID: "books",
+        Query:    "us",
+        Facets: []string{
+          "genres",
+        },
+        Filter: [][]string{
+          []string{"language = English", "language = French"},
+        },
+      },
     },
   })
 post_dump_1: |-
@@ -736,6 +734,12 @@ sorting_guide_sort_parameter_2: |-
   resp, err := client.Index("books").Search("butler", &meilisearch.SearchRequest{
     Sort: []string{
       "author:desc",
+    },
+  })
+sorting_guide_sort_nested_1: |-
+  resp, err := client.Index("books").Search("science fiction", &meilisearch.SearchRequest{
+    Sort: []string{
+      "rating.users:asc",
     },
   })
 search_parameter_guide_sort_1: |-
@@ -774,6 +778,10 @@ geosearch_guide_sort_usage_2: |-
       "_geoPoint(48.8561446,2.2978204):asc",
       "rating:desc",
     },
+  })
+geosearch_guide_filter_usage_3: |-
+  client.Index("restaurants").Search("", &meilisearch.SearchRequest{
+    Filter: "_geoBoundingBox([45.494181, 9.179175], [45.449484, 9.214024])",
   })
 primary_field_guide_create_index_primary_key: |-
   client.CreateIndex(&meilisearch.IndexConfig{
