@@ -638,7 +638,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: NoLimit}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 		})
@@ -756,7 +756,7 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: NoLimit}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 		})
@@ -854,7 +854,7 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 			testWaitForBatchTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: NoLimit}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 		})
@@ -959,7 +959,7 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: NoLimit}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 		})
@@ -1057,7 +1057,7 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 			testWaitForBatchTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: NoLimit}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 		})
@@ -1545,7 +1545,7 @@ func TestIndex_GetDocuments(t *testing.T) {
 
 			err := i.GetDocuments(tt.args.request, tt.args.resp)
 			require.NoError(t, err)
-			if tt.args.request != nil && tt.args.request.Limit != 0 {
+			if tt.args.request != nil && tt.args.request.Limit != NoLimit {
 				require.Equal(t, tt.args.request.Limit, int64(len(tt.args.resp.Results)))
 			} else {
 				require.Equal(t, 6, len(tt.args.resp.Results))
@@ -2004,7 +2004,7 @@ func TestIndex_UpdateDocumentsCsv(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: NoLimit}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 		})
@@ -2122,7 +2122,7 @@ func TestIndex_UpdateDocumentsCsvWithOptions(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: NoLimit}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 		})
@@ -2220,7 +2220,7 @@ func TestIndex_UpdateDocumentsCsvInBatches(t *testing.T) {
 			testWaitForBatchTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: NoLimit}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 		})
@@ -2301,7 +2301,7 @@ func TestIndex_UpdateDocumentsNdjson(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: NoLimit}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 		})
@@ -2399,7 +2399,7 @@ func TestIndex_UpdateDocumentsNdjsonInBatches(t *testing.T) {
 			testWaitForBatchTask(t, i, gotResp)
 
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: NoLimit}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 		})
