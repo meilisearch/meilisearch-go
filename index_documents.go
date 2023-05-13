@@ -15,6 +15,7 @@ import (
 	"strings"
 )
 
+// Variable for setting no limit on number of documents to fetch
 var NoLimit int64 = math.MinInt64
 
 func transformStringVariadicToMap(primaryKey ...string) (options map[string]string) {
