@@ -350,6 +350,10 @@ type DocumentQuery struct {
 // DocumentsQuery is the request body for list documents method
 type DocumentsQuery struct {
 	Offset int64    `json:"offset,omitempty"`
+	// Limit sets the numbers of returned documents from the
+	// search queries. The limit can be zero for explicitly
+	// return nothing. For retrieving all 
+	// returned documents, use NoLimit. 
 	Limit  int64   `json:"limit,omitempty"`
 	Fields []string `json:"fields,omitempty"`
 }
