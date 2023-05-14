@@ -15,7 +15,8 @@ import (
 	"strings"
 )
 
-// Variable for setting no limit on number of documents to fetch
+// NoLimit should be used to set Limit field value
+// on DocumentsQuery struct to return all documents.
 var NoLimit int64 = math.MinInt64
 
 func transformStringVariadicToMap(primaryKey ...string) (options map[string]string) {
