@@ -1481,15 +1481,16 @@ func TestIndex_GetDocuments(t *testing.T) {
 		client  *Client
 		request *DocumentsQuery
 		resp    *DocumentsResult
+		filter  []string
 	}
 	tests := []struct {
-		name string
-		args args
+		name   string
+		args   args
+		result int64
 	}{
 		{
 			name: "TestIndexBasicGetDocuments",
 			args: args{
-				UID:     "TestIndexBasicGetDocuments",
 				client:  defaultClient,
 				request: nil,
 				resp:    &DocumentsResult{},
@@ -1498,7 +1499,6 @@ func TestIndex_GetDocuments(t *testing.T) {
 		{
 			name: "TestIndexGetDocumentsWithCustomClient",
 			args: args{
-				UID:     "TestIndexGetDocumentsWithCustomClient",
 				client:  customClient,
 				request: nil,
 				resp:    &DocumentsResult{},
@@ -1507,7 +1507,6 @@ func TestIndex_GetDocuments(t *testing.T) {
 		{
 			name: "TestIndexGetDocumentsWithEmptyStruct",
 			args: args{
-				UID:     "TestIndexGetDocumentsWithNoExistingDocument",
 				client:  defaultClient,
 				request: &DocumentsQuery{},
 				resp:    &DocumentsResult{},
@@ -1516,7 +1515,6 @@ func TestIndex_GetDocuments(t *testing.T) {
 		{
 			name: "TestIndexGetDocumentsWithLimit",
 			args: args{
-				UID:    "TestIndexGetDocumentsWithNoExistingDocument",
 				client: defaultClient,
 				request: &DocumentsQuery{
 					Limit: 3,
@@ -1525,9 +1523,8 @@ func TestIndex_GetDocuments(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexGetDocumentsWithLimit",
+			name: "TestIndexGetDocumentsWithFields",
 			args: args{
-				UID:    "TestIndexGetDocumentsWithNoExistingDocument",
 				client: defaultClient,
 				request: &DocumentsQuery{
 					Fields: []string{"title"},
@@ -1535,20 +1532,57 @@ func TestIndex_GetDocuments(t *testing.T) {
 				resp: &DocumentsResult{},
 			},
 		},
+		{
+			name: "TestIndexGetDocumentsWithFilter",
+			args: args{
+				client: defaultClient,
+				request: &DocumentsQuery{
+					Filter: []string{"tag = Tragedy"},
+				},
+				resp: &DocumentsResult{},
+				filter: []string{
+					"tag",
+				},
+			},
+			result: 3,
+		},
+		{
+			name: "TestIndexGetDocumentsWithMultipleFilter",
+			args: args{
+				client: defaultClient,
+				request: &DocumentsQuery{
+					Filter: []string{"tag = Tragedy", "book_id = 742"},
+				},
+				resp: &DocumentsResult{},
+				filter: []string{
+					"tag",
+					"book_id",
+				},
+			},
+			result: 1,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
-			i := c.Index(tt.args.UID)
+			i := c.Index("indexUID")
 			t.Cleanup(cleanup(c))
-			SetUpBasicIndex(tt.args.UID)
+			SetUpIndexForFaceting()
+
+			if tt.args.request != nil && len(tt.args.request.Filter) != 0 {
+				gotTask, err := i.UpdateFilterableAttributes(&tt.args.filter)
+				require.NoError(t, err)
+				testWaitForTask(t, i, gotTask)
+			}
 
 			err := i.GetDocuments(tt.args.request, tt.args.resp)
 			require.NoError(t, err)
 			if tt.args.request != nil && tt.args.request.Limit != 0 {
 				require.Equal(t, tt.args.request.Limit, int64(len(tt.args.resp.Results)))
+			} else if tt.result != 0 {
+				require.Equal(t, tt.result, int64(len(tt.args.resp.Results)))
 			} else {
-				require.Equal(t, 6, len(tt.args.resp.Results))
+				require.Equal(t, 20, len(tt.args.resp.Results))
 			}
 		})
 	}

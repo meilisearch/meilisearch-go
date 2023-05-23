@@ -352,6 +352,7 @@ type DocumentsQuery struct {
 	Offset int64    `json:"offset,omitempty"`
 	Limit  int64    `json:"limit,omitempty"`
 	Fields []string `json:"fields,omitempty"`
+	Filter []string `json:"filter,omitempty"`
 }
 
 type CsvDocumentsQuery struct {

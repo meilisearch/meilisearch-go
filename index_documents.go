@@ -177,13 +177,15 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents",
 		method:              http.MethodGet,
+		contentType:         contentTypeJSON,
 		withRequest:         nil,
 		withResponse:        resp,
-		withQueryParams:     map[string]string{},
+		withQueryParams:     nil,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDocuments",
 	}
-	if request != nil {
+	if request != nil && len(request.Filter) == 0 {
+		req.withQueryParams = map[string]string{}
 		if request.Limit != 0 {
 			req.withQueryParams["limit"] = strconv.FormatInt(request.Limit, 10)
 		}
@@ -193,9 +195,13 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 		if len(request.Fields) != 0 {
 			req.withQueryParams["fields"] = strings.Join(request.Fields, ",")
 		}
+	} else if request != nil && len(request.Filter) != 0 {
+		req.withRequest = request
+		req.method = http.MethodPost
+		req.endpoint = req.endpoint + "/fetch"
 	}
 	if err := i.client.executeRequest(req); err != nil {
-		return err
+		return VersionErrorHintMessage(err, &req)
 	}
 	return nil
 }
