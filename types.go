@@ -313,6 +313,12 @@ type SearchRequest struct {
 	Sort                  []string
 	HitsPerPage           int64
 	Page                  int64
+	IndexUID              string
+	Query                 string
+}
+
+type MultiSearchRequest struct {
+	Queries []SearchRequest `json:"queries"`
 }
 
 // SearchResponse is the response body for search method
@@ -328,6 +334,12 @@ type SearchResponse struct {
 	HitsPerPage        int64         `json:"hitsPerPage,omitempty"`
 	Page               int64         `json:"page,omitempty"`
 	TotalPages         int64         `json:"totalPages,omitempty"`
+	FacetStats         interface{}   `json:"facetStats,omitempty"`
+	IndexUID           string        `json:"indexUid,omitempty"`
+}
+
+type MultiSearchResponse struct {
+	Results []SearchResponse `json:"results"`
 }
 
 // DocumentQuery is the request body get one documents method
@@ -340,6 +352,11 @@ type DocumentsQuery struct {
 	Offset int64    `json:"offset,omitempty"`
 	Limit  int64    `json:"limit,omitempty"`
 	Fields []string `json:"fields,omitempty"`
+}
+
+type CsvDocumentsQuery struct {
+	PrimaryKey   string `json:"primaryKey,omitempty"`
+	CsvDelimiter string `json:"csvDelimiter,omitempty"`
 }
 
 type DocumentsResult struct {
