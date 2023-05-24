@@ -526,6 +526,25 @@ func (i Index) DeleteDocuments(identifier []string) (resp *TaskInfo, err error) 
 	return resp, nil
 }
 
+func (i Index) DeleteDocumentsByFilter(filter interface{}) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:    "/indexes/" + i.UID + "/documents/delete",
+		method:      http.MethodPost,
+		contentType: contentTypeJSON,
+		withRequest: map[string]interface{}{
+			"filter": filter,
+		},
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "DeleteDocumentsByFilter",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, VersionErrorHintMessage(err, &req)
+	}
+	return resp, nil
+}
+
 func (i Index) DeleteAllDocuments() (resp *TaskInfo, err error) {
 	resp = &TaskInfo{}
 	req := internalRequest{
