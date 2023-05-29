@@ -1533,7 +1533,21 @@ func TestIndex_GetDocuments(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexGetDocumentsWithFilter",
+			name: "TestIndexGetDocumentsWithFilterAsString",
+			args: args{
+				client: defaultClient,
+				request: &DocumentsQuery{
+					Filter: "book_id = 123",
+				},
+				resp: &DocumentsResult{},
+				filter: []string{
+					"book_id",
+				},
+			},
+			result: 1,
+		},
+		{
+			name: "TestIndexGetDocumentsWithFilterAsArray",
 			args: args{
 				client: defaultClient,
 				request: &DocumentsQuery{
@@ -1547,7 +1561,7 @@ func TestIndex_GetDocuments(t *testing.T) {
 			result: 3,
 		},
 		{
-			name: "TestIndexGetDocumentsWithMultipleFilter",
+			name: "TestIndexGetDocumentsWithMultipleFilterWithArrayOfString",
 			args: args{
 				client: defaultClient,
 				request: &DocumentsQuery{
@@ -1561,6 +1575,21 @@ func TestIndex_GetDocuments(t *testing.T) {
 			},
 			result: 1,
 		},
+		{
+			name: "TestIndexGetDocumentsWithMultipleFilterWithInterface",
+			args: args{
+				client: defaultClient,
+				request: &DocumentsQuery{
+					Filter: []interface{}{[]string{"tag = Tragedy", "book_id = 123"}},
+				},
+				resp: &DocumentsResult{},
+				filter: []string{
+					"tag",
+					"book_id",
+				},
+			},
+			result: 4,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1569,7 +1598,7 @@ func TestIndex_GetDocuments(t *testing.T) {
 			t.Cleanup(cleanup(c))
 			SetUpIndexForFaceting()
 
-			if tt.args.request != nil && len(tt.args.request.Filter) != 0 {
+			if tt.args.request != nil && tt.args.request.Filter != nil {
 				gotTask, err := i.UpdateFilterableAttributes(&tt.args.filter)
 				require.NoError(t, err)
 				testWaitForTask(t, i, gotTask)

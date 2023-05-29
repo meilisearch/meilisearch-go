@@ -184,7 +184,7 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDocuments",
 	}
-	if request != nil && len(request.Filter) == 0 {
+	if request != nil && request.Filter == nil {
 		req.withQueryParams = map[string]string{}
 		if request.Limit != 0 {
 			req.withQueryParams["limit"] = strconv.FormatInt(request.Limit, 10)
@@ -195,7 +195,7 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 		if len(request.Fields) != 0 {
 			req.withQueryParams["fields"] = strings.Join(request.Fields, ",")
 		}
-	} else if request != nil && len(request.Filter) != 0 {
+	} else if request != nil && request.Filter != nil {
 		req.withRequest = request
 		req.method = http.MethodPost
 		req.endpoint = req.endpoint + "/fetch"
