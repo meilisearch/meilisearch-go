@@ -1495,6 +1495,7 @@ func TestIndex_GetDocuments(t *testing.T) {
 				request: nil,
 				resp:    &DocumentsResult{},
 			},
+			result: 20,
 		},
 		{
 			name: "TestIndexGetDocumentsWithCustomClient",
@@ -1503,6 +1504,7 @@ func TestIndex_GetDocuments(t *testing.T) {
 				request: nil,
 				resp:    &DocumentsResult{},
 			},
+			result: 20,
 		},
 		{
 			name: "TestIndexGetDocumentsWithEmptyStruct",
@@ -1511,6 +1513,7 @@ func TestIndex_GetDocuments(t *testing.T) {
 				request: &DocumentsQuery{},
 				resp:    &DocumentsResult{},
 			},
+			result: 20,
 		},
 		{
 			name: "TestIndexGetDocumentsWithLimit",
@@ -1521,6 +1524,7 @@ func TestIndex_GetDocuments(t *testing.T) {
 				},
 				resp: &DocumentsResult{},
 			},
+			result: 3,
 		},
 		{
 			name: "TestIndexGetDocumentsWithFields",
@@ -1531,6 +1535,7 @@ func TestIndex_GetDocuments(t *testing.T) {
 				},
 				resp: &DocumentsResult{},
 			},
+			result: 20,
 		},
 		{
 			name: "TestIndexGetDocumentsWithFilterAsString",
@@ -1608,11 +1613,8 @@ func TestIndex_GetDocuments(t *testing.T) {
 			require.NoError(t, err)
 			if tt.args.request != nil && tt.args.request.Limit != 0 {
 				require.Equal(t, tt.args.request.Limit, int64(len(tt.args.resp.Results)))
-			} else if tt.result != 0 {
-				require.Equal(t, tt.result, int64(len(tt.args.resp.Results)))
-			} else {
-				require.Equal(t, 20, len(tt.args.resp.Results))
 			}
+			require.Equal(t, tt.result, int64(len(tt.args.resp.Results)))
 		})
 	}
 }
