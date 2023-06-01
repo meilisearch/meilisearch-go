@@ -42,17 +42,6 @@ get_documents_post_1: |-
 
   client.Index("books").GetDocuments(&meilisearch.DocumentsQuery{
     Fields: []string{"title", "genres", "rating", "language"},
-  	Filter: []interface{}{
-  	  []string{"rating > 3"},
-  	  []string{"genres = Adventure", "genres = Fiction"},
-  	  []string{"language = English"},
-  	},
-  }, &result)
-  // OR
-  var result meilisearch.DocumentsResult
-
-  client.Index("books").GetDocuments(&meilisearch.DocumentsQuery{
-    Fields: []string{"title", "genres", "rating", "language"},
     Filter: "(rating > 3 AND (genres = Adventure OR genres = Fiction)) AND language = English",
   }, &result)
 add_or_replace_documents_1: |-
@@ -88,11 +77,6 @@ delete_documents_by_batch_1: |-
   })
 delete_documents_by_filter_1: |-
   client.Index("movies").DeleteDocumentsByFilter("genres=action OR genres=adventure")
-  // OR
-  client.Index("movies").DeleteDocumentsByFilter([]interface{}{
-    []string{"genres = action"},
-    []string{"genres = adventure"},
-  })
 search_post_1: |-
   client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
 multi_search_1: |-
