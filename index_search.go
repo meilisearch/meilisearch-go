@@ -7,7 +7,7 @@ import (
 
 // This constant contains the default values assigned by Meilisearch to the limit in search parameters
 //
-// Documentation: https://docs.meilisearch.com/reference/features/search_parameters.html
+// Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
 const (
 	DefaultLimit int64 = 20
 )
