@@ -146,6 +146,11 @@ func (e *Error) ErrorBody(body []byte) {
 	}
 }
 
+// Added a hint to the error message if it may come from a version incompatibility with Meilisearch
+func VersionErrorHintMessage(err error, req *internalRequest) error {
+	return fmt.Errorf("%w. Hint: It might not be working because you're not up to date with the Meilisearch version that %s call requires.", err, req.functionName)
+}
+
 func namedSprintf(format string, params map[string]interface{}) string {
 	for key, val := range params {
 		format = strings.ReplaceAll(format, "${"+key+"}", fmt.Sprintf("%v", val))
