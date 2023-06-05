@@ -31,10 +31,19 @@ get_one_document_1: |-
     Fields: []string{"id", "title", "poster", "release_date"},
   }, &a)
 get_documents_1: |-
-  var a []interface{}
-  client.Index("movies").GetDocuments(nil, &meilisearch.DocumentsQuery{
+  var result meilisearch.DocumentsResult
+
+  client.Index("movies").GetDocuments(&meilisearch.DocumentsQuery{
     Limit: 2,
-  }, &a)
+    Filter: "genres = action",
+  }, &result)
+get_documents_post_1: |-
+  var result meilisearch.DocumentsResult
+
+  client.Index("books").GetDocuments(&meilisearch.DocumentsQuery{
+    Fields: []string{"title", "genres", "rating", "language"},
+    Filter: "(rating > 3 AND (genres = Adventure OR genres = Fiction)) AND language = English",
+  }, &result)
 add_or_replace_documents_1: |-
   documents := []map[string]interface{}{
     {
@@ -59,13 +68,15 @@ delete_all_documents_1: |-
   client.Index("movies").DeleteAllDocuments()
 delete_one_document_1: |-
   client.Index("movies").DeleteDocument("25684")
-delete_documents_1: |-
+delete_documents_by_batch_1: |-
   client.Index("movies").DeleteDocuments([]string{
     "23488",
     "153738",
     "437035",
     "363869",
   })
+delete_documents_by_filter_1: |-
+  client.Index("movies").DeleteDocumentsByFilter("genres=action OR genres=adventure")
 search_post_1: |-
   client.Index("movies").Search("american ninja", &meilisearch.SearchRequest{})
 multi_search_1: |-
