@@ -4277,6 +4277,14 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo31(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
+		case "filter":
+			if m, ok := out.Filter.(easyjson.Unmarshaler); ok {
+				m.UnmarshalEasyJSON(in)
+			} else if m, ok := out.Filter.(json.Unmarshaler); ok {
+				_ = m.UnmarshalJSON(in.Raw())
+			} else {
+				out.Filter = in.Interface()
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -4324,6 +4332,22 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo31(out *jwriter.Writ
 				out.String(string(v104))
 			}
 			out.RawByte(']')
+		}
+	}
+	if in.Filter != nil {
+		const prefix string = ",\"filter\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		if m, ok := in.Filter.(easyjson.Marshaler); ok {
+			m.MarshalEasyJSON(out)
+		} else if m, ok := in.Filter.(json.Marshaler); ok {
+			out.Raw(m.MarshalJSON())
+		} else {
+			out.Raw(json.Marshal(in.Filter))
 		}
 	}
 	out.RawByte('}')

@@ -1285,7 +1285,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 		wantResp *TaskInfo
 	}{
 		{
-			name: "TestIndexBasicDeleteDocument",
+			name: "TestIndexBasicDeleteDocuments",
 			args: args{
 				UID:        "1",
 				client:     defaultClient,
@@ -1301,7 +1301,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexDeleteDocumentWithCustomClient",
+			name: "TestIndexDeleteDocumentsWithCustomClient",
 			args: args{
 				UID:        "2",
 				client:     customClient,
@@ -1317,7 +1317,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexBasicDeleteDocument",
+			name: "TestIndexDeleteOneDocumentOnMultiple",
 			args: args{
 				UID:        "3",
 				client:     defaultClient,
@@ -1335,7 +1335,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexBasicDeleteDocument",
+			name: "TestIndexDeleteMultipleDocuments",
 			args: args{
 				UID:        "4",
 				client:     defaultClient,
@@ -1379,6 +1379,129 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 				require.Error(t, err)
 				require.Empty(t, document)
 			}
+		})
+	}
+}
+
+func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
+	type args struct {
+		UID            string
+		client         *Client
+		filterToDelete interface{}
+		filterToApply  []string
+		documentsPtr   []docTestBooks
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantResp *TaskInfo
+	}{
+		{
+			name: "TestIndexDeleteDocumentsByFilterString",
+			args: args{
+				UID:            "1",
+				client:         defaultClient,
+				filterToApply:  []string{"book_id"},
+				filterToDelete: "book_id = 123",
+				documentsPtr: []docTestBooks{
+					{BookID: 123, Title: "Pride and Prejudice", Tag: "Romance", Year: 1813},
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
+		{
+			name: "TestIndexDeleteMultipleDocumentsByFilterArrayOfString",
+			args: args{
+				UID:            "1",
+				client:         customClient,
+				filterToApply:  []string{"tag"},
+				filterToDelete: []string{"tag = 'Epic fantasy'"},
+				documentsPtr: []docTestBooks{
+					{BookID: 1344, Title: "The Hobbit", Tag: "Epic fantasy", Year: 1937},
+					{BookID: 4, Title: "Harry Potter and the Half-Blood Prince", Tag: "Epic fantasy", Year: 2005},
+					{BookID: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Epic fantasy", Year: 1978},
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
+		{
+			name: "TestIndexDeleteMultipleDocumentsAndMultipleFiltersWithArrayOfString",
+			args: args{
+				UID:            "1",
+				client:         customClient,
+				filterToApply:  []string{"tag", "year"},
+				filterToDelete: []string{"tag = 'Epic fantasy'", "year > 1936"},
+				documentsPtr: []docTestBooks{
+					{BookID: 1344, Title: "The Hobbit", Tag: "Epic fantasy", Year: 1937},
+					{BookID: 4, Title: "Harry Potter and the Half-Blood Prince", Tag: "Epic fantasy", Year: 2005},
+					{BookID: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Epic fantasy", Year: 1978},
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
+		{
+			name: "TestIndexDeleteMultipleDocumentsAndMultipleFiltersWithInterface",
+			args: args{
+				UID:            "1",
+				client:         customClient,
+				filterToApply:  []string{"book_id", "tag"},
+				filterToDelete: []interface{}{[]string{"tag = 'Epic fantasy'", "book_id = 123"}},
+				documentsPtr: []docTestBooks{
+					{BookID: 123, Title: "Pride and Prejudice", Tag: "Romance", Year: 1813},
+					{BookID: 1344, Title: "The Hobbit", Tag: "Epic fantasy", Year: 1937},
+					{BookID: 4, Title: "Harry Potter and the Half-Blood Prince", Tag: "Epic fantasy", Year: 2005},
+					{BookID: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Epic fantasy", Year: 1978},
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
+			require.NoError(t, err)
+
+			testWaitForTask(t, i, gotAddResp)
+
+			if tt.args.filterToApply != nil && len(tt.args.filterToApply) != 0 {
+				gotTask, err := i.UpdateFilterableAttributes(&tt.args.filterToApply)
+				require.NoError(t, err)
+				testWaitForTask(t, i, gotTask)
+			}
+
+			gotResp, err := i.DeleteDocumentsByFilter(tt.args.filterToDelete)
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
+			require.Equal(t, tt.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.wantResp.Type, gotResp.Type)
+			require.NotZero(t, gotResp.EnqueuedAt)
+
+			testWaitForTask(t, i, gotResp)
+
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			require.NoError(t, err)
+			require.Zero(t, len(documents.Results))
 		})
 	}
 }
@@ -1481,75 +1604,140 @@ func TestIndex_GetDocuments(t *testing.T) {
 		client  *Client
 		request *DocumentsQuery
 		resp    *DocumentsResult
+		filter  []string
 	}
 	tests := []struct {
-		name string
-		args args
+		name   string
+		args   args
+		result int64
 	}{
 		{
 			name: "TestIndexBasicGetDocuments",
 			args: args{
-				UID:     "TestIndexBasicGetDocuments",
 				client:  defaultClient,
 				request: nil,
 				resp:    &DocumentsResult{},
 			},
+			result: 20,
 		},
 		{
 			name: "TestIndexGetDocumentsWithCustomClient",
 			args: args{
-				UID:     "TestIndexGetDocumentsWithCustomClient",
 				client:  customClient,
 				request: nil,
 				resp:    &DocumentsResult{},
 			},
+			result: 20,
 		},
 		{
 			name: "TestIndexGetDocumentsWithEmptyStruct",
 			args: args{
-				UID:     "TestIndexGetDocumentsWithNoExistingDocument",
 				client:  defaultClient,
 				request: &DocumentsQuery{},
 				resp:    &DocumentsResult{},
 			},
+			result: 20,
 		},
 		{
 			name: "TestIndexGetDocumentsWithLimit",
 			args: args{
-				UID:    "TestIndexGetDocumentsWithNoExistingDocument",
 				client: defaultClient,
 				request: &DocumentsQuery{
 					Limit: 3,
 				},
 				resp: &DocumentsResult{},
 			},
+			result: 3,
 		},
 		{
-			name: "TestIndexGetDocumentsWithLimit",
+			name: "TestIndexGetDocumentsWithFields",
 			args: args{
-				UID:    "TestIndexGetDocumentsWithNoExistingDocument",
 				client: defaultClient,
 				request: &DocumentsQuery{
 					Fields: []string{"title"},
 				},
 				resp: &DocumentsResult{},
 			},
+			result: 20,
+		},
+		{
+			name: "TestIndexGetDocumentsWithFilterAsString",
+			args: args{
+				client: defaultClient,
+				request: &DocumentsQuery{
+					Filter: "book_id = 123",
+				},
+				resp: &DocumentsResult{},
+				filter: []string{
+					"book_id",
+				},
+			},
+			result: 1,
+		},
+		{
+			name: "TestIndexGetDocumentsWithFilterAsArray",
+			args: args{
+				client: defaultClient,
+				request: &DocumentsQuery{
+					Filter: []string{"tag = Tragedy"},
+				},
+				resp: &DocumentsResult{},
+				filter: []string{
+					"tag",
+				},
+			},
+			result: 3,
+		},
+		{
+			name: "TestIndexGetDocumentsWithMultipleFilterWithArrayOfString",
+			args: args{
+				client: defaultClient,
+				request: &DocumentsQuery{
+					Filter: []string{"tag = Tragedy", "book_id = 742"},
+				},
+				resp: &DocumentsResult{},
+				filter: []string{
+					"tag",
+					"book_id",
+				},
+			},
+			result: 1,
+		},
+		{
+			name: "TestIndexGetDocumentsWithMultipleFilterWithInterface",
+			args: args{
+				client: defaultClient,
+				request: &DocumentsQuery{
+					Filter: []interface{}{[]string{"tag = Tragedy", "book_id = 123"}},
+				},
+				resp: &DocumentsResult{},
+				filter: []string{
+					"tag",
+					"book_id",
+				},
+			},
+			result: 4,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
-			i := c.Index(tt.args.UID)
+			i := c.Index("indexUID")
 			t.Cleanup(cleanup(c))
-			SetUpBasicIndex(tt.args.UID)
+			SetUpIndexForFaceting()
+
+			if tt.args.request != nil && tt.args.request.Filter != nil {
+				gotTask, err := i.UpdateFilterableAttributes(&tt.args.filter)
+				require.NoError(t, err)
+				testWaitForTask(t, i, gotTask)
+			}
 
 			err := i.GetDocuments(tt.args.request, tt.args.resp)
 			require.NoError(t, err)
 			if tt.args.request != nil && tt.args.request.Limit != 0 {
 				require.Equal(t, tt.args.request.Limit, int64(len(tt.args.resp.Results)))
-			} else {
-				require.Equal(t, 6, len(tt.args.resp.Results))
 			}
+			require.Equal(t, tt.result, int64(len(tt.args.resp.Results)))
 		})
 	}
 }
