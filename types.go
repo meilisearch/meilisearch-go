@@ -117,7 +117,7 @@ const (
 
 // Task indicates information about a task resource
 //
-// Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html
+// Documentation: https://www.meilisearch.com/docs/learn/advanced/asynchronous_operations
 type Task struct {
 	Status     TaskStatus          `json:"status"`
 	UID        int64               `json:"uid,omitempty"`
@@ -135,7 +135,7 @@ type Task struct {
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
 //
-// Documentation: https://docs.meilisearch.com/reference/api/tasks.html#tasks
+// Documentation: https://www.meilisearch.com/docs/reference/api/tasks#tasks
 type TaskInfo struct {
 	Status     TaskStatus `json:"status"`
 	TaskUID    int64      `json:"taskUid"`
@@ -222,7 +222,7 @@ type TaskResult struct {
 
 // Keys allow the user to connect to the Meilisearch instance
 //
-// Documentation: https://docs.meilisearch.com/learn/advanced/security.html#protecting-a-meilisearch-instance
+// Documentation: https://www.meilisearch.com/docs/learn/security/master_api_keys#protecting-a-meilisearch-instance
 type Key struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
@@ -294,7 +294,7 @@ type CreateIndexRequest struct {
 // SearchRequest is the request url param needed for a search query.
 // This struct will be converted to url param before sent.
 //
-// Documentation: https://docs.meilisearch.com/reference/features/search_parameters.html
+// Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
 type SearchRequest struct {
 	Offset                int64
 	Limit                 int64
@@ -349,9 +349,10 @@ type DocumentQuery struct {
 
 // DocumentsQuery is the request body for list documents method
 type DocumentsQuery struct {
-	Offset int64    `json:"offset,omitempty"`
-	Limit  int64    `json:"limit,omitempty"`
-	Fields []string `json:"fields,omitempty"`
+	Offset int64       `json:"offset,omitempty"`
+	Limit  int64       `json:"limit,omitempty"`
+	Fields []string    `json:"fields,omitempty"`
+	Filter interface{} `json:"filter,omitempty"`
 }
 
 type CsvDocumentsQuery struct {

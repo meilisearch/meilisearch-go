@@ -177,13 +177,15 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/documents",
 		method:              http.MethodGet,
+		contentType:         contentTypeJSON,
 		withRequest:         nil,
 		withResponse:        resp,
-		withQueryParams:     map[string]string{},
+		withQueryParams:     nil,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDocuments",
 	}
-	if request != nil {
+	if request != nil && request.Filter == nil {
+		req.withQueryParams = map[string]string{}
 		if request.Limit != 0 {
 			req.withQueryParams["limit"] = strconv.FormatInt(request.Limit, 10)
 		}
@@ -193,9 +195,13 @@ func (i Index) GetDocuments(request *DocumentsQuery, resp *DocumentsResult) erro
 		if len(request.Fields) != 0 {
 			req.withQueryParams["fields"] = strings.Join(request.Fields, ",")
 		}
+	} else if request != nil && request.Filter != nil {
+		req.withRequest = request
+		req.method = http.MethodPost
+		req.endpoint = req.endpoint + "/fetch"
 	}
 	if err := i.client.executeRequest(req); err != nil {
-		return err
+		return VersionErrorHintMessage(err, &req)
 	}
 	return nil
 }
@@ -522,6 +528,25 @@ func (i Index) DeleteDocuments(identifier []string) (resp *TaskInfo, err error) 
 	}
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) DeleteDocumentsByFilter(filter interface{}) (resp *TaskInfo, err error) {
+	resp = &TaskInfo{}
+	req := internalRequest{
+		endpoint:    "/indexes/" + i.UID + "/documents/delete",
+		method:      http.MethodPost,
+		contentType: contentTypeJSON,
+		withRequest: map[string]interface{}{
+			"filter": filter,
+		},
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "DeleteDocumentsByFilter",
+	}
+	if err := i.client.executeRequest(req); err != nil {
+		return nil, VersionErrorHintMessage(err, &req)
 	}
 	return resp, nil
 }
