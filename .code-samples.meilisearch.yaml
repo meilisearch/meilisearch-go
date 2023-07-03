@@ -499,7 +499,7 @@ documents_guide_add_movie_1: |-
   client.Index("movies").AddDocuments(documents)
 getting_started_check_task_status: |-
   client.GetTask(0)
-getting_started_add_documents_md: |-
+PLEASE_UPDATE_ME>>>>>>>>>>>>>getting_started_add_documents_md: |-
   ```bash
   go get -u github.com/meilisearch/meilisearch-go
   ```
