@@ -460,9 +460,11 @@ func TestIndex_FetchInfo(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp.UID, gotResp.UID)
 			require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
-			// Make sure that timestamps are also fetched
+			// Make sure that timestamps are also fetched and are updated
 			require.NotZero(t, gotResp.CreatedAt)
 			require.NotZero(t, gotResp.UpdatedAt)
+			require.Equal(t, i.CreatedAt, gotResp.CreatedAt)
+			require.Equal(t, i.UpdatedAt, gotResp.UpdatedAt)
 		})
 	}
 }
