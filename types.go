@@ -117,7 +117,7 @@ const (
 
 // Task indicates information about a task resource
 //
-// Documentation: https://docs.meilisearch.com/learn/advanced/asynchronous_operations.html
+// Documentation: https://www.meilisearch.com/docs/learn/advanced/asynchronous_operations
 type Task struct {
 	Status     TaskStatus          `json:"status"`
 	UID        int64               `json:"uid,omitempty"`
@@ -135,7 +135,7 @@ type Task struct {
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
 //
-// Documentation: https://docs.meilisearch.com/reference/api/tasks.html#tasks
+// Documentation: https://www.meilisearch.com/docs/reference/api/tasks#tasks
 type TaskInfo struct {
 	Status     TaskStatus `json:"status"`
 	TaskUID    int64      `json:"taskUid"`
@@ -222,7 +222,7 @@ type TaskResult struct {
 
 // Keys allow the user to connect to the Meilisearch instance
 //
-// Documentation: https://docs.meilisearch.com/learn/advanced/security.html#protecting-a-meilisearch-instance
+// Documentation: https://www.meilisearch.com/docs/learn/security/master_api_keys#protecting-a-meilisearch-instance
 type Key struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
@@ -237,14 +237,12 @@ type Key struct {
 
 // This structure is used to send the exact ISO-8601 time format managed by Meilisearch
 type KeyParsed struct {
-	Name        string    `json:"name"`
-	Description string    `json:"description"`
-	UID         string    `json:"uid,omitempty"`
-	Actions     []string  `json:"actions,omitempty"`
-	Indexes     []string  `json:"indexes,omitempty"`
-	CreatedAt   time.Time `json:"createdAt,omitempty"`
-	UpdatedAt   time.Time `json:"updatedAt,omitempty"`
-	ExpiresAt   *string   `json:"expiresAt"`
+	Name        string   `json:"name"`
+	Description string   `json:"description"`
+	UID         string   `json:"uid,omitempty"`
+	Actions     []string `json:"actions,omitempty"`
+	Indexes     []string `json:"indexes,omitempty"`
+	ExpiresAt   *string  `json:"expiresAt"`
 }
 
 // This structure is used to update a Key
@@ -296,7 +294,7 @@ type CreateIndexRequest struct {
 // SearchRequest is the request url param needed for a search query.
 // This struct will be converted to url param before sent.
 //
-// Documentation: https://docs.meilisearch.com/reference/features/search_parameters.html
+// Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
 type SearchRequest struct {
 	Offset                int64
 	Limit                 int64
@@ -315,6 +313,12 @@ type SearchRequest struct {
 	Sort                  []string
 	HitsPerPage           int64
 	Page                  int64
+	IndexUID              string
+	Query                 string
+}
+
+type MultiSearchRequest struct {
+	Queries []SearchRequest `json:"queries"`
 }
 
 // SearchResponse is the response body for search method
@@ -330,6 +334,12 @@ type SearchResponse struct {
 	HitsPerPage        int64         `json:"hitsPerPage,omitempty"`
 	Page               int64         `json:"page,omitempty"`
 	TotalPages         int64         `json:"totalPages,omitempty"`
+	FacetStats         interface{}   `json:"facetStats,omitempty"`
+	IndexUID           string        `json:"indexUid,omitempty"`
+}
+
+type MultiSearchResponse struct {
+	Results []SearchResponse `json:"results"`
 }
 
 // DocumentQuery is the request body get one documents method
@@ -339,9 +349,15 @@ type DocumentQuery struct {
 
 // DocumentsQuery is the request body for list documents method
 type DocumentsQuery struct {
-	Offset int64    `json:"offset,omitempty"`
-	Limit  int64    `json:"limit,omitempty"`
-	Fields []string `json:"fields,omitempty"`
+	Offset int64       `json:"offset,omitempty"`
+	Limit  int64       `json:"limit,omitempty"`
+	Fields []string    `json:"fields,omitempty"`
+	Filter interface{} `json:"filter,omitempty"`
+}
+
+type CsvDocumentsQuery struct {
+	PrimaryKey   string `json:"primaryKey,omitempty"`
+	CsvDelimiter string `json:"csvDelimiter,omitempty"`
 }
 
 type DocumentsResult struct {

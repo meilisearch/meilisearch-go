@@ -7,7 +7,7 @@ import (
 
 // This constant contains the default values assigned by Meilisearch to the limit in search parameters
 //
-// Documentation: https://docs.meilisearch.com/reference/features/search_parameters.html
+// Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
 const (
 	DefaultLimit int64 = 20
 )
@@ -44,6 +44,9 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	if request.Limit == 0 {
 		request.Limit = DefaultLimit
 	}
+	if request.IndexUID != "" {
+		request.IndexUID = ""
+	}
 
 	searchPostRequestParams := searchPostRequestParams(query, request)
 
@@ -65,10 +68,13 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 }
 
 func searchPostRequestParams(query string, request *SearchRequest) map[string]interface{} {
-	params := make(map[string]interface{}, 14)
+	params := make(map[string]interface{}, 16)
 
 	if !request.PlaceholderSearch {
 		params["q"] = query
+	}
+	if request.IndexUID != "" {
+		params["indexUid"] = request.IndexUID
 	}
 	if request.Limit != DefaultLimit {
 		params["limit"] = request.Limit
