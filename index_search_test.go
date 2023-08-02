@@ -220,6 +220,30 @@ func TestIndex_Search(t *testing.T) {
 			},
 		},
 		{
+			name: "TestIndexSearchWithAttributeToSearchOn",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "prince",
+				request: SearchRequest{
+					AttributesToSearchOn: []string{"title"},
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+			},
+		},
+		{
 			name: "TestIndexSearchWithAttributesToCrop",
 			args: args{
 				UID:    "indexUID",

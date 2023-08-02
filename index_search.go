@@ -112,6 +112,9 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	if len(request.AttributesToRetrieve) != 0 {
 		params["attributesToRetrieve"] = request.AttributesToRetrieve
 	}
+	if len(request.AttributesToSearchOn) != 0 {
+		params["attributesToSearchOn"] = request.AttributesToSearchOn
+	}
 	if len(request.AttributesToCrop) != 0 {
 		params["attributesToCrop"] = request.AttributesToCrop
 	}
