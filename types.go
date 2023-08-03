@@ -299,6 +299,7 @@ type SearchRequest struct {
 	Offset                int64
 	Limit                 int64
 	AttributesToRetrieve  []string
+	AttributesToSearchOn  []string
 	AttributesToCrop      []string
 	CropLength            int64
 	CropMarker            string
