@@ -7,7 +7,7 @@ import (
 
 // This constant contains the default values assigned by Meilisearch to the limit in search parameters
 //
-// Documentation: https://docs.meilisearch.com/reference/features/search_parameters.html
+// Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
 const (
 	DefaultLimit int64 = 20
 )
@@ -111,6 +111,9 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	}
 	if len(request.AttributesToRetrieve) != 0 {
 		params["attributesToRetrieve"] = request.AttributesToRetrieve
+	}
+	if len(request.AttributesToSearchOn) != 0 {
+		params["attributesToSearchOn"] = request.AttributesToSearchOn
 	}
 	if len(request.AttributesToCrop) != 0 {
 		params["attributesToCrop"] = request.AttributesToCrop

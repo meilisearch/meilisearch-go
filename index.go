@@ -86,7 +86,7 @@ func newIndex(client *Client, uid string) *Index {
 	}
 }
 
-func (i Index) FetchInfo() (resp *Index, err error) {
+func (i *Index) FetchInfo() (resp *Index, err error) {
 	resp = newIndex(i.client, i.UID)
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID,
@@ -99,7 +99,9 @@ func (i Index) FetchInfo() (resp *Index, err error) {
 	if err := i.client.executeRequest(req); err != nil {
 		return nil, err
 	}
-	i.PrimaryKey = resp.PrimaryKey //nolint:golint,staticcheck
+	i.PrimaryKey = resp.PrimaryKey
+	i.CreatedAt = resp.CreatedAt
+	i.UpdatedAt = resp.UpdatedAt
 	return resp, nil
 }
 
@@ -111,11 +113,11 @@ func (i Index) FetchPrimaryKey() (resp *string, err error) {
 	return &index.PrimaryKey, nil
 }
 
-func (i Index) UpdateIndex(primaryKey string) (resp *TaskInfo, err error) {
+func (i *Index) UpdateIndex(primaryKey string) (resp *TaskInfo, err error) {
 	request := &UpdateIndexRequest{
 		PrimaryKey: primaryKey,
 	}
-	i.PrimaryKey = primaryKey //nolint:golint,staticcheck
+	i.PrimaryKey = primaryKey
 	resp = &TaskInfo{}
 
 	req := internalRequest{
