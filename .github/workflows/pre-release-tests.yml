@@ -14,11 +14,11 @@ jobs:
     strategy:
       matrix:
         # Current go.mod version and latest stable go version
-        go: [1.16, 1.17]
+        go: [1.18, 1.19, 1.20]
         include:
-          - go: 1.16
+          - go: 1.18
             tag: current
-          - go: 1.17
+          - go: 1.20
             tag: latest
 
     name: integration-tests-against-rc (go ${{ matrix.tag }} version)

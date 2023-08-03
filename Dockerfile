@@ -1,4 +1,4 @@
-FROM golang:1.17.11-buster
+FROM golang:1.20-alpine
 
 WORKDIR /home/package
 
