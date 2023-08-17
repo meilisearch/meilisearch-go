@@ -2453,6 +2453,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo15(in *jlexer.Lexer,
 			}
 		case "ShowMatchesPosition":
 			out.ShowMatchesPosition = bool(in.Bool())
+		case "ShowRankingScore":
+			out.ShowRankingScore = bool(in.Bool())
 		case "Facets":
 			if in.IsNull() {
 				in.Skip()
@@ -2637,6 +2639,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo15(out *jwriter.Writ
 		const prefix string = ",\"ShowMatchesPosition\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.ShowMatchesPosition))
+	}
+	{
+		const prefix string = ",\"ShowRankingScore\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.ShowRankingScore))
 	}
 	{
 		const prefix string = ",\"Facets\":"

@@ -82,6 +82,9 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	if request.ShowMatchesPosition {
 		params["showMatchesPosition"] = request.ShowMatchesPosition
 	}
+	if request.ShowRankingScore {
+		params["showRankingScore"] = request.ShowRankingScore
+	}
 	if request.Filter != nil {
 		params["filter"] = request.Filter
 	}
