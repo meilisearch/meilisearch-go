@@ -296,28 +296,27 @@ type CreateIndexRequest struct {
 //
 // Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
 type SearchRequest struct {
-	Offset                  int64
-	Limit                   int64
-	AttributesToRetrieve    []string
-	AttributesToSearchOn    []string
-	AttributesToCrop        []string
-	CropLength              int64
-	CropMarker              string
-	AttributesToHighlight   []string
-	HighlightPreTag         string
-	HighlightPostTag        string
-	MatchingStrategy        string
-	Filter                  interface{}
-	ShowMatchesPosition     bool
-	ShowRankingScore        bool
-	ShowRankingScoreDetails bool
-	Facets                  []string
-	PlaceholderSearch       bool
-	Sort                    []string
-	HitsPerPage             int64
-	Page                    int64
-	IndexUID                string
-	Query                   string
+	Offset                int64
+	Limit                 int64
+	AttributesToRetrieve  []string
+	AttributesToSearchOn  []string
+	AttributesToCrop      []string
+	CropLength            int64
+	CropMarker            string
+	AttributesToHighlight []string
+	HighlightPreTag       string
+	HighlightPostTag      string
+	MatchingStrategy      string
+	Filter                interface{}
+	ShowMatchesPosition   bool
+	ShowRankingScore      bool
+	Facets                []string
+	PlaceholderSearch     bool
+	Sort                  []string
+	HitsPerPage           int64
+	Page                  int64
+	IndexUID              string
+	Query                 string
 }
 
 type MultiSearchRequest struct {
