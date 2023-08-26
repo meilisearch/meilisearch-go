@@ -218,6 +218,7 @@ type TaskResult struct {
 	Limit   int64  `json:"limit"`
 	From    int64  `json:"from"`
 	Next    int64  `json:"next"`
+	Total   int64  `json:"total"`
 }
 
 // Keys allow the user to connect to the Meilisearch instance
