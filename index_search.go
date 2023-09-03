@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -12,14 +13,20 @@ const (
 	DefaultLimit int64 = 20
 )
 
+var ErrNoSearchRequest = errors.New("no search request provided")
+
 func (i Index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error) {
-	resp := &json.RawMessage{}
+	if request == nil {
+		return nil, ErrNoSearchRequest
+	}
 
 	if request.Limit == 0 {
 		request.Limit = DefaultLimit
 	}
 
 	searchPostRequestParams := searchPostRequestParams(query, request)
+
+	resp := &json.RawMessage{}
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/search",
@@ -39,7 +46,9 @@ func (i Index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage
 }
 
 func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, error) {
-	resp := &SearchResponse{}
+	if request == nil {
+		return nil, ErrNoSearchRequest
+	}
 
 	if request.Limit == 0 {
 		request.Limit = DefaultLimit
@@ -49,6 +58,8 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	}
 
 	searchPostRequestParams := searchPostRequestParams(query, request)
+
+	resp := &SearchResponse{}
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/search",
