@@ -310,6 +310,7 @@ type SearchRequest struct {
 	MatchingStrategy      string
 	Filter                interface{}
 	ShowMatchesPosition   bool
+	ShowRankingScore      bool
 	Facets                []string
 	PlaceholderSearch     bool
 	Sort                  []string
