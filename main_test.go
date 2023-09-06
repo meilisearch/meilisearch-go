@@ -128,6 +128,32 @@ func SetUpEmptyIndex(index *IndexConfig) (resp *Index, err error) {
 	return client.GetIndex(index.Uid)
 }
 
+func SetUpIndexWithVector(indexUID string) (resp *Index, err error) {
+	client := NewClient(ClientConfig{
+		Host:   getenv("MEILISEARCH_URL", "http://localhost:7700"),
+		APIKey: masterKey,
+	})
+	index := client.Index(indexUID)
+
+	documents := []map[string]interface{}{
+		{"book_id": 123, "title": "Pride and Prejudice", "_vectors": []float64{0.1, 0.2, 0.3}},
+		{"book_id": 456, "title": "Le Petit Prince", "_vectors": []float64{2.4, 8.5, 1.6}},
+	}
+
+	task, err := index.AddDocuments(documents)
+	if err != nil {
+		fmt.Println(err)
+		return nil, err
+	}
+
+	finalTask, _ := index.WaitForTask(task.TaskUID)
+	if finalTask.Status != "succeeded" {
+		os.Exit(1)
+	}
+
+	return client.GetIndex(indexUID)
+}
+
 func SetUpBasicIndex(indexUID string) {
 	client := NewClient(ClientConfig{
 		Host:   getenv("MEILISEARCH_URL", "http://localhost:7700"),
