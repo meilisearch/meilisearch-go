@@ -141,7 +141,8 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	if len(request.Sort) != 0 {
 		params["sort"] = request.Sort
 	}
-	if len(request.Vector) > 0 {
+
+	if request.Vector != nil && len(request.Vector) > 0 {
 		params["vector"] = request.Vector
 	}
 
