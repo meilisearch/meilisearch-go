@@ -13,13 +13,14 @@ func TestIndex_SearchRaw(t *testing.T) {
 		PrimaryKey string
 		client     *Client
 		query      string
-		request    SearchRequest
+		request    *SearchRequest
 	}
 
 	tests := []struct {
-		name string
-		args args
-		want *SearchResponse
+		name    string
+		args    args
+		want    *SearchResponse
+		wantErr bool
 	}{
 		{
 			name: "TestIndexBasicSearch",
@@ -27,7 +28,7 @@ func TestIndex_SearchRaw(t *testing.T) {
 				UID:     "indexUID",
 				client:  defaultClient,
 				query:   "prince",
-				request: SearchRequest{},
+				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
@@ -42,6 +43,7 @@ func TestIndex_SearchRaw(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -51,9 +53,15 @@ func TestIndex_SearchRaw(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotRaw, err := i.SearchRaw(tt.args.query, &tt.args.request)
-			require.NoError(t, err)
+			gotRaw, err := i.SearchRaw(tt.args.query, tt.args.request)
 
+			if tt.wantErr {
+				require.Error(t, err)
+				require.Nil(t, tt.want)
+				return
+			}
+
+			require.NoError(t, err)
 			// Unmarshall the raw response from SearchRaw into a SearchResponse
 			var got SearchResponse
 			err = json.Unmarshal(*gotRaw, &got)
@@ -71,6 +79,7 @@ func TestIndex_SearchRaw(t *testing.T) {
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
 			require.Equal(t, tt.want.FacetDistribution, got.FacetDistribution)
+
 		})
 	}
 }
@@ -81,20 +90,32 @@ func TestIndex_Search(t *testing.T) {
 		PrimaryKey string
 		client     *Client
 		query      string
-		request    SearchRequest
+		request    *SearchRequest
 	}
 	tests := []struct {
-		name string
-		args args
-		want *SearchResponse
+		name    string
+		args    args
+		want    *SearchResponse
+		wantErr bool
 	}{
+		{
+			name: "TestIndexSearchWithEmptyRequest",
+			args: args{
+				UID:     "indexUID",
+				client:  defaultClient,
+				query:   "prince",
+				request: nil,
+			},
+			want:    nil,
+			wantErr: true,
+		},
 		{
 			name: "TestIndexBasicSearch",
 			args: args{
 				UID:     "indexUID",
 				client:  defaultClient,
 				query:   "prince",
-				request: SearchRequest{},
+				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
@@ -109,6 +130,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithCustomClient",
@@ -116,7 +138,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:     "indexUID",
 				client:  customClient,
 				query:   "prince",
-				request: SearchRequest{},
+				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
@@ -131,6 +153,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithLimit",
@@ -138,7 +161,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Limit: 1,
 				},
 			},
@@ -152,13 +175,14 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              1,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithPlaceholderSearch",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
-				request: SearchRequest{
+				request: &SearchRequest{
 					PlaceholderSearch: true,
 					Limit:             1,
 				},
@@ -173,6 +197,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              1,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithOffset",
@@ -180,7 +205,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Offset: 1,
 				},
 			},
@@ -194,6 +219,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             1,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithAttributeToRetrieve",
@@ -201,7 +227,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					AttributesToRetrieve: []string{"book_id", "title"},
 				},
 			},
@@ -218,6 +244,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithAttributeToSearchOn",
@@ -225,7 +252,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					AttributesToSearchOn: []string{"title"},
 				},
 			},
@@ -242,6 +269,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithAttributesToCrop",
@@ -249,7 +277,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "to",
-				request: SearchRequest{
+				request: &SearchRequest{
 					AttributesToCrop: []string{"title"},
 					CropLength:       2,
 				},
@@ -267,6 +295,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithAttributesToCropAndCustomCropMarker",
@@ -274,7 +303,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "to",
-				request: SearchRequest{
+				request: &SearchRequest{
 					AttributesToCrop: []string{"title"},
 					CropLength:       2,
 					CropMarker:       "(ꈍᴗꈍ)",
@@ -293,6 +322,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithAttributeToHighlight",
@@ -300,7 +330,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Limit:                 1,
 					AttributesToHighlight: []string{"*"},
 				},
@@ -318,6 +348,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              1,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithCustomPreAndPostHighlightTags",
@@ -325,7 +356,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Limit:                 1,
 					AttributesToHighlight: []string{"*"},
 					HighlightPreTag:       "(⊃｡•́‿•̀｡)⊃ ",
@@ -345,6 +376,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              1,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithShowMatchesPosition",
@@ -352,7 +384,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "and",
-				request: SearchRequest{
+				request: &SearchRequest{
 					ShowMatchesPosition: true,
 				},
 			},
@@ -375,6 +407,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithQuoteInQUery",
@@ -382,7 +415,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:     "indexUID",
 				client:  defaultClient,
 				query:   "and \"harry\"",
-				request: SearchRequest{},
+				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
@@ -394,6 +427,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithCustomMatchingStrategyAll",
@@ -401,7 +435,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "le prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Limit:                10,
 					AttributesToRetrieve: []string{"book_id", "title"},
 					MatchingStrategy:     "all",
@@ -417,6 +451,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              10,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithCustomMatchingStrategyLast",
@@ -424,7 +459,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Limit:                10,
 					AttributesToRetrieve: []string{"book_id", "title"},
 					MatchingStrategy:     "last",
@@ -443,6 +478,7 @@ func TestIndex_Search(t *testing.T) {
 				Offset:             0,
 				Limit:              10,
 			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -452,7 +488,14 @@ func TestIndex_Search(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			got, err := i.Search(tt.args.query, &tt.args.request)
+			got, err := i.Search(tt.args.query, tt.args.request)
+
+			if tt.wantErr {
+				require.Error(t, err)
+				require.Nil(t, tt.want)
+				return
+			}
+
 			require.NoError(t, err)
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 			for len := range got.Hits {
@@ -476,21 +519,33 @@ func TestIndex_SearchFacets(t *testing.T) {
 		PrimaryKey           string
 		client               *Client
 		query                string
-		request              SearchRequest
+		request              *SearchRequest
 		filterableAttributes []string
 	}
 	tests := []struct {
-		name string
-		args args
-		want *SearchResponse
+		name    string
+		args    args
+		want    *SearchResponse
+		wantErr bool
 	}{
+		{
+			name: "TestIndexSearchWithEmptyRequest",
+			args: args{
+				UID:     "indexUID",
+				client:  defaultClient,
+				query:   "prince",
+				request: nil,
+			},
+			want:    nil,
+			wantErr: true,
+		},
 		{
 			name: "TestIndexSearchWithFacets",
 			args: args{
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Facets: []string{"*"},
 				},
 				filterableAttributes: []string{"tag"},
@@ -515,6 +570,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 						},
 					}),
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithFacetsWithCustomClient",
@@ -522,7 +578,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 				UID:    "indexUID",
 				client: customClient,
 				query:  "prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Facets: []string{"*"},
 				},
 				filterableAttributes: []string{"tag"},
@@ -547,6 +603,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 						},
 					}),
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithFacetsAndFacetsStats",
@@ -554,7 +611,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "prince",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Facets: []string{"book_id"},
 				},
 				filterableAttributes: []string{"book_id"},
@@ -586,6 +643,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 						},
 					}),
 			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -599,7 +657,13 @@ func TestIndex_SearchFacets(t *testing.T) {
 			require.NoError(t, err)
 			testWaitForTask(t, i, updateFilter)
 
-			got, err := i.Search(tt.args.query, &tt.args.request)
+			got, err := i.Search(tt.args.query, tt.args.request)
+			if tt.wantErr {
+				require.Error(t, err)
+				require.Nil(t, tt.want)
+				return
+			}
+
 			require.NoError(t, err)
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 
@@ -625,12 +689,13 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 		client               *Client
 		query                string
 		filterableAttributes []string
-		request              SearchRequest
+		request              *SearchRequest
 	}
 	tests := []struct {
-		name string
-		args args
-		want *SearchResponse
+		name    string
+		args    args
+		want    *SearchResponse
+		wantErr bool
 	}{
 		{
 			name: "TestIndexBasicSearchWithFilter",
@@ -641,7 +706,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				filterableAttributes: []string{
 					"tag",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Filter: "tag = romance",
 				},
 			},
@@ -655,6 +720,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithFilterInInt",
@@ -665,7 +731,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				filterableAttributes: []string{
 					"year",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Filter: "year = 2005",
 				},
 			},
@@ -679,6 +745,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithFilterArray",
@@ -689,7 +756,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				filterableAttributes: []string{
 					"year",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Filter: []string{
 						"year = 2005",
 					},
@@ -705,6 +772,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithFilterMultipleArray",
@@ -716,7 +784,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 					"year",
 					"tag",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Filter: [][]string{
 						{"year < 1850"},
 						{"tag = romance"},
@@ -733,6 +801,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithMultipleFilter",
@@ -744,7 +813,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 					"tag",
 					"year",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Filter: "year > 1930",
 				},
 			},
@@ -761,6 +830,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithOneFilterAnd",
@@ -771,7 +841,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				filterableAttributes: []string{
 					"year",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Filter: "year < 1930 AND year > 1910",
 				},
 			},
@@ -791,6 +861,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithMultipleFilterAnd",
@@ -802,7 +873,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 					"tag",
 					"year",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Filter: "year < 1930 AND tag = Tale",
 				},
 			},
@@ -816,6 +887,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithFilterOr",
@@ -827,7 +899,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 					"year",
 					"tag",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Filter: "year > 2000 OR tag = Tale",
 				},
 			},
@@ -847,6 +919,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithAttributeToHighlight",
@@ -857,7 +930,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				filterableAttributes: []string{
 					"book_id",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					AttributesToHighlight: []string{"*"},
 					Filter:                "book_id > 10",
 				},
@@ -872,6 +945,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchWithFilterContainingSpaces",
@@ -882,7 +956,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				filterableAttributes: []string{
 					"tag",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Filter: "tag = 'Crime fiction'",
 				},
 			},
@@ -896,6 +970,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -909,7 +984,13 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			require.NoError(t, err)
 			testWaitForTask(t, i, updateFilter)
 
-			got, err := i.Search(tt.args.query, &tt.args.request)
+			got, err := i.Search(tt.args.query, tt.args.request)
+			if tt.wantErr {
+				require.Error(t, err)
+				require.Nil(t, tt.want)
+				return
+			}
+
 			require.NoError(t, err)
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 
@@ -933,12 +1014,13 @@ func TestIndex_SearchWithSort(t *testing.T) {
 		client             *Client
 		query              string
 		sortableAttributes []string
-		request            SearchRequest
+		request            *SearchRequest
 	}
 	tests := []struct {
-		name string
-		args args
-		want *SearchResponse
+		name    string
+		args    args
+		want    *SearchResponse
+		wantErr bool
 	}{
 		{
 			name: "TestIndexBasicSearchWithSortIntParameter",
@@ -949,7 +1031,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				sortableAttributes: []string{
 					"year",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Sort: []string{
 						"year:asc",
 					},
@@ -974,6 +1056,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexBasicSearchWithSortStringParameter",
@@ -984,7 +1067,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				sortableAttributes: []string{
 					"title",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Sort: []string{
 						"title:asc",
 					},
@@ -1009,6 +1092,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexBasicSearchWithSortMultipleParameter",
@@ -1020,7 +1104,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 					"title",
 					"year",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Sort: []string{
 						"title:asc",
 						"year:asc",
@@ -1046,6 +1130,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexBasicSearchWithSortMultipleParameterReverse",
@@ -1057,7 +1142,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 					"title",
 					"year",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Sort: []string{
 						"year:asc",
 						"title:asc",
@@ -1083,6 +1168,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexBasicSearchWithSortMultipleParameterPlaceHolder",
@@ -1094,7 +1180,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 					"title",
 					"year",
 				},
-				request: SearchRequest{
+				request: &SearchRequest{
 					Sort: []string{
 						"year:asc",
 						"title:asc",
@@ -1121,6 +1207,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				Offset:             0,
 				Limit:              4,
 			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -1134,7 +1221,13 @@ func TestIndex_SearchWithSort(t *testing.T) {
 			require.NoError(t, err)
 			testWaitForTask(t, i, updateFilter)
 
-			got, err := i.Search(tt.args.query, &tt.args.request)
+			got, err := i.Search(tt.args.query, tt.args.request)
+			if tt.wantErr {
+				require.Error(t, err)
+				require.Nil(t, tt.want)
+				return
+			}
+
 			require.NoError(t, err)
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 
@@ -1156,14 +1249,15 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 		PrimaryKey          string
 		client              *Client
 		query               string
-		request             SearchRequest
+		request             *SearchRequest
 		searchableAttribute []string
 		sortableAttribute   []string
 	}
 	tests := []struct {
-		name string
-		args args
-		want *SearchResponse
+		name    string
+		args    args
+		want    *SearchResponse
+		wantErr bool
 	}{
 		{
 			name: "TestIndexBasicSearchOnNestedFields",
@@ -1171,7 +1265,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				UID:     "TestIndexBasicSearchOnNestedFields",
 				client:  defaultClient,
 				query:   "An awesome",
-				request: SearchRequest{},
+				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
@@ -1187,6 +1281,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexBasicSearchOnNestedFieldsWithCustomClient",
@@ -1194,7 +1289,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				UID:     "TestIndexBasicSearchOnNestedFieldsWithCustomClient",
 				client:  customClient,
 				query:   "An awesome",
-				request: SearchRequest{},
+				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
@@ -1210,6 +1305,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchOnMultipleNestedFields",
@@ -1217,7 +1313,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				UID:     "TestIndexSearchOnMultipleNestedFields",
 				client:  defaultClient,
 				query:   "french",
-				request: SearchRequest{},
+				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
@@ -1247,7 +1343,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				UID:     "TestIndexSearchOnNestedFieldsWithSearchableAttribute",
 				client:  defaultClient,
 				query:   "An awesome",
-				request: SearchRequest{},
+				request: &SearchRequest{},
 				searchableAttribute: []string{
 					"title", "info.comment",
 				},
@@ -1266,6 +1362,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexSearchOnNestedFieldsWithSortableAttribute",
@@ -1273,7 +1370,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				UID:    "TestIndexSearchOnNestedFieldsWithSortableAttribute",
 				client: defaultClient,
 				query:  "An awesome",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Sort: []string{
 						"info.reviewNb:desc",
 					},
@@ -1299,6 +1396,7 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -1320,7 +1418,12 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				testWaitForTask(t, i, gotTask)
 			}
 
-			got, err := i.Search(tt.args.query, &tt.args.request)
+			got, err := i.Search(tt.args.query, tt.args.request)
+			if tt.wantErr {
+				require.Error(t, err)
+				require.Nil(t, tt.want)
+				return
+			}
 
 			require.NoError(t, err)
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
@@ -1341,12 +1444,13 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 		PrimaryKey string
 		client     *Client
 		query      string
-		request    SearchRequest
+		request    *SearchRequest
 	}
 	tests := []struct {
-		name string
-		args args
-		want *SearchResponse
+		name    string
+		args    args
+		want    *SearchResponse
+		wantErr bool
 	}{
 		{
 			name: "TestIndexBasicSearchWithHitsPerPage",
@@ -1354,7 +1458,7 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "and",
-				request: SearchRequest{
+				request: &SearchRequest{
 					HitsPerPage: 10,
 				},
 			},
@@ -1378,6 +1482,7 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				TotalHits:   4,
 				TotalPages:  1,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexBasicSearchWithPage",
@@ -1385,7 +1490,7 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "and",
-				request: SearchRequest{
+				request: &SearchRequest{
 					Page: 1,
 				},
 			},
@@ -1409,6 +1514,7 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				TotalHits:   4,
 				TotalPages:  1,
 			},
+			wantErr: false,
 		},
 		{
 			name: "TestIndexBasicSearchWithPageAndHitsPerPage",
@@ -1416,7 +1522,7 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query:  "and",
-				request: SearchRequest{
+				request: &SearchRequest{
 					HitsPerPage: 10,
 					Page:        1,
 				},
@@ -1441,6 +1547,7 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				TotalHits:   4,
 				TotalPages:  1,
 			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -1450,7 +1557,7 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			got, err := i.Search(tt.args.query, &tt.args.request)
+			got, err := i.Search(tt.args.query, tt.args.request)
 			require.NoError(t, err)
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 
