@@ -3,6 +3,7 @@ package meilisearch
 import (
 	"crypto/tls"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 	"testing"
@@ -133,6 +134,20 @@ func SetUpIndexWithVector(indexUID string) (resp *Index, err error) {
 		Host:   getenv("MEILISEARCH_URL", "http://localhost:7700"),
 		APIKey: masterKey,
 	})
+
+	req := internalRequest{
+		endpoint: "/experimental-features",
+		method:   http.MethodPatch,
+		contentType: "application/json",
+		withRequest: map[string]interface{}{
+			"vectorStore": true,
+		},
+	}
+
+	if err := client.executeRequest(req); err != nil {
+		panic(err)
+	}
+
 	index := client.Index(indexUID)
 
 	documents := []map[string]interface{}{
