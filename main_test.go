@@ -136,8 +136,8 @@ func SetUpIndexWithVector(indexUID string) (resp *Index, err error) {
 	})
 
 	req := internalRequest{
-		endpoint: "/experimental-features",
-		method:   http.MethodPatch,
+		endpoint:    "/experimental-features",
+		method:      http.MethodPatch,
 		contentType: "application/json",
 		withRequest: map[string]interface{}{
 			"vectorStore": true,
@@ -145,7 +145,7 @@ func SetUpIndexWithVector(indexUID string) (resp *Index, err error) {
 	}
 
 	if err := client.executeRequest(req); err != nil {
-		panic(err)
+		return nil, err
 	}
 
 	index := client.Index(indexUID)
