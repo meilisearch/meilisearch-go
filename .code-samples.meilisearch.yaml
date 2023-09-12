@@ -374,16 +374,16 @@ field_properties_guide_displayed_1: |-
   }
   client.Index("movies").UpdateDisplayedAttributes(&displayedAttributes)
 filtering_guide_1: |-
-  resp, err := client.Index("movies").Search("Avengers", &meilisearch.SearchRequest{
+  resp, err := client.Index("movie_ratings").Search("Avengers", &meilisearch.SearchRequest{
     Filter: "release_date > \"795484800\"",
   })
 filtering_guide_2: |-
-  resp, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
+  resp, err := client.Index("movie_ratings").Search("Batman", &meilisearch.SearchRequest{
     Filter: "release_date > 795484800 AND (director = \"Tim Burton\" OR director = \"Christopher Nolan\")",
   })
 filtering_guide_3: |-
-  resp, err := client.Index("movies").Search("Planet of the Apes", &meilisearch.SearchRequest{
-    Filter: "rating >= 3 AND (NOT director = \"Tim Burton\")",
+  resp, err := client.Index("movie_ratings").Search("Planet of the Apes", &meilisearch.SearchRequest{
+    Filter: "release_date > 1577884550 AND (NOT director = \"Tim Burton\")",
   })
 filtering_guide_nested_1: |-
   resp, err := client.Index("movie_ratings").Search("thriller", &meilisearch.SearchRequest{
@@ -646,13 +646,6 @@ filtering_update_settings_1: |-
     "director",
     "genres",
   })
-faceted_search_filter_1: |-
-  resp, err := client.Index("movies").Search("thriller", &meilisearch.SearchRequest{
-    Filter: [][]string{
-      []string{"genres = Horror", "genres = Mystery"},
-      []string{"director = \"Jordan Peele\""},
-    },
-  })
 faceted_search_facets_1: |-
   resp, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
     Facets: []string{
@@ -672,7 +665,7 @@ faceted_search_update_settings_1: |-
     "rating",
     "language",
   }
-  client.Index("books").UpdateFilterableAttributes(&filterableAttributes)
+  client.Index("movie_ratings").UpdateFilterableAttributes(&filterableAttributes)
 faceted_search_1: |-
   resp, err := client.Index("books").Search("classic", &meilisearch.SearchRequest{
     Facets: []string{
@@ -686,37 +679,27 @@ faceted_search_2: |-
     Queries: []SearchRequest{
       {
         IndexUID: "books",
-        Query:    "pooh",
         Facets: []string{
           "language",
           "genres",
           "author",
           "format",
         },
-        Filter: [][]string{
-          []string{"language = English", "language = French"},
-          []string{"genres = Fiction"},
-        },
+        Filter: "(language = English AND language = French) OR genres = Fiction",
       },
       {
         IndexUID: "books",
-        Query:    "nemo",
         Facets: []string{
           "language",
         },
-        Filter: [][]string{
-          []string{"genres = Fiction"},
-        },
+        Filter: "genres = Fiction",
       },
       {
         IndexUID: "books",
-        Query:    "us",
         Facets: []string{
           "genres",
         },
-        Filter: [][]string{
-          []string{"language = English", "language = French"},
-        },
+        Filter: "language = English OR language = French",
       },
     },
   })
@@ -797,7 +780,7 @@ geosearch_guide_sort_usage_2: |-
   })
 geosearch_guide_filter_usage_3: |-
   client.Index("restaurants").Search("", &meilisearch.SearchRequest{
-    Filter: "_geoBoundingBox([45.494181, 9.179175], [45.449484, 9.214024])",
+    Filter: "_geoBoundingBox([45.494181, 9.214024], [45.449484, 9.179175])",
   })
 primary_field_guide_create_index_primary_key: |-
   client.CreateIndex(&meilisearch.IndexConfig{
