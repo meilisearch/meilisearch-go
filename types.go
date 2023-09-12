@@ -314,6 +314,7 @@ type SearchRequest struct {
 	Facets                []string
 	PlaceholderSearch     bool
 	Sort                  []string
+	Vector                []float64
 	HitsPerPage           int64
 	Page                  int64
 	IndexUID              string
