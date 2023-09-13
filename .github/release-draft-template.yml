@@ -31,3 +31,5 @@ replacers:
     replace: ''
   - search: '/(?:and )?@meili-bot,?/g'
     replace: ''
+  - search: '/(?:and )?@meili-bors(?:\[bot\])?,?/g'
+    replace: ''
