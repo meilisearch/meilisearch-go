@@ -1,0 +1,2 @@
+ignore:
+  - "types_easyjson.go"

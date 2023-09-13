@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 )
 
@@ -12,14 +13,20 @@ const (
 	DefaultLimit int64 = 20
 )
 
+var ErrNoSearchRequest = errors.New("no search request provided")
+
 func (i Index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error) {
-	resp := &json.RawMessage{}
+	if request == nil {
+		return nil, ErrNoSearchRequest
+	}
 
 	if request.Limit == 0 {
 		request.Limit = DefaultLimit
 	}
 
 	searchPostRequestParams := searchPostRequestParams(query, request)
+
+	resp := &json.RawMessage{}
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/search",
@@ -39,7 +46,9 @@ func (i Index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage
 }
 
 func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, error) {
-	resp := &SearchResponse{}
+	if request == nil {
+		return nil, ErrNoSearchRequest
+	}
 
 	if request.Limit == 0 {
 		request.Limit = DefaultLimit
@@ -49,6 +58,8 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 	}
 
 	searchPostRequestParams := searchPostRequestParams(query, request)
+
+	resp := &SearchResponse{}
 
 	req := internalRequest{
 		endpoint:            "/indexes/" + i.UID + "/search",
@@ -81,6 +92,9 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	}
 	if request.ShowMatchesPosition {
 		params["showMatchesPosition"] = request.ShowMatchesPosition
+	}
+	if request.ShowRankingScore {
+		params["showRankingScore"] = request.ShowRankingScore
 	}
 	if request.Filter != nil {
 		params["filter"] = request.Filter
@@ -126,6 +140,10 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	}
 	if len(request.Sort) != 0 {
 		params["sort"] = request.Sort
+	}
+
+	if request.Vector != nil && len(request.Vector) > 0 {
+		params["vector"] = request.Vector
 	}
 
 	return params
