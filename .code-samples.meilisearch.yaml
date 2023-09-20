@@ -146,15 +146,13 @@ async_guide_filter_by_index_uids_1: |-
   client.GetTasks(&meilisearch.TasksQuery{
     IndexUIDS: []string{"movie"},
   })
-async_guide_canceled_by: |-
+async_guide_canceled_by_1: |-
   client.GetTasks(&meilisearch.TasksQuery{
-    CanceledBy: []int64{9},
+    CanceledBy: []int64{9, 15},
   })
 get_one_key_1: |-
   client.GetKey("6062abda-a5aa-4414-ac91-ecd7944c0f8d")
-get_keys_1: |-
-  client.GetKeys(nil)
-get_all_keys: |-
+get_all_keys_1: |-
   client.GetKeys(&meilisearch.KeysQuery{
     Limit: 3
   });
@@ -444,8 +442,15 @@ search_parameter_guide_hitsperpage_1: |-
     HitsPerPage: 15,
   })
 search_parameter_guide_page_1: |-
-  client.Index("movies").Search("q", &meilisearch.SearchRequest{
+  client.Index("movies").Search("", &meilisearch.SearchRequest{
     Page: 2,
+  })
+search_parameter_guide_facet_stats_1: |-
+  client.Index("movie_ratings").Search("Batman", &meilisearch.SearchRequest{
+    Facets: []string{
+      "genres",
+      "rating",
+    },
   })
 typo_tolerance_guide_1: |-
   client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
@@ -491,14 +496,6 @@ landing_getting_started_1: |-
     { "id": 4, "title": "Mad Max: Fury Road" },
     { "id": 5, "title": "Moana" },
     { "id": 6, "title": "Philadelphia" },
-  }
-  client.Index("movies").AddDocuments(documents)
-documents_guide_add_movie_1: |-
-  documents := []map[string]interface{}{
-    {
-      "movie_id": "123sq178",
-      "title":    "Amelie Poulain",
-    },
   }
   client.Index("movies").AddDocuments(documents)
 getting_started_check_task_status: |-
@@ -626,13 +623,6 @@ getting_started_configure_settings: |-
     },
   }
   client.Index("meteorites").UpdateSettings(&settings)
-getting_started_communicating_with_a_protected_instance: |-
-  client := meilisearch.NewClient(meilisearch.ClientConfig{
-    Host: "http://localhost:7700",
-    APIKey: "apiKey",
-  })
-
-  resp, err := client.Index("movies").Search("", &meilisearch.SearchRequest{})
 getting_started_faceting: |-
   client.Index("movies").UpdateFaceting(&meilisearch.Faceting{
       MaxValuesPerFacet: 2,
@@ -645,12 +635,6 @@ filtering_update_settings_1: |-
   resp, err := client.Index("movies").UpdateFilterableAttributes(&[]string{
     "director",
     "genres",
-  })
-faceted_search_facets_1: |-
-  resp, err := client.Index("movies").Search("Batman", &meilisearch.SearchRequest{
-    Facets: []string{
-      "genres",
-    },
   })
 faceted_search_walkthrough_filter_1: |-
   resp, err := client.Index("movies").Search("thriller", &meilisearch.SearchRequest{
@@ -672,35 +656,6 @@ faceted_search_1: |-
       "genres",
       "rating",
       "language",
-    },
-  })
-faceted_search_2: |-
-  client.MultiSearch(&MultiSearchRequest{
-    Queries: []SearchRequest{
-      {
-        IndexUID: "books",
-        Facets: []string{
-          "language",
-          "genres",
-          "author",
-          "format",
-        },
-        Filter: "(language = English AND language = French) OR genres = Fiction",
-      },
-      {
-        IndexUID: "books",
-        Facets: []string{
-          "language",
-        },
-        Filter: "genres = Fiction",
-      },
-      {
-        IndexUID: "books",
-        Facets: []string{
-          "genres",
-        },
-        Filter: "language = English OR language = French",
-      },
     },
   })
 post_dump_1: |-
@@ -869,7 +824,7 @@ synonyms_guide_1: |-
     "fantastic":  []string{"great"},
   }
   client.Index("movies").UpdateSynonyms(&synonyms)
-date_guide_Index_1: |-
+date_guide_index_1: |-
   jsonFile, _ := os.Open("games.json")
   defer jsonFile.Close()
 
