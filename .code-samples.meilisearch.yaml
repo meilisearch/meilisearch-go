@@ -452,6 +452,10 @@ search_parameter_guide_facet_stats_1: |-
       "rating",
     },
   })
+search_parameter_guide_attributes_to_search_on_1: |-
+  resp, err := client.Index("movies").Search("adventure", &meilisearch.SearchRequest{
+    AttributesToSearchOn: []string{"overview"},
+  })
 typo_tolerance_guide_1: |-
   client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
     Enabled: false,
