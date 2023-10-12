@@ -954,7 +954,7 @@ func TestClient_CancelTasks(t *testing.T) {
 				require.NotNil(t, gotResp.TaskUID)
 				require.NotNil(t, gotResp.EnqueuedAt)
 				require.Equal(t, "", gotResp.IndexUID)
-				require.Equal(t, "taskCancelation", gotResp.Type)
+				require.Equal(t, TaskTypeTaskCancelation, gotResp.Type)
 				require.Equal(t, tt.want, gotTask.Details.OriginalFilter)
 			}
 		})
@@ -1083,7 +1083,7 @@ func TestClient_DeleteTasks(t *testing.T) {
 			require.NotNil(t, gotResp.TaskUID)
 			require.NotNil(t, gotResp.EnqueuedAt)
 			require.Equal(t, "", gotResp.IndexUID)
-			require.Equal(t, "taskDeletion", gotResp.Type)
+			require.Equal(t, TaskTypeTaskDeletion, gotResp.Type)
 			require.NotNil(t, gotTask.Details.OriginalFilter)
 			require.Equal(t, tt.want, gotTask.Details.OriginalFilter)
 		})
@@ -1141,7 +1141,7 @@ func TestClient_SwapIndexes(t *testing.T) {
 			require.NotNil(t, gotResp.TaskUID)
 			require.NotNil(t, gotResp.EnqueuedAt)
 			require.Equal(t, "", gotResp.IndexUID)
-			require.Equal(t, "indexSwap", gotResp.Type)
+			require.Equal(t, TaskTypeIndexSwap, gotResp.Type)
 			require.Equal(t, tt.args.query, gotTask.Details.Swaps)
 		})
 	}
