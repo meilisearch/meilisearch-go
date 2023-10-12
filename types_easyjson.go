@@ -1042,7 +1042,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo7(in *jlexer.Lexer, 
 		case "indexUid":
 			out.IndexUID = string(in.String())
 		case "type":
-			out.Type = string(in.String())
+			out.Type = TaskType(in.String())
 		case "enqueuedAt":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.EnqueuedAt).UnmarshalJSON(data))
@@ -1140,7 +1140,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo8(in *jlexer.Lexer, 
 		case "indexUid":
 			out.IndexUID = string(in.String())
 		case "type":
-			out.Type = string(in.String())
+			out.Type = TaskType(in.String())
 		case "error":
 			easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo9(in, &out.Error)
 		case "duration":
