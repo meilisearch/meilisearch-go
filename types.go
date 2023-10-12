@@ -168,7 +168,7 @@ type TaskInfo struct {
 	Status     TaskStatus `json:"status"`
 	TaskUID    int64      `json:"taskUid"`
 	IndexUID   string     `json:"indexUid"`
-	Type       string     `json:"type"`
+	Type       TaskType   `json:"type"`
 	EnqueuedAt time.Time  `json:"enqueuedAt"`
 }
 
