@@ -178,8 +178,8 @@ type TasksQuery struct {
 	Limit            int64
 	From             int64
 	IndexUIDS        []string
-	Statuses         []string
-	Types            []string
+	Statuses         []TaskStatus
+	Types            []TaskType
 	CanceledBy       []int64
 	BeforeEnqueuedAt time.Time
 	AfterEnqueuedAt  time.Time
@@ -193,8 +193,8 @@ type TasksQuery struct {
 type CancelTasksQuery struct {
 	UIDS             []int64
 	IndexUIDS        []string
-	Statuses         []string
-	Types            []string
+	Statuses         []TaskStatus
+	Types            []TaskType
 	BeforeEnqueuedAt time.Time
 	AfterEnqueuedAt  time.Time
 	BeforeStartedAt  time.Time
@@ -205,8 +205,8 @@ type CancelTasksQuery struct {
 type DeleteTasksQuery struct {
 	UIDS             []int64
 	IndexUIDS        []string
-	Statuses         []string
-	Types            []string
+	Statuses         []TaskStatus
+	Types            []TaskType
 	CanceledBy       []int64
 	BeforeEnqueuedAt time.Time
 	AfterEnqueuedAt  time.Time

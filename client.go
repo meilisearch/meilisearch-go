@@ -507,10 +507,18 @@ func encodeTasksQuery(param *TasksQuery, req *internalRequest) {
 		req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
 	}
 	if len(param.Statuses) != 0 {
-		req.withQueryParams["statuses"] = strings.Join(param.Statuses, ",")
+		var statuses []string
+		for _, status := range param.Statuses {
+			statuses = append(statuses, string(status))
+		}
+		req.withQueryParams["statuses"] = strings.Join(statuses, ",")
 	}
 	if len(param.Types) != 0 {
-		req.withQueryParams["types"] = strings.Join(param.Types, ",")
+		var types []string
+		for _, t := range param.Types {
+			types = append(types, string(t))
+		}
+		req.withQueryParams["types"] = strings.Join(types, ",")
 	}
 	if len(param.IndexUIDS) != 0 {
 		req.withQueryParams["indexUids"] = strings.Join(param.IndexUIDS, ",")

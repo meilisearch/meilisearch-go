@@ -645,16 +645,16 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo5(in *jlexer.Lexer, 
 				in.Delim('[')
 				if out.Statuses == nil {
 					if !in.IsDelim(']') {
-						out.Statuses = make([]string, 0, 4)
+						out.Statuses = make([]TaskStatus, 0, 4)
 					} else {
-						out.Statuses = []string{}
+						out.Statuses = []TaskStatus{}
 					}
 				} else {
 					out.Statuses = (out.Statuses)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v9 string
-					v9 = string(in.String())
+					var v9 TaskStatus
+					v9 = TaskStatus(in.String())
 					out.Statuses = append(out.Statuses, v9)
 					in.WantComma()
 				}
@@ -668,16 +668,16 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo5(in *jlexer.Lexer, 
 				in.Delim('[')
 				if out.Types == nil {
 					if !in.IsDelim(']') {
-						out.Types = make([]string, 0, 4)
+						out.Types = make([]TaskType, 0, 4)
 					} else {
-						out.Types = []string{}
+						out.Types = []TaskType{}
 					}
 				} else {
 					out.Types = (out.Types)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v10 string
-					v10 = string(in.String())
+					var v10 TaskType
+					v10 = TaskType(in.String())
 					out.Types = append(out.Types, v10)
 					in.WantComma()
 				}
@@ -5251,16 +5251,16 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo34(in *jlexer.Lexer,
 				in.Delim('[')
 				if out.Statuses == nil {
 					if !in.IsDelim(']') {
-						out.Statuses = make([]string, 0, 4)
+						out.Statuses = make([]TaskStatus, 0, 4)
 					} else {
-						out.Statuses = []string{}
+						out.Statuses = []TaskStatus{}
 					}
 				} else {
 					out.Statuses = (out.Statuses)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v142 string
-					v142 = string(in.String())
+					var v142 TaskStatus
+					v142 = TaskStatus(in.String())
 					out.Statuses = append(out.Statuses, v142)
 					in.WantComma()
 				}
@@ -5274,16 +5274,16 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo34(in *jlexer.Lexer,
 				in.Delim('[')
 				if out.Types == nil {
 					if !in.IsDelim(']') {
-						out.Types = make([]string, 0, 4)
+						out.Types = make([]TaskType, 0, 4)
 					} else {
-						out.Types = []string{}
+						out.Types = []TaskType{}
 					}
 				} else {
 					out.Types = (out.Types)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v143 string
-					v143 = string(in.String())
+					var v143 TaskType
+					v143 = TaskType(in.String())
 					out.Types = append(out.Types, v143)
 					in.WantComma()
 				}
@@ -5776,16 +5776,16 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo38(in *jlexer.Lexer,
 				in.Delim('[')
 				if out.Statuses == nil {
 					if !in.IsDelim(']') {
-						out.Statuses = make([]string, 0, 4)
+						out.Statuses = make([]TaskStatus, 0, 4)
 					} else {
-						out.Statuses = []string{}
+						out.Statuses = []TaskStatus{}
 					}
 				} else {
 					out.Statuses = (out.Statuses)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v157 string
-					v157 = string(in.String())
+					var v157 TaskStatus
+					v157 = TaskStatus(in.String())
 					out.Statuses = append(out.Statuses, v157)
 					in.WantComma()
 				}
@@ -5799,16 +5799,16 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo38(in *jlexer.Lexer,
 				in.Delim('[')
 				if out.Types == nil {
 					if !in.IsDelim(']') {
-						out.Types = make([]string, 0, 4)
+						out.Types = make([]TaskType, 0, 4)
 					} else {
-						out.Types = []string{}
+						out.Types = []TaskType{}
 					}
 				} else {
 					out.Types = (out.Types)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v158 string
-					v158 = string(in.String())
+					var v158 TaskType
+					v158 = TaskType(in.String())
 					out.Types = append(out.Types, v158)
 					in.WantComma()
 				}

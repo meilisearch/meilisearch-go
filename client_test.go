@@ -855,7 +855,7 @@ func TestClient_CancelTasks(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query: &CancelTasksQuery{
-					Statuses: []string{"succeeded"},
+					Statuses: []TaskStatus{TaskStatusSucceeded},
 				},
 			},
 			want: "?statuses=succeeded",
@@ -921,7 +921,7 @@ func TestClient_CancelTasks(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query: &CancelTasksQuery{
-					Statuses:        []string{"enqueued"},
+					Statuses:        []TaskStatus{TaskStatusEnqueued},
 					IndexUIDS:       []string{"indexUID"},
 					UIDS:            []int64{1},
 					AfterEnqueuedAt: time.Now(),
@@ -978,7 +978,7 @@ func TestClient_DeleteTasks(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query: &DeleteTasksQuery{
-					Statuses: []string{"enqueued"},
+					Statuses: []TaskStatus{TaskStatusEnqueued},
 				},
 			},
 			want: "?statuses=enqueued",
@@ -1055,7 +1055,7 @@ func TestClient_DeleteTasks(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query: &DeleteTasksQuery{
-					Statuses:        []string{"enqueued"},
+					Statuses:        []TaskStatus{TaskStatusEnqueued},
 					IndexUIDS:       []string{"indexUID"},
 					UIDS:            []int64{1},
 					AfterEnqueuedAt: time.Now(),
