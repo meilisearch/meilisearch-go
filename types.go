@@ -113,6 +113,8 @@ const (
 	TaskStatusSucceeded TaskStatus = "succeeded"
 	// TaskStatusFailed a failure occurred when processing the task, no changes were made to the database
 	TaskStatusFailed TaskStatus = "failed"
+	// TaskStatusCanceled the task was canceled
+	TaskStatusCanceled TaskStatus = "canceled"
 )
 
 // TaskType is the type of a task
