@@ -127,8 +127,13 @@ async_guide_filter_by_date_1: |-
 async_guide_multiple_filters_1: |-
   client.GetTasks(&meilisearch.TasksQuery{
     IndexUIDS: []string{"movie"},
-    Types:     []string{"documentAdditionOrUpdate", "documentDeletion"},
-    Statuses:  []string{"processing"},
+    Types:     []meilisearch.TaskType{
+      meilisearch.TaskTypeDocumentAdditionOrUpdate,
+      meilisearch.TaskTypeDocumentDeletion,
+    },
+    Statuses:  []meilisearch.TaskStatus{
+      meilisearch.TaskStatusProcessing,
+    },
   })
 async_guide_filter_by_ids_1: |-
   client.GetTasks(&meilisearch.TasksQuery{
@@ -136,11 +141,17 @@ async_guide_filter_by_ids_1: |-
   })
 async_guide_filter_by_statuses_1: |-
   client.GetTasks(&meilisearch.TasksQuery{
-    Statuses: []string{"failed", "canceled"},
+    Statuses: []meilisearch.TaskStatus{
+      meilisearch.TaskStatusFailed,
+      meilisearch.TaskStatusCanceled,
+    },
   })
 async_guide_filter_by_types_1: |-
   client.GetTasks(&meilisearch.TasksQuery{
-    Types: []string{"dumpCreation", "indexSwap"},
+    Types: []meilisearch.TaskType{
+      meilisearch.TaskTypeDumpCreation,
+      meilisearch.TaskTypeIndexSwap,
+    },
   })
 async_guide_filter_by_index_uids_1: |-
   client.GetTasks(&meilisearch.TasksQuery{
