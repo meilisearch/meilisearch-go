@@ -272,6 +272,7 @@ func TestIndex_GetTasks(t *testing.T) {
 		UID      string
 		client   *Client
 		document []docTest
+		query    *TasksQuery
 	}
 	tests := []struct {
 		name string
@@ -294,6 +295,20 @@ func TestIndex_GetTasks(t *testing.T) {
 				client: customClient,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
+				},
+			},
+		},
+		{
+			name: "TestIndexBasicGetTasksWithFilters",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Statuses: []TaskStatus{TaskStatusSucceeded},
+					Types:    []TaskType{TaskTypeDocumentAdditionOrUpdate},
 				},
 			},
 		},

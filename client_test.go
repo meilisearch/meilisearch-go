@@ -922,12 +922,13 @@ func TestClient_CancelTasks(t *testing.T) {
 				client: defaultClient,
 				query: &CancelTasksQuery{
 					Statuses:        []TaskStatus{TaskStatusEnqueued},
+					Types:           []TaskType{TaskTypeDocumentAdditionOrUpdate},
 					IndexUIDS:       []string{"indexUID"},
 					UIDS:            []int64{1},
 					AfterEnqueuedAt: time.Now(),
 				},
 			},
-			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&uids=1",
+			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&types=documentAdditionOrUpdate&uids=1",
 		},
 	}
 	for _, tt := range tests {
