@@ -102,7 +102,7 @@ func TestClient_CreateIndex(t *testing.T) {
 					err.(*Error).MeilisearchApiError.Code)
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, gotResp.Type, "indexCreation")
+				require.Equal(t, gotResp.Type, TaskTypeIndexCreation)
 				require.Equal(t, gotResp.Status, TaskStatusEnqueued)
 				// Make sure that timestamps are also retrieved
 				require.NotZero(t, gotResp.EnqueuedAt)
@@ -224,7 +224,7 @@ func TestClient_DeleteIndex(t *testing.T) {
 						err.(*Error).MeilisearchApiError.Code)
 				} else {
 					require.NoError(t, err)
-					require.Equal(t, gotResp.Type, "indexDeletion")
+					require.Equal(t, gotResp.Type, TaskTypeIndexDeletion)
 					// Make sure that timestamps are also retrieved
 					require.NotZero(t, gotResp.EnqueuedAt)
 				}

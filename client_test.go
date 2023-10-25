@@ -855,7 +855,7 @@ func TestClient_CancelTasks(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query: &CancelTasksQuery{
-					Statuses: []string{"succeeded"},
+					Statuses: []TaskStatus{TaskStatusSucceeded},
 				},
 			},
 			want: "?statuses=succeeded",
@@ -921,13 +921,14 @@ func TestClient_CancelTasks(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query: &CancelTasksQuery{
-					Statuses:        []string{"enqueued"},
+					Statuses:        []TaskStatus{TaskStatusEnqueued},
+					Types:           []TaskType{TaskTypeDocumentAdditionOrUpdate},
 					IndexUIDS:       []string{"indexUID"},
 					UIDS:            []int64{1},
 					AfterEnqueuedAt: time.Now(),
 				},
 			},
-			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&uids=1",
+			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&types=documentAdditionOrUpdate&uids=1",
 		},
 	}
 	for _, tt := range tests {
@@ -954,7 +955,7 @@ func TestClient_CancelTasks(t *testing.T) {
 				require.NotNil(t, gotResp.TaskUID)
 				require.NotNil(t, gotResp.EnqueuedAt)
 				require.Equal(t, "", gotResp.IndexUID)
-				require.Equal(t, "taskCancelation", gotResp.Type)
+				require.Equal(t, TaskTypeTaskCancelation, gotResp.Type)
 				require.Equal(t, tt.want, gotTask.Details.OriginalFilter)
 			}
 		})
@@ -978,7 +979,7 @@ func TestClient_DeleteTasks(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query: &DeleteTasksQuery{
-					Statuses: []string{"enqueued"},
+					Statuses: []TaskStatus{TaskStatusEnqueued},
 				},
 			},
 			want: "?statuses=enqueued",
@@ -1055,7 +1056,7 @@ func TestClient_DeleteTasks(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				query: &DeleteTasksQuery{
-					Statuses:        []string{"enqueued"},
+					Statuses:        []TaskStatus{TaskStatusEnqueued},
 					IndexUIDS:       []string{"indexUID"},
 					UIDS:            []int64{1},
 					AfterEnqueuedAt: time.Now(),
@@ -1083,7 +1084,7 @@ func TestClient_DeleteTasks(t *testing.T) {
 			require.NotNil(t, gotResp.TaskUID)
 			require.NotNil(t, gotResp.EnqueuedAt)
 			require.Equal(t, "", gotResp.IndexUID)
-			require.Equal(t, "taskDeletion", gotResp.Type)
+			require.Equal(t, TaskTypeTaskDeletion, gotResp.Type)
 			require.NotNil(t, gotTask.Details.OriginalFilter)
 			require.Equal(t, tt.want, gotTask.Details.OriginalFilter)
 		})
@@ -1141,7 +1142,7 @@ func TestClient_SwapIndexes(t *testing.T) {
 			require.NotNil(t, gotResp.TaskUID)
 			require.NotNil(t, gotResp.EnqueuedAt)
 			require.Equal(t, "", gotResp.IndexUID)
-			require.Equal(t, "indexSwap", gotResp.Type)
+			require.Equal(t, TaskTypeIndexSwap, gotResp.Type)
 			require.Equal(t, tt.args.query, gotTask.Details.Swaps)
 		})
 	}

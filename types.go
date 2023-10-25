@@ -113,6 +113,36 @@ const (
 	TaskStatusSucceeded TaskStatus = "succeeded"
 	// TaskStatusFailed a failure occurred when processing the task, no changes were made to the database
 	TaskStatusFailed TaskStatus = "failed"
+	// TaskStatusCanceled the task was canceled
+	TaskStatusCanceled TaskStatus = "canceled"
+)
+
+// TaskType is the type of a task
+type TaskType string
+
+const (
+	// TaskTypeIndexCreation represents an index creation
+	TaskTypeIndexCreation TaskType = "indexCreation"
+	// TaskTypeIndexUpdate represents an index update
+	TaskTypeIndexUpdate TaskType = "indexUpdate"
+	// TaskTypeIndexDeletion represents an index deletion
+	TaskTypeIndexDeletion TaskType = "indexDeletion"
+	// TaskTypeIndexSwap represents an index swap
+	TaskTypeIndexSwap TaskType = "indexSwap"
+	// TaskTypeDocumentAdditionOrUpdate represents a document addition or update in an index
+	TaskTypeDocumentAdditionOrUpdate TaskType = "documentAdditionOrUpdate"
+	// TaskTypeDocumentDeletion represents a document deletion from an index
+	TaskTypeDocumentDeletion TaskType = "documentDeletion"
+	// TaskTypeSettingsUpdate represents a settings update
+	TaskTypeSettingsUpdate TaskType = "settingsUpdate"
+	// TaskTypeDumpCreation represents a dump creation
+	TaskTypeDumpCreation TaskType = "dumpCreation"
+	// TaskTypeTaskCancelation represents a task cancelation
+	TaskTypeTaskCancelation TaskType = "taskCancelation"
+	// TaskTypeTaskDeletion represents a task deletion
+	TaskTypeTaskDeletion TaskType = "taskDeletion"
+	// TaskTypeSnapshotCreation represents a snapshot creation
+	TaskTypeSnapshotCreation TaskType = "snapshotCreation"
 )
 
 // Task indicates information about a task resource
@@ -123,7 +153,7 @@ type Task struct {
 	UID        int64               `json:"uid,omitempty"`
 	TaskUID    int64               `json:"taskUid,omitempty"`
 	IndexUID   string              `json:"indexUid"`
-	Type       string              `json:"type"`
+	Type       TaskType            `json:"type"`
 	Error      meilisearchApiError `json:"error,omitempty"`
 	Duration   string              `json:"duration,omitempty"`
 	EnqueuedAt time.Time           `json:"enqueuedAt"`
@@ -140,7 +170,7 @@ type TaskInfo struct {
 	Status     TaskStatus `json:"status"`
 	TaskUID    int64      `json:"taskUid"`
 	IndexUID   string     `json:"indexUid"`
-	Type       string     `json:"type"`
+	Type       TaskType   `json:"type"`
 	EnqueuedAt time.Time  `json:"enqueuedAt"`
 }
 
@@ -150,8 +180,8 @@ type TasksQuery struct {
 	Limit            int64
 	From             int64
 	IndexUIDS        []string
-	Statuses         []string
-	Types            []string
+	Statuses         []TaskStatus
+	Types            []TaskType
 	CanceledBy       []int64
 	BeforeEnqueuedAt time.Time
 	AfterEnqueuedAt  time.Time
@@ -165,8 +195,8 @@ type TasksQuery struct {
 type CancelTasksQuery struct {
 	UIDS             []int64
 	IndexUIDS        []string
-	Statuses         []string
-	Types            []string
+	Statuses         []TaskStatus
+	Types            []TaskType
 	BeforeEnqueuedAt time.Time
 	AfterEnqueuedAt  time.Time
 	BeforeStartedAt  time.Time
@@ -177,8 +207,8 @@ type CancelTasksQuery struct {
 type DeleteTasksQuery struct {
 	UIDS             []int64
 	IndexUIDS        []string
-	Statuses         []string
-	Types            []string
+	Statuses         []TaskStatus
+	Types            []TaskType
 	CanceledBy       []int64
 	BeforeEnqueuedAt time.Time
 	AfterEnqueuedAt  time.Time
