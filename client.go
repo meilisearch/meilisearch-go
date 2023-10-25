@@ -415,19 +415,22 @@ func (c *Client) WaitForTask(taskUID int64, options ...WaitParams) (*Task, error
 			},
 		}
 	}
+	ticker := time.NewTicker(options[0].Interval)
 	for {
-		if err := options[0].Context.Err(); err != nil {
-			return nil, err
+		select {
+		case <-options[0].Context.Done():
+			return nil, options[0].Context.Err()
+		case <-ticker.C:
+			getTask, err := c.GetTask(taskUID)
+			if err != nil {
+				return nil, err
+			}
+			if getTask.Status != TaskStatusEnqueued && getTask.Status != TaskStatusProcessing {
+				return getTask, nil
+			}
 		}
-		getTask, err := c.GetTask(taskUID)
-		if err != nil {
-			return nil, err
-		}
-		if getTask.Status != TaskStatusEnqueued && getTask.Status != TaskStatusProcessing {
-			return getTask, nil
-		}
-		time.Sleep(options[0].Interval)
 	}
+
 }
 
 // Generate a JWT token for the use of multitenancy
