@@ -4844,6 +4844,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo33(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
+		case "dumpUid":
+			out.DumpUid = string(in.String())
 		default:
 			in.SkipRecursive()
 		}
@@ -5151,6 +5153,16 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo33(out *jwriter.Writ
 			}
 			out.RawByte(']')
 		}
+	}
+	if in.DumpUid != "" {
+		const prefix string = ",\"dumpUid\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.DumpUid))
 	}
 	out.RawByte('}')
 }

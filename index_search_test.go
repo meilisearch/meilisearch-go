@@ -1618,10 +1618,10 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 	}
 
 	i, err := SetUpIndexWithVector(testArg.UID)
-	if err != nil{
+	if err != nil {
 		t.Fatal(err)
 	}
-	
+
 	c := testArg.client
 	t.Cleanup(cleanup(c))
 
