@@ -240,6 +240,7 @@ type Details struct {
 	DeletedTasks         int64               `json:"deletedTasks,omitempty"`
 	OriginalFilter       string              `json:"originalFilter,omitempty"`
 	Swaps                []SwapIndexesParams `json:"swaps,omitempty"`
+	DumpUid              string              `json:"dumpUid,omitempty"`
 }
 
 // Return of multiple tasks is wrap in a TaskResult

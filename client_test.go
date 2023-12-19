@@ -572,19 +572,19 @@ func TestClient_CreateDump(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
 
-			gotResp, err := c.CreateDump()
+			task, err := c.CreateDump()
 			require.NoError(t, err)
-			if assert.NotNil(t, gotResp, "CreateDump() should not return nil value") {
-				require.Equal(t, tt.wantResp.Status, gotResp.Status, "CreateDump() got response status %v, want: %v", gotResp.Status, tt.wantResp.Status)
+			if assert.NotNil(t, task, "CreateDump() should not return nil value") {
+				require.Equal(t, tt.wantResp.Status, task.Status, "CreateDump() got response status %v, want: %v", task.Status, tt.wantResp.Status)
 			}
 
-			// Waiting for CreateDump() to finished
-			for {
-				gotResp, _ := c.GetTask(gotResp.TaskUID)
-				if gotResp.Status == "succeeded" {
-					break
-				}
-			}
+			taskInfo, err := c.WaitForTask(task.TaskUID)
+
+			require.NoError(t, err)
+			require.NotNil(t, taskInfo)
+			require.NotNil(t, taskInfo.Details)
+			require.Equal(t, TaskStatusSucceeded, taskInfo.Status)
+			require.NotEmpty(t, taskInfo.Details.DumpUid)
 		})
 	}
 }
