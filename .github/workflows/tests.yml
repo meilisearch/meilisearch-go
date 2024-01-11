@@ -14,7 +14,7 @@ jobs:
     name: linter
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-go@v4
+      - uses: actions/setup-go@v5
         with:
           go-version: 1.17
       - uses: actions/checkout@v4
@@ -47,7 +47,7 @@ jobs:
     name: integration-tests (go ${{ matrix.tag }} version)
     steps:
       - name: Set up Go ${{ matrix.go }}
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
       - name: Check out code into the Go module directory
