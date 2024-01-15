@@ -1600,38 +1600,39 @@ func TestIndex_SearchWithShowRankingScore(t *testing.T) {
 	require.NotNil(t, got.Hits[0].(map[string]interface{})["_rankingScore"])
 }
 
-func TestIndex_SearchWithVectorStore(t *testing.T) {
-	type args struct {
-		UID        string
-		PrimaryKey string
-		client     *Client
-		query      string
-		request    SearchRequest
-	}
-	testArg := args{
-		UID:    "indexUID",
-		client: defaultClient,
-		query:  "Pride and Prejudice",
-		request: SearchRequest{
-			Vector: []float64{0.1, 0.2, 0.3},
-		},
-	}
+// Commented because of https://github.com/meilisearch/meilisearch-go/issues/504
+// func TestIndex_SearchWithVectorStore(t *testing.T) {
+// 	type args struct {
+// 		UID        string
+// 		PrimaryKey string
+// 		client     *Client
+// 		query      string
+// 		request    SearchRequest
+// 	}
+// 	testArg := args{
+// 		UID:    "indexUID",
+// 		client: defaultClient,
+// 		query:  "Pride and Prejudice",
+// 		request: SearchRequest{
+// 			Vector: []float64{0.1, 0.2, 0.3},
+// 		},
+// 	}
 
-	i, err := SetUpIndexWithVector(testArg.UID)
-	if err != nil {
-		t.Fatal(err)
-	}
+// 	i, err := SetUpIndexWithVector(testArg.UID)
+// 	if err != nil {
+// 		t.Fatal(err)
+// 	}
 
-	c := testArg.client
-	t.Cleanup(cleanup(c))
+// 	c := testArg.client
+// 	t.Cleanup(cleanup(c))
 
-	got, err := i.Search(testArg.query, &testArg.request)
-	require.NoError(t, err)
-	require.NotNil(t, got.Hits[0].(map[string]interface{})["_vectors"])
+// 	got, err := i.Search(testArg.query, &testArg.request)
+// 	require.NoError(t, err)
+// 	require.NotNil(t, got.Hits[0].(map[string]interface{})["_vectors"])
 
-	vectorsRes := got.Hits[0].(map[string]interface{})["_vectors"].([]interface{})
+// 	vectorsRes := got.Hits[0].(map[string]interface{})["_vectors"].([]interface{})
 
-	for i := range vectorsRes {
-		require.Equal(t, testArg.request.Vector[i], vectorsRes[i])
-	}
-}
+// 	for i := range vectorsRes {
+// 		require.Equal(t, testArg.request.Vector[i], vectorsRes[i])
+// 	}
+// }
