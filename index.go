@@ -42,6 +42,7 @@ type IndexInterface interface {
 	GetDocuments(param *DocumentsQuery, resp *DocumentsResult) error
 	DeleteDocument(uid string) (resp *TaskInfo, err error)
 	DeleteDocuments(uid []string) (resp *TaskInfo, err error)
+	DeleteDocumentsByFilter(filter interface{}) (resp *TaskInfo, err error)
 	DeleteAllDocuments() (resp *TaskInfo, err error)
 	Search(query string, request *SearchRequest) (*SearchResponse, error)
 	SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error)
