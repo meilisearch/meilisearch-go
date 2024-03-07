@@ -146,5 +146,12 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 		params["vector"] = request.Vector
 	}
 
+	if request.Hybrid != nil {
+		hybrid := make(map[string]interface{}, 2)
+		hybrid["embedder"] = request.Hybrid.Embedder
+		hybrid["semanticRatio"] = request.Hybrid.SemanticRatio
+		params["hybrid"] = hybrid
+	}
+
 	return params
 }

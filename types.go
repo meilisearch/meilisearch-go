@@ -359,6 +359,12 @@ type SearchRequest struct {
 	Page                  int64
 	IndexUID              string
 	Query                 string
+	Hybrid                *SearchRequestHybrid
+}
+
+type SearchRequestHybrid struct {
+	SemanticRatio float64
+	Embedder      string
 }
 
 type MultiSearchRequest struct {
