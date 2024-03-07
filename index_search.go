@@ -79,7 +79,7 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 }
 
 func searchPostRequestParams(query string, request *SearchRequest) map[string]interface{} {
-	params := make(map[string]interface{}, 16)
+	params := make(map[string]interface{}, 22)
 
 	if !request.PlaceholderSearch {
 		params["q"] = query
