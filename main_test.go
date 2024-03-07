@@ -75,8 +75,10 @@ func cleanup(c ClientInterface) func() {
 }
 
 func testWaitForTask(t *testing.T, i *Index, u *TaskInfo) {
-	_, err := i.WaitForTask(u.TaskUID)
+	t.Helper()
+	r, err := i.WaitForTask(u.TaskUID)
 	require.NoError(t, err)
+	require.Equal(t, TaskStatusSucceeded, r.Status, fmt.Sprintf("Task failed: %#+v", r))
 }
 
 func testWaitForBatchTask(t *testing.T, i *Index, u []TaskInfo) {
