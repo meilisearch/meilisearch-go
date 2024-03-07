@@ -52,6 +52,7 @@ type Settings struct {
 	TypoTolerance        *TypoTolerance      `json:"typoTolerance,omitempty"`
 	Pagination           *Pagination         `json:"pagination,omitempty"`
 	Faceting             *Faceting           `json:"faceting,omitempty"`
+	Embedders            map[string]Embedder `json:"embedders,omitempty"`
 }
 
 // TypoTolerance is the type that represents the typo tolerance setting in Meilisearch
@@ -76,6 +77,14 @@ type Pagination struct {
 // Faceting is the type that represents the faceting setting in Meilisearch
 type Faceting struct {
 	MaxValuesPerFacet int64 `json:"maxValuesPerFacet"`
+}
+
+type Embedder struct {
+	Source           string `json:"source"`
+	ApiKey           string `json:"apiKey,omitempty"`
+	Model            string `json:"model,omitempty"`
+	Dimensions       int    `json:"dimensions,omitempty"`
+	DocumentTemplate string `json:"documentTemplate,omitempty"`
 }
 
 // Version is the type that represents the versions in Meilisearch

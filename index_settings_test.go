@@ -2847,3 +2847,114 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 		})
 	}
 }
+
+func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
+	type args struct {
+		UID      string
+		client   *Client
+		request  Settings
+		newIndex bool
+	}
+	tests := []struct {
+		name          string
+		args          args
+		wantTask      *TaskInfo
+		wantEmbedders map[string]Embedder
+		wantErr       string
+	}{
+		{
+			name: "TestIndexUpdateSettingsEmbeddersErr",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: Settings{
+					Embedders: map[string]Embedder{
+						"default": {
+							Source:           "openAi",
+							DocumentTemplate: "{{doc.foobar}}",
+						},
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantErr: "foobar",
+		},
+		{
+			name: "TestIndexUpdateSettingsEmbeddersErr",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: Settings{
+					Embedders: map[string]Embedder{
+						"default": {
+							Source:           "openAi",
+							ApiKey:           "xxx",
+							Model:            "text-embedding-ada-002",
+							DocumentTemplate: "A movie titled '{{doc.title}}'",
+						},
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantErr: "Incorrect API key",
+		},
+		{
+			name: "TestIndexUpdateSettingsEmbeddersUserProvided",
+			args: args{
+				newIndex: true,
+				UID:      "newIndexUID",
+				client:   defaultClient,
+				request: Settings{
+					Embedders: map[string]Embedder{
+						"default": {
+							Source:     "userProvided",
+							Dimensions: 3,
+						},
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			if !tt.args.newIndex {
+				SetUpIndexForFaceting()
+			} else {
+				task, err := c.CreateIndex(&IndexConfig{Uid: tt.args.UID})
+				require.NoError(t, err)
+				_, err = c.Index(tt.args.UID).WaitForTask(task.TaskUID)
+				require.NoError(t, err)
+			}
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := i.GetSettings()
+			require.NoError(t, err)
+			require.Empty(t, gotResp.Embedders)
+
+			gotTask, err := i.UpdateSettings(&tt.args.request)
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
+
+			r, err := i.WaitForTask(gotTask.TaskUID)
+			require.NoError(t, err)
+			if tt.wantErr != "" {
+				require.Contains(t, r.Error.Message, tt.wantErr)
+				return
+			}
+			require.Empty(t, r.Error.Message)
+
+			gotResp, err = i.GetSettings()
+			require.NoError(t, err)
+			require.Equal(t, tt.args.request.Embedders, gotResp.Embedders)
+		})
+	}
+}
