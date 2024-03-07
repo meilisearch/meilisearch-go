@@ -592,3 +592,18 @@ func (i Index) ResetFaceting() (resp *TaskInfo, err error) {
 	}
 	return resp, nil
 }
+
+func (i Index) GetEmbedders() (resp map[string]Embedder, err error) {
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/embedders",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetEmbedders",
+	}
+	if err = i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
