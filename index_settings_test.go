@@ -3025,3 +3025,35 @@ func TestIndex_UpdateEmbedders(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, updated, got)
 }
+
+func TestIndex_ResetEmbedders(t *testing.T) {
+	c := defaultClient
+	t.Cleanup(cleanup(c))
+
+	indexID := "newIndexUID"
+	i := c.Index(indexID)
+	taskInfo, err := c.CreateIndex(&IndexConfig{Uid: indexID})
+	require.NoError(t, err)
+	testWaitForTask(t, i, taskInfo)
+
+	taskInfo, err = i.UpdateSettings(&Settings{
+		Embedders: map[string]Embedder{
+			"default": {
+				Source:     "userProvided",
+				Dimensions: 3,
+			},
+		},
+	})
+	require.NoError(t, err)
+	testWaitForTask(t, i, taskInfo)
+
+	taskInfo, err = i.ResetEmbedders()
+	require.NoError(t, err)
+	task, err := i.WaitForTask(taskInfo.TaskUID)
+	require.NoError(t, err)
+	require.Equal(t, TaskStatusSucceeded, task.Status)
+
+	got, err := i.GetEmbedders()
+	require.NoError(t, err)
+	require.Empty(t, got)
+}
