@@ -592,3 +592,49 @@ func (i Index) ResetFaceting() (resp *TaskInfo, err error) {
 	}
 	return resp, nil
 }
+
+func (i Index) GetEmbedders() (resp map[string]Embedder, err error) {
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/embedders",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetEmbedders",
+	}
+	if err = i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) UpdateEmbedders(request map[string]Embedder) (resp *TaskInfo, err error) {
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/embedders",
+		method:              http.MethodPatch,
+		contentType:         contentTypeJSON,
+		withRequest:         &request,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateEmbedders",
+	}
+	if err = i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) ResetEmbedders() (resp *TaskInfo, err error) {
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/embedders",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetEmbedders",
+	}
+	if err = i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

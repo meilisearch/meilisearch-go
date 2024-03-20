@@ -79,7 +79,7 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 }
 
 func searchPostRequestParams(query string, request *SearchRequest) map[string]interface{} {
-	params := make(map[string]interface{}, 16)
+	params := make(map[string]interface{}, 22)
 
 	if !request.PlaceholderSearch {
 		params["q"] = query
@@ -144,6 +144,13 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 
 	if request.Vector != nil && len(request.Vector) > 0 {
 		params["vector"] = request.Vector
+	}
+
+	if request.Hybrid != nil {
+		hybrid := make(map[string]interface{}, 2)
+		hybrid["embedder"] = request.Hybrid.Embedder
+		hybrid["semanticRatio"] = request.Hybrid.SemanticRatio
+		params["hybrid"] = hybrid
 	}
 
 	return params

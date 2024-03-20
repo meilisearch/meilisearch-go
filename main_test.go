@@ -75,8 +75,10 @@ func cleanup(c ClientInterface) func() {
 }
 
 func testWaitForTask(t *testing.T, i *Index, u *TaskInfo) {
-	_, err := i.WaitForTask(u.TaskUID)
+	t.Helper()
+	r, err := i.WaitForTask(u.TaskUID)
 	require.NoError(t, err)
+	require.Equal(t, TaskStatusSucceeded, r.Status, fmt.Sprintf("Task failed: %#+v", r))
 }
 
 func testWaitForBatchTask(t *testing.T, i *Index, u []TaskInfo) {
@@ -149,21 +151,38 @@ func SetUpIndexWithVector(indexUID string) (resp *Index, err error) {
 	}
 
 	index := client.Index(indexUID)
-
-	documents := []map[string]interface{}{
-		{"book_id": 123, "title": "Pride and Prejudice", "_vectors": []float64{0.1, 0.2, 0.3}},
-		{"book_id": 456, "title": "Le Petit Prince", "_vectors": []float64{2.4, 8.5, 1.6}},
+	taskInfo, err := index.UpdateSettings(&Settings{
+		Embedders: map[string]Embedder{
+			"default": {
+				Source:     "userProvided",
+				Dimensions: 3,
+			},
+		},
+	})
+	if err != nil {
+		return nil, err
+	}
+	settingsTask, err := index.WaitForTask(taskInfo.TaskUID)
+	if err != nil {
+		return nil, err
+	}
+	if settingsTask.Status != TaskStatusSucceeded {
+		return nil, fmt.Errorf("Update settings task failed: %#+v", settingsTask)
 	}
 
-	task, err := index.AddDocuments(documents)
+	documents := []map[string]interface{}{
+		{"book_id": 123, "title": "Pride and Prejudice", "_vectors": map[string]interface{}{"default": []float64{0.1, 0.2, 0.3}}},
+		{"book_id": 456, "title": "Le Petit Prince", "_vectors": map[string]interface{}{"default": []float64{2.4, 8.5, 1.6}}},
+	}
+
+	taskInfo, err = index.AddDocuments(documents)
 	if err != nil {
-		fmt.Println(err)
 		return nil, err
 	}
 
-	finalTask, _ := index.WaitForTask(task.TaskUID)
-	if finalTask.Status != "succeeded" {
-		os.Exit(1)
+	finalTask, _ := index.WaitForTask(taskInfo.TaskUID)
+	if finalTask.Status != TaskStatusSucceeded {
+		return nil, fmt.Errorf("Add documents task failed: %#+v", finalTask)
 	}
 
 	return client.GetIndex(indexUID)
