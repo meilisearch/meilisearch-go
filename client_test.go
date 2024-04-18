@@ -829,6 +829,139 @@ func TestClient_GetTasks(t *testing.T) {
 	}
 }
 
+func TestClient_GetTasksUsingClient(t *testing.T) {
+	type args struct {
+		UID      string
+		client   *Client
+		document []docTest
+		query    *TasksQuery
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "TestBasicGetTasks",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: nil,
+			},
+		},
+		{
+			name: "TestGetTasksWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: nil,
+			},
+		},
+		{
+			name: "TestGetTasksWithLimit",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit: 1,
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithLimit",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit: 1,
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithFrom",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					From: 0,
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithParameters",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:     1,
+					From:      0,
+					IndexUIDS: []string{"indexUID"},
+				},
+			},
+		},
+		{
+			name: "TestGetTasksWithDateFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:            1,
+					BeforeEnqueuedAt: time.Now(),
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			task, err := i.AddDocuments(tt.args.document)
+			require.NoError(t, err)
+
+			_, err = c.WaitForTask(task.TaskUID)
+			require.NoError(t, err)
+
+			gotResp, err := c.GetTasks(tt.args.query)
+			require.NoError(t, err)
+			require.NotNil(t, (*gotResp).Results[0].Status)
+			require.NotZero(t, (*gotResp).Results[0].UID)
+			require.NotNil(t, (*gotResp).Results[0].Type)
+			if tt.args.query != nil {
+				if tt.args.query.Limit != 0 {
+					require.Equal(t, tt.args.query.Limit, (*gotResp).Limit)
+				} else {
+					require.Equal(t, int64(20), (*gotResp).Limit)
+				}
+				if tt.args.query.From != 0 {
+					require.Equal(t, tt.args.query.From, (*gotResp).From)
+				}
+			}
+		})
+	}
+}
+
 func TestClient_CancelTasks(t *testing.T) {
 	type args struct {
 		UID    string
