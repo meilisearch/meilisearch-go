@@ -451,6 +451,11 @@ func (c *Client) WaitForTask(taskUID int64, options ...WaitParams) (*Task, error
 
 	// Defer the stop of the ticker, help GC to cleanup
 	defer func() {
+		// we might want to revist this, go.mod now is 1.16
+		// however I still encouter the issue on go 1.22.2
+		// there are 2 issues regarding tickers
+		// https://go-review.googlesource.com/c/go/+/512355
+		// https://github.com/golang/go/issues/61542
 		ticker.Stop()
 		ticker = nil
 	}()
