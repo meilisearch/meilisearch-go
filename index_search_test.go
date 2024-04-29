@@ -1612,7 +1612,7 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 		client: defaultClient,
 		query:  "Pride and Prejudice",
 		request: SearchRequest{
-			Vector: []float64{0.1, 0.2, 0.3},
+			Vector: []float32{0.1, 0.2, 0.3},
 			Hybrid: &SearchRequestHybrid{
 				SemanticRatio: 0.5,
 				Embedder:      "default",

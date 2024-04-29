@@ -2635,16 +2635,16 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				in.Delim('[')
 				if out.Vector == nil {
 					if !in.IsDelim(']') {
-						out.Vector = make([]float64, 0, 8)
+						out.Vector = make([]float32, 0, 16)
 					} else {
-						out.Vector = []float64{}
+						out.Vector = []float32{}
 					}
 				} else {
 					out.Vector = (out.Vector)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v66 float64
-					v66 = float64(in.Float64())
+					var v66 float32
+					v66 = float32(in.Float32())
 					out.Vector = append(out.Vector, v66)
 					in.WantComma()
 				}
@@ -2850,7 +2850,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 				if v79 > 0 {
 					out.RawByte(',')
 				}
-				out.Float64(float64(v80))
+				out.Float32(float32(v80))
 			}
 			out.RawByte(']')
 		}
