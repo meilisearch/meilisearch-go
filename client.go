@@ -123,7 +123,7 @@ func (c *Client) GetStats() (resp *Stats, err error) {
 		functionName:        "GetStats",
 	}
 	if err := c.executeRequest(req); err != nil {
-		return nil, err
+		return nil, err // codecov:ignore:this -- this is not a test regarding the error
 	}
 	return resp, nil
 }
@@ -141,7 +141,7 @@ func (c *Client) CreateKey(request *Key) (resp *Key, err error) {
 		functionName:        "CreateKey",
 	}
 	if err := c.executeRequest(req); err != nil {
-		return nil, err
+		return nil, err // codecov:ignore:this -- this is not a test regarding the error
 	}
 	return resp, nil
 }
@@ -157,7 +157,7 @@ func (c *Client) GetKey(identifier string) (resp *Key, err error) {
 		functionName:        "GetKey",
 	}
 	if err := c.executeRequest(req); err != nil {
-		return nil, err
+		return nil, err // codecov:ignore:this -- this is not a test regarding the error
 	}
 	return resp, nil
 }
@@ -198,7 +198,7 @@ func (c *Client) UpdateKey(keyOrUID string, request *Key) (resp *Key, err error)
 		functionName:        "UpdateKey",
 	}
 	if err := c.executeRequest(req); err != nil {
-		return nil, err
+		return nil, err // codecov:ignore:this -- this is not a test regarding the error
 	}
 	return resp, nil
 }
@@ -253,7 +253,7 @@ func (c *Client) CreateDump() (resp *TaskInfo, err error) {
 		functionName:        "CreateDump",
 	}
 	if err := c.executeRequest(req); err != nil {
-		return nil, err
+		return nil, err // codecov:ignore:this -- this is not a test regarding the error
 	}
 	return resp, nil
 }
@@ -298,7 +298,7 @@ func (c *Client) GetTask(taskUID int64) (resp *Task, err error) {
 		functionName:        "GetTask",
 	}
 	if err := c.executeRequest(req); err != nil {
-		return nil, err
+		return nil, err // codecov:ignore:this -- this is not a test regarding the error
 	}
 	return resp, nil
 }
@@ -318,7 +318,7 @@ func (c *Client) GetTasks(param *TasksQuery) (resp *TaskResult, err error) {
 		encodeTasksQuery(param, &req)
 	}
 	if err := c.executeRequest(req); err != nil {
-		return nil, err
+		return nil, err // codecov:ignore:this -- this is not a test regarding the error
 	}
 	return resp, nil
 }
@@ -381,7 +381,7 @@ func (c *Client) DeleteTasks(param *DeleteTasksQuery) (resp *TaskInfo, err error
 		encodeTasksQuery(paramToSend, &req)
 	}
 	if err := c.executeRequest(req); err != nil {
-		return nil, err
+		return nil, err // codecov:ignore:this -- this is not a test regarding the error
 	}
 	return resp, nil
 }
@@ -398,7 +398,7 @@ func (c *Client) SwapIndexes(param []SwapIndexesParams) (resp *TaskInfo, err err
 		functionName:        "SwapIndexes",
 	}
 	if err := c.executeRequest(req); err != nil {
-		return nil, err
+		return nil, err // codecov:ignore:this -- this is not a test regarding the error
 	}
 	return resp, nil
 }
@@ -413,9 +413,12 @@ func (c *Client) WaitForTask(taskUID int64, options ...WaitParams) (*Task, error
 	// extract closure to get the task and check the status first before the ticker
 	fn := func() (*Task, error) {
 		getTask, err := c.GetTask(taskUID)
+		// codecov:ignore:start -- ignores everything between this and the end line (see convo https://github.com/meilisearch/meilisearch-go/pull/523)
 		if err != nil {
 			return nil, err
 		}
+		// codecov:ignore:end -- end of ignore
+
 		if getTask.Status != TaskStatusEnqueued && getTask.Status != TaskStatusProcessing {
 			return getTask, nil
 		}
@@ -424,10 +427,12 @@ func (c *Client) WaitForTask(taskUID int64, options ...WaitParams) (*Task, error
 
 	// run first before the ticker, we do not want to wait for the first interval
 	task, err := fn()
+	// codecov:ignore:start -- ignores everything between this and the end line (see convo https://github.com/meilisearch/meilisearch-go/pull/523)
 	if err != nil {
 		// Return error if it exists
 		return nil, err
 	}
+	// codecov:ignore:end -- end of ignore
 
 	// Return task if it exists
 	if task != nil {
@@ -466,9 +471,11 @@ func (c *Client) WaitForTask(taskUID int64, options ...WaitParams) (*Task, error
 			return nil, options[0].Context.Err()
 		case <-ticker.C:
 			task, err := fn()
+			// codecov:ignore:start -- ignores everything between this and the end line (see convo https://github.com/meilisearch/meilisearch-go/pull/523)
 			if err != nil {
 				return nil, err
 			}
+			// codecov:ignore:end -- end of ignore
 			if task != nil {
 				return task, nil
 			}

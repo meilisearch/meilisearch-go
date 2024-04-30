@@ -151,6 +151,16 @@ func TestClient_GetKeys(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "TestGetKeysWithOffset",
+			args: args{
+				client: defaultClient,
+				request: &KeysQuery{
+					Limit:  2,
+					Offset: 1,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -158,9 +168,12 @@ func TestClient_GetKeys(t *testing.T) {
 
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "GetKeys() should not return nil value")
-			if tt.args.request != nil && tt.args.request.Limit != 0 {
+			switch {
+			case tt.args.request != nil && tt.args.request.Limit != 0 && tt.args.request.Offset == 0:
 				require.Equal(t, tt.args.request.Limit, int64(len(gotResp.Results)))
-			} else {
+			case tt.args.request != nil && tt.args.request.Limit == 2 && tt.args.request.Offset == 1:
+				require.GreaterOrEqual(t, len(gotResp.Results), int(tt.args.request.Limit-tt.args.request.Offset))
+			default:
 				require.GreaterOrEqual(t, len(gotResp.Results), 2)
 			}
 		})
