@@ -1101,7 +1101,7 @@ func TestClient_GetTasksUsingClientAllFailures(t *testing.T) {
 			_, err := c.DeleteIndex("NOT_EXISTS")
 			require.Error(t, err)
 
-			_, err = c.WaitForTask(math.MaxInt)
+			_, err = c.WaitForTask(math.MaxInt32)
 			require.Error(t, err)
 
 			_, err = i.AddDocuments(tt.args.document)
