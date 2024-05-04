@@ -96,6 +96,9 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	if request.ShowRankingScore {
 		params["showRankingScore"] = request.ShowRankingScore
 	}
+	if request.ShowRankingScoreDetails {
+		params["showRankingScoreDetails"] = request.ShowRankingScoreDetails
+	}
 	if request.Filter != nil {
 		params["filter"] = request.Filter
 	}
@@ -141,11 +144,9 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	if len(request.Sort) != 0 {
 		params["sort"] = request.Sort
 	}
-
 	if request.Vector != nil && len(request.Vector) > 0 {
 		params["vector"] = request.Vector
 	}
-
 	if request.Hybrid != nil {
 		hybrid := make(map[string]interface{}, 2)
 		hybrid["embedder"] = request.Hybrid.Embedder
