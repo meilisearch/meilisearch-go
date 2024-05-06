@@ -2579,6 +2579,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 			out.ShowMatchesPosition = bool(in.Bool())
 		case "ShowRankingScore":
 			out.ShowRankingScore = bool(in.Bool())
+		case "ShowRankingScoreDetails":
+			out.ShowRankingScoreDetails = bool(in.Bool())
 		case "Facets":
 			if in.IsNull() {
 				in.Skip()
@@ -2635,16 +2637,16 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				in.Delim('[')
 				if out.Vector == nil {
 					if !in.IsDelim(']') {
-						out.Vector = make([]float64, 0, 8)
+						out.Vector = make([]float32, 0, 16)
 					} else {
-						out.Vector = []float64{}
+						out.Vector = []float32{}
 					}
 				} else {
 					out.Vector = (out.Vector)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v66 float64
-					v66 = float64(in.Float64())
+					var v66 float32
+					v66 = float32(in.Float32())
 					out.Vector = append(out.Vector, v66)
 					in.WantComma()
 				}
@@ -2803,6 +2805,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 		out.Bool(bool(in.ShowRankingScore))
 	}
 	{
+		const prefix string = ",\"ShowRankingScoreDetails\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.ShowRankingScoreDetails))
+	}
+	{
 		const prefix string = ",\"Facets\":"
 		out.RawString(prefix)
 		if in.Facets == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
@@ -2850,7 +2857,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 				if v79 > 0 {
 					out.RawByte(',')
 				}
-				out.Float64(float64(v80))
+				out.Float32(float32(v80))
 			}
 			out.RawByte(']')
 		}

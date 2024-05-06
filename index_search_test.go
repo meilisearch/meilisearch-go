@@ -1599,6 +1599,32 @@ func TestIndex_SearchWithShowRankingScore(t *testing.T) {
 	require.NotNil(t, got.Hits[0].(map[string]interface{})["_rankingScore"])
 }
 
+func TestIndex_SearchWithShowRankingScoreDetails(t *testing.T) {
+	type args struct {
+		UID        string
+		PrimaryKey string
+		client     *Client
+		query      string
+		request    SearchRequest
+	}
+	testArg := args{
+		UID:    "indexUID",
+		client: defaultClient,
+		query:  "and",
+		request: SearchRequest{
+			ShowRankingScoreDetails: true,
+		},
+	}
+	SetUpIndexForFaceting()
+	c := testArg.client
+	i := c.Index(testArg.UID)
+	t.Cleanup(cleanup(c))
+
+	got, err := i.Search(testArg.query, &testArg.request)
+	require.NoError(t, err)
+	require.NotNil(t, got.Hits[0].(map[string]interface{})["_rankingScoreDetails"])
+}
+
 func TestIndex_SearchWithVectorStore(t *testing.T) {
 	type args struct {
 		UID        string
@@ -1612,7 +1638,7 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 		client: defaultClient,
 		query:  "Pride and Prejudice",
 		request: SearchRequest{
-			Vector: []float64{0.1, 0.2, 0.3},
+			Vector: []float32{0.1, 0.2, 0.3},
 			Hybrid: &SearchRequestHybrid{
 				SemanticRatio: 0.5,
 				Embedder:      "default",
