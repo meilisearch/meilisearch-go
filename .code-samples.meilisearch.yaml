@@ -440,6 +440,10 @@ search_parameter_guide_show_ranking_score_1: |-
   resp, err := client.Index("movies").Search("dragon", &meilisearch.SearchRequest{
     showRankingScore:    true,
   })
+search_parameter_guide_show_ranking_score_details_1: |-
+  resp, err := client.Index("movies").Search("dragon", &meilisearch.SearchRequest{
+    showRankingScoreDetails:    true,
+  })
 search_parameter_guide_matching_strategy_1: |-
   resp, err := client.Index("movies").Search("big fat liar", &meilisearch.SearchRequest{
     MatchingStrategy:    "last",
