@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"context"
+	"math"
 	"reflect"
 	"strings"
 	"sync"
@@ -151,6 +152,16 @@ func TestClient_GetKeys(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "TestGetKeysWithOffset",
+			args: args{
+				client: defaultClient,
+				request: &KeysQuery{
+					Limit:  2,
+					Offset: 1,
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -158,9 +169,12 @@ func TestClient_GetKeys(t *testing.T) {
 
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "GetKeys() should not return nil value")
-			if tt.args.request != nil && tt.args.request.Limit != 0 {
+			switch {
+			case tt.args.request != nil && tt.args.request.Limit != 0 && tt.args.request.Offset == 0:
 				require.Equal(t, tt.args.request.Limit, int64(len(gotResp.Results)))
-			} else {
+			case tt.args.request != nil && tt.args.request.Limit == 2 && tt.args.request.Offset == 1:
+				require.GreaterOrEqual(t, len(gotResp.Results), int(tt.args.request.Limit-tt.args.request.Offset))
+			default:
 				require.GreaterOrEqual(t, len(gotResp.Results), 2)
 			}
 		})
@@ -825,6 +839,306 @@ func TestClient_GetTasks(t *testing.T) {
 					require.Equal(t, tt.args.query.From, (*gotResp).From)
 				}
 			}
+		})
+	}
+}
+
+func TestClient_GetTasksUsingClient(t *testing.T) {
+	type args struct {
+		UID             string
+		client          *Client
+		document        []docTest
+		query           *TasksQuery
+		expectedResults int
+	}
+
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "TestBasicGetTasks",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query:           nil,
+				expectedResults: 1,
+			},
+		},
+		{
+			name: "TestGetTasksWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query:           nil,
+				expectedResults: 1,
+			},
+		},
+		{
+			name: "TestGetTasksWithLimit",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit: 1,
+				},
+				expectedResults: 1,
+			},
+		},
+		{
+			name: "TestGetTasksWithLimit",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit: 1,
+				},
+				expectedResults: 1,
+			},
+		},
+		{
+			name: "TestGetTasksWithFrom",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					From: 0,
+				},
+				expectedResults: 1,
+			},
+		},
+		{
+			name: "TestGetTasksWithFrom_1",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					From: 1,
+				},
+				expectedResults: 0,
+			},
+		},
+		{
+			name: "TestGetTasksWithParameters",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:     1,
+					From:      0,
+					IndexUIDS: []string{"indexUID"},
+				},
+				expectedResults: 1,
+			},
+		},
+		{
+			name: "TestGetTasksWithDateFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:            1,
+					BeforeEnqueuedAt: time.Now(),
+				},
+				expectedResults: 1,
+			},
+		},
+
+		{
+			name: "TestGetTasksWithBeforeStartedAt",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:           1,
+					BeforeStartedAt: time.Now(),
+				},
+				expectedResults: 1,
+			},
+		},
+		{
+			name: "TestGetTasksWithAfterStartedAt",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:          1,
+					AfterStartedAt: time.Now().Add(-time.Hour),
+				},
+				expectedResults: 0,
+			},
+		},
+		{
+			name: "TestGetTasksWithBeforeFinishedAt",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:            1,
+					BeforeFinishedAt: time.Now().Add(time.Hour),
+				},
+				expectedResults: 1,
+			},
+		},
+		{
+			name: "TestGetTasksWithAfterFinishedAt",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:           1,
+					AfterFinishedAt: time.Now().Add(-time.Hour),
+				},
+				expectedResults: 0,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+
+			t.Cleanup(cleanup(c))
+
+			task, err := i.AddDocuments(tt.args.document)
+			require.NoError(t, err)
+
+			_, err = c.WaitForTask(task.TaskUID)
+			require.NoError(t, err)
+
+			gotResp, err := c.GetTasks(tt.args.query)
+			require.NoError(t, err)
+			require.NotNil(t, gotResp)
+			// require.Equal(t, tt.args.expectedResults, len((*gotResp).Results))
+
+			if tt.args.expectedResults > 0 {
+				require.NotNil(t, (*gotResp).Results[0].Status)
+				require.NotZero(t, (*gotResp).Results[0].UID)
+				require.NotNil(t, (*gotResp).Results[0].Type)
+			}
+			if tt.args.query != nil {
+				if tt.args.query.Limit != 0 {
+					require.Equal(t, tt.args.query.Limit, (*gotResp).Limit)
+				} else {
+					require.Equal(t, int64(20), (*gotResp).Limit)
+				}
+				if tt.args.query.From != 0 && tt.args.expectedResults > 0 {
+					require.Equal(t, tt.args.query.From, (*gotResp).From)
+				}
+			}
+		})
+	}
+}
+
+func TestClient_GetTasksUsingClientAllFailures(t *testing.T) {
+	type args struct {
+		UID             string
+		client          *Client
+		document        []docTest
+		query           *TasksQuery
+		expectedResults int
+	}
+
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "TestBasicGetTasks",
+			args: args{
+				UID:    "indexUID",
+				client: brokenClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query:           nil,
+				expectedResults: 1,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := tt.args.client
+			t.Cleanup(cleanup(c))
+			i := c.Index("NOT_EXISTS")
+
+			_, err := c.DeleteIndex("NOT_EXISTS")
+			require.Error(t, err)
+
+			_, err = c.WaitForTask(math.MaxInt32)
+			require.Error(t, err)
+
+			_, err = i.AddDocuments(tt.args.document)
+			require.Error(t, err)
+
+			_, err = c.GetTasks(tt.args.query)
+			require.Error(t, err)
+
+			_, err = c.GetStats()
+			require.Error(t, err)
+
+			_, err = c.CreateKey(&Key{
+				Name: "Wrong",
+			})
+			require.Error(t, err)
+
+			_, err = c.GetKey("Wrong")
+			require.Error(t, err)
+
+			_, err = c.UpdateKey("Wrong", &Key{
+				Name: "Wrong",
+			})
+			require.Error(t, err)
+
+			_, err = c.CreateDump()
+			require.Error(t, err)
+
+			_, err = c.GetTask(1)
+			require.Error(t, err)
+
+			_, err = c.DeleteTasks(nil)
+			require.Error(t, err)
+
+			_, err = c.SwapIndexes([]SwapIndexesParams{
+				{Indexes: []string{"Wrong", "Worse"}},
+			})
+			require.Error(t, err)
 		})
 	}
 }

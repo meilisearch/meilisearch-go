@@ -316,6 +316,15 @@ var customClient = NewFastHTTPCustomClient(ClientConfig{
 		Name:      "custom-client",
 	})
 
+var brokenClient = NewFastHTTPCustomClient(ClientConfig{
+	Host:   getenv("MEILISEARCH_URL", "http://localhost:7700"),
+	APIKey: "WRONG",
+},
+	&fasthttp.Client{
+		TLSConfig: &tls.Config{InsecureSkipVerify: true},
+		Name:      "broken-client",
+	})
+
 var timeoutClient = NewClient(ClientConfig{
 	Host:    getenv("MEILISEARCH_URL", "http://localhost:7700"),
 	APIKey:  masterKey,

@@ -15,7 +15,6 @@ import (
 
 // ClientConfig configure the Client
 type ClientConfig struct {
-
 	// Host is the host of your Meilisearch database
 	// Example: 'http://localhost:7700'
 	Host string
@@ -63,6 +62,11 @@ type ClientInterface interface {
 }
 
 var _ ClientInterface = &Client{}
+
+const (
+	defaultWaitForTaskTimeout  = 5 * time.Second
+	defaultWaitForTaskInterval = 50 * time.Millisecond
+)
 
 // NewFastHTTPCustomClient creates Meilisearch with custom fasthttp.Client
 func NewFastHTTPCustomClient(config ClientConfig, client *fasthttp.Client) *Client {
@@ -405,32 +409,72 @@ func (c *Client) SwapIndexes(param []SwapIndexesParams) (resp *TaskInfo, err err
 // If no ctx and interval are provided WaitForTask will check each 50ms the
 // status of a task.
 func (c *Client) WaitForTask(taskUID int64, options ...WaitParams) (*Task, error) {
+	// extract closure to get the task and check the status first before the ticker
+	fn := func() (*Task, error) {
+		getTask, err := c.GetTask(taskUID)
+		if err != nil {
+			return nil, err
+		}
+
+		if getTask.Status != TaskStatusEnqueued && getTask.Status != TaskStatusProcessing {
+			return getTask, nil
+		}
+		return nil, nil
+	}
+
+	// run first before the ticker, we do not want to wait for the first interval
+	task, err := fn()
+	if err != nil {
+		// Return error if it exists
+		return nil, err
+	}
+
+	// Return task if it exists
+	if task != nil {
+		return task, nil
+	}
+
+	// Check if options are provided, if not create a default context and interval
 	if options == nil {
-		ctx, cancelFunc := context.WithTimeout(context.Background(), time.Second*5)
+		ctx, cancelFunc := context.WithTimeout(context.Background(), defaultWaitForTaskTimeout)
 		defer cancelFunc()
 		options = []WaitParams{
 			{
 				Context:  ctx,
-				Interval: time.Millisecond * 50,
+				Interval: defaultWaitForTaskInterval,
 			},
 		}
 	}
+
+	// Create a ticker to check the task status, because our initial check was not successful
 	ticker := time.NewTicker(options[0].Interval)
+
+	// Defer the stop of the ticker, help GC to cleanup
+	defer func() {
+		// we might want to revist this, go.mod now is 1.16
+		// however I still encouter the issue on go 1.22.2
+		// there are 2 issues regarding tickers
+		// https://go-review.googlesource.com/c/go/+/512355
+		// https://github.com/golang/go/issues/61542
+		ticker.Stop()
+		ticker = nil
+	}()
+
 	for {
 		select {
 		case <-options[0].Context.Done():
 			return nil, options[0].Context.Err()
 		case <-ticker.C:
-			getTask, err := c.GetTask(taskUID)
+			task, err := fn()
 			if err != nil {
 				return nil, err
 			}
-			if getTask.Status != TaskStatusEnqueued && getTask.Status != TaskStatusProcessing {
-				return getTask, nil
+
+			if task != nil {
+				return task, nil
 			}
 		}
 	}
-
 }
 
 // Generate a JWT token for the use of multitenancy
