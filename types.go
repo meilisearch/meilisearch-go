@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-	"github.com/valyala/fasthttp"
 )
 
 //
@@ -13,8 +12,8 @@ import (
 
 // Client is a structure that give you the power for interacting with an high-level api with Meilisearch.
 type Client struct {
-	config     ClientConfig
-	httpClient *fasthttp.Client
+	config          ClientConfig
+	requestExecutor requestExecutor
 }
 
 // Index is the type that represent an index in Meilisearch

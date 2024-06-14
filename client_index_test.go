@@ -46,6 +46,19 @@ func TestClient_CreateIndex(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:   "TestCreateIndexWithNetHTTPClient",
+			client: netHTTPClient,
+			args: args{
+				config: IndexConfig{
+					Uid: "TestCreateIndexWithNetHTTPClient",
+				},
+			},
+			wantResp: &Index{
+				UID: "TestCreateIndexWithNetHTTPClient",
+			},
+			wantErr: false,
+		},
+		{
 			name:   "TestCreateIndexWithPrimaryKey",
 			client: defaultClient,
 			args: args{
@@ -150,6 +163,15 @@ func TestClient_DeleteIndex(t *testing.T) {
 			args: args{
 				createUid: []string{"TestDeleteIndexWithCustomClient"},
 				deleteUid: []string{"TestDeleteIndexWithCustomClient"},
+			},
+			wantErr: false,
+		},
+		{
+			name:   "TestDeleteIndexWithNetHTTPClient",
+			client: netHTTPClient,
+			args: args{
+				createUid: []string{"TestDeleteIndexNetHTTP"},
+				deleteUid: []string{"TestDeleteIndexNetHTTP"},
 			},
 			wantErr: false,
 		},
@@ -286,6 +308,24 @@ func TestClient_GetIndexes(t *testing.T) {
 				Results: []Index{
 					{
 						UID: "TestGetIndexesWithCustomClient",
+					},
+				},
+				Offset: 0,
+				Limit:  20,
+				Total:  1,
+			},
+		},
+		{
+			name:   "TestGetIndexesWithNetHTTPClient",
+			client: netHTTPClient,
+			args: args{
+				uid:     []string{"TestGetIndexesWithNetHTTPClient"},
+				request: nil,
+			},
+			wantResp: &IndexesResults{
+				Results: []Index{
+					{
+						UID: "TestGetIndexesWithNetHTTPClient",
 					},
 				},
 				Offset: 0,
@@ -461,6 +501,24 @@ func TestClient_GetRawIndexes(t *testing.T) {
 			},
 		},
 		{
+			name:   "TestGetRawIndexesWithNetHTTPClient",
+			client: netHTTPClient,
+			args: args{
+				uid:     []string{"TestGetRawIndexesNetHTTP"},
+				request: nil,
+			},
+			wantResp: map[string]interface{}{
+				"results": []map[string]string{
+					{
+						"uid": "TestGetRawIndexesWithNetHTTPClient",
+					},
+				},
+				"offset": float64(0),
+				"limit":  float64(20),
+				"total":  float64(1),
+			},
+		},
+		{
 			name:   "TestGetRawIndexesOnMultipleIndex",
 			client: defaultClient,
 			args: args{
@@ -605,6 +663,20 @@ func TestClient_GetIndex(t *testing.T) {
 			wantCmp: false,
 		},
 		{
+			name:   "TestGetIndexWithNetHTTPClient",
+			client: netHTTPClient,
+			args: args{
+				config: IndexConfig{
+					Uid: "TestGetIndexWithNetHTTPClient",
+				},
+				uid: "TestGetIndexWithNetHTTPClient",
+			},
+			wantResp: &Index{
+				UID: "TestGetIndexWithNetHTTPClient",
+			},
+			wantCmp: false,
+		},
+		{
 			name:   "TestGetIndexWithPrimaryKey",
 			client: defaultClient,
 			args: args{
@@ -689,6 +761,19 @@ func TestClient_GetRawIndex(t *testing.T) {
 			},
 		},
 		{
+			name:   "TestGetRawIndexWithNetHTTPClient",
+			client: netHTTPClient,
+			args: args{
+				config: IndexConfig{
+					Uid: "TestGetRawIndexWithNetHTTPClient",
+				},
+				uid: "TestGetRawIndexWithNetHTTPClient",
+			},
+			wantResp: map[string]interface{}{
+				"uid": string("TestGetRawIndexWithNetHTTPClient"),
+			},
+		},
+		{
 			name:   "TestGetRawIndexWithPrimaryKey",
 			client: defaultClient,
 			args: args{
@@ -752,6 +837,16 @@ func TestClient_Index(t *testing.T) {
 			},
 			want: Index{
 				UID: "TestIndexWithCustomClient",
+			},
+		},
+		{
+			name:   "TestIndexWithNetHTTPClient",
+			client: netHTTPClient,
+			args: args{
+				uid: "TestIndexWithNetHTTPClient",
+			},
+			want: Index{
+				UID: "TestIndexWithNetHTTPClient",
 			},
 		},
 	}

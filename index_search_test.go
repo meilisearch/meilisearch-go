@@ -155,6 +155,29 @@ func TestIndex_Search(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name: "TestIndexSearchWithNetHTTPClient",
+			args: args{
+				UID:     "indexUID",
+				client:  netHTTPClient,
+				query:   "prince",
+				request: &SearchRequest{},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+			},
+			wantErr: false,
+		},
+		{
 			name: "TestIndexSearchWithLimit",
 			args: args{
 				UID:    "indexUID",
@@ -576,6 +599,39 @@ func TestIndex_SearchFacets(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: customClient,
+				query:  "prince",
+				request: &SearchRequest{
+					Facets: []string{"*"},
+				},
+				filterableAttributes: []string{"tag"},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+				FacetDistribution: map[string]interface{}(
+					map[string]interface{}{
+						"tag": map[string]interface{}{
+							"Epic fantasy": float64(1),
+							"Tale":         float64(1),
+						},
+					}),
+			},
+			wantErr: false,
+		},
+		{
+			name: "TestIndexSearchWithFacetsWithNetHTTPClient",
+			args: args{
+				UID:    "indexUID",
+				client: netHTTPClient,
 				query:  "prince",
 				request: &SearchRequest{
 					Facets: []string{"*"},
@@ -1287,6 +1343,30 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 			args: args{
 				UID:     "TestIndexBasicSearchOnNestedFieldsWithCustomClient",
 				client:  customClient,
+				query:   "An awesome",
+				request: &SearchRequest{},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"id": float64(5), "title": "The Hobbit",
+						"info": map[string]interface{}{
+							"comment":  "An awesome book",
+							"reviewNb": float64(900),
+						},
+					},
+				},
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
+			},
+			wantErr: false,
+		},
+		{
+			name: "TestIndexBasicSearchOnNestedFieldsWithNetHTTPClient",
+			args: args{
+				UID:     "TestIndexBasicSearchOnNestedFieldsWithNetHTTPClient",
+				client:  netHTTPClient,
 				query:   "An awesome",
 				request: &SearchRequest{},
 			},

@@ -3,6 +3,7 @@ package meilisearch
 import (
 	"context"
 	"math"
+	"net/http"
 	"reflect"
 	"strings"
 	"sync"
@@ -11,7 +12,6 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"github.com/valyala/fasthttp"
 )
 
 func TestClient_Version(t *testing.T) {
@@ -26,6 +26,10 @@ func TestClient_Version(t *testing.T) {
 		{
 			name:   "TestVersionWithCustomClient",
 			client: customClient,
+		},
+		{
+			name:   "TestVersionWithNetHTTPClient",
+			client: netHTTPClient,
 		},
 	}
 	for _, tt := range tests {
@@ -46,6 +50,13 @@ func TestClient_TimeoutError(t *testing.T) {
 		{
 			name:   "TestTimeoutError",
 			client: timeoutClient,
+			expectedError: Error{
+				MeilisearchApiError: meilisearchApiError{},
+			},
+		},
+		{
+			name:   "TestTimeoutErrorWithNetHTTPClient",
+			client: timeoutNetHTTPClient,
 			expectedError: Error{
 				MeilisearchApiError: meilisearchApiError{},
 			},
@@ -75,6 +86,10 @@ func TestClient_GetStats(t *testing.T) {
 			name:   "TestGetStatsWithCustomClient",
 			client: customClient,
 		},
+		{
+			name:   "TestGetStatsWithNetHTTPClient",
+			client: netHTTPClient,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -97,6 +112,10 @@ func TestClient_GetKey(t *testing.T) {
 		{
 			name:   "TestGetKeyWithCustomClient",
 			client: customClient,
+		},
+		{
+			name:   "TestGetKeyWithNetHTTPClient",
+			client: netHTTPClient,
 		},
 	}
 	for _, tt := range tests {
@@ -133,6 +152,13 @@ func TestClient_GetKeys(t *testing.T) {
 			name: "TestGetKeysWithCustomClient",
 			args: args{
 				client:  customClient,
+				request: nil,
+			},
+		},
+		{
+			name: "TestGetKeysWithNetHTTPClient",
+			args: args{
+				client:  netHTTPClient,
 				request: nil,
 			},
 		},
@@ -198,6 +224,14 @@ func TestClient_CreateKey(t *testing.T) {
 		{
 			name:   "TestCreateKeyWithCustomClient",
 			client: customClient,
+			key: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+		},
+		{
+			name:   "TestCreateKeyWithNetHTTPClient",
+			client: netHTTPClient,
 			key: Key{
 				Actions: []string{"*"},
 				Indexes: []string{"*"},
@@ -330,6 +364,17 @@ func TestClient_UpdateKey(t *testing.T) {
 			},
 		},
 		{
+			name:   "TestUpdateKeyWithDescriptionWithNetHTTPClient",
+			client: netHTTPClient,
+			keyToCreate: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+			keyToUpdate: Key{
+				Description: "TestUpdateKeyWithDescription",
+			},
+		},
+		{
 			name:   "TestUpdateKeyWithName",
 			client: defaultClient,
 			keyToCreate: Key{
@@ -410,6 +455,14 @@ func TestClient_DeleteKey(t *testing.T) {
 		{
 			name:   "TestDeleteKeyWithCustomClient",
 			client: customClient,
+			key: Key{
+				Actions: []string{"*"},
+				Indexes: []string{"*"},
+			},
+		},
+		{
+			name:   "TestDeleteKeyWithNetHTTPClient",
+			client: netHTTPClient,
 			key: Key{
 				Actions: []string{"*"},
 				Indexes: []string{"*"},
@@ -504,16 +557,19 @@ func TestClient_Health(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name: "TestHealthWithBadUrl",
-			client: &Client{
-				config: ClientConfig{
-					Host:   "http://wrongurl:1234",
-					APIKey: masterKey,
-				},
-				httpClient: &fasthttp.Client{
-					Name: "meilisearch-client",
-				},
+			name:   "TestHealthWithNetHTTPClient",
+			client: netHTTPClient,
+			wantResp: &Health{
+				Status: "available",
 			},
+			wantErr: false,
+		},
+		{
+			name: "TestHealthWithBadUrl",
+			client: NewClient(ClientConfig{
+				Host:   "http://wrongurl:1234",
+				APIKey: masterKey,
+			}),
 			wantErr: true,
 		},
 	}
@@ -547,16 +603,25 @@ func TestClient_IsHealthy(t *testing.T) {
 			want:   true,
 		},
 		{
-			name: "TestIsHealthyWIthBadUrl",
-			client: &Client{
-				config: ClientConfig{
-					Host:   "http://wrongurl:1234",
-					APIKey: masterKey,
-				},
-				httpClient: &fasthttp.Client{
-					Name: "meilisearch-client",
-				},
-			},
+			name:   "TestIsHealthyWithNetHTTPClient",
+			client: netHTTPClient,
+			want:   true,
+		},
+		{
+			name: "TestIsHealthyWithBadUrl",
+			client: NewClient(ClientConfig{
+				Host:   "http://wrongurl:1234",
+				APIKey: masterKey,
+			}),
+			want: false,
+		},
+		{
+			name: "TestIsHealthyNetHTTPWithBadUrl",
+			client: NewClient(ClientConfig{
+				Host:      "http://wrongurl:1234",
+				APIKey:    masterKey,
+				Transport: http.DefaultTransport,
+			}),
 			want: false,
 		},
 	}
@@ -577,6 +642,20 @@ func TestClient_CreateDump(t *testing.T) {
 		{
 			name:   "TestCreateDump",
 			client: defaultClient,
+			wantResp: &Task{
+				Status: "enqueued",
+			},
+		},
+		{
+			name:   "TestCreateDumpWithCustomClient",
+			client: customClient,
+			wantResp: &Task{
+				Status: "enqueued",
+			},
+		},
+		{
+			name:   "TestCreateDumpWithNetHTTPClient",
+			client: netHTTPClient,
 			wantResp: &Task{
 				Status: "enqueued",
 			},
@@ -637,11 +716,22 @@ func TestClient_GetTask(t *testing.T) {
 			},
 		},
 		{
+			name: "TestBasicGetTaskWithNetHTTPClient",
+			args: args{
+				UID:     "TestBasicGetTask",
+				client:  netHTTPClient,
+				taskUID: 2,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+			},
+		},
+		{
 			name: "TestGetTask",
 			args: args{
 				UID:     "TestGetTask",
 				client:  defaultClient,
-				taskUID: 2,
+				taskUID: 3,
 				document: []docTest{
 					{ID: "456", Name: "Le Petit Prince"},
 					{ID: "1", Name: "Alice In Wonderland"},
@@ -709,6 +799,17 @@ func TestClient_GetTasks(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: customClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: nil,
+			},
+		},
+		{
+			name: "TestGetTasksWithNetHTTPClient",
+			args: args{
+				UID:    "indexUID",
+				client: netHTTPClient,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
@@ -873,6 +974,18 @@ func TestClient_GetTasksUsingClient(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: customClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query:           nil,
+				expectedResults: 1,
+			},
+		},
+		{
+			name: "TestGetTasksWithNetHTTPClient",
+			args: args{
+				UID:    "indexUID",
+				client: netHTTPClient,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
@@ -1084,6 +1197,18 @@ func TestClient_GetTasksUsingClientAllFailures(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: brokenClient,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query:           nil,
+				expectedResults: 1,
+			},
+		},
+		{
+			name: "TestGetTasksWithNetHTTPClient",
+			args: args{
+				UID:    "indexUID",
+				client: brokenNetHTTPClient,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
@@ -1506,6 +1631,22 @@ func TestClient_DefaultWaitForTask(t *testing.T) {
 			},
 			want: "succeeded",
 		},
+		{
+			name: "TestDefaultWaitForTaskWithNetHTTPClient",
+			args: args{
+				UID:    "TestDefaultWaitForTaskWithNetHTTPClient",
+				client: netHTTPClient,
+				taskUID: &Task{
+					UID: 0,
+				},
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+					{ID: "456", Name: "Le Petit Prince"},
+					{ID: "1", Name: "Alice In Wonderland"},
+				},
+			},
+			want: "succeeded",
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1559,6 +1700,24 @@ func TestClient_WaitForTaskWithContext(t *testing.T) {
 			args: args{
 				UID:      "TestWaitForTask50WithCustomClient",
 				client:   customClient,
+				interval: time.Millisecond * 50,
+				timeout:  time.Second * 5,
+				taskUID: &Task{
+					UID: 0,
+				},
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+					{ID: "456", Name: "Le Petit Prince"},
+					{ID: "1", Name: "Alice In Wonderland"},
+				},
+			},
+			want: "succeeded",
+		},
+		{
+			name: "TestWaitForTask50WithNetHTTPClient",
+			args: args{
+				UID:      "TestWaitForTask50WithNetHTTPClient",
+				client:   netHTTPClient,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
 				taskUID: &Task{

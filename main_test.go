@@ -316,6 +316,12 @@ var customClient = NewFastHTTPCustomClient(ClientConfig{
 		Name:      "custom-client",
 	})
 
+var netHTTPClient = NewClient(ClientConfig{
+	Host:      getenv("MEILISEARCH_URL", "http://localhost:7700"),
+	APIKey:    masterKey,
+	Transport: http.DefaultTransport,
+})
+
 var brokenClient = NewFastHTTPCustomClient(ClientConfig{
 	Host:   getenv("MEILISEARCH_URL", "http://localhost:7700"),
 	APIKey: "WRONG",
@@ -325,10 +331,23 @@ var brokenClient = NewFastHTTPCustomClient(ClientConfig{
 		Name:      "broken-client",
 	})
 
+var brokenNetHTTPClient = NewClient(ClientConfig{
+	Host:      getenv("MEILISEARCH_URL", "http://localhost:7700"),
+	APIKey:    "WRONG",
+	Transport: http.DefaultTransport,
+})
+
 var timeoutClient = NewClient(ClientConfig{
 	Host:    getenv("MEILISEARCH_URL", "http://localhost:7700"),
 	APIKey:  masterKey,
 	Timeout: 1,
+})
+
+var timeoutNetHTTPClient = NewClient(ClientConfig{
+	Host:      getenv("MEILISEARCH_URL", "http://localhost:7700"),
+	APIKey:    masterKey,
+	Timeout:   1,
+	Transport: http.DefaultTransport,
 })
 
 var privateClient = NewClient(ClientConfig{

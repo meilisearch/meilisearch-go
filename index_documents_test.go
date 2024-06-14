@@ -80,6 +80,31 @@ func TestIndex_AddDocuments(t *testing.T) {
 			},
 		},
 		{
+			name: "TestIndexAddDocumentsWithNetHTTPClient",
+			args: args{
+				UID:    "TestIndexAddDocumentsWithNetHTTPClient",
+				client: netHTTPClient,
+				documentsPtr: []map[string]interface{}{
+					{"ID": "123", "Name": "Pride and Prejudice"},
+				},
+			},
+			resp: resp{
+				wantResp: &TaskInfo{
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"ID": "123", "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
+			},
+		},
+		{
 			name: "TestIndexMultipleAddDocuments",
 			args: args{
 				UID:    "TestIndexMultipleAddDocuments",
@@ -138,6 +163,31 @@ func TestIndex_AddDocuments(t *testing.T) {
 			args: args{
 				UID:    "TestIndexAddDocumentsWithIntIDWithCustomClient",
 				client: customClient,
+				documentsPtr: []map[string]interface{}{
+					{"BookID": float64(123), "Title": "Pride and Prejudice"},
+				},
+			},
+			resp: resp{
+				wantResp: &TaskInfo{
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"BookID": float64(123), "Title": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
+			},
+		},
+		{
+			name: "TestIndexAddDocumentsWithIntIDWithNetHTTPClient",
+			args: args{
+				UID:    "TestIndexAddDocumentsWithIntIDWithNetHTTPClient",
+				client: netHTTPClient,
 				documentsPtr: []map[string]interface{}{
 					{"BookID": float64(123), "Title": "Pride and Prejudice"},
 				},
@@ -261,6 +311,32 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			args: args{
 				UID:    "TestIndexAddDocumentsWithPrimaryKeyWithCustomClient",
 				client: customClient,
+				documentsPtr: []map[string]interface{}{
+					{"key": "123", "Name": "Pride and Prejudice"},
+				},
+				primaryKey: "key",
+			},
+			resp: resp{
+				wantResp: &TaskInfo{
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
+				documentsRes: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"key": "123", "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
+			},
+		},
+		{
+			name: "TestIndexAddDocumentsWithPrimaryKeyWithNetHTTPClient",
+			args: args{
+				UID:    "TestIndexAddDocumentsWithPrimaryKeyWithNetHTTPClient",
+				client: netHTTPClient,
 				documentsPtr: []map[string]interface{}{
 					{"key": "123", "Name": "Pride and Prejudice"},
 				},
@@ -1104,6 +1180,18 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 				Type:    "documentDeletion",
 			},
 		},
+		{
+			name: "TestIndexDeleteAllDocumentsWithNetHTTPClient",
+			args: args{
+				UID:    "TestIndexDeleteAllDocumentsWithNetHTTPClient",
+				client: netHTTPClient,
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 2,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1175,6 +1263,22 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			},
 		},
 		{
+			name: "TestIndexDeleteOneDocumentWithNetHTTPClient",
+			args: args{
+				UID:        "2",
+				client:     netHTTPClient,
+				identifier: "123",
+				documentsPtr: []map[string]interface{}{
+					{"ID": "123", "Name": "Pride and Prejudice"},
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
+		{
 			name: "TestIndexDeleteOneDocumentinMultiple",
 			args: args{
 				UID:        "3",
@@ -1213,6 +1317,22 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			args: args{
 				UID:        "5",
 				client:     customClient,
+				identifier: "123",
+				documentsPtr: []map[string]interface{}{
+					{"BookID": 123, "Title": "Pride and Prejudice"},
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
+		{
+			name: "TestIndexDeleteOneDocumentWithIntIDWithNetHTTPClient",
+			args: args{
+				UID:        "5",
+				client:     netHTTPClient,
 				identifier: "123",
 				documentsPtr: []map[string]interface{}{
 					{"BookID": 123, "Title": "Pride and Prejudice"},

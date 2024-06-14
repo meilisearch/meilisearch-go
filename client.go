@@ -24,6 +24,9 @@ type ClientConfig struct {
 
 	// Timeout is optional
 	Timeout time.Duration
+
+	// Transport is optional
+	Transport http.RoundTripper
 }
 
 type WaitParams struct {
@@ -69,26 +72,39 @@ const (
 )
 
 // NewFastHTTPCustomClient creates Meilisearch with custom fasthttp.Client
+//
+// Transport config will be ignored.
 func NewFastHTTPCustomClient(config ClientConfig, client *fasthttp.Client) *Client {
 	c := &Client{
-		config:     config,
-		httpClient: client,
+		config: config,
+		requestExecutor: &fasthttpRequestExecutor{
+			httpClient: client,
+		},
 	}
 	return c
 }
 
-// NewClient creates Meilisearch with default fasthttp.Client
+// NewClient creates Meilisearch client
+//
+// If Transport config is given, the standard http.Client with the given Transport will be used;
+// otherwise, a fasthttp.Client will be used for optimal performance.
 func NewClient(config ClientConfig) *Client {
-	client := &fasthttp.Client{
+	if config.Transport != nil {
+		return &Client{
+			config: config,
+			requestExecutor: &nethttpRequestExecutor{
+				httpClient: &http.Client{
+					Transport: config.Transport,
+					Timeout:   config.Timeout,
+				},
+			},
+		}
+	}
+	return NewFastHTTPCustomClient(config, &fasthttp.Client{
 		Name: "meilisearch-client",
 		// Reuse the most recently-used idle connection.
 		ConnPoolStrategy: fasthttp.LIFO,
-	}
-	c := &Client{
-		config:     config,
-		httpClient: client,
-	}
-	return c
+	})
 }
 
 func (c *Client) Version() (resp *Version, err error) {
