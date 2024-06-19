@@ -2670,6 +2670,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				(*out.Hybrid).UnmarshalEasyJSON(in)
 			}
+		case "RetrieveVectors":
+			out.RetrieveVectors = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -2890,6 +2892,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 		} else {
 			(*in.Hybrid).MarshalEasyJSON(out)
 		}
+	}
+	{
+		const prefix string = ",\"RetrieveVectors\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.RetrieveVectors))
 	}
 	out.RawByte('}')
 }

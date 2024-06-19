@@ -361,6 +361,7 @@ type SearchRequest struct {
 	IndexUID                string
 	Query                   string
 	Hybrid                  *SearchRequestHybrid
+	RetrieveVectors         bool
 }
 
 type SearchRequestHybrid struct {
