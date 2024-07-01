@@ -153,6 +153,9 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 		hybrid["semanticRatio"] = request.Hybrid.SemanticRatio
 		params["hybrid"] = hybrid
 	}
+	if request.RetrieveVectors {
+		params["retrieveVectors"] = request.RetrieveVectors
+	}
 
 	return params
 }
