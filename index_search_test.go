@@ -1638,11 +1638,11 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 		client: defaultClient,
 		query:  "Pride and Prejudice",
 		request: SearchRequest{
-			Vector: []float32{0.1, 0.2, 0.3},
 			Hybrid: &SearchRequestHybrid{
 				SemanticRatio: 0.5,
 				Embedder:      "default",
 			},
+			RetrieveVectors: true,
 		},
 	}
 
@@ -1660,10 +1660,5 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 	for _, hit := range got.Hits {
 		hit := hit.(map[string]interface{})
 		require.NotNil(t, hit["_vectors"])
-		vectors := hit["_vectors"].(map[string]interface{})
-
-		require.NotNil(t, vectors["default"])
-		def := vectors["default"].([]interface{})
-		require.Equal(t, 3, len(def))
 	}
 }
