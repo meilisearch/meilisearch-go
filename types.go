@@ -406,7 +406,7 @@ type FacetSearchRequest struct {
 type FacetSearchResponse struct {
 	FacetHits        []interface{} `json:"facetHits"`
 	FacetQuery       string        `json:"facetQuery"`
-	processingTimeMs int64         `json:"processingTimeMs"`
+	ProcessingTimeMs int64         `json:"processingTimeMs"`
 }
 
 // DocumentQuery is the request body get one documents method
