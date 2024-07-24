@@ -98,6 +98,17 @@ multi_search_1: |-
       },
     },
   })
+facet_search_1: |-
+  client.Index("movies").FacetSearch(&meilisearch.FacetSearchRequest{
+    FacetQuery: "fiction",
+    FacetName: "genres",
+    Filter: "rating > 3", 
+  })
+facet_search_3: |-
+  client.Index("movies").FacetSearch(&meilisearch.FacetSearchRequest{
+    FacetQuery: "c",
+    FacetName: "genres",
+  })
 delete_tasks_1: |-
   client.DeleteTaks(&meilisearch.DeleteTasksQuery{
     UIDS: []int64{1, 2},
