@@ -105,7 +105,7 @@ facet_search_1: |-
     Filter: "rating > 3", 
   })
 facet_search_3: |-
-  client.Index("movies").FacetSearch(&meilisearch.FacetSearchRequest{
+  client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
     FacetQuery: "c",
     FacetName: "genres",
   })
