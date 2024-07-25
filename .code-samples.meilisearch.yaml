@@ -99,7 +99,7 @@ multi_search_1: |-
     },
   })
 facet_search_1: |-
-  client.Index("movies").FacetSearch(&meilisearch.FacetSearchRequest{
+  client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
     FacetQuery: "fiction",
     FacetName: "genres",
     Filter: "rating > 3", 
