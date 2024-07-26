@@ -102,7 +102,7 @@ facet_search_1: |-
   client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
     FacetQuery: "fiction",
     FacetName: "genres",
-    Filter: "rating > 3", 
+    Filter: "rating > 3",
   })
 facet_search_3: |-
   client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
@@ -656,7 +656,11 @@ getting_started_configure_settings: |-
 getting_started_faceting: |-
   client.Index("movies").UpdateFaceting(&meilisearch.Faceting{
       MaxValuesPerFacet: 2,
+      SortFacetValuesBy: {
+         "*": "count"
+      }
   })
+
 getting_started_pagination: |-
   client.Index("movies").UpdatePagination(&meilisearch.Pagination{
       MaxTotalHits: 500,
