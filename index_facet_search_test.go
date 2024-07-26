@@ -43,7 +43,138 @@ func TestIndex_FacetSearch(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "TestIndexFacetSearchWithFilter",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: &FacetSearchRequest{
+					FacetName:  "tag",
+					FacetQuery: "Novel",
+					Filter:     "tag = 'Novel'",
+				},
+				filterableAttributes: []string{"tag"},
+			},
+			want: &FacetSearchResponse{
+				FacetHits: []interface{}{
+					map[string]interface{}{
+						"value": "Novel", "count": float64(5),
+					},
+				},
+				FacetQuery: "Novel",
+			},
+			wantErr: false,
+		},
+		{
+			name: "TestIndexFacetSearchWithMatchingStrategy",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: &FacetSearchRequest{
+					FacetName:        "tag",
+					FacetQuery:       "Novel",
+					MatchingStrategy: "frequency",
+				},
+				filterableAttributes: []string{"tag"},
+			},
+			want: &FacetSearchResponse{
+				FacetHits: []interface{}{
+					map[string]interface{}{
+						"value": "Novel", "count": float64(5),
+					},
+				},
+				FacetQuery: "Novel",
+			},
+			wantErr: false,
+		},
+		{
+			name: "TestIndexFacetSearchWithAttributesToSearchOn",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: &FacetSearchRequest{
+					FacetName:            "tag",
+					FacetQuery:           "Novel",
+					AttributesToSearchOn: []string{"tag"},
+				},
+				filterableAttributes: []string{"tag"},
+			},
+			want: &FacetSearchResponse{
+				FacetHits: []interface{}{
+					map[string]interface{}{
+						"value": "Novel", "count": float64(5),
+					},
+				},
+				FacetQuery: "Novel",
+			},
+			wantErr: false,
+		},
+		{
+			name: "TestIndexFacetSearchWithNoFacetSearchRequest",
+			args: args{
+				UID:     "indexUID",
+				client:  defaultClient,
+				request: nil,
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "TestIndexFacetSearchWithNoFacetName",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: &FacetSearchRequest{
+					FacetQuery: "Novel",
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "TestIndexFacetSearchWithNoFacetQuery",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: &FacetSearchRequest{
+					FacetName: "tag",
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "TestIndexFacetSearchWithNoFilterableAttributes",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: &FacetSearchRequest{
+					FacetName:  "tag",
+					FacetQuery: "Novel",
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
+		{
+			name: "TestIndexFacetSearchWithQ",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: &FacetSearchRequest{
+					Q:         "query",
+					FacetName: "tag",
+				},
+				filterableAttributes: []string{"tag"},
+			},
+			want: &FacetSearchResponse{
+				FacetHits:  []interface{}{},
+				FacetQuery: "",
+			},
+			wantErr: false,
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			SetUpIndexForFaceting()
@@ -51,15 +182,17 @@ func TestIndex_FacetSearch(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
-			require.NoError(t, err)
-			testWaitForTask(t, i, updateFilter)
+			if len(tt.args.filterableAttributes) > 0 {
+				updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
+				require.NoError(t, err)
+				testWaitForTask(t, i, updateFilter)
+			}
 
 			gotRaw, err := i.FacetSearch(tt.args.request)
 
 			if tt.wantErr {
 				require.Error(t, err)
-				require.Nil(t, tt.want)
+				require.Nil(t, gotRaw)
 				return
 			}
 
