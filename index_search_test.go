@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"encoding/json"
+	"github.com/stretchr/testify/assert"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -1661,4 +1662,32 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 		hit := hit.(map[string]interface{})
 		require.NotNil(t, hit["_vectors"])
 	}
+}
+
+func TestIndex_SearchRankingScoreThreshold(t *testing.T) {
+	type args struct {
+		UID        string
+		PrimaryKey string
+		client     *Client
+		query      string
+		request    SearchRequest
+	}
+	testArg := args{
+		UID:    "indexUID",
+		client: defaultClient,
+		query:  "Pri",
+		request: SearchRequest{
+			RankingScoreThreshold: 0.2,
+		},
+	}
+
+	SetUpBasicIndex(testArg.UID)
+
+	c := testArg.client
+	t.Cleanup(cleanup(c))
+
+	got, err := testArg.client.Index(testArg.UID).Search(testArg.query, &testArg.request)
+	require.NoError(t, err)
+
+	assert.Len(t, got.Hits, 3)
 }
