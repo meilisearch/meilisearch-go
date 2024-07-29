@@ -395,6 +395,21 @@ type MultiSearchResponse struct {
 	Results []SearchResponse `json:"results"`
 }
 
+type FacetSearchRequest struct {
+	FacetName            string   `json:"facetName,omitempty"`
+	FacetQuery           string   `json:"facetQuery,omitempty"`
+	Q                    string   `json:"q,omitempty"`
+	Filter               string   `json:"filter,omitempty"`
+	MatchingStrategy     string   `json:"matchingStrategy,omitempty"`
+	AttributesToSearchOn []string `json:"attributesToSearchOn,omitempty"`
+}
+
+type FacetSearchResponse struct {
+	FacetHits        []interface{} `json:"facetHits"`
+	FacetQuery       string        `json:"facetQuery"`
+	ProcessingTimeMs int64         `json:"processingTimeMs"`
+}
+
 // DocumentQuery is the request body get one documents method
 type DocumentQuery struct {
 	Fields []string `json:"fields,omitempty"`
