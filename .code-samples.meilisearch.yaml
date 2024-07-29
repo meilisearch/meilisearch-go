@@ -884,10 +884,6 @@ date_guide_sort_1: |-
     },
   })
 search_parameter_reference_ranking_score_threshold_1: |-
-  curl \
-  -X POST 'http://localhost:7700/indexes/INDEX_NAME/search' \
-  -H 'Content-Type: application/json' \
-  --data-binary '{
-      "q": "badman",
-      "rankingScoreThreshold": 0.2
-  }'
+  resp, err := client.Index("INDEX_NAME").Search("badman", &meilisearch.SearchRequest{
+    RankingScoreThreshold: 0.2,
+  })
