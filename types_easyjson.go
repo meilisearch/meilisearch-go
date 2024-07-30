@@ -247,30 +247,19 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo2(out *jwriter.Write
 	out.RawByte('{')
 	first := true
 	_ = first
-	if in.Enabled {
+	{
 		const prefix string = ",\"enabled\":"
-		first = false
 		out.RawString(prefix[1:])
 		out.Bool(bool(in.Enabled))
 	}
 	if true {
 		const prefix string = ",\"minWordSizeForTypos\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		(in.MinWordSizeForTypos).MarshalEasyJSON(out)
 	}
 	if len(in.DisableOnWords) != 0 {
 		const prefix string = ",\"disableOnWords\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		{
 			out.RawByte('[')
 			for v3, v4 := range in.DisableOnWords {
@@ -284,12 +273,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo2(out *jwriter.Write
 	}
 	if len(in.DisableOnAttributes) != 0 {
 		const prefix string = ",\"disableOnAttributes\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		out.RawString(prefix)
 		{
 			out.RawByte('[')
 			for v5, v6 := range in.DisableOnAttributes {
