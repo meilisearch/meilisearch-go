@@ -362,6 +362,7 @@ type SearchRequest struct {
 	Query                   string
 	Hybrid                  *SearchRequestHybrid
 	RetrieveVectors         bool
+	RankingScoreThreshold   float64
 }
 
 type SearchRequestHybrid struct {

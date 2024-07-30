@@ -2672,6 +2672,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 			}
 		case "RetrieveVectors":
 			out.RetrieveVectors = bool(in.Bool())
+		case "RankingScoreThreshold":
+			out.RankingScoreThreshold = float64(in.Float64())
 		default:
 			in.SkipRecursive()
 		}
@@ -2897,6 +2899,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 		const prefix string = ",\"RetrieveVectors\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.RetrieveVectors))
+	}
+	{
+		const prefix string = ",\"RankingScoreThreshold\":"
+		out.RawString(prefix)
+		out.Float64(float64(in.RankingScoreThreshold))
 	}
 	out.RawByte('}')
 }
