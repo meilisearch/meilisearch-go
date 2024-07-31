@@ -1724,3 +1724,35 @@ func TestIndex_SearchWithDistinct(t *testing.T) {
 		})
 	}
 }
+
+func TestIndex_SearchSimilarDocuments(t *testing.T) {
+	tests := []struct {
+		UID        string
+		PrimaryKey string
+		client     *Client
+		request    *SimilarDocumentQuery
+		resp       *SimilarDocumentResult
+	}{
+		{
+			UID:    "indexUID",
+			client: defaultClient,
+			request: &SimilarDocumentQuery{
+				Id: "123",
+			},
+			resp: new(SimilarDocumentResult),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.UID, func(t *testing.T) {
+			i, err := SetUpIndexWithVector(tt.UID)
+			require.NoError(t, err)
+			c := tt.client
+			t.Cleanup(cleanup(c))
+
+			err = i.SearchSimilarDocuments(tt.request, tt.resp)
+			require.NoError(t, err)
+			require.NotNil(t, tt.resp)
+		})
+	}
+}
