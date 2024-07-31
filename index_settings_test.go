@@ -225,6 +225,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
+				SearchCutoffMs:       0,
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
 				Synonyms:             map[string][]string(nil),
@@ -245,6 +246,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
+				SearchCutoffMs:       0,
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
 				Synonyms:             map[string][]string(nil),
@@ -1531,6 +1533,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					Faceting: &Faceting{
 						MaxValuesPerFacet: 200,
 					},
+					SearchCutoffMs: 150,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1548,6 +1551,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SearchCutoffMs:       150,
 			},
 		},
 		{
@@ -1593,6 +1597,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					Faceting: &Faceting{
 						MaxValuesPerFacet: 200,
 					},
+					SearchCutoffMs: 150,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1610,6 +1615,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SearchCutoffMs:       150,
 			},
 		},
 	}
@@ -1620,16 +1626,12 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSettings()
-			require.NoError(t, err)
-			require.Equal(t, tt.wantResp, gotResp)
-
 			gotTask, err := i.UpdateSettings(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
-			gotResp, err = i.GetSettings()
+			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -3074,4 +3076,33 @@ func TestIndex_ResetEmbedders(t *testing.T) {
 	got, err := i.GetEmbedders()
 	require.NoError(t, err)
 	require.Empty(t, got)
+}
+
+func Test_SearchCutoffMs(t *testing.T) {
+	c := defaultClient
+	t.Cleanup(cleanup(c))
+
+	indexID := "newIndexUID"
+	i := c.Index(indexID)
+	taskInfo, err := c.CreateIndex(&IndexConfig{Uid: indexID})
+	require.NoError(t, err)
+	testWaitForTask(t, i, taskInfo)
+
+	n := int64(250)
+
+	task, err := i.UpdateSearchCutoffMs(n)
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err := i.GetSearchCutoffMs()
+	require.NoError(t, err)
+	require.Equal(t, n, got)
+
+	task, err = i.ResetSearchCutoffMs()
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err = i.GetSearchCutoffMs()
+	require.NoError(t, err)
+	require.Equal(t, int64(0), got)
 }

@@ -638,3 +638,49 @@ func (i Index) ResetEmbedders() (resp *TaskInfo, err error) {
 	}
 	return resp, nil
 }
+
+func (i Index) GetSearchCutoffMs() (resp int64, err error) {
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/search-cutoff-ms",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetSearchCutoffMs",
+	}
+	if err = i.client.executeRequest(req); err != nil {
+		return 0, err
+	}
+	return resp, nil
+}
+
+func (i Index) UpdateSearchCutoffMs(request int64) (resp *TaskInfo, err error) {
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/search-cutoff-ms",
+		method:              http.MethodPut,
+		contentType:         contentTypeJSON,
+		withRequest:         &request,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateSearchCutoffMs",
+	}
+	if err = i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i Index) ResetSearchCutoffMs() (resp *TaskInfo, err error) {
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/settings/search-cutoff-ms",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetSearchCutoffMs",
+	}
+	if err = i.client.executeRequest(req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
