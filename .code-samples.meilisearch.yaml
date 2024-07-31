@@ -883,6 +883,10 @@ date_guide_sort_1: |-
       "release_timestamp:desc",
     },
   })
+search_parameter_reference_ranking_score_threshold_1: |-
+  client.Index("INDEX_NAME").Search("badman", &meilisearch.SearchRequest{
+    RankingScoreThreshold: 0.2,
+  })
 get_search_cutoff_1: |-
   client.Index("movies").GetSearchCutoffMs()
 update_search_cutoff_1: |-

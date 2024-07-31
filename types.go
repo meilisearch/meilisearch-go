@@ -58,7 +58,7 @@ type Settings struct {
 
 // TypoTolerance is the type that represents the typo tolerance setting in Meilisearch
 type TypoTolerance struct {
-	Enabled             bool                `json:"enabled,omitempty"`
+	Enabled             bool                `json:"enabled"`
 	MinWordSizeForTypos MinWordSizeForTypos `json:"minWordSizeForTypos,omitempty"`
 	DisableOnWords      []string            `json:"disableOnWords,omitempty"`
 	DisableOnAttributes []string            `json:"disableOnAttributes,omitempty"`
@@ -363,6 +363,7 @@ type SearchRequest struct {
 	Query                   string
 	Hybrid                  *SearchRequestHybrid
 	RetrieveVectors         bool
+	RankingScoreThreshold   float64
 }
 
 type SearchRequestHybrid struct {

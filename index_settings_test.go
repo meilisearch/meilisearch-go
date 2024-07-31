@@ -2698,6 +2698,28 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			},
 			wantResp: &defaultTypoTolerance,
 		},
+		{
+			name: "TestIndexDisableTypoTolerance",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				request: TypoTolerance{
+					Enabled: false,
+					MinWordSizeForTypos: MinWordSizeForTypos{
+						OneTypo:  5,
+						TwoTypos: 9,
+					},
+					DisableOnWords:      []string{},
+					DisableOnAttributes: []string{},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &TypoTolerance{
+				Enabled: false,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -2706,16 +2728,12 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetTypoTolerance()
-			require.NoError(t, err)
-			require.Equal(t, tt.wantResp, gotResp)
-
 			gotTask, err := i.UpdateTypoTolerance(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
-			gotResp, err = i.GetTypoTolerance()
+			gotResp, err := i.GetTypoTolerance()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
