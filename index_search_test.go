@@ -1662,3 +1662,35 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 		require.NotNil(t, hit["_vectors"])
 	}
 }
+
+func TestIndex_SearchWithDistinct(t *testing.T) {
+	tests := []struct {
+		UID        string
+		PrimaryKey string
+		client     *Client
+		query      string
+		request    SearchRequest
+	}{
+		{
+			UID:    "indexUID",
+			client: defaultClient,
+			query:  "white shirt",
+			request: SearchRequest{
+				Distinct: "sku",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.UID, func(t *testing.T) {
+			SetUpDistinctIndex(tt.UID)
+			c := tt.client
+			t.Cleanup(cleanup(c))
+			i := c.Index(tt.UID)
+
+			got, err := i.Search(tt.query, &tt.request)
+			require.NoError(t, err)
+			require.NotNil(t, got.Hits)
+		})
+	}
+}

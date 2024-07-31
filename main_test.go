@@ -214,6 +214,44 @@ func SetUpBasicIndex(indexUID string) {
 	}
 }
 
+func SetUpDistinctIndex(indexUID string) {
+	client := NewClient(ClientConfig{
+		Host:   getenv("MEILISEARCH_URL", "http://localhost:7700"),
+		APIKey: masterKey,
+	})
+	index := client.Index(indexUID)
+
+	atters := []string{"product_id", "title", "sku", "url"}
+	task, err := index.UpdateFilterableAttributes(&atters)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	finalTask, _ := index.WaitForTask(task.TaskUID)
+	if finalTask.Status != "succeeded" {
+		os.Exit(1)
+	}
+
+	documents := []map[string]interface{}{
+		{"product_id": 123, "title": "white shirt", "sku": "sku1234", "url": "https://example.com/products/p123"},
+		{"product_id": 456, "title": "red shirt", "sku": "sku213", "url": "https://example.com/products/p456"},
+		{"product_id": 1, "title": "green shirt", "sku": "sku876", "url": "https://example.com/products/p1"},
+		{"product_id": 1344, "title": "blue shirt", "sku": "sku963", "url": "https://example.com/products/p1344"},
+		{"product_id": 4, "title": "yellow shirt", "sku": "sku9064", "url": "https://example.com/products/p4"},
+		{"product_id": 42, "title": "gray shirt", "sku": "sku964", "url": "https://example.com/products/p42"},
+	}
+	task, err = index.AddDocuments(documents)
+	if err != nil {
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	finalTask, _ = index.WaitForTask(task.TaskUID)
+	if finalTask.Status != "succeeded" {
+		os.Exit(1)
+	}
+}
+
 func SetUpIndexWithNestedFields(indexUID string) {
 	client := NewClient(ClientConfig{
 		Host:   getenv("MEILISEARCH_URL", "http://localhost:7700"),

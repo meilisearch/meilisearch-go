@@ -360,6 +360,7 @@ type SearchRequest struct {
 	Page                    int64
 	IndexUID                string
 	Query                   string
+	Distinct                string
 	Hybrid                  *SearchRequestHybrid
 	RetrieveVectors         bool
 }
