@@ -247,6 +247,7 @@ update_settings_1: |-
     Faceting: &meilisearch.Faceting{
       MaxValuesPerFacet: 200,
     },
+    SearchCutoffMs: 150,
   }
   client.Index("movies").UpdateSettings(&settings)
 reset_settings_1: |-

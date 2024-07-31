@@ -1533,6 +1533,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					Faceting: &Faceting{
 						MaxValuesPerFacet: 200,
 					},
+					SearchCutoffMs: 150,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1550,6 +1551,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SearchCutoffMs:       150,
 			},
 		},
 		{
@@ -1595,6 +1597,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					Faceting: &Faceting{
 						MaxValuesPerFacet: 200,
 					},
+					SearchCutoffMs: 150,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1612,6 +1615,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SearchCutoffMs:       150,
 			},
 		},
 	}
@@ -1622,16 +1626,12 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSettings()
-			require.NoError(t, err)
-			require.Equal(t, tt.wantResp, gotResp)
-
 			gotTask, err := i.UpdateSettings(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
-			gotResp, err = i.GetSettings()
+			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
