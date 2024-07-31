@@ -247,6 +247,7 @@ update_settings_1: |-
     Faceting: &meilisearch.Faceting{
       MaxValuesPerFacet: 200,
     },
+    SearchCutoffMs: 150,
   }
   client.Index("movies").UpdateSettings(&settings)
 reset_settings_1: |-
@@ -902,3 +903,9 @@ search_parameter_reference_ranking_score_threshold_1: |-
   client.Index("INDEX_NAME").Search("badman", &meilisearch.SearchRequest{
     RankingScoreThreshold: 0.2,
   })
+get_search_cutoff_1: |-
+  client.Index("movies").GetSearchCutoffMs()
+update_search_cutoff_1: |-
+  client.Index("movies").UpdateSearchCutoffMs(150)
+reset_search_cutoff_1: |-
+  client.Index("books").ResetSearchCutoffMs()
