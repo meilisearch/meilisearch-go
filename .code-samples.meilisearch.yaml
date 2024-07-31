@@ -883,6 +883,21 @@ date_guide_sort_1: |-
       "release_timestamp:desc",
     },
   })
+search_parameter_reference_distinct_1: |-
+  client.Index("INDEX_NAME").Search("QUERY TERMS", &meilisearch.SearchRequest{
+    Distinct: "ATTRIBUTE_A",
+  })
+distinct_attribute_guide_distinct_parameter_1: |-
+  client.Index("products").Search("white shirt", &meilisearch.SearchRequest{
+    Distinct: "sku",
+  })
+distinct_attribute_guide_filterable_1: |-
+  filterableAttributes := []string{
+    "product_id",
+    "sku",
+    "url",
+  }
+  client.Index("products").UpdateFilterableAttributes(&filterableAttributes)
 search_parameter_reference_ranking_score_threshold_1: |-
   client.Index("INDEX_NAME").Search("badman", &meilisearch.SearchRequest{
     RankingScoreThreshold: 0.2,
