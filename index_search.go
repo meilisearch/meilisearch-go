@@ -160,5 +160,9 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 		params["retrieveVectors"] = request.RetrieveVectors
 	}
 
+	if request.RankingScoreThreshold != 0 {
+		params["rankingScoreThreshold"] = request.RankingScoreThreshold
+	}
+
 	return params
 }

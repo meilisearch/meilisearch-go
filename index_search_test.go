@@ -479,6 +479,36 @@ func TestIndex_Search(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "TestIndexSearchWithRankingScoreThreshold",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "pri",
+				request: &SearchRequest{
+					Limit:                 10,
+					AttributesToRetrieve:  []string{"book_id", "title"},
+					RankingScoreThreshold: 0.2,
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(123), "title": "Pride and Prejudice",
+					},
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 3,
+				Offset:             0,
+				Limit:              10,
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
