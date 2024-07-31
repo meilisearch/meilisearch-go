@@ -84,6 +84,9 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	if !request.PlaceholderSearch {
 		params["q"] = query
 	}
+	if request.Distinct != "" {
+		params["distinct"] = request.Distinct
+	}
 	if request.IndexUID != "" {
 		params["indexUid"] = request.IndexUID
 	}

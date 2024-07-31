@@ -2656,6 +2656,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 			out.IndexUID = string(in.String())
 		case "Query":
 			out.Query = string(in.String())
+		case "Distinct":
+			out.Distinct = string(in.String())
 		case "Hybrid":
 			if in.IsNull() {
 				in.Skip()
@@ -2881,6 +2883,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 		const prefix string = ",\"Query\":"
 		out.RawString(prefix)
 		out.String(string(in.Query))
+	}
+	{
+		const prefix string = ",\"Distinct\":"
+		out.RawString(prefix)
+		out.String(string(in.Distinct))
 	}
 	{
 		const prefix string = ",\"Hybrid\":"
