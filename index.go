@@ -74,6 +74,9 @@ type IndexInterface interface {
 	GetFilterableAttributes() (resp *[]string, err error)
 	UpdateFilterableAttributes(request *[]string) (resp *TaskInfo, err error)
 	ResetFilterableAttributes() (resp *TaskInfo, err error)
+	GetSearchCutoffMs() (resp int64, err error)
+	UpdateSearchCutoffMs(request int64) (resp *TaskInfo, err error)
+	ResetSearchCutoffMs() (resp *TaskInfo, err error)
 
 	WaitForTask(taskUID int64, options ...WaitParams) (*Task, error)
 }
