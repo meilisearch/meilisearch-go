@@ -883,3 +883,9 @@ date_guide_sort_1: |-
       "release_timestamp:desc",
     },
   })
+get_search_cutoff_1: |-
+  client.Index("movies").GetSearchCutoffMs()
+update_search_cutoff_1: |-
+  client.Index("movies").UpdateSearchCutoffMs(150)
+reset_search_cutoff_1: |-
+  client.Index("books").ResetSearchCutoffMs()

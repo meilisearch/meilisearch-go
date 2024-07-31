@@ -225,6 +225,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
+				SearchCutoffMs:       0,
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
 				Synonyms:             map[string][]string(nil),
@@ -245,6 +246,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
+				SearchCutoffMs:       0,
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
 				Synonyms:             map[string][]string(nil),
@@ -3056,4 +3058,33 @@ func TestIndex_ResetEmbedders(t *testing.T) {
 	got, err := i.GetEmbedders()
 	require.NoError(t, err)
 	require.Empty(t, got)
+}
+
+func Test_SearchCutoffMs(t *testing.T) {
+	c := defaultClient
+	t.Cleanup(cleanup(c))
+
+	indexID := "newIndexUID"
+	i := c.Index(indexID)
+	taskInfo, err := c.CreateIndex(&IndexConfig{Uid: indexID})
+	require.NoError(t, err)
+	testWaitForTask(t, i, taskInfo)
+
+	n := int64(250)
+
+	task, err := i.UpdateSearchCutoffMs(n)
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err := i.GetSearchCutoffMs()
+	require.NoError(t, err)
+	require.Equal(t, n, got)
+
+	task, err = i.ResetSearchCutoffMs()
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err = i.GetSearchCutoffMs()
+	require.NoError(t, err)
+	require.Equal(t, int64(0), got)
 }
