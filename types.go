@@ -425,6 +425,29 @@ type DocumentsQuery struct {
 	Filter interface{} `json:"filter,omitempty"`
 }
 
+// SimilarDocumentQuery is query parameters of similar documents
+type SimilarDocumentQuery struct {
+	Id                      interface{} `json:"id,omitempty"`
+	Embedder                string      `json:"embedder,omitempty"`
+	AttributesToRetrieve    []string    `json:"attributesToRetrieve,omitempty"`
+	Offset                  int64       `json:"offset,omitempty"`
+	Limit                   int64       `json:"limit,omitempty"`
+	Filter                  string      `json:"filter,omitempty"`
+	ShowRankingScore        bool        `json:"showRankingScore,omitempty"`
+	ShowRankingScoreDetails bool        `json:"showRankingScoreDetails,omitempty"`
+	RankingScoreThreshold   float64     `json:"rankingScoreThreshold,omitempty"`
+	RetrieveVectors         bool        `json:"retrieveVectors,omitempty"`
+}
+
+type SimilarDocumentResult struct {
+	Hits               []interface{} `json:"hits,omitempty"`
+	ID                 string        `json:"id,omitempty"`
+	ProcessingTimeMS   int64         `json:"processingTimeMs,omitempty"`
+	Limit              int64         `json:"limit,omitempty"`
+	Offset             int64         `json:"offset,omitempty"`
+	EstimatedTotalHits int64         `json:"estimatedTotalHits,omitempty"`
+}
+
 type CsvDocumentsQuery struct {
 	PrimaryKey   string `json:"primaryKey,omitempty"`
 	CsvDelimiter string `json:"csvDelimiter,omitempty"`
