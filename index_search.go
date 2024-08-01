@@ -153,6 +153,11 @@ func searchPostRequestParams(query string, request *SearchRequest) map[string]in
 	if request.Hybrid != nil {
 		hybrid := make(map[string]interface{}, 2)
 		hybrid["embedder"] = request.Hybrid.Embedder
+
+		if request.Hybrid.Embedder == "" {
+			hybrid["embedder"] = "default"
+		}
+
 		hybrid["semanticRatio"] = request.Hybrid.SemanticRatio
 		params["hybrid"] = hybrid
 	}
