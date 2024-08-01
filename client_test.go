@@ -2026,3 +2026,14 @@ func TestClient_MultiSearch(t *testing.T) {
 		})
 	}
 }
+
+func TestClient_CreateSnapshot(t *testing.T) {
+	cli := defaultClient
+	task, err := cli.CreateSnapshot()
+	require.NoError(t, err)
+	require.NotNil(t, task)
+
+	taskRes, err := cli.WaitForTask(task.TaskUID)
+	require.NoError(t, err)
+	require.Equal(t, taskRes.Status, TaskStatusSucceeded)
+}
