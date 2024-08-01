@@ -82,3 +82,20 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 
 	return resp, nil
 }
+
+func (i Index) SearchSimilarDocuments(param *SimilarDocumentQuery, resp *SimilarDocumentResult) error {
+	req := internalRequest{
+		endpoint:            "/indexes/" + i.UID + "/similar",
+		method:              http.MethodPost,
+		withRequest:         param,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "SearchSimilarDocuments",
+		contentType:         contentTypeJSON,
+	}
+
+	if err := i.client.executeRequest(req); err != nil {
+		return err
+	}
+	return nil
+}
