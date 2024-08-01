@@ -46,6 +46,7 @@ type IndexInterface interface {
 	DeleteAllDocuments() (resp *TaskInfo, err error)
 	Search(query string, request *SearchRequest) (*SearchResponse, error)
 	SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error)
+	SearchSimilarDocuments(param *SimilarDocumentQuery, resp *SimilarDocumentResult) error
 
 	GetTask(taskUID int64) (resp *Task, err error)
 	GetTasks(param *TasksQuery) (resp *TaskResult, err error)

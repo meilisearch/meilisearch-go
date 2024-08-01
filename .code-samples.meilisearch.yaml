@@ -899,6 +899,11 @@ distinct_attribute_guide_filterable_1: |-
     "url",
   }
   client.Index("products").UpdateFilterableAttributes(&filterableAttributes)
+get_similar_post_1: |-
+  resp := new(meilisearch.SimilarDocumentResult)
+  client.Index("INDEX_NAME").SearchSimilarDocuments(&meilisearch.SimilarDocumentQuery{
+    Id: "TARGET_DOCUMENT_ID",
+  }, resp)
 search_parameter_reference_ranking_score_threshold_1: |-
   client.Index("INDEX_NAME").Search("badman", &meilisearch.SearchRequest{
     RankingScoreThreshold: 0.2,
