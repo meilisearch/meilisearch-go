@@ -25,10 +25,12 @@ func TestIndex_SearchRaw(t *testing.T) {
 		{
 			name: "TestIndexBasicSearch",
 			args: args{
-				UID:     "indexUID",
-				client:  defaultClient,
-				query:   "prince",
-				request: &SearchRequest{},
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "prince",
+				request: &SearchRequest{
+					IndexUID: "foobar",
+				},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
@@ -44,6 +46,17 @@ func TestIndex_SearchRaw(t *testing.T) {
 				Limit:              20,
 			},
 			wantErr: false,
+		},
+		{
+			name: "TestNullRequestInSearchRow",
+			args: args{
+				UID:     "indexUID",
+				client:  defaultClient,
+				query:   "prince",
+				request: nil,
+			},
+			want:    nil,
+			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
@@ -115,6 +128,31 @@ func TestIndex_Search(t *testing.T) {
 				client:  defaultClient,
 				query:   "prince",
 				request: &SearchRequest{},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+			},
+			wantErr: false,
+		},
+		{
+			name: "TestIndexBasicSearchWithIndexUIDInRequest",
+			args: args{
+				UID:    "indexUID",
+				client: defaultClient,
+				query:  "prince",
+				request: &SearchRequest{
+					IndexUID: "foobar",
+				},
 			},
 			want: &SearchResponse{
 				Hits: []interface{}{
