@@ -338,42 +338,41 @@ type CreateIndexRequest struct {
 //
 // Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
 type SearchRequest struct {
-	Offset                  int64
-	Limit                   int64
-	AttributesToRetrieve    []string
-	AttributesToSearchOn    []string
-	AttributesToCrop        []string
-	CropLength              int64
-	CropMarker              string
-	AttributesToHighlight   []string
-	HighlightPreTag         string
-	HighlightPostTag        string
-	MatchingStrategy        string
-	Filter                  interface{}
-	ShowMatchesPosition     bool
-	ShowRankingScore        bool
-	ShowRankingScoreDetails bool
-	Facets                  []string
-	PlaceholderSearch       bool
-	Sort                    []string
-	Vector                  []float32
-	HitsPerPage             int64
-	Page                    int64
-	IndexUID                string
-	Query                   string
-	Distinct                string
-	Hybrid                  *SearchRequestHybrid
-	RetrieveVectors         bool
-	RankingScoreThreshold   float64
+	Offset                  int64                `json:"offset,omitempty"`
+	Limit                   int64                `json:"limit,omitempty"`
+	AttributesToRetrieve    []string             `json:"attributesToRetrieve,omitempty"`
+	AttributesToSearchOn    []string             `json:"attributesToSearchOn,omitempty"`
+	AttributesToCrop        []string             `json:"attributesToCrop,omitempty"`
+	CropLength              int64                `json:"cropLength,omitempty"`
+	CropMarker              string               `json:"cropMarker,omitempty"`
+	AttributesToHighlight   []string             `json:"attributesToHighlight,omitempty"`
+	HighlightPreTag         string               `json:"highlightPreTag,omitempty"`
+	HighlightPostTag        string               `json:"highlightPostTag,omitempty"`
+	MatchingStrategy        string               `json:"matchingStrategy,omitempty"`
+	Filter                  interface{}          `json:"filter,omitempty"`
+	ShowMatchesPosition     bool                 `json:"showMatchesPosition,omitempty"`
+	ShowRankingScore        bool                 `json:"showRankingScore,omitempty"`
+	ShowRankingScoreDetails bool                 `json:"showRankingScoreDetails,omitempty"`
+	Facets                  []string             `json:"facets,omitempty"`
+	Sort                    []string             `json:"sort,omitempty"`
+	Vector                  []float32            `json:"vector,omitempty"`
+	HitsPerPage             int64                `json:"hitsPerPage,omitempty"`
+	Page                    int64                `json:"page,omitempty"`
+	IndexUID                string               `json:"indexUid,omitempty"`
+	Query                   string               `json:"q"`
+	Distinct                string               `json:"distinct,omitempty"`
+	Hybrid                  *SearchRequestHybrid `json:"hybrid,omitempty"`
+	RetrieveVectors         bool                 `json:"retrieveVectors,omitempty"`
+	RankingScoreThreshold   float64              `json:"rankingScoreThreshold,omitempty"`
 }
 
 type SearchRequestHybrid struct {
-	SemanticRatio float64
-	Embedder      string
+	SemanticRatio float64 `json:"semanticRatio,omitempty"`
+	Embedder      string  `json:"embedder,omitempty"`
 }
 
 type MultiSearchRequest struct {
-	Queries []SearchRequest `json:"queries"`
+	Queries []*SearchRequest `json:"queries"`
 }
 
 // SearchResponse is the response body for search method
@@ -466,4 +465,13 @@ func (b *RawType) UnmarshalJSON(data []byte) error {
 // MarshalJSON supports json.Marshaler interface
 func (b RawType) MarshalJSON() ([]byte, error) {
 	return b, nil
+}
+
+func (s *SearchRequest) validate() {
+	if s.Limit == 0 {
+		s.Limit = DefaultLimit
+	}
+	if s.Hybrid != nil && s.Hybrid.Embedder == "" {
+		s.Hybrid.Embedder = "default"
+	}
 }

@@ -182,8 +182,7 @@ func TestIndex_Search(t *testing.T) {
 				UID:    "indexUID",
 				client: defaultClient,
 				request: &SearchRequest{
-					PlaceholderSearch: true,
-					Limit:             1,
+					Limit: 1,
 				},
 			},
 			want: &SearchResponse{
@@ -1656,40 +1655,60 @@ func TestIndex_SearchWithShowRankingScoreDetails(t *testing.T) {
 }
 
 func TestIndex_SearchWithVectorStore(t *testing.T) {
-	type args struct {
+	tests := []struct {
+		name       string
 		UID        string
 		PrimaryKey string
 		client     *Client
 		query      string
 		request    SearchRequest
-	}
-	testArg := args{
-		UID:    "indexUID",
-		client: defaultClient,
-		query:  "Pride and Prejudice",
-		request: SearchRequest{
-			Hybrid: &SearchRequestHybrid{
-				SemanticRatio: 0.5,
-				Embedder:      "default",
+	}{
+		{
+			name:   "basic hybrid test",
+			UID:    "indexUID",
+			client: defaultClient,
+			query:  "Pride and Prejudice",
+			request: SearchRequest{
+				Hybrid: &SearchRequestHybrid{
+					SemanticRatio: 0.5,
+					Embedder:      "default",
+				},
+				RetrieveVectors: true,
 			},
-			RetrieveVectors: true,
+		},
+		{
+			name:   "empty Embedder",
+			UID:    "indexUID",
+			client: defaultClient,
+			query:  "Pride and Prejudice",
+			request: SearchRequest{
+				Hybrid: &SearchRequestHybrid{
+					SemanticRatio: 0.5,
+					Embedder:      "",
+				},
+				RetrieveVectors: true,
+			},
 		},
 	}
 
-	i, err := SetUpIndexWithVector(testArg.UID)
-	if err != nil {
-		t.Fatal(err)
-	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			i, err := SetUpIndexWithVector(tt.UID)
+			if err != nil {
+				t.Fatal(err)
+			}
 
-	c := testArg.client
-	t.Cleanup(cleanup(c))
+			c := tt.client
+			t.Cleanup(cleanup(c))
 
-	got, err := i.Search(testArg.query, &testArg.request)
-	require.NoError(t, err)
+			got, err := i.Search(tt.query, &tt.request)
+			require.NoError(t, err)
 
-	for _, hit := range got.Hits {
-		hit := hit.(map[string]interface{})
-		require.NotNil(t, hit["_vectors"])
+			for _, hit := range got.Hits {
+				hit := hit.(map[string]interface{})
+				require.NotNil(t, hit["_vectors"])
+			}
+		})
 	}
 }
 

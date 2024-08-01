@@ -1902,7 +1902,7 @@ func TestClient_MultiSearch(t *testing.T) {
 			args: args{
 				client: defaultClient,
 				queries: &MultiSearchRequest{
-					[]SearchRequest{
+					[]*SearchRequest{
 						{
 							IndexUID: "TestClientMultiSearchOneIndex",
 							Query:    "wonder",
@@ -1934,7 +1934,7 @@ func TestClient_MultiSearch(t *testing.T) {
 			args: args{
 				client: defaultClient,
 				queries: &MultiSearchRequest{
-					[]SearchRequest{
+					[]*SearchRequest{
 						{
 							IndexUID: "TestClientMultiSearchOnTwoIndexes1",
 							Query:    "wonder",
@@ -1987,7 +1987,7 @@ func TestClient_MultiSearch(t *testing.T) {
 			args: args{
 				client: defaultClient,
 				queries: &MultiSearchRequest{
-					[]SearchRequest{
+					[]*SearchRequest{
 						{
 							Query: "",
 						},
@@ -2011,6 +2011,7 @@ func TestClient_MultiSearch(t *testing.T) {
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {
+				require.NotNil(t, got)
 				for i := 0; i < len(tt.want.Results); i++ {
 					if !reflect.DeepEqual(got.Results[i].Hits, tt.want.Results[i].Hits) {
 						t.Errorf("Client.MultiSearch() = %v, want %v", got.Results[i].Hits, tt.want.Results[i].Hits)

@@ -2384,9 +2384,9 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo15(in *jlexer.Lexer,
 			continue
 		}
 		switch key {
-		case "SemanticRatio":
+		case "semanticRatio":
 			out.SemanticRatio = float64(in.Float64())
-		case "Embedder":
+		case "embedder":
 			out.Embedder = string(in.String())
 		default:
 			in.SkipRecursive()
@@ -2402,14 +2402,20 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo15(out *jwriter.Writ
 	out.RawByte('{')
 	first := true
 	_ = first
-	{
-		const prefix string = ",\"SemanticRatio\":"
+	if in.SemanticRatio != 0 {
+		const prefix string = ",\"semanticRatio\":"
+		first = false
 		out.RawString(prefix[1:])
 		out.Float64(float64(in.SemanticRatio))
 	}
-	{
-		const prefix string = ",\"Embedder\":"
-		out.RawString(prefix)
+	if in.Embedder != "" {
+		const prefix string = ",\"embedder\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.String(string(in.Embedder))
 	}
 	out.RawByte('}')
@@ -2457,11 +2463,11 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 			continue
 		}
 		switch key {
-		case "Offset":
+		case "offset":
 			out.Offset = int64(in.Int64())
-		case "Limit":
+		case "limit":
 			out.Limit = int64(in.Int64())
-		case "AttributesToRetrieve":
+		case "attributesToRetrieve":
 			if in.IsNull() {
 				in.Skip()
 				out.AttributesToRetrieve = nil
@@ -2484,7 +2490,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
-		case "AttributesToSearchOn":
+		case "attributesToSearchOn":
 			if in.IsNull() {
 				in.Skip()
 				out.AttributesToSearchOn = nil
@@ -2507,7 +2513,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
-		case "AttributesToCrop":
+		case "attributesToCrop":
 			if in.IsNull() {
 				in.Skip()
 				out.AttributesToCrop = nil
@@ -2530,11 +2536,11 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
-		case "CropLength":
+		case "cropLength":
 			out.CropLength = int64(in.Int64())
-		case "CropMarker":
+		case "cropMarker":
 			out.CropMarker = string(in.String())
-		case "AttributesToHighlight":
+		case "attributesToHighlight":
 			if in.IsNull() {
 				in.Skip()
 				out.AttributesToHighlight = nil
@@ -2557,13 +2563,13 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
-		case "HighlightPreTag":
+		case "highlightPreTag":
 			out.HighlightPreTag = string(in.String())
-		case "HighlightPostTag":
+		case "highlightPostTag":
 			out.HighlightPostTag = string(in.String())
-		case "MatchingStrategy":
+		case "matchingStrategy":
 			out.MatchingStrategy = string(in.String())
-		case "Filter":
+		case "filter":
 			if m, ok := out.Filter.(easyjson.Unmarshaler); ok {
 				m.UnmarshalEasyJSON(in)
 			} else if m, ok := out.Filter.(json.Unmarshaler); ok {
@@ -2571,13 +2577,13 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 			} else {
 				out.Filter = in.Interface()
 			}
-		case "ShowMatchesPosition":
+		case "showMatchesPosition":
 			out.ShowMatchesPosition = bool(in.Bool())
-		case "ShowRankingScore":
+		case "showRankingScore":
 			out.ShowRankingScore = bool(in.Bool())
-		case "ShowRankingScoreDetails":
+		case "showRankingScoreDetails":
 			out.ShowRankingScoreDetails = bool(in.Bool())
-		case "Facets":
+		case "facets":
 			if in.IsNull() {
 				in.Skip()
 				out.Facets = nil
@@ -2600,9 +2606,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
-		case "PlaceholderSearch":
-			out.PlaceholderSearch = bool(in.Bool())
-		case "Sort":
+		case "sort":
 			if in.IsNull() {
 				in.Skip()
 				out.Sort = nil
@@ -2625,7 +2629,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
-		case "Vector":
+		case "vector":
 			if in.IsNull() {
 				in.Skip()
 				out.Vector = nil
@@ -2648,17 +2652,17 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
-		case "HitsPerPage":
+		case "hitsPerPage":
 			out.HitsPerPage = int64(in.Int64())
-		case "Page":
+		case "page":
 			out.Page = int64(in.Int64())
-		case "IndexUID":
+		case "indexUid":
 			out.IndexUID = string(in.String())
-		case "Query":
+		case "q":
 			out.Query = string(in.String())
-		case "Distinct":
+		case "distinct":
 			out.Distinct = string(in.String())
-		case "Hybrid":
+		case "hybrid":
 			if in.IsNull() {
 				in.Skip()
 				out.Hybrid = nil
@@ -2668,9 +2672,9 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				(*out.Hybrid).UnmarshalEasyJSON(in)
 			}
-		case "RetrieveVectors":
+		case "retrieveVectors":
 			out.RetrieveVectors = bool(in.Bool())
-		case "RankingScoreThreshold":
+		case "rankingScoreThreshold":
 			out.RankingScoreThreshold = float64(in.Float64())
 		default:
 			in.SkipRecursive()
@@ -2686,22 +2690,31 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 	out.RawByte('{')
 	first := true
 	_ = first
-	{
-		const prefix string = ",\"Offset\":"
+	if in.Offset != 0 {
+		const prefix string = ",\"offset\":"
+		first = false
 		out.RawString(prefix[1:])
 		out.Int64(int64(in.Offset))
 	}
-	{
-		const prefix string = ",\"Limit\":"
-		out.RawString(prefix)
+	if in.Limit != 0 {
+		const prefix string = ",\"limit\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.Int64(int64(in.Limit))
 	}
-	{
-		const prefix string = ",\"AttributesToRetrieve\":"
-		out.RawString(prefix)
-		if in.AttributesToRetrieve == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
+	if len(in.AttributesToRetrieve) != 0 {
+		const prefix string = ",\"attributesToRetrieve\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
 		} else {
+			out.RawString(prefix)
+		}
+		{
 			out.RawByte('[')
 			for v67, v68 := range in.AttributesToRetrieve {
 				if v67 > 0 {
@@ -2712,12 +2725,15 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 			out.RawByte(']')
 		}
 	}
-	{
-		const prefix string = ",\"AttributesToSearchOn\":"
-		out.RawString(prefix)
-		if in.AttributesToSearchOn == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
+	if len(in.AttributesToSearchOn) != 0 {
+		const prefix string = ",\"attributesToSearchOn\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
 		} else {
+			out.RawString(prefix)
+		}
+		{
 			out.RawByte('[')
 			for v69, v70 := range in.AttributesToSearchOn {
 				if v69 > 0 {
@@ -2728,12 +2744,15 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 			out.RawByte(']')
 		}
 	}
-	{
-		const prefix string = ",\"AttributesToCrop\":"
-		out.RawString(prefix)
-		if in.AttributesToCrop == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
+	if len(in.AttributesToCrop) != 0 {
+		const prefix string = ",\"attributesToCrop\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
 		} else {
+			out.RawString(prefix)
+		}
+		{
 			out.RawByte('[')
 			for v71, v72 := range in.AttributesToCrop {
 				if v71 > 0 {
@@ -2744,22 +2763,35 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 			out.RawByte(']')
 		}
 	}
-	{
-		const prefix string = ",\"CropLength\":"
-		out.RawString(prefix)
+	if in.CropLength != 0 {
+		const prefix string = ",\"cropLength\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.Int64(int64(in.CropLength))
 	}
-	{
-		const prefix string = ",\"CropMarker\":"
-		out.RawString(prefix)
+	if in.CropMarker != "" {
+		const prefix string = ",\"cropMarker\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.String(string(in.CropMarker))
 	}
-	{
-		const prefix string = ",\"AttributesToHighlight\":"
-		out.RawString(prefix)
-		if in.AttributesToHighlight == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
+	if len(in.AttributesToHighlight) != 0 {
+		const prefix string = ",\"attributesToHighlight\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
 		} else {
+			out.RawString(prefix)
+		}
+		{
 			out.RawByte('[')
 			for v73, v74 := range in.AttributesToHighlight {
 				if v73 > 0 {
@@ -2770,24 +2802,44 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 			out.RawByte(']')
 		}
 	}
-	{
-		const prefix string = ",\"HighlightPreTag\":"
-		out.RawString(prefix)
+	if in.HighlightPreTag != "" {
+		const prefix string = ",\"highlightPreTag\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.String(string(in.HighlightPreTag))
 	}
-	{
-		const prefix string = ",\"HighlightPostTag\":"
-		out.RawString(prefix)
+	if in.HighlightPostTag != "" {
+		const prefix string = ",\"highlightPostTag\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.String(string(in.HighlightPostTag))
 	}
-	{
-		const prefix string = ",\"MatchingStrategy\":"
-		out.RawString(prefix)
+	if in.MatchingStrategy != "" {
+		const prefix string = ",\"matchingStrategy\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.String(string(in.MatchingStrategy))
 	}
-	{
-		const prefix string = ",\"Filter\":"
-		out.RawString(prefix)
+	if in.Filter != nil {
+		const prefix string = ",\"filter\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		if m, ok := in.Filter.(easyjson.Marshaler); ok {
 			m.MarshalEasyJSON(out)
 		} else if m, ok := in.Filter.(json.Marshaler); ok {
@@ -2796,27 +2848,45 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 			out.Raw(json.Marshal(in.Filter))
 		}
 	}
-	{
-		const prefix string = ",\"ShowMatchesPosition\":"
-		out.RawString(prefix)
+	if in.ShowMatchesPosition {
+		const prefix string = ",\"showMatchesPosition\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.Bool(bool(in.ShowMatchesPosition))
 	}
-	{
-		const prefix string = ",\"ShowRankingScore\":"
-		out.RawString(prefix)
+	if in.ShowRankingScore {
+		const prefix string = ",\"showRankingScore\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.Bool(bool(in.ShowRankingScore))
 	}
-	{
-		const prefix string = ",\"ShowRankingScoreDetails\":"
-		out.RawString(prefix)
+	if in.ShowRankingScoreDetails {
+		const prefix string = ",\"showRankingScoreDetails\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.Bool(bool(in.ShowRankingScoreDetails))
 	}
-	{
-		const prefix string = ",\"Facets\":"
-		out.RawString(prefix)
-		if in.Facets == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
+	if len(in.Facets) != 0 {
+		const prefix string = ",\"facets\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
 		} else {
+			out.RawString(prefix)
+		}
+		{
 			out.RawByte('[')
 			for v75, v76 := range in.Facets {
 				if v75 > 0 {
@@ -2827,17 +2897,15 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 			out.RawByte(']')
 		}
 	}
-	{
-		const prefix string = ",\"PlaceholderSearch\":"
-		out.RawString(prefix)
-		out.Bool(bool(in.PlaceholderSearch))
-	}
-	{
-		const prefix string = ",\"Sort\":"
-		out.RawString(prefix)
-		if in.Sort == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
+	if len(in.Sort) != 0 {
+		const prefix string = ",\"sort\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
 		} else {
+			out.RawString(prefix)
+		}
+		{
 			out.RawByte('[')
 			for v77, v78 := range in.Sort {
 				if v77 > 0 {
@@ -2848,12 +2916,15 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 			out.RawByte(']')
 		}
 	}
-	{
-		const prefix string = ",\"Vector\":"
-		out.RawString(prefix)
-		if in.Vector == nil && (out.Flags&jwriter.NilSliceAsEmpty) == 0 {
-			out.RawString("null")
+	if len(in.Vector) != 0 {
+		const prefix string = ",\"vector\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
 		} else {
+			out.RawString(prefix)
+		}
+		{
 			out.RawByte('[')
 			for v79, v80 := range in.Vector {
 				if v79 > 0 {
@@ -2864,47 +2935,63 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 			out.RawByte(']')
 		}
 	}
-	{
-		const prefix string = ",\"HitsPerPage\":"
-		out.RawString(prefix)
+	if in.HitsPerPage != 0 {
+		const prefix string = ",\"hitsPerPage\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.Int64(int64(in.HitsPerPage))
 	}
-	{
-		const prefix string = ",\"Page\":"
-		out.RawString(prefix)
+	if in.Page != 0 {
+		const prefix string = ",\"page\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.Int64(int64(in.Page))
 	}
-	{
-		const prefix string = ",\"IndexUID\":"
-		out.RawString(prefix)
+	if in.IndexUID != "" {
+		const prefix string = ",\"indexUid\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.String(string(in.IndexUID))
 	}
 	{
-		const prefix string = ",\"Query\":"
-		out.RawString(prefix)
+		const prefix string = ",\"q\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
 		out.String(string(in.Query))
 	}
-	{
-		const prefix string = ",\"Distinct\":"
+	if in.Distinct != "" {
+		const prefix string = ",\"distinct\":"
 		out.RawString(prefix)
 		out.String(string(in.Distinct))
 	}
-	{
-		const prefix string = ",\"Hybrid\":"
+	if in.Hybrid != nil {
+		const prefix string = ",\"hybrid\":"
 		out.RawString(prefix)
-		if in.Hybrid == nil {
-			out.RawString("null")
-		} else {
-			(*in.Hybrid).MarshalEasyJSON(out)
-		}
+		(*in.Hybrid).MarshalEasyJSON(out)
 	}
-	{
-		const prefix string = ",\"RetrieveVectors\":"
+	if in.RetrieveVectors {
+		const prefix string = ",\"retrieveVectors\":"
 		out.RawString(prefix)
 		out.Bool(bool(in.RetrieveVectors))
 	}
-	{
-		const prefix string = ",\"RankingScoreThreshold\":"
+	if in.RankingScoreThreshold != 0 {
+		const prefix string = ",\"rankingScoreThreshold\":"
 		out.RawString(prefix)
 		out.Float64(float64(in.RankingScoreThreshold))
 	}
@@ -3125,16 +3212,24 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo19(in *jlexer.Lexer,
 				in.Delim('[')
 				if out.Queries == nil {
 					if !in.IsDelim(']') {
-						out.Queries = make([]SearchRequest, 0, 0)
+						out.Queries = make([]*SearchRequest, 0, 8)
 					} else {
-						out.Queries = []SearchRequest{}
+						out.Queries = []*SearchRequest{}
 					}
 				} else {
 					out.Queries = (out.Queries)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v84 SearchRequest
-					(v84).UnmarshalEasyJSON(in)
+					var v84 *SearchRequest
+					if in.IsNull() {
+						in.Skip()
+						v84 = nil
+					} else {
+						if v84 == nil {
+							v84 = new(SearchRequest)
+						}
+						(*v84).UnmarshalEasyJSON(in)
+					}
 					out.Queries = append(out.Queries, v84)
 					in.WantComma()
 				}
@@ -3165,7 +3260,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo19(out *jwriter.Writ
 				if v85 > 0 {
 					out.RawByte(',')
 				}
-				(v86).MarshalEasyJSON(out)
+				if v86 == nil {
+					out.RawString("null")
+				} else {
+					(*v86).MarshalEasyJSON(out)
+				}
 			}
 			out.RawByte(']')
 		}
