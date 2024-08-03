@@ -20,11 +20,15 @@ func (i Index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage
 		return nil, ErrNoSearchRequest
 	}
 
-	if request.Limit == 0 {
-		request.Limit = DefaultLimit
+	if query != "" {
+		request.Query = query
 	}
 
-	searchPostRequestParams := searchPostRequestParams(query, request)
+	if request.IndexUID != "" {
+		request.IndexUID = ""
+	}
+
+	request.validate()
 
 	resp := &json.RawMessage{}
 
@@ -32,7 +36,7 @@ func (i Index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage
 		endpoint:            "/indexes/" + i.UID + "/search",
 		method:              http.MethodPost,
 		contentType:         contentTypeJSON,
-		withRequest:         searchPostRequestParams,
+		withRequest:         request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "SearchRaw",
@@ -50,14 +54,15 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 		return nil, ErrNoSearchRequest
 	}
 
-	if request.Limit == 0 {
-		request.Limit = DefaultLimit
+	if query != "" {
+		request.Query = query
 	}
+
 	if request.IndexUID != "" {
 		request.IndexUID = ""
 	}
 
-	searchPostRequestParams := searchPostRequestParams(query, request)
+	request.validate()
 
 	resp := &SearchResponse{}
 
@@ -65,7 +70,7 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 		endpoint:            "/indexes/" + i.UID + "/search",
 		method:              http.MethodPost,
 		contentType:         contentTypeJSON,
-		withRequest:         searchPostRequestParams,
+		withRequest:         request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Search",
@@ -93,93 +98,4 @@ func (i Index) SearchSimilarDocuments(param *SimilarDocumentQuery, resp *Similar
 		return err
 	}
 	return nil
-}
-
-func searchPostRequestParams(query string, request *SearchRequest) map[string]interface{} {
-	params := make(map[string]interface{}, 22)
-
-	if !request.PlaceholderSearch {
-		params["q"] = query
-	}
-	if request.Distinct != "" {
-		params["distinct"] = request.Distinct
-	}
-	if request.IndexUID != "" {
-		params["indexUid"] = request.IndexUID
-	}
-	if request.Limit != DefaultLimit {
-		params["limit"] = request.Limit
-	}
-	if request.ShowMatchesPosition {
-		params["showMatchesPosition"] = request.ShowMatchesPosition
-	}
-	if request.ShowRankingScore {
-		params["showRankingScore"] = request.ShowRankingScore
-	}
-	if request.ShowRankingScoreDetails {
-		params["showRankingScoreDetails"] = request.ShowRankingScoreDetails
-	}
-	if request.Filter != nil {
-		params["filter"] = request.Filter
-	}
-	if request.Offset != 0 {
-		params["offset"] = request.Offset
-	}
-	if request.CropLength != 0 {
-		params["cropLength"] = request.CropLength
-	}
-	if request.HitsPerPage != 0 {
-		params["hitsPerPage"] = request.HitsPerPage
-	}
-	if request.Page != 0 {
-		params["page"] = request.Page
-	}
-	if request.CropMarker != "" {
-		params["cropMarker"] = request.CropMarker
-	}
-	if request.HighlightPreTag != "" {
-		params["highlightPreTag"] = request.HighlightPreTag
-	}
-	if request.HighlightPostTag != "" {
-		params["highlightPostTag"] = request.HighlightPostTag
-	}
-	if request.MatchingStrategy != "" {
-		params["matchingStrategy"] = request.MatchingStrategy
-	}
-	if len(request.AttributesToRetrieve) != 0 {
-		params["attributesToRetrieve"] = request.AttributesToRetrieve
-	}
-	if len(request.AttributesToSearchOn) != 0 {
-		params["attributesToSearchOn"] = request.AttributesToSearchOn
-	}
-	if len(request.AttributesToCrop) != 0 {
-		params["attributesToCrop"] = request.AttributesToCrop
-	}
-	if len(request.AttributesToHighlight) != 0 {
-		params["attributesToHighlight"] = request.AttributesToHighlight
-	}
-	if len(request.Facets) != 0 {
-		params["facets"] = request.Facets
-	}
-	if len(request.Sort) != 0 {
-		params["sort"] = request.Sort
-	}
-	if request.Vector != nil && len(request.Vector) > 0 {
-		params["vector"] = request.Vector
-	}
-	if request.Hybrid != nil {
-		hybrid := make(map[string]interface{}, 2)
-		hybrid["embedder"] = request.Hybrid.Embedder
-		hybrid["semanticRatio"] = request.Hybrid.SemanticRatio
-		params["hybrid"] = hybrid
-	}
-	if request.RetrieveVectors {
-		params["retrieveVectors"] = request.RetrieveVectors
-	}
-
-	if request.RankingScoreThreshold != 0 {
-		params["rankingScoreThreshold"] = request.RankingScoreThreshold
-	}
-
-	return params
 }

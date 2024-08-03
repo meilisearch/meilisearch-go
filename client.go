@@ -260,20 +260,15 @@ func (c *Client) CreateDump() (resp *TaskInfo, err error) {
 func (c *Client) MultiSearch(queries *MultiSearchRequest) (*MultiSearchResponse, error) {
 	resp := &MultiSearchResponse{}
 
-	searchPostQueries := make(map[string][]map[string]interface{}, 1)
-
 	for i := 0; i < len(queries.Queries); i++ {
-		if queries.Queries[i].Limit == 0 {
-			queries.Queries[i].Limit = DefaultLimit
-		}
-		searchPostQueries["queries"] = append(searchPostQueries["queries"], searchPostRequestParams(queries.Queries[i].Query, &queries.Queries[i]))
+		queries.Queries[i].validate()
 	}
 
 	req := internalRequest{
 		endpoint:            "/multi-search",
 		method:              http.MethodPost,
 		contentType:         contentTypeJSON,
-		withRequest:         searchPostQueries,
+		withRequest:         queries,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "MultiSearch",
@@ -484,7 +479,7 @@ func (c *Client) WaitForTask(taskUID int64, options ...WaitParams) (*Task, error
 // ExpiresAt options is a time.Time when the key will expire. Note that if an ExpiresAt value is included it should be in UTC time.
 // ApiKey options is the API key parent of the token. If you leave it empty the client API Key will be used.
 func (c *Client) GenerateTenantToken(APIKeyUID string, SearchRules map[string]interface{}, Options *TenantTokenOptions) (resp string, err error) {
-	// Validate the arguments
+	// validate the arguments
 	if SearchRules == nil {
 		return "", fmt.Errorf("GenerateTenantToken: The search rules added in the token generation must be of type array or object")
 	}
