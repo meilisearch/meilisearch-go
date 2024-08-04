@@ -86,10 +86,8 @@ import (
 )
 
 func main() {
-	client := meilisearch.NewClient(meilisearch.ClientConfig{
-                Host: "http://127.0.0.1:7700",
-                APIKey: "masterKey",
-        })
+	client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("foobar"))
+
 	// An index is where the documents are stored.
 	index := client.Index("movies")
 
