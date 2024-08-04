@@ -150,7 +150,7 @@ func (e *Error) ErrorBody(body []byte) {
 // VersionErrorHintMessage a hint to the error message if it may come from a version incompatibility with meilisearch
 func VersionErrorHintMessage(err error, req *internalRequest) error {
 	return fmt.Errorf("%w. Hint: It might not be working because you're not up to date with the "+
-		"meilisearch version that %s call requires", err, req.functionName)
+		"Meilisearch version that %s call requires", err, req.functionName)
 }
 
 func namedSprintf(format string, params map[string]interface{}) string {

@@ -1,55 +1,16 @@
 package meilisearch
 
 import (
+	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 )
 
-// This constant contains the default values assigned by Meilisearch to the limit in search parameters
-//
-// Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
-const (
-	DefaultLimit int64 = 20
-)
-
-var ErrNoSearchRequest = errors.New("no search request provided")
-
-func (i Index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error) {
-	if request == nil {
-		return nil, ErrNoSearchRequest
-	}
-
-	if query != "" {
-		request.Query = query
-	}
-
-	if request.IndexUID != "" {
-		request.IndexUID = ""
-	}
-
-	request.validate()
-
-	resp := &json.RawMessage{}
-
-	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/search",
-		method:              http.MethodPost,
-		contentType:         contentTypeJSON,
-		withRequest:         request,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "SearchRaw",
-	}
-
-	if err := i.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+func (i *index) Search(query string, request *SearchRequest) (*SearchResponse, error) {
+	return i.SearchWithContext(context.Background(), query, request)
 }
 
-func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, error) {
+func (i *index) SearchWithContext(ctx context.Context, query string, request *SearchRequest) (*SearchResponse, error) {
 	if request == nil {
 		return nil, ErrNoSearchRequest
 	}
@@ -64,10 +25,10 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 
 	request.validate()
 
-	resp := &SearchResponse{}
+	resp := new(SearchResponse)
 
-	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/search",
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/search",
 		method:              http.MethodPost,
 		contentType:         contentTypeJSON,
 		withRequest:         request,
@@ -76,16 +37,86 @@ func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, er
 		functionName:        "Search",
 	}
 
-	if err := i.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(ctx, req); err != nil {
 		return nil, err
 	}
 
 	return resp, nil
 }
 
-func (i Index) SearchSimilarDocuments(param *SimilarDocumentQuery, resp *SimilarDocumentResult) error {
-	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/similar",
+func (i *index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error) {
+	return i.SearchRawWithContext(context.Background(), query, request)
+}
+
+func (i *index) SearchRawWithContext(ctx context.Context, query string, request *SearchRequest) (*json.RawMessage, error) {
+	if request == nil {
+		return nil, ErrNoSearchRequest
+	}
+
+	if query != "" {
+		request.Query = query
+	}
+
+	if request.IndexUID != "" {
+		request.IndexUID = ""
+	}
+
+	request.validate()
+
+	resp := new(json.RawMessage)
+
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/search",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "SearchRaw",
+	}
+
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (i *index) FacetSearch(request *FacetSearchRequest) (*json.RawMessage, error) {
+	return i.FacetSearchWithContext(context.Background(), request)
+}
+
+func (i *index) FacetSearchWithContext(ctx context.Context, request *FacetSearchRequest) (*json.RawMessage, error) {
+	if request == nil {
+		return nil, ErrNoFacetSearchRequest
+	}
+
+	resp := new(json.RawMessage)
+
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/facet-search",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "FacetSearch",
+	}
+
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (i *index) SearchSimilarDocuments(param *SimilarDocumentQuery, resp *SimilarDocumentResult) error {
+	return i.SearchSimilarDocumentsWithContext(context.Background(), param, resp)
+}
+
+func (i *index) SearchSimilarDocumentsWithContext(ctx context.Context, param *SimilarDocumentQuery, resp *SimilarDocumentResult) error {
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/similar",
 		method:              http.MethodPost,
 		withRequest:         param,
 		withResponse:        resp,
@@ -94,7 +125,7 @@ func (i Index) SearchSimilarDocuments(param *SimilarDocumentQuery, resp *Similar
 		contentType:         contentTypeJSON,
 	}
 
-	if err := i.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(ctx, req); err != nil {
 		return err
 	}
 	return nil

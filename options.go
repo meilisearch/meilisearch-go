@@ -16,9 +16,8 @@ var (
 )
 
 type meiliOpt struct {
-	client  *http.Client
-	timeout time.Duration
-	apiKey  string
+	client *http.Client
+	apiKey string
 }
 
 type Option func(*meiliOpt)
