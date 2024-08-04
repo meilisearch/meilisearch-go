@@ -553,6 +553,21 @@ func TestIndex_Search(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "TestIndexSearchWithInvalidIndex",
+			args: args{
+				UID:    "invalidIndex",
+				client: sv,
+				query:  "pri",
+				request: &SearchRequest{
+					Limit:                 10,
+					AttributesToRetrieve:  []string{"book_id", "title"},
+					RankingScoreThreshold: 0.2,
+				},
+			},
+			want:    nil,
+			wantErr: true,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -1818,6 +1833,7 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 		client     ServiceManager
 		request    *SimilarDocumentQuery
 		resp       *SimilarDocumentResult
+		wantErr    bool
 	}{
 		{
 			UID:    "indexUID",
@@ -1825,7 +1841,15 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 			request: &SimilarDocumentQuery{
 				Id: "123",
 			},
-			resp: new(SimilarDocumentResult),
+			resp:    new(SimilarDocumentResult),
+			wantErr: false,
+		},
+		{
+			UID:     "indexUID",
+			client:  sv,
+			request: &SimilarDocumentQuery{},
+			resp:    new(SimilarDocumentResult),
+			wantErr: true,
 		},
 	}
 
@@ -1837,6 +1861,11 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			err = i.SearchSimilarDocuments(tt.request, tt.resp)
+			if tt.wantErr {
+				require.Error(t, err)
+				return
+			}
+
 			require.NoError(t, err)
 			require.NotNil(t, tt.resp)
 		})

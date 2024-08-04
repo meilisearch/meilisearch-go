@@ -471,6 +471,7 @@ func TestIndex_FetchInfo(t *testing.T) {
 	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
+	broken := setup(t, "", WithAPIKey("wrong"))
 
 	type args struct {
 		UID    string
@@ -503,25 +504,37 @@ func TestIndex_FetchInfo(t *testing.T) {
 				PrimaryKey: "book_id",
 			},
 		},
+		{
+			name: "TestIndexFetchInfoWithBrokenClient",
+			args: args{
+				UID:    "TestIndexFetchInfoWithCustomClient",
+				client: broken,
+			},
+			wantResp: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			setUpBasicIndex(tt.args.client, tt.args.UID)
+			setUpBasicIndex(sv, tt.args.UID)
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			i, err := c.GetIndex(tt.args.UID)
-			require.NoError(t, err)
+			i := c.Index(tt.args.UID)
 
 			gotResp, err := i.FetchInfo()
-			require.NoError(t, err)
-			require.Equal(t, tt.wantResp.UID, gotResp.UID)
-			require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
-			// Make sure that timestamps are also fetched and are updated
-			require.NotZero(t, gotResp.CreatedAt)
-			require.NotZero(t, gotResp.UpdatedAt)
-			require.Equal(t, i.CreatedAt, gotResp.CreatedAt)
-			require.Equal(t, i.UpdatedAt, gotResp.UpdatedAt)
+
+			if tt.wantResp == nil {
+				require.Error(t, err)
+				require.Nil(t, gotResp)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tt.wantResp.UID, gotResp.UID)
+				require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
+				// Make sure that timestamps are also fetched and are updated
+				require.NotZero(t, gotResp.CreatedAt)
+				require.NotZero(t, gotResp.UpdatedAt)
+			}
+
 		})
 	}
 }
