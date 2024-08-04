@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"bytes"
 	"context"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -22,6 +23,9 @@ func TestExecuteRequest(t *testing.T) {
 		} else if r.Method == http.MethodPost && r.URL.Path == "/test-post" {
 			w.WriteHeader(http.StatusCreated)
 			_, _ = w.Write([]byte(`{"message":"post successful"}`))
+		} else if r.URL.Path == "/test-bad-request" {
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte(`{"message":"bad request"}`))
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
@@ -71,6 +75,17 @@ func TestExecuteRequest(t *testing.T) {
 			expectedResp: nil,
 			expectedErr:  &Error{StatusCode: http.StatusNotFound},
 		},
+		{
+			name: "400 Bad Request",
+			internalReq: &internalRequest{
+				endpoint:            "/test-bad-request",
+				method:              http.MethodGet,
+				withResponse:        &mockResponse{},
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp: nil,
+			expectedErr:  &Error{StatusCode: http.StatusBadRequest},
+		},
 	}
 
 	for _, tt := range tests {
@@ -78,13 +93,30 @@ func TestExecuteRequest(t *testing.T) {
 			err := client.executeRequest(context.Background(), tt.internalReq)
 			if tt.expectedErr != nil {
 				assert.Error(t, err)
-				var apiErr *Error
-				assert.ErrorAs(t, err, &apiErr)
-				assert.Equal(t, tt.expectedErr.(*Error).StatusCode, apiErr.StatusCode)
+				if apiErr, ok := tt.expectedErr.(*Error); ok {
+					var actualErr *Error
+					assert.ErrorAs(t, err, &actualErr)
+					assert.Equal(t, apiErr.StatusCode, actualErr.StatusCode)
+				} else {
+					assert.Contains(t, err.Error(), tt.expectedErr.Error())
+				}
 			} else {
 				assert.NoError(t, err)
 				assert.Equal(t, tt.expectedResp, tt.internalReq.withResponse)
 			}
 		})
 	}
+}
+
+func TestBufferPool(t *testing.T) {
+	client := newClient(&http.Client{}, "http://localhost", "")
+
+	data := "test"
+
+	buf1 := client.bufferPool.Get().(*bytes.Buffer)
+	buf1.WriteString(data)
+	client.bufferPool.Put(buf1)
+
+	buf2 := client.bufferPool.Get().(*bytes.Buffer)
+	assert.Equal(t, buf2.String(), data)
 }
