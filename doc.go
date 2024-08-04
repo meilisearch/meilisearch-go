@@ -8,11 +8,23 @@
 //
 //	Example:
 //
-//	sv, err := New("http://localhost:7700", WithAPIKey("foobar"))
+//	meili := New("http://localhost:7700", WithAPIKey("foobar"))
+//
+//	idx := meili.Index("movies")
+//
+//	documents := []map[string]interface{}{
+//		{"id": 1, "title": "Carol", "genres": []string{"Romance", "Drama"}},
+//		{"id": 2, "title": "Wonder Woman", "genres": []string{"Action", "Adventure"}},
+//		{"id": 3, "title": "Life of Pi", "genres": []string{"Adventure", "Drama"}},
+//		{"id": 4, "title": "Mad Max: Fury Road", "genres": []string{"Adventure", "Science Fiction"}},
+//		{"id": 5, "title": "Moana", "genres": []string{"Fantasy", "Action"}},
+//		{"id": 6, "title": "Philadelphia", "genres": []string{"Drama"}},
+//	}
+//	task, err := idx.AddDocuments(documents)
 //	if err != nil {
 //		fmt.Println(err)
-//		return
+//		os.Exit(1)
 //	}
 //
-//	fmt.Println(sv.IsHealthy(context.Background()))
+//	fmt.Println(task.TaskUID)
 package meilisearch
