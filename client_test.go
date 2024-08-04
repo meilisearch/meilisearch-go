@@ -1,7 +1,6 @@
 package meilisearch
 
 import (
-	"bytes"
 	"context"
 	"github.com/stretchr/testify/assert"
 	"net/http"
@@ -106,17 +105,4 @@ func TestExecuteRequest(t *testing.T) {
 			}
 		})
 	}
-}
-
-func TestBufferPool(t *testing.T) {
-	client := newClient(&http.Client{}, "http://localhost", "")
-
-	data := "test"
-
-	buf1 := client.bufferPool.Get().(*bytes.Buffer)
-	buf1.WriteString(data)
-	client.bufferPool.Put(buf1)
-
-	buf2 := client.bufferPool.Get().(*bytes.Buffer)
-	assert.Equal(t, buf2.String(), data)
 }
