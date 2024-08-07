@@ -1,86 +1,122 @@
 package meilisearch
 
 import (
+	"context"
 	"encoding/json"
-	"errors"
 	"net/http"
 )
 
-// This constant contains the default values assigned by Meilisearch to the limit in search parameters
-//
-// Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
-const (
-	DefaultLimit int64 = 20
-)
-
-var ErrNoSearchRequest = errors.New("no search request provided")
-
-func (i Index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error) {
-	if request == nil {
-		return nil, ErrNoSearchRequest
-	}
-
-	if request.Limit == 0 {
-		request.Limit = DefaultLimit
-	}
-
-	searchPostRequestParams := searchPostRequestParams(query, request)
-
-	resp := &json.RawMessage{}
-
-	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/search",
-		method:              http.MethodPost,
-		contentType:         contentTypeJSON,
-		withRequest:         searchPostRequestParams,
-		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusOK},
-		functionName:        "SearchRaw",
-	}
-
-	if err := i.client.executeRequest(req); err != nil {
-		return nil, err
-	}
-
-	return resp, nil
+func (i *index) Search(query string, request *SearchRequest) (*SearchResponse, error) {
+	return i.SearchWithContext(context.Background(), query, request)
 }
 
-func (i Index) Search(query string, request *SearchRequest) (*SearchResponse, error) {
+func (i *index) SearchWithContext(ctx context.Context, query string, request *SearchRequest) (*SearchResponse, error) {
 	if request == nil {
 		return nil, ErrNoSearchRequest
 	}
 
-	if request.Limit == 0 {
-		request.Limit = DefaultLimit
+	if query != "" {
+		request.Query = query
 	}
+
 	if request.IndexUID != "" {
 		request.IndexUID = ""
 	}
 
-	searchPostRequestParams := searchPostRequestParams(query, request)
+	request.validate()
 
-	resp := &SearchResponse{}
+	resp := new(SearchResponse)
 
-	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/search",
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/search",
 		method:              http.MethodPost,
 		contentType:         contentTypeJSON,
-		withRequest:         searchPostRequestParams,
+		withRequest:         request,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Search",
 	}
 
-	if err := i.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(ctx, req); err != nil {
 		return nil, err
 	}
 
 	return resp, nil
 }
 
-func (i Index) SearchSimilarDocuments(param *SimilarDocumentQuery, resp *SimilarDocumentResult) error {
-	req := internalRequest{
-		endpoint:            "/indexes/" + i.UID + "/similar",
+func (i *index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error) {
+	return i.SearchRawWithContext(context.Background(), query, request)
+}
+
+func (i *index) SearchRawWithContext(ctx context.Context, query string, request *SearchRequest) (*json.RawMessage, error) {
+	if request == nil {
+		return nil, ErrNoSearchRequest
+	}
+
+	if query != "" {
+		request.Query = query
+	}
+
+	if request.IndexUID != "" {
+		request.IndexUID = ""
+	}
+
+	request.validate()
+
+	resp := new(json.RawMessage)
+
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/search",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "SearchRaw",
+	}
+
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (i *index) FacetSearch(request *FacetSearchRequest) (*json.RawMessage, error) {
+	return i.FacetSearchWithContext(context.Background(), request)
+}
+
+func (i *index) FacetSearchWithContext(ctx context.Context, request *FacetSearchRequest) (*json.RawMessage, error) {
+	if request == nil {
+		return nil, ErrNoFacetSearchRequest
+	}
+
+	resp := new(json.RawMessage)
+
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/facet-search",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "FacetSearch",
+	}
+
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+
+	return resp, nil
+}
+
+func (i *index) SearchSimilarDocuments(param *SimilarDocumentQuery, resp *SimilarDocumentResult) error {
+	return i.SearchSimilarDocumentsWithContext(context.Background(), param, resp)
+}
+
+func (i *index) SearchSimilarDocumentsWithContext(ctx context.Context, param *SimilarDocumentQuery, resp *SimilarDocumentResult) error {
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/similar",
 		method:              http.MethodPost,
 		withRequest:         param,
 		withResponse:        resp,
@@ -89,97 +125,8 @@ func (i Index) SearchSimilarDocuments(param *SimilarDocumentQuery, resp *Similar
 		contentType:         contentTypeJSON,
 	}
 
-	if err := i.client.executeRequest(req); err != nil {
+	if err := i.client.executeRequest(ctx, req); err != nil {
 		return err
 	}
 	return nil
-}
-
-func searchPostRequestParams(query string, request *SearchRequest) map[string]interface{} {
-	params := make(map[string]interface{}, 22)
-
-	if !request.PlaceholderSearch {
-		params["q"] = query
-	}
-	if request.Distinct != "" {
-		params["distinct"] = request.Distinct
-	}
-	if request.IndexUID != "" {
-		params["indexUid"] = request.IndexUID
-	}
-	if request.Limit != DefaultLimit {
-		params["limit"] = request.Limit
-	}
-	if request.ShowMatchesPosition {
-		params["showMatchesPosition"] = request.ShowMatchesPosition
-	}
-	if request.ShowRankingScore {
-		params["showRankingScore"] = request.ShowRankingScore
-	}
-	if request.ShowRankingScoreDetails {
-		params["showRankingScoreDetails"] = request.ShowRankingScoreDetails
-	}
-	if request.Filter != nil {
-		params["filter"] = request.Filter
-	}
-	if request.Offset != 0 {
-		params["offset"] = request.Offset
-	}
-	if request.CropLength != 0 {
-		params["cropLength"] = request.CropLength
-	}
-	if request.HitsPerPage != 0 {
-		params["hitsPerPage"] = request.HitsPerPage
-	}
-	if request.Page != 0 {
-		params["page"] = request.Page
-	}
-	if request.CropMarker != "" {
-		params["cropMarker"] = request.CropMarker
-	}
-	if request.HighlightPreTag != "" {
-		params["highlightPreTag"] = request.HighlightPreTag
-	}
-	if request.HighlightPostTag != "" {
-		params["highlightPostTag"] = request.HighlightPostTag
-	}
-	if request.MatchingStrategy != "" {
-		params["matchingStrategy"] = request.MatchingStrategy
-	}
-	if len(request.AttributesToRetrieve) != 0 {
-		params["attributesToRetrieve"] = request.AttributesToRetrieve
-	}
-	if len(request.AttributesToSearchOn) != 0 {
-		params["attributesToSearchOn"] = request.AttributesToSearchOn
-	}
-	if len(request.AttributesToCrop) != 0 {
-		params["attributesToCrop"] = request.AttributesToCrop
-	}
-	if len(request.AttributesToHighlight) != 0 {
-		params["attributesToHighlight"] = request.AttributesToHighlight
-	}
-	if len(request.Facets) != 0 {
-		params["facets"] = request.Facets
-	}
-	if len(request.Sort) != 0 {
-		params["sort"] = request.Sort
-	}
-	if request.Vector != nil && len(request.Vector) > 0 {
-		params["vector"] = request.Vector
-	}
-	if request.Hybrid != nil {
-		hybrid := make(map[string]interface{}, 2)
-		hybrid["embedder"] = request.Hybrid.Embedder
-		hybrid["semanticRatio"] = request.Hybrid.SemanticRatio
-		params["hybrid"] = hybrid
-	}
-	if request.RetrieveVectors {
-		params["retrieveVectors"] = request.RetrieveVectors
-	}
-
-	if request.RankingScoreThreshold != 0 {
-		params["rankingScoreThreshold"] = request.RankingScoreThreshold
-	}
-
-	return params
 }

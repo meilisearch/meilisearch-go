@@ -2,25 +2,30 @@ package meilisearch
 
 import (
 	"context"
+	"crypto/tls"
+	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
-
-	"github.com/stretchr/testify/require"
 )
 
 func TestIndex_Delete(t *testing.T) {
+	sv := setup(t, "")
+	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		createUid []string
 		deleteUid []string
 	}
 	tests := []struct {
 		name   string
-		client *Client
+		client ServiceManager
 		args   args
 	}{
 		{
 			name:   "TestIndexDeleteOneIndex",
-			client: defaultClient,
+			client: sv,
 			args: args{
 				createUid: []string{"TestIndexDeleteOneIndex"},
 				deleteUid: []string{"TestIndexDeleteOneIndex"},
@@ -28,7 +33,7 @@ func TestIndex_Delete(t *testing.T) {
 		},
 		{
 			name:   "TestIndexDeleteOneIndexWithCustomClient",
-			client: customClient,
+			client: customSv,
 			args: args{
 				createUid: []string{"TestIndexDeleteOneIndexWithCustomClient"},
 				deleteUid: []string{"TestIndexDeleteOneIndexWithCustomClient"},
@@ -36,7 +41,7 @@ func TestIndex_Delete(t *testing.T) {
 		},
 		{
 			name:   "TestIndexDeleteMultipleIndex",
-			client: defaultClient,
+			client: sv,
 			args: args{
 				createUid: []string{
 					"TestIndexDeleteMultipleIndex_1",
@@ -56,7 +61,7 @@ func TestIndex_Delete(t *testing.T) {
 		},
 		{
 			name:   "TestIndexDeleteNotExistingIndex",
-			client: defaultClient,
+			client: sv,
 			args: args{
 				createUid: []string{},
 				deleteUid: []string{"TestIndexDeleteNotExistingIndex"},
@@ -64,7 +69,7 @@ func TestIndex_Delete(t *testing.T) {
 		},
 		{
 			name:   "TestIndexDeleteMultipleNotExistingIndex",
-			client: defaultClient,
+			client: sv,
 			args: args{
 				createUid: []string{},
 				deleteUid: []string{
@@ -81,7 +86,7 @@ func TestIndex_Delete(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			for _, uid := range tt.args.createUid {
-				_, err := SetUpEmptyIndex(&IndexConfig{Uid: uid})
+				_, err := setUpEmptyIndex(sv, &IndexConfig{Uid: uid})
 				require.NoError(t, err, "CreateIndex() in DeleteTest error should be nil")
 			}
 			for k := range tt.args.deleteUid {
@@ -95,9 +100,14 @@ func TestIndex_Delete(t *testing.T) {
 }
 
 func TestIndex_GetStats(t *testing.T) {
+	sv := setup(t, "")
+	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -108,7 +118,7 @@ func TestIndex_GetStats(t *testing.T) {
 			name: "TestIndexBasicGetStats",
 			args: args{
 				UID:    "TestIndexBasicGetStats",
-				client: defaultClient,
+				client: sv,
 			},
 			wantResp: &StatsIndex{
 				NumberOfDocuments: 6,
@@ -120,7 +130,7 @@ func TestIndex_GetStats(t *testing.T) {
 			name: "TestIndexGetStatsWithCustomClient",
 			args: args{
 				UID:    "TestIndexGetStatsWithCustomClient",
-				client: customClient,
+				client: customSv,
 			},
 			wantResp: &StatsIndex{
 				NumberOfDocuments: 6,
@@ -131,7 +141,7 @@ func TestIndex_GetStats(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpBasicIndex(tt.args.UID)
+			setUpBasicIndex(sv, tt.args.UID)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -144,36 +154,35 @@ func TestIndex_GetStats(t *testing.T) {
 }
 
 func Test_newIndex(t *testing.T) {
+	sv := setup(t, "")
+	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
-		client *Client
+		client ServiceManager
 		uid    string
 	}
 	tests := []struct {
 		name string
 		args args
-		want *Index
+		want IndexManager
 	}{
 		{
 			name: "TestBasicNewIndex",
 			args: args{
-				client: defaultClient,
+				client: sv,
 				uid:    "TestBasicNewIndex",
 			},
-			want: &Index{
-				UID:    "TestBasicNewIndex",
-				client: defaultClient,
-			},
+			want: sv.Index("TestBasicNewIndex"),
 		},
 		{
 			name: "TestNewIndexCustomClient",
 			args: args{
-				client: customClient,
+				client: sv,
 				uid:    "TestNewIndexCustomClient",
 			},
-			want: &Index{
-				UID:    "TestNewIndexCustomClient",
-				client: customClient,
-			},
+			want: customSv.Index("TestNewIndexCustomClient"),
 		},
 	}
 	for _, tt := range tests {
@@ -181,20 +190,36 @@ func Test_newIndex(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			got := newIndex(c, tt.args.uid)
-			require.Equal(t, tt.want.UID, got.UID)
-			require.Equal(t, tt.want.client, got.client)
+			gotIdx := c.Index(tt.args.uid)
+
+			task, err := c.CreateIndex(&IndexConfig{Uid: tt.args.uid})
+			require.NoError(t, err)
+
+			testWaitForTask(t, gotIdx, task)
+
+			gotIdxResult, err := gotIdx.FetchInfo()
+			require.NoError(t, err)
+
+			wantIdxResult, err := tt.want.FetchInfo()
+			require.NoError(t, err)
+
+			require.Equal(t, gotIdxResult.UID, wantIdxResult.UID)
 			// Timestamps should be empty unless fetched
-			require.Zero(t, got.CreatedAt)
-			require.Zero(t, got.UpdatedAt)
+			require.NotZero(t, gotIdxResult.CreatedAt)
+			require.NotZero(t, gotIdxResult.UpdatedAt)
 		})
 	}
 }
 
 func TestIndex_GetTask(t *testing.T) {
+	sv := setup(t, "")
+	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID      string
-		client   *Client
+		client   ServiceManager
 		taskUID  int64
 		document []docTest
 	}
@@ -206,7 +231,7 @@ func TestIndex_GetTask(t *testing.T) {
 			name: "TestIndexBasicGetTask",
 			args: args{
 				UID:     "TestIndexBasicGetTask",
-				client:  defaultClient,
+				client:  sv,
 				taskUID: 0,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
@@ -217,7 +242,7 @@ func TestIndex_GetTask(t *testing.T) {
 			name: "TestIndexGetTaskWithCustomClient",
 			args: args{
 				UID:     "TestIndexGetTaskWithCustomClient",
-				client:  customClient,
+				client:  customSv,
 				taskUID: 0,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
@@ -228,7 +253,7 @@ func TestIndex_GetTask(t *testing.T) {
 			name: "TestIndexGetTask",
 			args: args{
 				UID:     "TestIndexGetTask",
-				client:  defaultClient,
+				client:  sv,
 				taskUID: 0,
 				document: []docTest{
 					{ID: "456", Name: "Le Petit Prince"},
@@ -238,7 +263,7 @@ func TestIndex_GetTask(t *testing.T) {
 		},
 	}
 
-	t.Cleanup(cleanup(defaultClient))
+	t.Cleanup(cleanup(sv, customSv))
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -249,7 +274,7 @@ func TestIndex_GetTask(t *testing.T) {
 			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(task.TaskUID)
+			_, err = c.WaitForTask(task.TaskUID, 0)
 			require.NoError(t, err)
 
 			gotResp, err := i.GetTask(task.TaskUID)
@@ -268,9 +293,14 @@ func TestIndex_GetTask(t *testing.T) {
 }
 
 func TestIndex_GetTasks(t *testing.T) {
+	sv := setup(t, "")
+	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID      string
-		client   *Client
+		client   ServiceManager
 		document []docTest
 		query    *TasksQuery
 	}
@@ -282,7 +312,7 @@ func TestIndex_GetTasks(t *testing.T) {
 			name: "TestIndexBasicGetTasks",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: sv,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
@@ -292,7 +322,7 @@ func TestIndex_GetTasks(t *testing.T) {
 			name: "TestIndexGetTasksWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customSv,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
@@ -302,7 +332,7 @@ func TestIndex_GetTasks(t *testing.T) {
 			name: "TestIndexBasicGetTasksWithFilters",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: sv,
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
@@ -322,7 +352,7 @@ func TestIndex_GetTasks(t *testing.T) {
 			task, err := i.AddDocuments(tt.args.document)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(task.TaskUID)
+			_, err = c.WaitForTask(task.TaskUID, 0)
 			require.NoError(t, err)
 
 			gotResp, err := i.GetTasks(nil)
@@ -335,9 +365,14 @@ func TestIndex_GetTasks(t *testing.T) {
 }
 
 func TestIndex_WaitForTask(t *testing.T) {
+	sv := setup(t, "")
+	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID      string
-		client   *Client
+		client   ServiceManager
 		interval time.Duration
 		timeout  time.Duration
 		document []docTest
@@ -351,7 +386,7 @@ func TestIndex_WaitForTask(t *testing.T) {
 			name: "TestWaitForTask50",
 			args: args{
 				UID:      "TestWaitForTask50",
-				client:   defaultClient,
+				client:   sv,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
 				document: []docTest{
@@ -366,7 +401,7 @@ func TestIndex_WaitForTask(t *testing.T) {
 			name: "TestWaitForTask50WithCustomClient",
 			args: args{
 				UID:      "TestWaitForTask50WithCustomClient",
-				client:   customClient,
+				client:   customSv,
 				interval: time.Millisecond * 50,
 				timeout:  time.Second * 5,
 				document: []docTest{
@@ -381,7 +416,7 @@ func TestIndex_WaitForTask(t *testing.T) {
 			name: "TestWaitForTask10",
 			args: args{
 				UID:      "TestWaitForTask10",
-				client:   defaultClient,
+				client:   sv,
 				interval: time.Millisecond * 10,
 				timeout:  time.Second * 5,
 				document: []docTest{
@@ -396,7 +431,7 @@ func TestIndex_WaitForTask(t *testing.T) {
 			name: "TestWaitForTaskWithTimeout",
 			args: args{
 				UID:      "TestWaitForTaskWithTimeout",
-				client:   defaultClient,
+				client:   sv,
 				interval: time.Millisecond * 50,
 				timeout:  time.Millisecond * 10,
 				document: []docTest{
@@ -420,7 +455,7 @@ func TestIndex_WaitForTask(t *testing.T) {
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
 			defer cancelFunc()
 
-			gotTask, err := i.WaitForTask(task.TaskUID, WaitParams{Context: ctx, Interval: tt.args.interval})
+			gotTask, err := i.WaitForTaskWithContext(ctx, task.TaskUID, 0)
 			if tt.args.timeout < tt.args.interval {
 				require.Error(t, err)
 			} else {
@@ -432,22 +467,28 @@ func TestIndex_WaitForTask(t *testing.T) {
 }
 
 func TestIndex_FetchInfo(t *testing.T) {
+	sv := setup(t, "")
+	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+	broken := setup(t, "", WithAPIKey("wrong"))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *Index
+		wantResp *IndexResult
 	}{
 		{
 			name: "TestIndexBasicFetchInfo",
 			args: args{
 				UID:    "TestIndexBasicFetchInfo",
-				client: defaultClient,
+				client: sv,
 			},
-			wantResp: &Index{
+			wantResp: &IndexResult{
 				UID:        "TestIndexBasicFetchInfo",
 				PrimaryKey: "book_id",
 			},
@@ -456,38 +497,57 @@ func TestIndex_FetchInfo(t *testing.T) {
 			name: "TestIndexFetchInfoWithCustomClient",
 			args: args{
 				UID:    "TestIndexFetchInfoWithCustomClient",
-				client: customClient,
+				client: customSv,
 			},
-			wantResp: &Index{
+			wantResp: &IndexResult{
 				UID:        "TestIndexFetchInfoWithCustomClient",
 				PrimaryKey: "book_id",
 			},
 		},
+		{
+			name: "TestIndexFetchInfoWithBrokenClient",
+			args: args{
+				UID:    "TestIndexFetchInfoWithCustomClient",
+				client: broken,
+			},
+			wantResp: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpBasicIndex(tt.args.UID)
+			setUpBasicIndex(sv, tt.args.UID)
 			c := tt.args.client
-			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
+			i := c.Index(tt.args.UID)
+
 			gotResp, err := i.FetchInfo()
-			require.NoError(t, err)
-			require.Equal(t, tt.wantResp.UID, gotResp.UID)
-			require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
-			// Make sure that timestamps are also fetched and are updated
-			require.NotZero(t, gotResp.CreatedAt)
-			require.NotZero(t, gotResp.UpdatedAt)
-			require.Equal(t, i.CreatedAt, gotResp.CreatedAt)
-			require.Equal(t, i.UpdatedAt, gotResp.UpdatedAt)
+
+			if tt.wantResp == nil {
+				require.Error(t, err)
+				require.Nil(t, gotResp)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, tt.wantResp.UID, gotResp.UID)
+				require.Equal(t, tt.wantResp.PrimaryKey, gotResp.PrimaryKey)
+				// Make sure that timestamps are also fetched and are updated
+				require.NotZero(t, gotResp.CreatedAt)
+				require.NotZero(t, gotResp.UpdatedAt)
+			}
+
 		})
 	}
 }
 
 func TestIndex_FetchPrimaryKey(t *testing.T) {
+	sv := setup(t, "")
+	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name           string
@@ -498,7 +558,7 @@ func TestIndex_FetchPrimaryKey(t *testing.T) {
 			name: "TestIndexBasicFetchPrimaryKey",
 			args: args{
 				UID:    "TestIndexBasicFetchPrimaryKey",
-				client: defaultClient,
+				client: sv,
 			},
 			wantPrimaryKey: "book_id",
 		},
@@ -506,14 +566,14 @@ func TestIndex_FetchPrimaryKey(t *testing.T) {
 			name: "TestIndexFetchPrimaryKeyWithCustomClient",
 			args: args{
 				UID:    "TestIndexFetchPrimaryKeyWithCustomClient",
-				client: customClient,
+				client: customSv,
 			},
 			wantPrimaryKey: "book_id",
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpBasicIndex(tt.args.UID)
+			setUpBasicIndex(tt.args.client, tt.args.UID)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -526,26 +586,31 @@ func TestIndex_FetchPrimaryKey(t *testing.T) {
 }
 
 func TestIndex_UpdateIndex(t *testing.T) {
+	sv := setup(t, "")
+	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		primaryKey string
 		config     IndexConfig
-		client     *Client
+		client     ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *Index
+		wantResp *IndexResult
 	}{
 		{
 			name: "TestIndexBasicUpdateIndex",
 			args: args{
-				client: defaultClient,
+				client: sv,
 				config: IndexConfig{
 					Uid: "indexUID",
 				},
 				primaryKey: "book_id",
 			},
-			wantResp: &Index{
+			wantResp: &IndexResult{
 				UID:        "indexUID",
 				PrimaryKey: "book_id",
 			},
@@ -553,13 +618,13 @@ func TestIndex_UpdateIndex(t *testing.T) {
 		{
 			name: "TestIndexUpdateIndexWithCustomClient",
 			args: args{
-				client: customClient,
+				client: customSv,
 				config: IndexConfig{
 					Uid: "indexUID",
 				},
 				primaryKey: "book_id",
 			},
-			wantResp: &Index{
+			wantResp: &IndexResult{
 				UID:        "indexUID",
 				PrimaryKey: "book_id",
 			},
@@ -570,7 +635,7 @@ func TestIndex_UpdateIndex(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			i, err := SetUpEmptyIndex(&tt.args.config)
+			i, err := setUpEmptyIndex(tt.args.client, &tt.args.config)
 			require.NoError(t, err)
 			require.Equal(t, tt.args.config.Uid, i.UID)
 			// Store original timestamps
@@ -580,7 +645,7 @@ func TestIndex_UpdateIndex(t *testing.T) {
 			gotResp, err := i.UpdateIndex(tt.args.primaryKey)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(gotResp.TaskUID)
+			_, err = c.WaitForTask(gotResp.TaskUID, 0)
 			require.NoError(t, err)
 
 			require.NoError(t, err)

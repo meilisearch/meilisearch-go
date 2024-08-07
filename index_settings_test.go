@@ -1,15 +1,20 @@
 package meilisearch
 
 import (
-	"testing"
-
+	"crypto/tls"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
 func TestIndex_GetFilterableAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name string
@@ -19,20 +24,20 @@ func TestIndex_GetFilterableAttributes(t *testing.T) {
 			name: "TestIndexBasicGetFilterableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 		},
 		{
 			name: "TestIndexGetFilterableAttributesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -45,9 +50,14 @@ func TestIndex_GetFilterableAttributes(t *testing.T) {
 }
 
 func TestIndex_GetDisplayedAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -58,7 +68,7 @@ func TestIndex_GetDisplayedAttributes(t *testing.T) {
 			name: "TestIndexBasicGetDisplayedAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -66,14 +76,14 @@ func TestIndex_GetDisplayedAttributes(t *testing.T) {
 			name: "TestIndexGetDisplayedAttributesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantResp: &[]string{"*"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -86,9 +96,11 @@ func TestIndex_GetDisplayedAttributes(t *testing.T) {
 }
 
 func TestIndex_GetDistinctAttribute(t *testing.T) {
+	meili := setup(t, "")
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name string
@@ -98,20 +110,20 @@ func TestIndex_GetDistinctAttribute(t *testing.T) {
 			name: "TestIndexBasicGetDistinctAttribute",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 		},
 		{
 			name: "TestIndexBasicGetDistinctAttribute",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -124,9 +136,11 @@ func TestIndex_GetDistinctAttribute(t *testing.T) {
 }
 
 func TestIndex_GetRankingRules(t *testing.T) {
+	meili := setup(t, "")
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -137,7 +151,7 @@ func TestIndex_GetRankingRules(t *testing.T) {
 			name: "TestIndexBasicGetRankingRules",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantResp: &defaultRankingRules,
 		},
@@ -145,14 +159,14 @@ func TestIndex_GetRankingRules(t *testing.T) {
 			name: "TestIndexGetRankingRulesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantResp: &defaultRankingRules,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -165,9 +179,11 @@ func TestIndex_GetRankingRules(t *testing.T) {
 }
 
 func TestIndex_GetSearchableAttributes(t *testing.T) {
+	meili := setup(t, "")
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -178,7 +194,7 @@ func TestIndex_GetSearchableAttributes(t *testing.T) {
 			name: "TestIndexBasicGetSearchableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantResp: &[]string{"*"},
 		},
@@ -186,14 +202,14 @@ func TestIndex_GetSearchableAttributes(t *testing.T) {
 			name: "TestIndexGetSearchableAttributesCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantResp: &[]string{"*"},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -206,9 +222,14 @@ func TestIndex_GetSearchableAttributes(t *testing.T) {
 }
 
 func TestIndex_GetSettings(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -219,7 +240,7 @@ func TestIndex_GetSettings(t *testing.T) {
 			name: "TestIndexBasicGetSettings",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -240,7 +261,7 @@ func TestIndex_GetSettings(t *testing.T) {
 			name: "TestIndexGetSettingsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantResp: &Settings{
 				RankingRules:         defaultRankingRules,
@@ -260,7 +281,7 @@ func TestIndex_GetSettings(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -273,9 +294,14 @@ func TestIndex_GetSettings(t *testing.T) {
 }
 
 func TestIndex_GetStopWords(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name string
@@ -285,20 +311,20 @@ func TestIndex_GetStopWords(t *testing.T) {
 			name: "TestIndexBasicGetStopWords",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 		},
 		{
 			name: "TestIndexGetStopWordsCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -311,9 +337,14 @@ func TestIndex_GetStopWords(t *testing.T) {
 }
 
 func TestIndex_GetSynonyms(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name string
@@ -323,20 +354,20 @@ func TestIndex_GetSynonyms(t *testing.T) {
 			name: "TestIndexBasicGetSynonyms",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 		},
 		{
 			name: "TestIndexGetSynonymsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -349,9 +380,14 @@ func TestIndex_GetSynonyms(t *testing.T) {
 }
 
 func TestIndex_GetSortableAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name string
@@ -361,20 +397,20 @@ func TestIndex_GetSortableAttributes(t *testing.T) {
 			name: "TestIndexBasicGetSortableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 		},
 		{
 			name: "TestIndexGetSortableAttributesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -387,9 +423,14 @@ func TestIndex_GetSortableAttributes(t *testing.T) {
 }
 
 func TestIndex_GetTypoTolerance(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -400,7 +441,7 @@ func TestIndex_GetTypoTolerance(t *testing.T) {
 			name: "TestIndexBasicGetTypoTolerance",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantResp: &defaultTypoTolerance,
 		},
@@ -408,14 +449,14 @@ func TestIndex_GetTypoTolerance(t *testing.T) {
 			name: "TestIndexGetTypoToleranceWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantResp: &defaultTypoTolerance,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -428,9 +469,14 @@ func TestIndex_GetTypoTolerance(t *testing.T) {
 }
 
 func TestIndex_GetPagination(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -441,7 +487,7 @@ func TestIndex_GetPagination(t *testing.T) {
 			name: "TestIndexBasicGetPagination",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantResp: &defaultPagination,
 		},
@@ -449,14 +495,14 @@ func TestIndex_GetPagination(t *testing.T) {
 			name: "TestIndexGetPaginationWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantResp: &defaultPagination,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -469,9 +515,14 @@ func TestIndex_GetPagination(t *testing.T) {
 }
 
 func TestIndex_GetFaceting(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -482,7 +533,7 @@ func TestIndex_GetFaceting(t *testing.T) {
 			name: "TestIndexBasicGetFaceting",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantResp: &defaultFaceting,
 		},
@@ -490,14 +541,14 @@ func TestIndex_GetFaceting(t *testing.T) {
 			name: "TestIndexGetFacetingWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantResp: &defaultFaceting,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -510,9 +561,14 @@ func TestIndex_GetFaceting(t *testing.T) {
 }
 
 func TestIndex_ResetFilterableAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -523,7 +579,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 			name: "TestIndexBasicResetFilterableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -533,7 +589,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 			name: "TestIndexResetFilterableAttributesCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -542,7 +598,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -560,9 +616,14 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 }
 
 func TestIndex_ResetDisplayedAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -574,7 +635,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 			name: "TestIndexBasicResetDisplayedAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -585,7 +646,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 			name: "TestIndexResetDisplayedAttributesCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -595,7 +656,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -613,9 +674,14 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 }
 
 func TestIndex_ResetDistinctAttribute(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -626,7 +692,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 			name: "TestIndexBasicResetDistinctAttribute",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -636,7 +702,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 			name: "TestIndexResetDistinctAttributeWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -645,7 +711,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -663,9 +729,14 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 }
 
 func TestIndex_ResetRankingRules(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -677,7 +748,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			name: "TestIndexBasicResetRankingRules",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -688,7 +759,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			name: "TestIndexResetRankingRulesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -698,7 +769,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -716,9 +787,14 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 }
 
 func TestIndex_ResetSearchableAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -730,7 +806,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 			name: "TestIndexBasicResetSearchableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -741,7 +817,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 			name: "TestIndexResetSearchableAttributesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -751,7 +827,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -769,9 +845,14 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 }
 
 func TestIndex_ResetSettings(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -783,7 +864,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 			name: "TestIndexBasicResetSettings",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -806,7 +887,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 			name: "TestIndexResetSettingsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -828,7 +909,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -846,9 +927,14 @@ func TestIndex_ResetSettings(t *testing.T) {
 }
 
 func TestIndex_ResetStopWords(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -859,7 +945,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 			name: "TestIndexBasicResetStopWords",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -869,7 +955,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 			name: "TestIndexResetStopWordsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -878,7 +964,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -896,9 +982,14 @@ func TestIndex_ResetStopWords(t *testing.T) {
 }
 
 func TestIndex_ResetSynonyms(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -909,7 +1000,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 			name: "TestIndexBasicResetSynonyms",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -919,7 +1010,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 			name: "TestIndexResetSynonymsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -928,7 +1019,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -946,9 +1037,14 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 }
 
 func TestIndex_ResetSortableAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -959,7 +1055,7 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 			name: "TestIndexBasicResetSortableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -969,7 +1065,7 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 			name: "TestIndexResetSortableAttributesCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -978,7 +1074,7 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -996,9 +1092,14 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 }
 
 func TestIndex_ResetTypoTolerance(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -1010,7 +1111,7 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 			name: "TestIndexBasicResetTypoTolerance",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -1021,7 +1122,7 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 			name: "TestIndexResetTypoToleranceWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -1031,7 +1132,7 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -1049,9 +1150,14 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 }
 
 func TestIndex_ResetPagination(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -1063,7 +1169,7 @@ func TestIndex_ResetPagination(t *testing.T) {
 			name: "TestIndexBasicResetPagination",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -1074,7 +1180,7 @@ func TestIndex_ResetPagination(t *testing.T) {
 			name: "TestIndexResetPaginationWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -1084,7 +1190,7 @@ func TestIndex_ResetPagination(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -1102,9 +1208,14 @@ func TestIndex_ResetPagination(t *testing.T) {
 }
 
 func TestIndex_ResetFaceting(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID    string
-		client *Client
+		client ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -1116,7 +1227,7 @@ func TestIndex_ResetFaceting(t *testing.T) {
 			name: "TestIndexBasicResetFaceting",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -1127,7 +1238,7 @@ func TestIndex_ResetFaceting(t *testing.T) {
 			name: "TestIndexResetFacetingWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
@@ -1137,7 +1248,7 @@ func TestIndex_ResetFaceting(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -1155,9 +1266,14 @@ func TestIndex_ResetFaceting(t *testing.T) {
 }
 
 func TestIndex_UpdateFilterableAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request []string
 	}
 	tests := []struct {
@@ -1169,7 +1285,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			name: "TestIndexBasicUpdateFilterableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: []string{
 					"title",
 				},
@@ -1182,7 +1298,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			name: "TestIndexUpdateFilterableAttributesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: []string{
 					"title",
 				},
@@ -1194,7 +1310,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -1216,9 +1332,14 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 }
 
 func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request []string
 	}
 	tests := []struct {
@@ -1231,7 +1352,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 			name: "TestIndexBasicUpdateDisplayedAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: []string{
 					"book_id", "tag", "title",
 				},
@@ -1245,7 +1366,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 			name: "TestIndexUpdateDisplayedAttributesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: []string{
 					"book_id", "tag", "title",
 				},
@@ -1258,7 +1379,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -1280,9 +1401,14 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 }
 
 func TestIndex_UpdateDistinctAttribute(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request string
 	}
 	tests := []struct {
@@ -1294,7 +1420,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 			name: "TestIndexBasicUpdateDistinctAttribute",
 			args: args{
 				UID:     "indexUID",
-				client:  defaultClient,
+				client:  meili,
 				request: "movie_id",
 			},
 			wantTask: &TaskInfo{
@@ -1305,7 +1431,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 			name: "TestIndexUpdateDistinctAttributeWithCustomClient",
 			args: args{
 				UID:     "indexUID",
-				client:  customClient,
+				client:  customMeili,
 				request: "movie_id",
 			},
 			wantTask: &TaskInfo{
@@ -1315,7 +1441,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -1337,9 +1463,14 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 }
 
 func TestIndex_UpdateRankingRules(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request []string
 	}
 	tests := []struct {
@@ -1352,7 +1483,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			name: "TestIndexBasicUpdateRankingRules",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: []string{
 					"typo", "words",
 				},
@@ -1366,7 +1497,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			name: "TestIndexUpdateRankingRulesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: []string{
 					"typo", "words",
 				},
@@ -1380,7 +1511,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			name: "TestIndexUpdateRankingRulesAscending",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: []string{
 					"BookID:asc",
 				},
@@ -1393,7 +1524,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -1415,9 +1546,14 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 }
 
 func TestIndex_UpdateSearchableAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request []string
 	}
 	tests := []struct {
@@ -1430,7 +1566,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 			name: "TestIndexBasicUpdateSearchableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: []string{
 					"title", "tag",
 				},
@@ -1444,7 +1580,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 			name: "TestIndexUpdateSearchableAttributesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: []string{
 					"title", "tag",
 				},
@@ -1457,7 +1593,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -1479,9 +1615,14 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 }
 
 func TestIndex_UpdateSettings(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request Settings
 	}
 	tests := []struct {
@@ -1494,7 +1635,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			name: "TestIndexBasicUpdateSettings",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -1558,7 +1699,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			name: "TestIndexUpdateSettingsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -1621,7 +1762,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -1639,9 +1780,14 @@ func TestIndex_UpdateSettings(t *testing.T) {
 }
 
 func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID            string
-		client         *Client
+		client         ServiceManager
 		firstRequest   Settings
 		firstResponse  Settings
 		secondRequest  Settings
@@ -1657,7 +1803,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			name: "TestIndexUpdateJustSynonyms",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				firstRequest: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -1727,7 +1873,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			name: "TestIndexUpdateJustSynonymsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				firstRequest: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -1797,7 +1943,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			name: "TestIndexUpdateJustSearchableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				firstRequest: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -1867,7 +2013,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			name: "TestIndexUpdateJustDisplayedAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				firstRequest: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -1937,7 +2083,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			name: "TestIndexUpdateJustStopWords",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				firstRequest: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -2007,7 +2153,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			name: "TestIndexUpdateJustFilterableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				firstRequest: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -2077,7 +2223,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			name: "TestIndexUpdateJustSortableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				firstRequest: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -2147,7 +2293,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			name: "TestIndexUpdateJustTypoTolerance",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				firstRequest: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -2249,7 +2395,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			name: "TestIndexUpdateJustPagination",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				firstRequest: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -2319,7 +2465,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			name: "TestIndexUpdateJustFaceting",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				firstRequest: Settings{
 					RankingRules: []string{
 						"typo", "words",
@@ -2388,7 +2534,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -2420,9 +2566,14 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 }
 
 func TestIndex_UpdateStopWords(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request []string
 	}
 	tests := []struct {
@@ -2434,7 +2585,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 			name: "TestIndexBasicUpdateStopWords",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: []string{
 					"of", "the", "to",
 				},
@@ -2447,7 +2598,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 			name: "TestIndexUpdateStopWordsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: []string{
 					"of", "the", "to",
 				},
@@ -2459,7 +2610,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -2481,9 +2632,14 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 }
 
 func TestIndex_UpdateSynonyms(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request map[string][]string
 	}
 	tests := []struct {
@@ -2495,7 +2651,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 			name: "TestIndexBasicUpdateSynonyms",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: map[string][]string{
 					"wolverine": {"logan", "xmen"},
 				},
@@ -2508,7 +2664,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 			name: "TestIndexUpdateSynonymsWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: map[string][]string{
 					"wolverine": {"logan", "xmen"},
 				},
@@ -2520,7 +2676,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -2542,9 +2698,14 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 }
 
 func TestIndex_UpdateSortableAttributes(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request []string
 	}
 	tests := []struct {
@@ -2556,7 +2717,7 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 			name: "TestIndexBasicUpdateSortableAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: []string{
 					"title",
 				},
@@ -2569,7 +2730,7 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 			name: "TestIndexUpdateSortableAttributesWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: []string{
 					"title",
 				},
@@ -2581,7 +2742,7 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -2603,9 +2764,14 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 }
 
 func TestIndex_UpdateTypoTolerance(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request TypoTolerance
 	}
 	tests := []struct {
@@ -2618,7 +2784,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			name: "TestIndexBasicUpdateTypoTolerance",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: TypoTolerance{
 					Enabled: true,
 					MinWordSizeForTypos: MinWordSizeForTypos{
@@ -2638,7 +2804,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			name: "TestIndexUpdateTypoToleranceWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: TypoTolerance{
 					Enabled: true,
 					MinWordSizeForTypos: MinWordSizeForTypos{
@@ -2658,7 +2824,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			name: "TestIndexUpdateTypoToleranceWithDisableOnWords",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: TypoTolerance{
 					Enabled: true,
 					MinWordSizeForTypos: MinWordSizeForTypos{
@@ -2680,7 +2846,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			name: "TestIndexUpdateTypoToleranceWithDisableOnAttributes",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: TypoTolerance{
 					Enabled: true,
 					MinWordSizeForTypos: MinWordSizeForTypos{
@@ -2702,7 +2868,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			name: "TestIndexDisableTypoTolerance",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: TypoTolerance{
 					Enabled: false,
 					MinWordSizeForTypos: MinWordSizeForTypos{
@@ -2723,7 +2889,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -2741,9 +2907,14 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 }
 
 func TestIndex_UpdatePagination(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request Pagination
 	}
 	tests := []struct {
@@ -2756,7 +2927,7 @@ func TestIndex_UpdatePagination(t *testing.T) {
 			name: "TestIndexBasicUpdatePagination",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: Pagination{
 					MaxTotalHits: 1200,
 				},
@@ -2770,7 +2941,7 @@ func TestIndex_UpdatePagination(t *testing.T) {
 			name: "TestIndexUpdatePaginationWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: Pagination{
 					MaxTotalHits: 1200,
 				},
@@ -2783,7 +2954,7 @@ func TestIndex_UpdatePagination(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -2805,9 +2976,14 @@ func TestIndex_UpdatePagination(t *testing.T) {
 }
 
 func TestIndex_UpdateFaceting(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
 	type args struct {
 		UID     string
-		client  *Client
+		client  ServiceManager
 		request Faceting
 	}
 	tests := []struct {
@@ -2820,7 +2996,7 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 			name: "TestIndexBasicUpdateFaceting",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: Faceting{
 					MaxValuesPerFacet: 200,
 				},
@@ -2834,7 +3010,7 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 			name: "TestIndexUpdateFacetingWithCustomClient",
 			args: args{
 				UID:    "indexUID",
-				client: customClient,
+				client: customMeili,
 				request: Faceting{
 					MaxValuesPerFacet: 200,
 				},
@@ -2847,7 +3023,7 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			SetUpIndexForFaceting()
+			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
@@ -2869,9 +3045,11 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 }
 
 func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
+	meili := setup(t, "")
+
 	type args struct {
 		UID      string
-		client   *Client
+		client   ServiceManager
 		request  Settings
 		newIndex bool
 	}
@@ -2886,7 +3064,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 			name: "TestIndexUpdateSettingsEmbeddersErr",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: Settings{
 					Embedders: map[string]Embedder{
 						"default": {
@@ -2905,7 +3083,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 			name: "TestIndexUpdateSettingsEmbeddersErr",
 			args: args{
 				UID:    "indexUID",
-				client: defaultClient,
+				client: meili,
 				request: Settings{
 					Embedders: map[string]Embedder{
 						"default": {
@@ -2927,7 +3105,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 			args: args{
 				newIndex: true,
 				UID:      "newIndexUID",
-				client:   defaultClient,
+				client:   meili,
 				request: Settings{
 					Embedders: map[string]Embedder{
 						"default": {
@@ -2946,11 +3124,11 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			if !tt.args.newIndex {
-				SetUpIndexForFaceting()
+				setUpIndexForFaceting(tt.args.client)
 			} else {
 				task, err := c.CreateIndex(&IndexConfig{Uid: tt.args.UID})
 				require.NoError(t, err)
-				_, err = c.Index(tt.args.UID).WaitForTask(task.TaskUID)
+				_, err = c.Index(tt.args.UID).WaitForTask(task.TaskUID, 0)
 				require.NoError(t, err)
 			}
 			i := c.Index(tt.args.UID)
@@ -2964,7 +3142,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 
-			r, err := i.WaitForTask(gotTask.TaskUID)
+			r, err := i.WaitForTask(gotTask.TaskUID, 0)
 			require.NoError(t, err)
 			if tt.wantErr != "" {
 				require.Contains(t, r.Error.Message, tt.wantErr)
@@ -2980,7 +3158,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 }
 
 func TestIndex_GetEmbedders(t *testing.T) {
-	c := defaultClient
+	c := setup(t, "")
 	t.Cleanup(cleanup(c))
 
 	indexID := "newIndexUID"
@@ -3007,7 +3185,7 @@ func TestIndex_GetEmbedders(t *testing.T) {
 }
 
 func TestIndex_UpdateEmbedders(t *testing.T) {
-	c := defaultClient
+	c := setup(t, "")
 	t.Cleanup(cleanup(c))
 
 	indexID := "newIndexUID"
@@ -3037,7 +3215,7 @@ func TestIndex_UpdateEmbedders(t *testing.T) {
 
 	taskInfo, err = i.UpdateEmbedders(updated)
 	require.NoError(t, err)
-	task, err := i.WaitForTask(taskInfo.TaskUID)
+	task, err := i.WaitForTask(taskInfo.TaskUID, 0)
 	require.NoError(t, err)
 	require.Equal(t, TaskStatusSucceeded, task.Status)
 
@@ -3047,7 +3225,7 @@ func TestIndex_UpdateEmbedders(t *testing.T) {
 }
 
 func TestIndex_ResetEmbedders(t *testing.T) {
-	c := defaultClient
+	c := setup(t, "")
 	t.Cleanup(cleanup(c))
 
 	indexID := "newIndexUID"
@@ -3069,7 +3247,7 @@ func TestIndex_ResetEmbedders(t *testing.T) {
 
 	taskInfo, err = i.ResetEmbedders()
 	require.NoError(t, err)
-	task, err := i.WaitForTask(taskInfo.TaskUID)
+	task, err := i.WaitForTask(taskInfo.TaskUID, 0)
 	require.NoError(t, err)
 	require.Equal(t, TaskStatusSucceeded, task.Status)
 
@@ -3079,7 +3257,7 @@ func TestIndex_ResetEmbedders(t *testing.T) {
 }
 
 func Test_SearchCutoffMs(t *testing.T) {
-	c := defaultClient
+	c := setup(t, "")
 	t.Cleanup(cleanup(c))
 
 	indexID := "newIndexUID"
