@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestIndex_AddDocuments(t *testing.T) {
+func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 	sv := setup(t, "")
 	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
@@ -209,6 +209,15 @@ func TestIndex_AddDocuments(t *testing.T) {
 			}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.resp.documentsRes, documents)
+
+			gotResp, err = i.UpdateDocuments(tt.args.documentsPtr)
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
+			require.Equal(t, gotResp.Status, tt.resp.wantResp.Status)
+			require.Equal(t, gotResp.Type, tt.resp.wantResp.Type)
+			require.Equal(t, gotResp.IndexUID, tt.args.UID)
+			require.NotZero(t, gotResp.EnqueuedAt)
+			require.NoError(t, err)
 		})
 	}
 }
@@ -399,7 +408,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 	}
 }
 
-func TestIndex_AddDocumentsInBatches(t *testing.T) {
+func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 	sv := setup(t, "")
 
 	type argsNoKey struct {
@@ -512,6 +521,18 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 
 			require.NoError(t, err)
 			require.Equal(t, tt.args.documentsPtr, documents.Results)
+
+			gotResp, err = i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize)
+			require.NoError(t, err)
+			for i := 0; i < 2; i++ {
+				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
+				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+				require.Equal(t, gotResp[i].IndexUID, tt.args.UID)
+				require.NotZero(t, gotResp[i].EnqueuedAt)
+			}
+
+			testWaitForBatchTask(t, i, gotResp)
 		})
 	}
 
@@ -545,7 +566,7 @@ func TestIndex_AddDocumentsInBatches(t *testing.T) {
 	}
 }
 
-func TestIndex_AddDocumentsNdjson(t *testing.T) {
+func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 	sv := setup(t, "")
 
 	type args struct {
@@ -618,6 +639,16 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 			err = i.GetDocuments(&DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
+
+			if !testReader {
+				gotResp, err = i.UpdateDocumentsNdjson(tt.args.documents)
+				require.NoError(t, err)
+				require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
+				require.Equal(t, tt.wantResp.Status, gotResp.Status)
+				require.Equal(t, tt.wantResp.Type, gotResp.Type)
+				require.NotZero(t, gotResp.EnqueuedAt)
+				testWaitForTask(t, i, gotResp)
+			}
 		})
 	}
 
@@ -628,7 +659,7 @@ func TestIndex_AddDocumentsNdjson(t *testing.T) {
 	}
 }
 
-func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
+func TestIndex_AddOrUpdateDocumentsCsvInBatches(t *testing.T) {
 	sv := setup(t, "")
 
 	type args struct {
@@ -718,6 +749,18 @@ func TestIndex_AddDocumentsCsvInBatches(t *testing.T) {
 			err = i.GetDocuments(&DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
+
+			if !testReader {
+				gotResp, err = i.UpdateDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize, nil)
+				require.NoError(t, err)
+				for i := 0; i < 2; i++ {
+					require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
+					require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+					require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+					require.NotZero(t, gotResp[i].EnqueuedAt)
+				}
+			}
+
 		})
 	}
 
@@ -931,7 +974,7 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 	}
 }
 
-func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
+func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
 	sv := setup(t, "")
 
 	type args struct {
@@ -1021,6 +1064,18 @@ func TestIndex_AddDocumentsNdjsonInBatches(t *testing.T) {
 			err = i.GetDocuments(&DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
+
+			if !testReader {
+				gotResp, err = i.UpdateDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize)
+				require.NoError(t, err)
+				for i := 0; i < 2; i++ {
+					require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
+					require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+					require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+					require.NotZero(t, gotResp[i].EnqueuedAt)
+				}
+				testWaitForBatchTask(t, i, gotResp)
+			}
 		})
 	}
 
