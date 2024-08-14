@@ -43,7 +43,7 @@ func TestError_VersionErrorHintMessage(t *testing.T) {
 			err := VersionErrorHintMessage(tt.args.mockedError, tt.args.request)
 			require.Error(t, err)
 			fmt.Println(err)
-			require.Equal(t, tt.args.mockedError.Error()+". Hint: It might not be working because you're not up to date with the Meilisearch version that "+tt.args.request.functionName+" call requires.", err.Error())
+			require.Equal(t, tt.args.mockedError.Error()+". Hint: It might not be working because you're not up to date with the Meilisearch version that "+tt.args.request.functionName+" call requires", err.Error())
 		})
 	}
 }
