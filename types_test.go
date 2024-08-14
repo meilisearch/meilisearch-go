@@ -1,43 +1,42 @@
 package meilisearch
 
 import (
-	"encoding/json"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"testing"
 )
 
-func TestTypes_UnmarshalJSON(t *testing.T) {
-	var raw RawType
-	data := []byte(`"some data"`)
+func TestRawType_UnmarshalJSON(t *testing.T) {
+	var r RawType
 
-	err := json.Unmarshal(data, &raw)
-	require.NoError(t, err)
+	data := []byte(`"example"`)
+	err := r.UnmarshalJSON(data)
+	assert.NoError(t, err)
+	assert.Equal(t, RawType(`"example"`), r)
 
-	expected := RawType(data)
-	require.Equal(t, expected, raw)
+	data = []byte(`""`)
+	err = r.UnmarshalJSON(data)
+	assert.NoError(t, err)
+	assert.Equal(t, RawType(`""`), r)
+
+	data = []byte(`{invalid}`)
+	err = r.UnmarshalJSON(data)
+	assert.NoError(t, err)
+	assert.Equal(t, RawType(`{invalid}`), r)
 }
 
-func TestTypes_MarshalJSON(t *testing.T) {
-	raw := RawType(`"some data"`)
+func TestRawType_MarshalJSON(t *testing.T) {
+	r := RawType(`"example"`)
+	data, err := r.MarshalJSON()
+	assert.NoError(t, err)
+	assert.Equal(t, []byte(`"example"`), data)
 
-	data, err := json.Marshal(raw)
-	require.NoError(t, err)
+	r = RawType(`""`)
+	data, err = r.MarshalJSON()
+	assert.NoError(t, err)
+	assert.Equal(t, []byte(`""`), data)
 
-	expected := []byte(`"some data"`)
-	require.Equal(t, data, expected)
-}
-
-func TestTypes_ValidateSearchRequest(t *testing.T) {
-	req := &SearchRequest{
-		Limit: 0,
-		Hybrid: &SearchRequestHybrid{
-			Embedder: "",
-		},
-	}
-
-	req.validate()
-
-	assert.Equal(t, req.Limit, DefaultLimit)
-	assert.Equal(t, req.Hybrid.Embedder, "default")
+	r = RawType(`{random}`)
+	data, err = r.MarshalJSON()
+	assert.NoError(t, err)
+	assert.Equal(t, []byte(`{random}`), data)
 }

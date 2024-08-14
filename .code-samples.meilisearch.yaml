@@ -515,10 +515,7 @@ add_movies_json_1: |-
 
   client.Index("movies").AddDocuments(&movies)
 landing_getting_started_1: |-
-  client := meilisearch.NewClient(meilisearch.ClientConfig{
-    Host: "http://localhost:7700",
-    APIKey: "masterKey",
-  })
+  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
 
   documents := []map[string]interface{}{
     { "id": 1, "title": "Carol" },
@@ -548,10 +545,7 @@ getting_started_add_documents_md: |-
   )
 
   func main() {
-    client := meilisearch.NewClient(meilisearch.ClientConfig{
-      Host: "http://localhost:7700",
-      APIKey: aSampleMasterKey,
-    })
+    client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
 
     jsonFile, _ := os.Open("movies.json")
     defer jsonFile.Close()
@@ -576,9 +570,7 @@ getting_started_search_md: |-
 
   [About this SDK](https://github.com/meilisearch/meilisearch-go/)
 getting_started_add_meteorites: |-
-  client := meilisearch.NewClient(meilisearch.ClientConfig{
-    Host: "http://localhost:7700",
-  })
+  client := meilisearch.New("http://localhost:7700")
 
   jsonFile, _ := os.Open("meteorites.json")
   defer jsonFile.Close()
@@ -791,25 +783,16 @@ primary_field_guide_add_document_primary_key: |-
 primary_field_guide_update_document_primary_key: |-
   client.Index("books").UpdateIndex("title")
 security_guide_search_key_1: |-
-  client := meilisearch.NewClient(meilisearch.ClientConfig{
-    Host: "http://localhost:7700",
-    APIKey: "apiKey",
-  })
+  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
   client.Index("patient_medical_records").Search();
 security_guide_update_key_1: |-
-  client := meilisearch.NewClient(meilisearch.ClientConfig{
-    Host: "http://localhost:7700",
-    APIKey: "masterKey",
-  })
+  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
 
   client.UpdateKey("74c9c733-3368-4738-bbe5-1d18a5fecb37", &meilisearch.Key{
     Indexes: []string{"doctors"},
   })
 security_guide_create_key_1: |-
-  client := meilisearch.NewClient(meilisearch.ClientConfig{
-    Host: "http://localhost:7700",
-    APIKey: "masterKey",
-  })
+  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
 
   client.CreateKey(&meilisearch.Key{
     Description: "Search patient records key",
@@ -818,22 +801,13 @@ security_guide_create_key_1: |-
     ExpiresAt: time.Date(2042, time.April, 02, 0, 42, 42, 0, time.UTC),
   })
 security_guide_list_keys_1: |-
-  client := meilisearch.NewClient(meilisearch.ClientConfig{
-    Host: "http://localhost:7700",
-    APIKey: "masterKey",
-  })
+  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
   client.GetKeys(nil);
 security_guide_delete_key_1: |-
-  client := meilisearch.NewClient(meilisearch.ClientConfig{
-    Host: "http://localhost:7700",
-    APIKey: "masterKey",
-  })
+  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
   client.DeleteKey("74c9c733-3368-4738-bbe5-1d18a5fecb37");
 authorization_header_1: |-
-  client := meilisearch.NewClient(meilisearch.ClientConfig{
-    Host: "http://localhost:7700",
-    APIKey: "masterKey",
-  })
+  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
   client.GetKeys(nil);
 tenant_token_guide_generate_sdk_1: |-
   searchRules := map[string]interface{}{
@@ -848,11 +822,8 @@ tenant_token_guide_generate_sdk_1: |-
 
   token, err := client.GenerateTenantToken(searchRules, options);
 tenant_token_guide_search_sdk_1: |-
-  frontEndClient := meilisearch.NewClient(meilisearch.ClientConfig{
-    Host: "http://localhost:7700",
-    APIKey: token,
-  })
-  frontEndClient.Index("patient_medical_records").Search("blood test", &meilisearch.SearchRequest{});
+  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
+  client.Index("patient_medical_records").Search("blood test", &meilisearch.SearchRequest{});
 synonyms_guide_1: |-
   synonyms := map[string][]string{
     "great":      []string{"fantastic"},
