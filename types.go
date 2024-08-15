@@ -48,6 +48,8 @@ type Settings struct {
 	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
 	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
 	SearchCutoffMs       int64               `json:"searchCutoffMs,omitempty"`
+	SeparatorTokens      []string            `json:"separatorTokens,omitempty"`
+	NonSeparatorTokens   []string            `json:"nonSeparatorTokens,omitempty"`
 	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
 	StopWords            []string            `json:"stopWords,omitempty"`
 	Synonyms             map[string][]string `json:"synonyms,omitempty"`

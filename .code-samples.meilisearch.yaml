@@ -3,6 +3,8 @@
 # the documentation on build
 # You can read more on https://github.com/meilisearch/documentation/tree/master/.vuepress/code-samples
 ---
+create_snapshot_1: |-
+  client.CreateSnapshot()
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-
@@ -895,3 +897,21 @@ update_search_cutoff_1: |-
   client.Index("movies").UpdateSearchCutoffMs(150)
 reset_search_cutoff_1: |-
   client.Index("books").ResetSearchCutoffMs()
+get_separator_tokens_1: |-
+  client.Index("articles").GetSeparatorTokens()
+update_separator_tokens_1: |-
+  client.Index("articles").UpdateSeparatorTokens([]string{
+    "|",
+    "&hellip;",
+  })
+reset_separator_tokens_1: |-
+    client.Index("articles").ResetSeparatorTokens()
+get_non_separator_tokens_1: |-
+  client.Index("articles").GetNonSeparatorTokens()
+update_non_separator_tokens_1: |-
+  client.Index("articles").UpdateNonSeparatorTokens([]string{
+    "@",
+    "#",
+  })
+reset_non_separator_tokens_1: |-
+  client.Index("articles").ResetNonSeparatorTokens()

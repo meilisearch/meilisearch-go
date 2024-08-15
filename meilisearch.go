@@ -155,6 +155,12 @@ type ServiceManager interface {
 	// IsHealthy checks if the Meilisearch server is healthy.
 	IsHealthy() bool
 
+	// CreateSnapshot create database snapshot from meilisearch
+	CreateSnapshot() (*TaskInfo, error)
+
+	// CreateSnapshotWithContext create database snapshot from meilisearch and support parent context
+	CreateSnapshotWithContext(ctx context.Context) (*TaskInfo, error)
+
 	// Close closes the connection to the Meilisearch server.
 	Close()
 }
@@ -720,6 +726,28 @@ func (m *meilisearch) HealthWithContext(ctx context.Context) (*Health, error) {
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "Health",
 	}
+	if err := m.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (m *meilisearch) CreateSnapshot() (*TaskInfo, error) {
+	return m.CreateSnapshotWithContext(context.Background())
+}
+
+func (m *meilisearch) CreateSnapshotWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/snapshots",
+		method:              http.MethodPost,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		contentType:         contentTypeJSON,
+		functionName:        "CreateSnapshot",
+	}
+
 	if err := m.client.executeRequest(ctx, req); err != nil {
 		return nil, err
 	}

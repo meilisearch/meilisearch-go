@@ -255,6 +255,8 @@ func TestIndex_GetSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -276,6 +278,8 @@ func TestIndex_GetSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 	}
@@ -881,6 +885,8 @@ func TestIndex_ResetSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -904,6 +910,8 @@ func TestIndex_ResetSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 	}
@@ -1677,7 +1685,9 @@ func TestIndex_UpdateSettings(t *testing.T) {
 							"*": SortFacetTypeAlpha,
 						},
 					},
-					SearchCutoffMs: 150,
+					SearchCutoffMs:     150,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1696,6 +1706,8 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
 				SearchCutoffMs:       150,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -1744,7 +1756,9 @@ func TestIndex_UpdateSettings(t *testing.T) {
 							"*": SortFacetTypeAlpha,
 						},
 					},
-					SearchCutoffMs: 150,
+					SearchCutoffMs:     150,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1763,6 +1777,8 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
 				SearchCutoffMs:       150,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 	}
@@ -1834,6 +1850,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1856,6 +1874,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1873,6 +1893,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -1904,6 +1926,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1926,6 +1950,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1943,6 +1969,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -1974,6 +2002,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 				secondRequest: Settings{
 					SearchableAttributes: []string{
@@ -1996,6 +2026,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2013,6 +2045,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -2044,6 +2078,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 				secondRequest: Settings{
 					DisplayedAttributes: []string{
@@ -2066,6 +2102,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2083,6 +2121,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -2114,6 +2154,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 				secondRequest: Settings{
 					StopWords: []string{
@@ -2136,6 +2178,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2153,6 +2197,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -2184,6 +2230,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 				secondRequest: Settings{
 					FilterableAttributes: []string{
@@ -2206,6 +2254,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2223,6 +2273,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -2251,9 +2303,11 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes: []string{
 						"title",
 					},
-					TypoTolerance: &defaultTypoTolerance,
-					Pagination:    &defaultPagination,
-					Faceting:      &defaultFaceting,
+					TypoTolerance:      &defaultTypoTolerance,
+					Pagination:         &defaultPagination,
+					Faceting:           &defaultFaceting,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 				secondRequest: Settings{
 					SortableAttributes: []string{
@@ -2273,9 +2327,11 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes: []string{
 						"title",
 					},
-					TypoTolerance: &defaultTypoTolerance,
-					Pagination:    &defaultPagination,
-					Faceting:      &defaultFaceting,
+					TypoTolerance:      &defaultTypoTolerance,
+					Pagination:         &defaultPagination,
+					Faceting:           &defaultFaceting,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2293,6 +2349,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -2336,6 +2394,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
 				},
 				secondRequest: Settings{
 					TypoTolerance: &TypoTolerance{
@@ -2376,8 +2436,10 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 							"year",
 						},
 					},
-					Pagination: &defaultPagination,
-					Faceting:   &defaultFaceting,
+					Pagination:         &defaultPagination,
+					Faceting:           &defaultFaceting,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2395,6 +2457,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -2425,7 +2489,9 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Pagination: &Pagination{
 						MaxTotalHits: 1200,
 					},
-					Faceting: &defaultFaceting,
+					Faceting:           &defaultFaceting,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 				secondRequest: Settings{
 					Pagination: &Pagination{
@@ -2447,7 +2513,9 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Pagination: &Pagination{
 						MaxTotalHits: 1200,
 					},
-					Faceting: &defaultFaceting,
+					Faceting:           &defaultFaceting,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2465,6 +2533,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -2499,6 +2569,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 							"*": SortFacetTypeAlpha,
 						},
 					},
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 				secondRequest: Settings{
 					Faceting: &Faceting{
@@ -2524,6 +2596,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 							"*": SortFacetTypeAlpha,
 						},
 					},
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2541,6 +2615,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 	}
@@ -3361,4 +3437,54 @@ func Test_SearchCutoffMs(t *testing.T) {
 	got, err = i.GetSearchCutoffMs()
 	require.NoError(t, err)
 	require.Equal(t, int64(0), got)
+}
+
+func Test_SeparatorTokens(t *testing.T) {
+	c := setup(t, "")
+
+	indexID := "newIndexUID"
+	i := c.Index(indexID)
+
+	tokens := []string{"|", "&hellip;"}
+
+	task, err := i.UpdateSeparatorTokens(tokens)
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err := i.GetSeparatorTokens()
+	require.NoError(t, err)
+	require.ElementsMatchf(t, tokens, got, "tokens is not match with got")
+
+	task, err = i.ResetSeparatorTokens()
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err = i.GetSeparatorTokens()
+	require.NoError(t, err)
+	require.Equal(t, got, []string{})
+}
+
+func Test_NonSeparatorTokens(t *testing.T) {
+	c := setup(t, "")
+
+	indexID := "newIndexUID"
+	i := c.Index(indexID)
+
+	tokens := []string{"@", "#"}
+
+	task, err := i.UpdateNonSeparatorTokens(tokens)
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err := i.GetNonSeparatorTokens()
+	require.NoError(t, err)
+	require.ElementsMatchf(t, tokens, got, "tokens is not match with got")
+
+	task, err = i.ResetNonSeparatorTokens()
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err = i.GetNonSeparatorTokens()
+	require.NoError(t, err)
+	require.Equal(t, got, []string{})
 }
