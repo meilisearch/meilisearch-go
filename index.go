@@ -468,6 +468,54 @@ type IndexManager interface {
 	// ResetSearchCutoffMsWithContext resets the search cutoff time in milliseconds to default value using the provided context for cancellation.
 	ResetSearchCutoffMsWithContext(ctx context.Context) (*TaskInfo, error)
 
+	// GetSeparatorTokens returns separators tokens
+	// https://www.meilisearch.com/docs/reference/api/settings#get-separator-tokens
+	GetSeparatorTokens() ([]string, error)
+
+	// GetSeparatorTokensWithContext returns separator tokens and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#get-separator-tokens
+	GetSeparatorTokensWithContext(ctx context.Context) ([]string, error)
+
+	// UpdateSeparatorTokens update separator tokens
+	// https://www.meilisearch.com/docs/reference/api/settings#update-separator-tokens
+	UpdateSeparatorTokens(tokens []string) (*TaskInfo, error)
+
+	// UpdateSeparatorTokensWithContext update separator tokens and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#update-separator-tokens
+	UpdateSeparatorTokensWithContext(ctx context.Context, tokens []string) (*TaskInfo, error)
+
+	// ResetSeparatorTokens reset separator tokens
+	// https://www.meilisearch.com/docs/reference/api/settings#reset-separator-tokens
+	ResetSeparatorTokens() (*TaskInfo, error)
+
+	// ResetSeparatorTokensWithContext reset separator tokens and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#reset-separator-tokens
+	ResetSeparatorTokensWithContext(ctx context.Context) (*TaskInfo, error)
+
+	// GetNonSeparatorTokens returns non-separator tokens
+	// https://www.meilisearch.com/docs/reference/api/settings#get-non-separator-tokens
+	GetNonSeparatorTokens() ([]string, error)
+
+	// GetNonSeparatorTokensWithContext returns non-separator tokens and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#get-non-separator-tokens
+	GetNonSeparatorTokensWithContext(ctx context.Context) ([]string, error)
+
+	// UpdateNonSeparatorTokens update non-separator tokens
+	// https://www.meilisearch.com/docs/reference/api/settings#update-non-separator-tokens
+	UpdateNonSeparatorTokens(tokens []string) (*TaskInfo, error)
+
+	// UpdateNonSeparatorTokensWithContext update non-separator tokens and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#update-non-separator-tokens
+	UpdateNonSeparatorTokensWithContext(ctx context.Context, tokens []string) (*TaskInfo, error)
+
+	// ResetNonSeparatorTokens reset non-separator tokens
+	// https://www.meilisearch.com/docs/reference/api/settings#reset-non-separator-tokens
+	ResetNonSeparatorTokens() (*TaskInfo, error)
+
+	// ResetNonSeparatorTokensWithContext reset non-separator tokens and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#reset-non-separator-tokens
+	ResetNonSeparatorTokensWithContext(ctx context.Context) (*TaskInfo, error)
+
 	// WaitForTask waits for a task to complete by its UID with the given interval.
 	WaitForTask(taskUID int64, interval time.Duration) (*Task, error)
 

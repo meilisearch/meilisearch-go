@@ -858,3 +858,125 @@ func (i *index) ResetSearchCutoffMsWithContext(ctx context.Context) (*TaskInfo, 
 	}
 	return resp, nil
 }
+
+func (i *index) GetSeparatorTokens() ([]string, error) {
+	return i.GetSeparatorTokensWithContext(context.Background())
+}
+
+func (i *index) GetSeparatorTokensWithContext(ctx context.Context) ([]string, error) {
+	resp := make([]string, 0)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/separator-tokens",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetSeparatorTokens",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) UpdateSeparatorTokens(req []string) (*TaskInfo, error) {
+	return i.UpdateSeparatorTokensWithContext(context.Background(), req)
+}
+
+func (i *index) UpdateSeparatorTokensWithContext(ctx context.Context, tokens []string) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/separator-tokens",
+		method:              http.MethodPut,
+		withRequest:         &tokens,
+		withResponse:        resp,
+		contentType:         contentTypeJSON,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateSeparatorTokens",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) ResetSeparatorTokens() (*TaskInfo, error) {
+	return i.ResetSeparatorTokensWithContext(context.Background())
+}
+
+func (i *index) ResetSeparatorTokensWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/separator-tokens",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetSeparatorTokens",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) GetNonSeparatorTokens() ([]string, error) {
+	return i.GetNonSeparatorTokensWithContext(context.Background())
+}
+
+func (i *index) GetNonSeparatorTokensWithContext(ctx context.Context) ([]string, error) {
+	resp := make([]string, 0)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/non-separator-tokens",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetNonSeparatorTokens",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) UpdateNonSeparatorTokens(req []string) (*TaskInfo, error) {
+	return i.UpdateNonSeparatorTokensWithContext(context.Background(), req)
+}
+
+func (i *index) UpdateNonSeparatorTokensWithContext(ctx context.Context, tokens []string) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/non-separator-tokens",
+		method:              http.MethodPut,
+		withRequest:         &tokens,
+		withResponse:        resp,
+		contentType:         contentTypeJSON,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateNonSeparatorTokens",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) ResetNonSeparatorTokens() (*TaskInfo, error) {
+	return i.ResetNonSeparatorTokensWithContext(context.Background())
+}
+
+func (i *index) ResetNonSeparatorTokensWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/non-separator-tokens",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetNonSeparatorTokens",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
