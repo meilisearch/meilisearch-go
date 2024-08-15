@@ -3,6 +3,8 @@
 # the documentation on build
 # You can read more on https://github.com/meilisearch/documentation/tree/master/.vuepress/code-samples
 ---
+create_snapshot_1: |-
+  client.CreateSnapshot()
 get_one_index_1: |-
   client.GetIndex("movies")
 list_all_indexes_1: |-

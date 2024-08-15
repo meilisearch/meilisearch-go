@@ -2109,3 +2109,10 @@ func TestClient_MultiSearch(t *testing.T) {
 		})
 	}
 }
+
+func Test_CreateSnapshot(t *testing.T) {
+	c := setup(t, "")
+	task, err := c.CreateSnapshot()
+	require.NoError(t, err)
+	testWaitForTask(t, c.Index("indexUID"), task)
+}
