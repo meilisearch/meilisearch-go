@@ -902,4 +902,4 @@ update_non_separator_tokens_1: |-
     "#",
   })
 reset_non_separator_tokens_1: |-
-  client.Index("articles").GetNonSeparatorTokens()
+  client.Index("articles").ResetNonSeparatorTokens()
