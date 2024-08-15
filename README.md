@@ -1,3 +1,6 @@
+[![codecov](https://codecov.io/gh/meilisearch/meilisearch-go/branch/main/graph/badge.svg?token=8N6N60D5UI)](https://codecov.io/gh/meilisearch/meilisearch-go)
+[![Go Report Card](https://goreportcard.com/badge/github.com/meilisearch/meilisearch-go)](https://goreportcard.com/report/github.com/meilisearch/meilisearch-go)
+
 <p align="center">
   <img src="https://raw.githubusercontent.com/meilisearch/integration-guides/main/assets/logos/meilisearch_go.svg" alt="Meilisearch-Go" width="200" height="200" />
 </p>
