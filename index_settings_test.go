@@ -885,6 +885,8 @@ func TestIndex_ResetSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 		{
@@ -908,6 +910,8 @@ func TestIndex_ResetSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
 			},
 		},
 	}
