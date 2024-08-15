@@ -885,3 +885,21 @@ update_search_cutoff_1: |-
   client.Index("movies").UpdateSearchCutoffMs(150)
 reset_search_cutoff_1: |-
   client.Index("books").ResetSearchCutoffMs()
+get_separator_tokens_1: |-
+  client.Index("articles").GetSeparatorTokens()
+update_separator_tokens_1: |-
+  client.Index("articles").UpdateSeparatorTokens([]string{
+    "|",
+    "&hellip;",
+  })
+reset_separator_tokens_1: |-
+    client.Index("articles").ResetSeparatorTokens()
+get_non_separator_tokens_1: |-
+  client.Index("articles").GetNonSeparatorTokens()
+update_non_separator_tokens_1: |-
+  client.Index("articles").UpdateNonSeparatorTokens([]string{
+    "@",
+    "#",
+  })
+reset_non_separator_tokens_1: |-
+  client.Index("articles").GetNonSeparatorTokens()
