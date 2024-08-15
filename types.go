@@ -47,6 +47,7 @@ type Settings struct {
 	RankingRules         []string            `json:"rankingRules,omitempty"`
 	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
 	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
+	Dictionary           []string            `json:"dictionary,omitempty"`
 	SearchCutoffMs       int64               `json:"searchCutoffMs,omitempty"`
 	SeparatorTokens      []string            `json:"separatorTokens,omitempty"`
 	NonSeparatorTokens   []string            `json:"nonSeparatorTokens,omitempty"`

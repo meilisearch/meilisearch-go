@@ -859,6 +859,67 @@ func (i *index) ResetSearchCutoffMsWithContext(ctx context.Context) (*TaskInfo, 
 	return resp, nil
 }
 
+func (i *index) GetDictionary() ([]string, error) {
+	return i.GetDictionaryWithContext(context.Background())
+}
+
+func (i *index) GetDictionaryWithContext(ctx context.Context) ([]string, error) {
+	resp := make([]string, 0)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/dictionary",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetDictionary",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) UpdateDictionary(words []string) (*TaskInfo, error) {
+	return i.UpdateDictionaryWithContext(context.Background(), words)
+}
+
+func (i *index) UpdateDictionaryWithContext(ctx context.Context, words []string) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/dictionary",
+		method:              http.MethodPut,
+		contentType:         contentTypeJSON,
+		withRequest:         &words,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateDictionary",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) ResetDictionary() (*TaskInfo, error) {
+	return i.ResetDictionaryWithContext(context.Background())
+}
+
+func (i *index) ResetDictionaryWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/dictionary",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetDictionary",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (i *index) GetSeparatorTokens() ([]string, error) {
 	return i.GetSeparatorTokensWithContext(context.Background())
 }
