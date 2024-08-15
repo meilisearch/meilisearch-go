@@ -17,8 +17,6 @@
 <p align="center">
   <a href="https://github.com/meilisearch/meilisearch-go/actions"><img src="https://github.com/meilisearch/meilisearch-go/workflows/Tests/badge.svg" alt="GitHub Workflow Status"></a>
   <a href="https://goreportcard.com/report/github.com/meilisearch/meilisearch-go"><img src="https://goreportcard.com/badge/github.com/meilisearch/meilisearch-go" alt="Test"></a>
-  <a href="https://codecov.io/gh/meilisearch/meilisearch-go"><img src="https://codecov.io/gh/meilisearch/meilisearch-go/branch/main/graph/badge.svg?token=8N6N60D5UI" alt="CodeCov"></a>
-  <a href="https://pkg.go.dev/github.com/meilisearch/meilisearch-go"><img src="https://pkg.go.dev/badge/github.com/meilisearch/meilisearch-go.svg" alt="Go Reference"></a>
   <a href="https://github.com/meilisearch/meilisearch-go/blob/main/LICENSE"><img src="https://img.shields.io/badge/license-MIT-informational" alt="License"></a>
   <a href="https://ms-bors.herokuapp.com/repositories/58"><img src="https://bors.tech/images/badge_small.svg" alt="Bors enabled"></a>
 </p>
