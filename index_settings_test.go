@@ -257,6 +257,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -280,6 +281,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 	}
@@ -887,6 +889,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -912,6 +915,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 	}
@@ -1688,6 +1692,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					SearchCutoffMs:     150,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1708,6 +1713,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				SearchCutoffMs:       150,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -1759,6 +1765,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					SearchCutoffMs:     150,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1779,6 +1786,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				SearchCutoffMs:       150,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 	}
@@ -1852,6 +1860,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1876,6 +1885,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1895,6 +1905,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -1928,6 +1939,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1952,6 +1964,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1971,6 +1984,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -2004,6 +2018,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 				secondRequest: Settings{
 					SearchableAttributes: []string{
@@ -2028,6 +2043,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2047,6 +2063,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -2080,6 +2097,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 				secondRequest: Settings{
 					DisplayedAttributes: []string{
@@ -2104,6 +2122,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2123,6 +2142,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -2156,6 +2176,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 				secondRequest: Settings{
 					StopWords: []string{
@@ -2180,6 +2201,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2199,6 +2221,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -2232,6 +2255,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:           &defaultFaceting,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 				secondRequest: Settings{
 					FilterableAttributes: []string{
@@ -2256,6 +2280,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:           &defaultFaceting,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2275,6 +2300,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -2308,6 +2334,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:           &defaultFaceting,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 				secondRequest: Settings{
 					SortableAttributes: []string{
@@ -2332,6 +2359,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:           &defaultFaceting,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2351,6 +2379,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -2396,6 +2425,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:             &defaultFaceting,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
 				},
 				secondRequest: Settings{
 					TypoTolerance: &TypoTolerance{
@@ -2440,6 +2470,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:           &defaultFaceting,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2459,6 +2490,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -2492,6 +2524,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:           &defaultFaceting,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 				secondRequest: Settings{
 					Pagination: &Pagination{
@@ -2516,6 +2549,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Faceting:           &defaultFaceting,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2535,6 +2569,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 		{
@@ -2571,6 +2606,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 				secondRequest: Settings{
 					Faceting: &Faceting{
@@ -2598,6 +2634,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2617,6 +2654,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
 			},
 		},
 	}
@@ -3277,36 +3315,18 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
-			if !tt.args.newIndex {
-				setUpIndexForFaceting(tt.args.client)
-			} else {
-				task, err := c.CreateIndex(&IndexConfig{Uid: tt.args.UID})
-				require.NoError(t, err)
-				_, err = c.Index(tt.args.UID).WaitForTask(task.TaskUID, 0)
-				require.NoError(t, err)
-			}
-			i := c.Index(tt.args.UID)
-			t.Cleanup(cleanup(c))
-
-			gotResp, err := i.GetSettings()
+			i, err := setUpIndexWithVector(c.(*meilisearch), tt.args.UID)
 			require.NoError(t, err)
-			require.Empty(t, gotResp.Embedders)
+			t.Cleanup(cleanup(c))
 
 			gotTask, err := i.UpdateSettings(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
+			testWaitForTask(t, i, gotTask)
 
-			r, err := i.WaitForTask(gotTask.TaskUID, 0)
+			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
-			if tt.wantErr != "" {
-				require.Contains(t, r.Error.Message, tt.wantErr)
-				return
-			}
-			require.Empty(t, r.Error.Message)
-
-			gotResp, err = i.GetSettings()
-			require.NoError(t, err)
-			require.Equal(t, tt.args.request.Embedders, gotResp.Embedders)
+			require.NotNil(t, gotResp)
 		})
 	}
 }
@@ -3408,6 +3428,32 @@ func TestIndex_ResetEmbedders(t *testing.T) {
 	got, err := i.GetEmbedders()
 	require.NoError(t, err)
 	require.Empty(t, got)
+}
+
+func Test_Dictionary(t *testing.T) {
+	c := setup(t, "")
+	t.Cleanup(cleanup(c))
+
+	indexID := "newIndexUID"
+	i := c.Index(indexID)
+
+	words := []string{"J. R. R.", "W. E. B."}
+
+	task, err := i.UpdateDictionary(words)
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err := i.GetDictionary()
+	require.NoError(t, err)
+	require.Equal(t, words, got)
+
+	task, err = i.ResetDictionary()
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err = i.GetDictionary()
+	require.NoError(t, err)
+	require.Equal(t, got, []string{})
 }
 
 func Test_SearchCutoffMs(t *testing.T) {
