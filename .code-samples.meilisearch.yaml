@@ -907,7 +907,7 @@ update_dictionary_1: |-
 reset_dictionary_1: |-
   client.Index("books").ResetDictionary()
 get_separator_tokens_1: |-
-  client.Index("books").GetSeparatorTokens()
+  client.Index("articles").GetSeparatorTokens()
 update_separator_tokens_1: |-
   client.Index("articles").UpdateSeparatorTokens([]string{
     "|",
