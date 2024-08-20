@@ -898,9 +898,7 @@ update_search_cutoff_1: |-
 reset_search_cutoff_1: |-
   client.Index("books").ResetSearchCutoffMs()
 get_dictionary_1: |-
-  client.Index("articles").GetSeparatorTokens()
-get_separator_tokens_1: |-
-  client.Index("books").GetDictionary()
+  client.Index("articles").GetDictionary()
 update_dictionary_1: |-
   client.Index("books").UpdateSeparatorTokens([]string{
     "J. R. R.",
@@ -908,6 +906,8 @@ update_dictionary_1: |-
   })
 reset_dictionary_1: |-
   client.Index("books").ResetDictionary()
+get_separator_tokens_1: |-
+  client.Index("books").GetSeparatorTokens()
 update_separator_tokens_1: |-
   client.Index("articles").UpdateSeparatorTokens([]string{
     "|",
