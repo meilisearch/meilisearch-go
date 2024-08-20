@@ -368,9 +368,19 @@ get_faceting_settings_1: |-
 update_faceting_settings_1: |-
   client.Index("books").UpdateFaceting(&meilisearch.Faceting{
       MaxValuesPerFacet: 2,
+      SortFacetValuesBy: {
+         "*":      SortFacetTypeAlpha,
+         "genres": SortFacetTypeCount,
+      }
   })
 reset_faceting_settings_1: |-
   client.Index("books").ResetFaceting()
+facet_search_2: |-
+  client.Index("books").UpdateFaceting(&meilisearch.Faceting{
+      SortFacetValuesBy: {
+         "genres": SortFacetTypeCount,
+      }
+  })
 get_index_stats_1: |-
   client.Index("movies").GetStats()
 get_indexes_stats_1: |-
@@ -652,7 +662,7 @@ getting_started_faceting: |-
   client.Index("movies").UpdateFaceting(&meilisearch.Faceting{
       MaxValuesPerFacet: 2,
       SortFacetValuesBy: {
-         "*": "count"
+         "*": SortFacetTypeCount,
       }
   })
 
