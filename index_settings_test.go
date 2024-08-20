@@ -1685,6 +1685,9 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 					Faceting: &Faceting{
 						MaxValuesPerFacet: 200,
+						SortFacetValuesBy: map[string]SortFacetType{
+							"*": SortFacetTypeAlpha,
+						},
 					},
 					SearchCutoffMs:     150,
 					SeparatorTokens:    make([]string, 0),
@@ -1755,6 +1758,9 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 					Faceting: &Faceting{
 						MaxValuesPerFacet: 200,
+						SortFacetValuesBy: map[string]SortFacetType{
+							"*": SortFacetTypeAlpha,
+						},
 					},
 					SearchCutoffMs:     150,
 					SeparatorTokens:    make([]string, 0),
@@ -2594,6 +2600,9 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Pagination:           &defaultPagination,
 					Faceting: &Faceting{
 						MaxValuesPerFacet: 200,
+						SortFacetValuesBy: map[string]SortFacetType{
+							"*": SortFacetTypeAlpha,
+						},
 					},
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
@@ -2619,6 +2628,9 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Pagination:           &defaultPagination,
 					Faceting: &Faceting{
 						MaxValuesPerFacet: 200,
+						SortFacetValuesBy: map[string]SortFacetType{
+							"*": SortFacetTypeAlpha,
+						},
 					},
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
@@ -3113,6 +3125,9 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 				client: meili,
 				request: Faceting{
 					MaxValuesPerFacet: 200,
+					SortFacetValuesBy: map[string]SortFacetType{
+						"*": SortFacetTypeAlpha,
+					},
 				},
 			},
 			wantTask: &TaskInfo{
@@ -3127,12 +3142,79 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 				client: customMeili,
 				request: Faceting{
 					MaxValuesPerFacet: 200,
+					SortFacetValuesBy: map[string]SortFacetType{
+						"*": SortFacetTypeAlpha,
+					},
 				},
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultFaceting,
+		},
+		{
+			name: "TestIndexGetStartedFaceting",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: Faceting{
+					MaxValuesPerFacet: 2,
+					SortFacetValuesBy: map[string]SortFacetType{
+						"*": SortFacetTypeCount,
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &Faceting{
+				MaxValuesPerFacet: 2,
+				SortFacetValuesBy: map[string]SortFacetType{
+					"*": SortFacetTypeCount,
+				},
+			},
+		},
+		{
+			name: "TestIndexSortFacetValuesByCountFaceting",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: Faceting{
+					SortFacetValuesBy: map[string]SortFacetType{
+						"*":        SortFacetTypeAlpha,
+						"indexUID": SortFacetTypeCount,
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &Faceting{
+				SortFacetValuesBy: map[string]SortFacetType{
+					"*":        SortFacetTypeAlpha,
+					"indexUID": SortFacetTypeCount,
+				},
+			},
+		},
+		{
+			name: "TestIndexSortFacetValuesAllIndexFaceting",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: Faceting{
+					SortFacetValuesBy: map[string]SortFacetType{
+						"*": SortFacetTypeCount,
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &Faceting{
+				SortFacetValuesBy: map[string]SortFacetType{
+					"*": SortFacetTypeCount,
+				},
+			},
 		},
 	}
 	for _, tt := range tests {
@@ -3142,16 +3224,12 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetFaceting()
-			require.NoError(t, err)
-			require.Equal(t, tt.wantResp, gotResp)
-
 			gotTask, err := i.UpdateFaceting(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
-			gotResp, err = i.GetFaceting()
+			gotResp, err := i.GetFaceting()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})

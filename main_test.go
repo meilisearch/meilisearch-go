@@ -33,6 +33,9 @@ var (
 	}
 	defaultFaceting = Faceting{
 		MaxValuesPerFacet: 100,
+		SortFacetValuesBy: map[string]SortFacetType{
+			"*": SortFacetTypeAlpha,
+		},
 	}
 )
 
