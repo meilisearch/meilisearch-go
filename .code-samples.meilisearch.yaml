@@ -898,7 +898,7 @@ update_search_cutoff_1: |-
 reset_search_cutoff_1: |-
   client.Index("books").ResetSearchCutoffMs()
 get_dictionary_1: |-
-  client.Index("articles").GetDictionary()
+  client.Index("books").GetDictionary()
 update_dictionary_1: |-
   client.Index("books").UpdateSeparatorTokens([]string{
     "J. R. R.",
