@@ -1041,3 +1041,64 @@ func (i *index) ResetNonSeparatorTokensWithContext(ctx context.Context) (*TaskIn
 	}
 	return resp, nil
 }
+
+func (i *index) GetProximityPrecision() (ProximityPrecisionType, error) {
+	return i.GetProximityPrecisionWithContext(context.Background())
+}
+
+func (i *index) GetProximityPrecisionWithContext(ctx context.Context) (ProximityPrecisionType, error) {
+	resp := new(ProximityPrecisionType)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/proximity-precision",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetProximityPrecision",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return "", err
+	}
+	return *resp, nil
+}
+
+func (i *index) UpdateProximityPrecision(proximityType ProximityPrecisionType) (*TaskInfo, error) {
+	return i.UpdateProximityPrecisionWithContext(context.Background(), proximityType)
+}
+
+func (i *index) UpdateProximityPrecisionWithContext(ctx context.Context, proximityType ProximityPrecisionType) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/proximity-precision",
+		method:              http.MethodPut,
+		withRequest:         &proximityType,
+		withResponse:        resp,
+		contentType:         contentTypeJSON,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateProximityPrecision",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) ResetProximityPrecision() (*TaskInfo, error) {
+	return i.ResetProximityPrecisionWithContext(context.Background())
+}
+
+func (i *index) ResetProximityPrecisionWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/proximity-precision",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetProximityPrecision",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

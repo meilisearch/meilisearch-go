@@ -44,22 +44,23 @@ type IndexesQuery struct {
 
 // Settings is the type that represents the settings in meilisearch
 type Settings struct {
-	RankingRules         []string            `json:"rankingRules,omitempty"`
-	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
-	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
-	Dictionary           []string            `json:"dictionary,omitempty"`
-	SearchCutoffMs       int64               `json:"searchCutoffMs,omitempty"`
-	SeparatorTokens      []string            `json:"separatorTokens,omitempty"`
-	NonSeparatorTokens   []string            `json:"nonSeparatorTokens,omitempty"`
-	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
-	StopWords            []string            `json:"stopWords,omitempty"`
-	Synonyms             map[string][]string `json:"synonyms,omitempty"`
-	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
-	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
-	TypoTolerance        *TypoTolerance      `json:"typoTolerance,omitempty"`
-	Pagination           *Pagination         `json:"pagination,omitempty"`
-	Faceting             *Faceting           `json:"faceting,omitempty"`
-	Embedders            map[string]Embedder `json:"embedders,omitempty"`
+	RankingRules         []string               `json:"rankingRules,omitempty"`
+	DistinctAttribute    *string                `json:"distinctAttribute,omitempty"`
+	SearchableAttributes []string               `json:"searchableAttributes,omitempty"`
+	Dictionary           []string               `json:"dictionary,omitempty"`
+	SearchCutoffMs       int64                  `json:"searchCutoffMs,omitempty"`
+	ProximityPrecision   ProximityPrecisionType `json:"proximityPrecision,omitempty"`
+	SeparatorTokens      []string               `json:"separatorTokens,omitempty"`
+	NonSeparatorTokens   []string               `json:"nonSeparatorTokens,omitempty"`
+	DisplayedAttributes  []string               `json:"displayedAttributes,omitempty"`
+	StopWords            []string               `json:"stopWords,omitempty"`
+	Synonyms             map[string][]string    `json:"synonyms,omitempty"`
+	FilterableAttributes []string               `json:"filterableAttributes,omitempty"`
+	SortableAttributes   []string               `json:"sortableAttributes,omitempty"`
+	TypoTolerance        *TypoTolerance         `json:"typoTolerance,omitempty"`
+	Pagination           *Pagination            `json:"pagination,omitempty"`
+	Faceting             *Faceting              `json:"faceting,omitempty"`
+	Embedders            map[string]Embedder    `json:"embedders,omitempty"`
 }
 
 // TypoTolerance is the type that represents the typo tolerance setting in meilisearch
@@ -118,9 +119,19 @@ type Stats struct {
 }
 
 type (
-	TaskType      string // TaskType is the type of a task
-	SortFacetType string // SortFacetType is type of facet sorting, alpha or count
-	TaskStatus    string // TaskStatus is the status of a task.
+	TaskType               string // TaskType is the type of a task
+	SortFacetType          string // SortFacetType is type of facet sorting, alpha or count
+	TaskStatus             string // TaskStatus is the status of a task.
+	ProximityPrecisionType string // ProximityPrecisionType accepts one of the ByWord or ByAttribute
+)
+
+const (
+	// ByWord calculate the precise distance between query terms. Higher precision, but may lead to longer
+	// indexing time. This is the default setting
+	ByWord ProximityPrecisionType = "byWord"
+	// ByAttribute determine if multiple query terms are present in the same attribute.
+	// Lower precision, but shorter indexing time
+	ByAttribute ProximityPrecisionType = "byAttribute"
 )
 
 const (
