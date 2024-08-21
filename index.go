@@ -516,6 +516,46 @@ type IndexManager interface {
 	// https://www.meilisearch.com/docs/reference/api/settings#reset-non-separator-tokens
 	ResetNonSeparatorTokensWithContext(ctx context.Context) (*TaskInfo, error)
 
+	// GetDictionary returns user dictionary
+	//
+	//Allows users to instruct Meilisearch to consider groups of strings as a
+	//single term by adding a supplementary dictionary of user-defined terms.
+	//This is particularly useful when working with datasets containing many domain-specific
+	//words, and in languages where words are not separated by whitespace such as Japanese.
+	//Custom dictionaries are also useful in a few use-cases for space-separated languages,
+	//such as datasets with names such as "J. R. R. Tolkien" and "W. E. B. Du Bois".
+	//
+	// https://www.meilisearch.com/docs/reference/api/settings#get-dictionary
+	GetDictionary() ([]string, error)
+
+	// GetDictionaryWithContext returns user dictionary and support parent context
+	//
+	//Allows users to instruct Meilisearch to consider groups of strings as a
+	//single term by adding a supplementary dictionary of user-defined terms.
+	//This is particularly useful when working with datasets containing many domain-specific
+	//words, and in languages where words are not separated by whitespace such as Japanese.
+	//Custom dictionaries are also useful in a few use-cases for space-separated languages,
+	//such as datasets with names such as "J. R. R. Tolkien" and "W. E. B. Du Bois".
+	//
+	// https://www.meilisearch.com/docs/reference/api/settings#get-dictionary
+	GetDictionaryWithContext(ctx context.Context) ([]string, error)
+
+	// UpdateDictionary update user dictionary
+	// https://www.meilisearch.com/docs/reference/api/settings#update-dictionary
+	UpdateDictionary(words []string) (*TaskInfo, error)
+
+	// UpdateDictionaryWithContext update user dictionary and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#update-dictionary
+	UpdateDictionaryWithContext(ctx context.Context, words []string) (*TaskInfo, error)
+
+	// ResetDictionary reset user dictionary
+	// https://www.meilisearch.com/docs/reference/api/settings#reset-dictionary
+	ResetDictionary() (*TaskInfo, error)
+
+	// ResetDictionaryWithContext reset user dictionary and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#reset-dictionary
+	ResetDictionaryWithContext(ctx context.Context) (*TaskInfo, error)
+
 	// WaitForTask waits for a task to complete by its UID with the given interval.
 	WaitForTask(taskUID int64, interval time.Duration) (*Task, error)
 

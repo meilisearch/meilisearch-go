@@ -47,6 +47,7 @@ type Settings struct {
 	RankingRules         []string            `json:"rankingRules,omitempty"`
 	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
 	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
+	Dictionary           []string            `json:"dictionary,omitempty"`
 	SearchCutoffMs       int64               `json:"searchCutoffMs,omitempty"`
 	SeparatorTokens      []string            `json:"separatorTokens,omitempty"`
 	NonSeparatorTokens   []string            `json:"nonSeparatorTokens,omitempty"`
@@ -83,6 +84,8 @@ type Pagination struct {
 // Faceting is the type that represents the faceting setting in meilisearch
 type Faceting struct {
 	MaxValuesPerFacet int64 `json:"maxValuesPerFacet"`
+	// SortFacetValuesBy index_name: alpha|count
+	SortFacetValuesBy map[string]SortFacetType `json:"sortFacetValuesBy"`
 }
 
 type Embedder struct {
@@ -114,8 +117,11 @@ type Stats struct {
 	Indexes      map[string]StatsIndex `json:"indexes"`
 }
 
-// TaskStatus is the status of a task.
-type TaskStatus string
+type (
+	TaskType      string // TaskType is the type of a task
+	SortFacetType string // SortFacetType is type of facet sorting, alpha or count
+	TaskStatus    string // TaskStatus is the status of a task.
+)
 
 const (
 	// TaskStatusUnknown is the default TaskStatus, should not exist
@@ -132,8 +138,10 @@ const (
 	TaskStatusCanceled TaskStatus = "canceled"
 )
 
-// TaskType is the type of a task
-type TaskType string
+const (
+	SortFacetTypeAlpha SortFacetType = "alpha"
+	SortFacetTypeCount SortFacetType = "count"
+)
 
 const (
 	// TaskTypeIndexCreation represents an index creation
