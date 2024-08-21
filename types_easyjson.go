@@ -2114,6 +2114,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo15(in *jlexer.Lexer,
 			}
 		case "searchCutoffMs":
 			out.SearchCutoffMs = int64(in.Int64())
+		case "proximityPrecision":
+			out.ProximityPrecision = ProximityPrecisionType(in.String())
 		case "separatorTokens":
 			if in.IsNull() {
 				in.Skip()
@@ -2429,6 +2431,16 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo15(out *jwriter.Writ
 			out.RawString(prefix)
 		}
 		out.Int64(int64(in.SearchCutoffMs))
+	}
+	if in.ProximityPrecision != "" {
+		const prefix string = ",\"proximityPrecision\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(in.ProximityPrecision))
 	}
 	if len(in.SeparatorTokens) != 0 {
 		const prefix string = ",\"separatorTokens\":"
@@ -3080,7 +3092,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo18(in *jlexer.Lexer,
 		case "highlightPostTag":
 			out.HighlightPostTag = string(in.String())
 		case "matchingStrategy":
-			out.MatchingStrategy = string(in.String())
+			out.MatchingStrategy = MatchingStrategy(in.String())
 		case "filter":
 			if m, ok := out.Filter.(easyjson.Unmarshaler); ok {
 				m.UnmarshalEasyJSON(in)

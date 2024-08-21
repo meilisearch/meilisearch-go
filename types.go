@@ -44,22 +44,23 @@ type IndexesQuery struct {
 
 // Settings is the type that represents the settings in meilisearch
 type Settings struct {
-	RankingRules         []string            `json:"rankingRules,omitempty"`
-	DistinctAttribute    *string             `json:"distinctAttribute,omitempty"`
-	SearchableAttributes []string            `json:"searchableAttributes,omitempty"`
-	Dictionary           []string            `json:"dictionary,omitempty"`
-	SearchCutoffMs       int64               `json:"searchCutoffMs,omitempty"`
-	SeparatorTokens      []string            `json:"separatorTokens,omitempty"`
-	NonSeparatorTokens   []string            `json:"nonSeparatorTokens,omitempty"`
-	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
-	StopWords            []string            `json:"stopWords,omitempty"`
-	Synonyms             map[string][]string `json:"synonyms,omitempty"`
-	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
-	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
-	TypoTolerance        *TypoTolerance      `json:"typoTolerance,omitempty"`
-	Pagination           *Pagination         `json:"pagination,omitempty"`
-	Faceting             *Faceting           `json:"faceting,omitempty"`
-	Embedders            map[string]Embedder `json:"embedders,omitempty"`
+	RankingRules         []string               `json:"rankingRules,omitempty"`
+	DistinctAttribute    *string                `json:"distinctAttribute,omitempty"`
+	SearchableAttributes []string               `json:"searchableAttributes,omitempty"`
+	Dictionary           []string               `json:"dictionary,omitempty"`
+	SearchCutoffMs       int64                  `json:"searchCutoffMs,omitempty"`
+	ProximityPrecision   ProximityPrecisionType `json:"proximityPrecision,omitempty"`
+	SeparatorTokens      []string               `json:"separatorTokens,omitempty"`
+	NonSeparatorTokens   []string               `json:"nonSeparatorTokens,omitempty"`
+	DisplayedAttributes  []string               `json:"displayedAttributes,omitempty"`
+	StopWords            []string               `json:"stopWords,omitempty"`
+	Synonyms             map[string][]string    `json:"synonyms,omitempty"`
+	FilterableAttributes []string               `json:"filterableAttributes,omitempty"`
+	SortableAttributes   []string               `json:"sortableAttributes,omitempty"`
+	TypoTolerance        *TypoTolerance         `json:"typoTolerance,omitempty"`
+	Pagination           *Pagination            `json:"pagination,omitempty"`
+	Faceting             *Faceting              `json:"faceting,omitempty"`
+	Embedders            map[string]Embedder    `json:"embedders,omitempty"`
 }
 
 // TypoTolerance is the type that represents the typo tolerance setting in meilisearch
@@ -118,9 +119,35 @@ type Stats struct {
 }
 
 type (
-	TaskType      string // TaskType is the type of a task
-	SortFacetType string // SortFacetType is type of facet sorting, alpha or count
-	TaskStatus    string // TaskStatus is the status of a task.
+	TaskType               string // TaskType is the type of a task
+	SortFacetType          string // SortFacetType is type of facet sorting, alpha or count
+	TaskStatus             string // TaskStatus is the status of a task.
+	ProximityPrecisionType string // ProximityPrecisionType accepts one of the ByWord or ByAttribute
+	MatchingStrategy       string // MatchingStrategy one of the Last, All, Frequency
+)
+
+const (
+	// Last returns documents containing all the query terms first. If there are not enough results containing all
+	// query terms to meet the requested limit, Meilisearch will remove one query term at a time,
+	// starting from the end of the query.
+	Last MatchingStrategy = "last"
+	// All only returns documents that contain all query terms. Meilisearch will not match any more documents even
+	// if there aren't enough to meet the requested limit.
+	All MatchingStrategy = "all"
+	// Frequency returns documents containing all the query terms first. If there are not enough results containing
+	//all query terms to meet the requested limit, Meilisearch will remove one query term at a time, starting
+	//with the word that is the most frequent in the dataset. frequency effectively gives more weight to terms
+	//that appear less frequently in a set of results.
+	Frequency MatchingStrategy = "frequency"
+)
+
+const (
+	// ByWord calculate the precise distance between query terms. Higher precision, but may lead to longer
+	// indexing time. This is the default setting
+	ByWord ProximityPrecisionType = "byWord"
+	// ByAttribute determine if multiple query terms are present in the same attribute.
+	// Lower precision, but shorter indexing time
+	ByAttribute ProximityPrecisionType = "byAttribute"
 )
 
 const (
@@ -361,7 +388,7 @@ type SearchRequest struct {
 	AttributesToHighlight   []string             `json:"attributesToHighlight,omitempty"`
 	HighlightPreTag         string               `json:"highlightPreTag,omitempty"`
 	HighlightPostTag        string               `json:"highlightPostTag,omitempty"`
-	MatchingStrategy        string               `json:"matchingStrategy,omitempty"`
+	MatchingStrategy        MatchingStrategy     `json:"matchingStrategy,omitempty"`
 	Filter                  interface{}          `json:"filter,omitempty"`
 	ShowMatchesPosition     bool                 `json:"showMatchesPosition,omitempty"`
 	ShowRankingScore        bool                 `json:"showRankingScore,omitempty"`

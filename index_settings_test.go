@@ -247,6 +247,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				SearchCutoffMs:       0,
+				ProximityPrecision:   ByWord,
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
 				Synonyms:             map[string][]string(nil),
@@ -271,6 +272,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				SearchCutoffMs:       0,
+				ProximityPrecision:   ByWord,
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
 				Synonyms:             map[string][]string(nil),
@@ -887,6 +889,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -913,6 +916,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -1690,6 +1694,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 						},
 					},
 					SearchCutoffMs:     150,
+					ProximityPrecision: ByAttribute,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
@@ -1711,6 +1716,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
 				SearchCutoffMs:       150,
+				ProximityPrecision:   ByAttribute,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -1763,6 +1769,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 						},
 					},
 					SearchCutoffMs:     150,
+					ProximityPrecision: ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
@@ -1784,6 +1791,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
 				SearchCutoffMs:       150,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -1858,6 +1866,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -1883,6 +1892,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -1903,6 +1913,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -1937,6 +1948,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -1962,6 +1974,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -1982,6 +1995,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -2016,6 +2030,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -2041,6 +2056,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -2061,6 +2077,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -2095,6 +2112,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -2120,6 +2138,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -2140,6 +2159,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -2174,6 +2194,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -2199,6 +2220,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -2219,6 +2241,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -2253,6 +2276,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
+					ProximityPrecision: ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
@@ -2278,6 +2302,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
+					ProximityPrecision: ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
@@ -2298,6 +2323,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -2332,6 +2358,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
+					ProximityPrecision: ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
@@ -2357,6 +2384,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
+					ProximityPrecision: ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
@@ -2377,6 +2405,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -2423,6 +2452,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
+					ProximityPrecision:   ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
@@ -2468,6 +2498,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
+					ProximityPrecision: ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
@@ -2488,6 +2519,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -2522,6 +2554,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						MaxTotalHits: 1200,
 					},
 					Faceting:           &defaultFaceting,
+					ProximityPrecision: ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
@@ -2547,6 +2580,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						MaxTotalHits: 1200,
 					},
 					Faceting:           &defaultFaceting,
+					ProximityPrecision: ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
@@ -2567,6 +2601,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -2598,6 +2633,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					ProximityPrecision:   ByWord,
 					Faceting: &Faceting{
 						MaxValuesPerFacet: 200,
 						SortFacetValuesBy: map[string]SortFacetType{
@@ -2626,6 +2662,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					ProximityPrecision:   ByWord,
 					Faceting: &Faceting{
 						MaxValuesPerFacet: 200,
 						SortFacetValuesBy: map[string]SortFacetType{
@@ -2652,6 +2689,94 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
+			},
+		},
+		{
+			name: "TestIndexUpdateJustProximityPrecision",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				firstRequest: Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					ProximityPrecision: ByAttribute,
+				},
+				firstResponse: Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
+					ProximityPrecision:   ByAttribute,
+					Faceting: &Faceting{
+						MaxValuesPerFacet: 100,
+						SortFacetValuesBy: map[string]SortFacetType{
+							"*": SortFacetTypeAlpha,
+						},
+					},
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
+				},
+				secondRequest: Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					ProximityPrecision: ByWord,
+				},
+				secondResponse: Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             map[string][]string(nil),
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
+					ProximityPrecision:   ByWord,
+					Faceting: &Faceting{
+						MaxValuesPerFacet: 100,
+						SortFacetValuesBy: map[string]SortFacetType{
+							"*": SortFacetTypeAlpha,
+						},
+					},
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &Settings{
+				RankingRules:         defaultRankingRules,
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             map[string][]string(nil),
+				FilterableAttributes: []string{},
+				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
+				Faceting:             &defaultFaceting,
+				ProximityPrecision:   ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
@@ -3533,4 +3658,32 @@ func Test_NonSeparatorTokens(t *testing.T) {
 	got, err = i.GetNonSeparatorTokens()
 	require.NoError(t, err)
 	require.Equal(t, got, []string{})
+}
+
+func Test_ProximityPrecision(t *testing.T) {
+	c := setup(t, "")
+	t.Cleanup(cleanup(c))
+
+	indexID := "newIndexUID"
+	i := c.Index(indexID)
+
+	got, err := i.GetProximityPrecision()
+	require.NoError(t, err)
+	require.Equal(t, ByWord, got)
+
+	task, err := i.UpdateProximityPrecision(ByAttribute)
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err = i.GetProximityPrecision()
+	require.NoError(t, err)
+	require.Equal(t, ByAttribute, got)
+
+	task, err = i.ResetProximityPrecision()
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	got, err = i.GetProximityPrecision()
+	require.NoError(t, err)
+	require.Equal(t, ByWord, got)
 }
