@@ -556,6 +556,30 @@ type IndexManager interface {
 	// https://www.meilisearch.com/docs/reference/api/settings#reset-dictionary
 	ResetDictionaryWithContext(ctx context.Context) (*TaskInfo, error)
 
+	// GetProximityPrecision returns ProximityPrecision configuration value
+	// https://www.meilisearch.com/docs/reference/api/settings#get-proximity-precision-settings
+	GetProximityPrecision() (ProximityPrecisionType, error)
+
+	// GetProximityPrecisionWithContext returns ProximityPrecision configuration value and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#get-proximity-precision-settings
+	GetProximityPrecisionWithContext(ctx context.Context) (ProximityPrecisionType, error)
+
+	// UpdateProximityPrecision set ProximityPrecision value ByWord or ByAttribute
+	// https://www.meilisearch.com/docs/reference/api/settings#update-proximity-precision-settings
+	UpdateProximityPrecision(proximityType ProximityPrecisionType) (*TaskInfo, error)
+
+	// UpdateProximityPrecisionWithContext set ProximityPrecision value ByWord or ByAttribute and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#update-proximity-precision-settings
+	UpdateProximityPrecisionWithContext(ctx context.Context, proximityType ProximityPrecisionType) (*TaskInfo, error)
+
+	// ResetProximityPrecision reset ProximityPrecision to default ByWord
+	// https://www.meilisearch.com/docs/reference/api/settings#reset-proximity-precision-settings
+	ResetProximityPrecision() (*TaskInfo, error)
+
+	// ResetProximityPrecisionWithContext reset ProximityPrecision to default ByWord and support parent context
+	// https://www.meilisearch.com/docs/reference/api/settings#reset-proximity-precision-settings
+	ResetProximityPrecisionWithContext(ctx context.Context) (*TaskInfo, error)
+
 	// WaitForTask waits for a task to complete by its UID with the given interval.
 	WaitForTask(taskUID int64, interval time.Duration) (*Task, error)
 
