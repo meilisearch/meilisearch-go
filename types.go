@@ -123,6 +123,22 @@ type (
 	SortFacetType          string // SortFacetType is type of facet sorting, alpha or count
 	TaskStatus             string // TaskStatus is the status of a task.
 	ProximityPrecisionType string // ProximityPrecisionType accepts one of the ByWord or ByAttribute
+	MatchingStrategy       string // MatchingStrategy one of the Last, All, Frequency
+)
+
+const (
+	// Last returns documents containing all the query terms first. If there are not enough results containing all
+	// query terms to meet the requested limit, Meilisearch will remove one query term at a time,
+	// starting from the end of the query.
+	Last MatchingStrategy = "last"
+	// All only returns documents that contain all query terms. Meilisearch will not match any more documents even
+	// if there aren't enough to meet the requested limit.
+	All MatchingStrategy = "all"
+	// Frequency returns documents containing all the query terms first. If there are not enough results containing
+	//all query terms to meet the requested limit, Meilisearch will remove one query term at a time, starting
+	//with the word that is the most frequent in the dataset. frequency effectively gives more weight to terms
+	//that appear less frequently in a set of results.
+	Frequency MatchingStrategy = "frequency"
 )
 
 const (
@@ -372,7 +388,7 @@ type SearchRequest struct {
 	AttributesToHighlight   []string             `json:"attributesToHighlight,omitempty"`
 	HighlightPreTag         string               `json:"highlightPreTag,omitempty"`
 	HighlightPostTag        string               `json:"highlightPostTag,omitempty"`
-	MatchingStrategy        string               `json:"matchingStrategy,omitempty"`
+	MatchingStrategy        MatchingStrategy     `json:"matchingStrategy,omitempty"`
 	Filter                  interface{}          `json:"filter,omitempty"`
 	ShowMatchesPosition     bool                 `json:"showMatchesPosition,omitempty"`
 	ShowRankingScore        bool                 `json:"showRankingScore,omitempty"`

@@ -470,12 +470,17 @@ search_parameter_guide_show_ranking_score_details_1: |-
   })
 search_parameter_guide_matching_strategy_1: |-
   resp, err := client.Index("movies").Search("big fat liar", &meilisearch.SearchRequest{
-    MatchingStrategy:    "last",
+    MatchingStrategy:    Last,
   })
 search_parameter_guide_matching_strategy_2: |-
   resp, err := client.Index("movies").Search("big fat liar", &meilisearch.SearchRequest{
-    MatchingStrategy:    "all",
+    MatchingStrategy:    All,
   })
+search_parameter_guide_matching_strategy_3: |-
+  client.Index("movies").Search("white shirt", &meilisearch.SearchRequest{
+    MatchingStrategy: Frequency,
+  })
+
 search_parameter_guide_hitsperpage_1: |-
   client.Index("movies").Search("", &meilisearch.SearchRequest{
     HitsPerPage: 15,
