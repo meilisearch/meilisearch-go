@@ -2,7 +2,7 @@ package meilisearch
 
 import "fmt"
 
-const VERSION = "0.27.2"
+const VERSION = "0.28.0"
 
 func GetQualifiedVersion() (qualifiedVersion string) {
 	return getQualifiedVersion(VERSION)
