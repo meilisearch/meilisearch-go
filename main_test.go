@@ -234,6 +234,7 @@ func setUpIndexForFaceting(client ServiceManager) {
 		{BookID: 254, Title: "Lolita", Tag: "Novel", Year: 1955},
 		{BookID: 921, Title: "The Brothers Karamazov", Tag: "Novel", Year: 1879},
 		{BookID: 1032, Title: "Crime and Punishment", Tag: "Crime fiction", Year: 1866},
+		{BookID: 1039, Title: "The Girl in the white shirt", Tag: "white shirt", Year: 1999},
 	}
 	task, err := idx.AddDocuments(booksTest)
 	if err != nil {

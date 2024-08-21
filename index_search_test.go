@@ -236,7 +236,7 @@ func TestIndex_Search(t *testing.T) {
 						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 				},
-				EstimatedTotalHits: 20,
+				EstimatedTotalHits: 21,
 				Offset:             0,
 				Limit:              1,
 			},
@@ -550,6 +550,28 @@ func TestIndex_Search(t *testing.T) {
 				EstimatedTotalHits: 3,
 				Offset:             0,
 				Limit:              10,
+			},
+			wantErr: false,
+		},
+		{
+			name: "TestIndexSearchWithMatchStrategyFrequency",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				query:  "white shirt",
+				request: &SearchRequest{
+					MatchingStrategy: Frequency,
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(1039), "title": "The Girl in the white shirt",
+					},
+				},
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
 			},
 			wantErr: false,
 		},
@@ -1296,7 +1318,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 						"book_id": float64(7), "title": "Don Quixote",
 					},
 				},
-				EstimatedTotalHits: 20,
+				EstimatedTotalHits: 21,
 				Offset:             0,
 				Limit:              4,
 			},

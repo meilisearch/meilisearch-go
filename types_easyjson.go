@@ -3092,7 +3092,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo18(in *jlexer.Lexer,
 		case "highlightPostTag":
 			out.HighlightPostTag = string(in.String())
 		case "matchingStrategy":
-			out.MatchingStrategy = string(in.String())
+			out.MatchingStrategy = MatchingStrategy(in.String())
 		case "filter":
 			if m, ok := out.Filter.(easyjson.Unmarshaler); ok {
 				m.UnmarshalEasyJSON(in)
