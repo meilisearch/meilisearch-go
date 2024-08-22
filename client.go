@@ -197,7 +197,7 @@ func (c *client) sendRequest(
 		request.Header.Set("Content-Encoding", req.contentEncoding.String())
 	}
 
-	request.Header.Set("User-Agent", GetQualifiedVersion()
+	request.Header.Set("User-Agent", GetQualifiedVersion())
 
 	resp, err := c.client.Do(request)
 	if err != nil {
