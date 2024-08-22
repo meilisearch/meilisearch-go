@@ -91,6 +91,7 @@ type Faceting struct {
 
 type Embedder struct {
 	Source           string `json:"source"`
+	URL              string `json:"url,omitempty"`
 	ApiKey           string `json:"apiKey,omitempty"`
 	Model            string `json:"model,omitempty"`
 	Dimensions       int    `json:"dimensions,omitempty"`
