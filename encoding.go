@@ -1,0 +1,147 @@
+package meilisearch
+
+import (
+	"bytes"
+	"encoding/json"
+	"github.com/klauspost/compress/flate"
+	"github.com/klauspost/compress/gzip"
+	"io"
+	"sync"
+)
+
+type encoder interface {
+	Encode(rc io.Reader) (*bytes.Buffer, error)
+	Decode(data []byte, vPtr interface{}) error
+}
+
+func newEncoding(ce ContentEncoding, level EncodingCompressionLevel) encoder {
+	switch ce {
+	case GzipEncoding:
+		return &gzipEncoder{
+			gzWriterPool: &sync.Pool{
+				New: func() interface{} {
+					w, err := gzip.NewWriterLevel(io.Discard, level.Int())
+					return &gzipWriter{
+						writer: w,
+						err:    err,
+					}
+				},
+			},
+			bufferPool: &sync.Pool{
+				New: func() interface{} {
+					return new(bytes.Buffer)
+				},
+			},
+		}
+	case DeflateEncoding:
+		return &flateEncoder{
+			flWriterPool: &sync.Pool{
+				New: func() interface{} {
+					w, err := flate.NewWriter(io.Discard, level.Int())
+					return &flateWriter{
+						writer: w,
+						err:    err,
+					}
+				},
+			},
+			bufferPool: &sync.Pool{
+				New: func() interface{} {
+					return new(bytes.Buffer)
+				},
+			},
+		}
+	default:
+		return nil
+	}
+}
+
+type gzipEncoder struct {
+	gzWriterPool *sync.Pool
+	bufferPool   *sync.Pool
+}
+
+type gzipWriter struct {
+	writer *gzip.Writer
+	err    error
+}
+
+func (g *gzipEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
+	w := g.gzWriterPool.Get().(*gzipWriter)
+	defer g.gzWriterPool.Put(w)
+
+	if w.err != nil {
+		return nil, w.err
+	}
+
+	buf := g.bufferPool.Get().(*bytes.Buffer)
+	buf.Reset()
+	w.writer.Reset(buf)
+
+	if _, err := io.Copy(w.writer, rc); err != nil {
+		return nil, err
+	}
+
+	if err := w.writer.Close(); err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (g *gzipEncoder) Decode(data []byte, vPtr interface{}) error {
+	r, err := gzip.NewReader(bytes.NewReader(data))
+	if err != nil {
+		return err
+	}
+	defer r.Close()
+
+	if err := json.NewDecoder(r).Decode(vPtr); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type flateEncoder struct {
+	flWriterPool *sync.Pool
+	bufferPool   *sync.Pool
+}
+
+type flateWriter struct {
+	writer *flate.Writer
+	err    error
+}
+
+func (d *flateEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
+	w := d.flWriterPool.Get().(*flateWriter)
+	defer d.flWriterPool.Put(w)
+
+	if w.err != nil {
+		return nil, w.err
+	}
+
+	buf := d.bufferPool.Get().(*bytes.Buffer)
+	buf.Reset()
+	w.writer.Reset(buf)
+
+	if _, err := io.Copy(w.writer, rc); err != nil {
+		return nil, err
+	}
+
+	if err := w.writer.Close(); err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (d *flateEncoder) Decode(data []byte, vPtr interface{}) error {
+	r := flate.NewReader(bytes.NewBuffer(data))
+	defer r.Close()
+
+	if err := json.NewDecoder(r).Decode(vPtr); err != nil {
+		return err
+	}
+
+	return nil
+}
