@@ -12,12 +12,21 @@ var (
 		client: &http.Client{
 			Transport: baseTransport(),
 		},
+		contentEncoding: &encodingOpt{
+			level: DefaultCompression,
+		},
 	}
 )
 
 type meiliOpt struct {
-	client *http.Client
-	apiKey string
+	client          *http.Client
+	apiKey          string
+	contentEncoding *encodingOpt
+}
+
+type encodingOpt struct {
+	encodingType ContentEncoding
+	level        EncodingCompressionLevel
 }
 
 type Option func(*meiliOpt)
@@ -39,10 +48,25 @@ func WithCustomClientWithTLS(tlsConfig *tls.Config) Option {
 }
 
 // WithAPIKey is API key or master key.
+//
 // more: https://www.meilisearch.com/docs/reference/api/keys
 func WithAPIKey(key string) Option {
 	return func(opt *meiliOpt) {
 		opt.apiKey = key
+	}
+}
+
+// WithContentEncoding support the Content-Encoding header indicates the media type is compressed by a given algorithm.
+// compression improves transfer speed and reduces bandwidth consumption by sending and receiving smaller payloads.
+// the Accept-Encoding header, instead, indicates the compression algorithm the client understands.
+//
+// more: https://www.meilisearch.com/docs/reference/api/overview#content-encoding
+func WithContentEncoding(encodingType ContentEncoding, level EncodingCompressionLevel) Option {
+	return func(opt *meiliOpt) {
+		opt.contentEncoding = &encodingOpt{
+			encodingType: encodingType,
+			level:        level,
+		}
 	}
 }
 
