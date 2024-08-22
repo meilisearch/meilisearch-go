@@ -12,9 +12,10 @@ import (
 
 // index is the type that represent an index in meilisearch
 type index struct {
-	uid        string
-	primaryKey string
-	client     *client
+	uid             string
+	primaryKey      string
+	client          *client
+	contentEncoding ContentEncoding
 }
 
 type IndexManager interface {
@@ -587,10 +588,11 @@ type IndexManager interface {
 	WaitForTaskWithContext(ctx context.Context, taskUID int64, interval time.Duration) (*Task, error)
 }
 
-func newIndex(cli *client, uid string) IndexManager {
+func newIndex(cli *client, uid string, ce ContentEncoding) IndexManager {
 	return &index{
-		client: cli,
-		uid:    uid,
+		client:          cli,
+		uid:             uid,
+		contentEncoding: ce,
 	}
 }
 

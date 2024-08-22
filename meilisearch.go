@@ -10,7 +10,8 @@ import (
 )
 
 type meilisearch struct {
-	client *client
+	client          *client
+	contentEncoding ContentEncoding
 }
 
 type ServiceManager interface {
@@ -178,7 +179,9 @@ func New(host string, options ...Option) ServiceManager {
 			defOpt.client,
 			host,
 			defOpt.apiKey,
+			defOpt.contentEncoding.level,
 		),
+		contentEncoding: defOpt.contentEncoding.encodingType,
 	}
 }
 
@@ -194,7 +197,7 @@ func Connect(host string, options ...Option) (ServiceManager, error) {
 }
 
 func (m *meilisearch) Index(uid string) IndexManager {
-	return newIndex(m.client, uid)
+	return newIndex(m.client, uid, m.contentEncoding)
 }
 
 func (m *meilisearch) GetIndex(indexID string) (*IndexResult, error) {
@@ -202,7 +205,7 @@ func (m *meilisearch) GetIndex(indexID string) (*IndexResult, error) {
 }
 
 func (m *meilisearch) GetIndexWithContext(ctx context.Context, indexID string) (*IndexResult, error) {
-	return newIndex(m.client, indexID).FetchInfoWithContext(ctx)
+	return newIndex(m.client, indexID, m.contentEncoding).FetchInfoWithContext(ctx)
 }
 
 func (m *meilisearch) GetRawIndex(uid string) (map[string]interface{}, error) {
@@ -251,7 +254,7 @@ func (m *meilisearch) ListIndexesWithContext(ctx context.Context, param *Indexes
 	}
 
 	for i := range resp.Results {
-		resp.Results[i].IndexManager = newIndex(m.client, resp.Results[i].UID)
+		resp.Results[i].IndexManager = newIndex(m.client, resp.Results[i].UID, m.contentEncoding)
 	}
 
 	return resp, nil
