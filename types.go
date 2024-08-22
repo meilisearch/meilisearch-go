@@ -6,13 +6,35 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
+type (
+	ContentEncoding          string
+	EncodingCompressionLevel int
+)
+
 const (
 	DefaultLimit int64 = 20
 
 	contentTypeJSON   string = "application/json"
 	contentTypeNDJSON string = "application/x-ndjson"
 	contentTypeCSV    string = "text/csv"
+
+	GzipEncoding    ContentEncoding = "gzip"
+	DeflateEncoding ContentEncoding = "deflate"
+
+	NoCompression          EncodingCompressionLevel = 0
+	BestSpeed              EncodingCompressionLevel = 1
+	BestCompression        EncodingCompressionLevel = 9
+	DefaultCompression     EncodingCompressionLevel = -1
+	HuffmanOnlyCompression EncodingCompressionLevel = -2
+	ConstantCompression    EncodingCompressionLevel = -2
+	StatelessCompression   EncodingCompressionLevel = -3
 )
+
+func (c ContentEncoding) String() string { return string(c) }
+
+func (c ContentEncoding) IsZero() bool { return c == "" }
+
+func (c EncodingCompressionLevel) Int() int { return int(c) }
 
 type IndexConfig struct {
 	// Uid is the unique identifier of a given index.
