@@ -3,6 +3,7 @@ module github.com/meilisearch/meilisearch-go
 go 1.16
 
 require (
+	github.com/andybalholm/brotli v1.1.0 // indirect
 	github.com/golang-jwt/jwt/v4 v4.5.0
 	github.com/klauspost/compress v1.17.9 // indirect
 	github.com/mailru/easyjson v0.7.7

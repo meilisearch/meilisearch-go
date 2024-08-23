@@ -13,19 +13,21 @@ import (
 )
 
 type client struct {
-	client     *http.Client
-	host       string
-	apiKey     string
-	bufferPool *sync.Pool
-	encoders   map[ContentEncoding]encoder
+	client          *http.Client
+	host            string
+	apiKey          string
+	bufferPool      *sync.Pool
+	encoder         encoder
+	contentEncoding string
 }
 
 type internalRequest struct {
-	endpoint        string
-	method          string
-	contentType     string
-	contentEncoding ContentEncoding
-	encodingLevel   EncodingCompressionLevel
+	endpoint string
+	method   string
+
+	contentType  string
+	reqEncoding  bool
+	respEncoding bool
 
 	withRequest     interface{}
 	withResponse    interface{}
@@ -36,21 +38,24 @@ type internalRequest struct {
 	functionName string
 }
 
-func newClient(cli *http.Client, host, apiKey string, level EncodingCompressionLevel) *client {
-	return &client{
+func newClient(cli *http.Client, host, apiKey string, ce ContentEncoding, cl EncodingCompressionLevel) *client {
+	c := &client{
 		client: cli,
 		host:   host,
 		apiKey: apiKey,
-		encoders: map[ContentEncoding]encoder{
-			GzipEncoding:    newEncoding(GzipEncoding, level),
-			DeflateEncoding: newEncoding(DeflateEncoding, level),
-		},
 		bufferPool: &sync.Pool{
 			New: func() interface{} {
 				return new(bytes.Buffer)
 			},
 		},
 	}
+
+	if !ce.IsZero() {
+		c.contentEncoding = ce.String()
+		c.encoder = newEncoding(ce, cl)
+	}
+
+	return c
 }
 
 func (c *client) executeRequest(ctx context.Context, req *internalRequest) error {
@@ -162,13 +167,12 @@ func (c *client) sendRequest(
 			body = buf
 		}
 
-		if !req.contentEncoding.IsZero() {
-			b, err := c.encoders[req.contentEncoding].Encode(body)
+		if req.reqEncoding && c.encoder != nil {
+			body, err = c.encoder.Encode(body)
 			if err != nil {
 				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
 					fmt.Errorf("failed to marshal with json.Marshal: %w", err))
 			}
-			body = b
 		}
 	}
 
@@ -186,15 +190,12 @@ func (c *client) sendRequest(
 		request.Header.Set("Authorization", "Bearer "+c.apiKey)
 	}
 
-	if !req.contentEncoding.IsZero() && req.method == http.MethodGet {
-		request.Header.Set("Accept-Encoding", req.contentEncoding.String())
+	if req.respEncoding && c.encoder != nil {
+		request.Header.Set("Accept-Encoding", c.contentEncoding)
 	}
 
-	if !req.contentEncoding.IsZero() &&
-		req.method == http.MethodPost ||
-		req.method == http.MethodPatch ||
-		req.method == http.MethodPut {
-		request.Header.Set("Content-Encoding", req.contentEncoding.String())
+	if req.reqEncoding && c.encoder != nil {
+		request.Header.Set("Content-Encoding", c.contentEncoding)
 	}
 
 	request.Header.Set("User-Agent", GetQualifiedVersion())
@@ -239,14 +240,11 @@ func (c *client) handleStatusCode(req *internalRequest, statusCode int, body []b
 
 func (c *client) handleResponse(req *internalRequest, body []byte, internalError *Error) (err error) {
 	if req.withResponse != nil {
-		// If the response is encoded and the request specified Accept-Encoding
-		if !req.contentEncoding.IsZero() && req.method == http.MethodGet {
-			enc := c.encoders[req.contentEncoding]
-			if err := enc.Decode(body, req.withResponse); err != nil {
+		if req.respEncoding && c.encoder != nil {
+			if err := c.encoder.Decode(body, req.withResponse); err != nil {
 				return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
 			}
 		} else {
-			// Handle regular JSON response
 			internalError.ResponseToString = string(body)
 
 			var err error

@@ -20,6 +20,7 @@ const (
 
 	GzipEncoding    ContentEncoding = "gzip"
 	DeflateEncoding ContentEncoding = "deflate"
+	BrotliEncoding  ContentEncoding = "br"
 
 	NoCompression          EncodingCompressionLevel = 0
 	BestSpeed              EncodingCompressionLevel = 1
