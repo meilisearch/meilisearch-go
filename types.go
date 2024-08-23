@@ -499,6 +499,19 @@ type DocumentsResult struct {
 	Total   int64                    `json:"total"`
 }
 
+// ExperimentalFeaturesResult represents the experimental features result from the API.
+type ExperimentalFeaturesBase struct {
+	VectorStore *bool `json:"vectorStore,omitempty"`
+	LogsRoute   *bool `json:"logsRoute,omitempty"`
+	Metrics     *bool `json:"metrics,omitempty"`
+}
+
+type ExperimentalFeaturesResult struct {
+	VectorStore bool `json:"vectorStore"`
+	LogsRoute   bool `json:"logsRoute"`
+	Metrics     bool `json:"metrics"`
+}
+
 type SwapIndexesParams struct {
 	Indexes []string `json:"indexes"`
 }

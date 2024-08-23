@@ -3,10 +3,11 @@ package meilisearch
 import (
 	"context"
 	"fmt"
-	"github.com/golang-jwt/jwt/v4"
 	"net/http"
 	"strconv"
 	"time"
+
+	"github.com/golang-jwt/jwt/v4"
 )
 
 type meilisearch struct {
@@ -160,6 +161,9 @@ type ServiceManager interface {
 
 	// CreateSnapshotWithContext create database snapshot from meilisearch and support parent context
 	CreateSnapshotWithContext(ctx context.Context) (*TaskInfo, error)
+
+	// ExperimentalFeatures returns the experimental features manager.
+	ExperimentalFeatures() *ExperimentalFeatures
 
 	// Close closes the connection to the Meilisearch server.
 	Close()
