@@ -3,6 +3,7 @@ package meilisearch
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/andybalholm/brotli"
 	"github.com/klauspost/compress/flate"
 	"github.com/klauspost/compress/gzip"
 	"io"
@@ -42,6 +43,19 @@ func newEncoding(ce ContentEncoding, level EncodingCompressionLevel) encoder {
 						writer: w,
 						err:    err,
 					}
+				},
+			},
+			bufferPool: &sync.Pool{
+				New: func() interface{} {
+					return new(bytes.Buffer)
+				},
+			},
+		}
+	case BrotliEncoding:
+		return &brotliEncoder{
+			brWriterPool: &sync.Pool{
+				New: func() interface{} {
+					return brotli.NewWriterLevel(io.Discard, level.Int())
 				},
 			},
 			bufferPool: &sync.Pool{
@@ -139,6 +153,39 @@ func (d *flateEncoder) Decode(data []byte, vPtr interface{}) error {
 	r := flate.NewReader(bytes.NewBuffer(data))
 	defer r.Close()
 
+	if err := json.NewDecoder(r).Decode(vPtr); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+type brotliEncoder struct {
+	brWriterPool *sync.Pool
+	bufferPool   *sync.Pool
+}
+
+func (b *brotliEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
+	w := b.brWriterPool.Get().(*brotli.Writer)
+	defer b.brWriterPool.Put(w)
+
+	buf := b.bufferPool.Get().(*bytes.Buffer)
+	buf.Reset()
+	w.Reset(buf)
+
+	if _, err := io.Copy(w, rc); err != nil {
+		return nil, err
+	}
+
+	if err := w.Close(); err != nil {
+		return nil, err
+	}
+
+	return buf, nil
+}
+
+func (b *brotliEncoder) Decode(data []byte, vPtr interface{}) error {
+	r := brotli.NewReader(bytes.NewBuffer(data))
 	if err := json.NewDecoder(r).Decode(vPtr); err != nil {
 		return err
 	}
