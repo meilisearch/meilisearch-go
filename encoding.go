@@ -91,7 +91,7 @@ func (g *gzipEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 	buf.Reset()
 	w.writer.Reset(buf)
 
-	if _, err := io.Copy(w.writer, rc); err != nil {
+	if _, err := copyZeroAlloc(w.writer, rc); err != nil {
 		return nil, err
 	}
 
@@ -138,7 +138,7 @@ func (d *flateEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 	buf.Reset()
 	w.writer.Reset(buf)
 
-	if _, err := io.Copy(w.writer, rc); err != nil {
+	if _, err := copyZeroAlloc(w.writer, rc); err != nil {
 		return nil, err
 	}
 
@@ -173,7 +173,7 @@ func (b *brotliEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 	buf.Reset()
 	w.Reset(buf)
 
-	if _, err := io.Copy(w, rc); err != nil {
+	if _, err := copyZeroAlloc(w, rc); err != nil {
 		return nil, err
 	}
 
@@ -191,4 +191,24 @@ func (b *brotliEncoder) Decode(data []byte, vPtr interface{}) error {
 	}
 
 	return nil
+}
+
+var copyBufPool = sync.Pool{
+	New: func() interface{} {
+		return make([]byte, 4096)
+	},
+}
+
+func copyZeroAlloc(w io.Writer, r io.Reader) (int64, error) {
+	if wt, ok := r.(io.WriterTo); ok {
+		return wt.WriteTo(w)
+	}
+	if rt, ok := w.(io.ReaderFrom); ok {
+		return rt.ReadFrom(r)
+	}
+	vbuf := copyBufPool.Get()
+	buf := vbuf.([]byte)
+	n, err := io.CopyBuffer(w, r, buf)
+	copyBufPool.Put(vbuf)
+	return n, err
 }
