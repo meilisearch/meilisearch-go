@@ -3,8 +3,11 @@ package meilisearch
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"github.com/stretchr/testify/assert"
 	"io"
+	"strings"
+	"sync"
 	"testing"
 )
 
@@ -164,4 +167,86 @@ func TestBrotliEncoder_InvalidData(t *testing.T) {
 	var decoded mockData
 	err := encoder.Decode([]byte("invalid data"), &decoded)
 	assert.Error(t, err, "decoding invalid data should produce an error")
+}
+
+func TestCopyZeroAlloc(t *testing.T) {
+	t.Run("RegularCopy", func(t *testing.T) {
+		src := strings.NewReader("hello world")
+		dst := &bytes.Buffer{}
+
+		n, err := copyZeroAlloc(dst, src)
+		assert.NoError(t, err, "copy should not produce an error")
+		assert.Equal(t, int64(11), n, "copy length should be 11")
+		assert.Equal(t, "hello world", dst.String(), "destination should contain the copied data")
+	})
+
+	t.Run("EmptySource", func(t *testing.T) {
+		src := strings.NewReader("")
+		dst := &bytes.Buffer{}
+
+		n, err := copyZeroAlloc(dst, src)
+		assert.NoError(t, err, "copy should not produce an error")
+		assert.Equal(t, int64(0), n, "copy length should be 0")
+		assert.Equal(t, "", dst.String(), "destination should be empty")
+	})
+
+	t.Run("LargeDataCopy", func(t *testing.T) {
+		data := strings.Repeat("a", 10000)
+		src := strings.NewReader(data)
+		dst := &bytes.Buffer{}
+
+		n, err := copyZeroAlloc(dst, src)
+		assert.NoError(t, err, "copy should not produce an error")
+		assert.Equal(t, int64(len(data)), n, "copy length should match the source data length")
+		assert.Equal(t, data, dst.String(), "destination should contain the copied data")
+	})
+
+	t.Run("ErrorOnWrite", func(t *testing.T) {
+		src := strings.NewReader("hello world")
+		dst := &errorWriter{}
+
+		n, err := copyZeroAlloc(dst, src)
+		assert.Error(t, err, "copy should produce an error")
+		assert.Equal(t, int64(0), n, "copy length should be 0 due to the error")
+		assert.Equal(t, "write error", err.Error(), "error should match expected error")
+	})
+
+	t.Run("ErrorOnRead", func(t *testing.T) {
+		src := &errorReader{}
+		dst := &bytes.Buffer{}
+
+		n, err := copyZeroAlloc(dst, src)
+		assert.Error(t, err, "copy should produce an error")
+		assert.Equal(t, int64(0), n, "copy length should be 0 due to the error")
+		assert.Equal(t, "read error", err.Error(), "error should match expected error")
+	})
+
+	t.Run("ConcurrentAccess", func(t *testing.T) {
+		var wg sync.WaitGroup
+		src := strings.NewReader("concurrent data")
+		dst := &bytes.Buffer{}
+
+		for i := 0; i < 10; i++ {
+			wg.Add(1)
+			go func() {
+				defer wg.Done()
+				_, _ = copyZeroAlloc(dst, src)
+			}()
+		}
+		wg.Wait()
+
+		assert.Equal(t, "concurrent data", dst.String(), "destination should contain the copied data")
+	})
+}
+
+type errorWriter struct{}
+
+func (e *errorWriter) Write(p []byte) (int, error) {
+	return 0, errors.New("write error")
+}
+
+type errorReader struct{}
+
+func (e *errorReader) Read(p []byte) (int, error) {
+	return 0, errors.New("read error")
 }
