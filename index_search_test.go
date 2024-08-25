@@ -7,6 +7,118 @@ import (
 	"testing"
 )
 
+func TestIndex_SearchWithContentEncoding(t *testing.T) {
+	tests := []struct {
+		Name            string
+		ContentEncoding ContentEncoding
+		Query           string
+		Request         *SearchRequest
+		FacetRequest    *FacetSearchRequest
+		Response        *SearchResponse
+		FacetResponse   *FacetSearchResponse
+	}{
+		{
+			Name:            "SearchResultWithGzipEncoding",
+			ContentEncoding: GzipEncoding,
+			Query:           "prince",
+			Request: &SearchRequest{
+				IndexUID: "indexUID",
+			},
+			FacetRequest: &FacetSearchRequest{
+				FacetName:  "tag",
+				FacetQuery: "Novel",
+			},
+			FacetResponse: &FacetSearchResponse{
+				FacetHits: []interface{}{
+					map[string]interface{}{
+						"value": "Novel", "count": float64(5),
+					},
+				},
+				FacetQuery: "Novel",
+			},
+			Response: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+			},
+		},
+		{
+			Name:            "SearchResultWithBrotliEncoding",
+			ContentEncoding: BrotliEncoding,
+			Query:           "prince",
+			Request: &SearchRequest{
+				IndexUID: "indexUID",
+			},
+			Response: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+			},
+			FacetRequest: &FacetSearchRequest{
+				FacetName:  "tag",
+				FacetQuery: "Novel",
+			},
+			FacetResponse: &FacetSearchResponse{
+				FacetHits: []interface{}{
+					map[string]interface{}{
+						"value": "Novel", "count": float64(5),
+					},
+				},
+				FacetQuery: "Novel",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			sv := setup(t, "", WithContentEncoding(tt.ContentEncoding, DefaultCompression))
+			setUpIndexForFaceting(sv)
+			i := sv.Index(tt.Request.IndexUID)
+			t.Cleanup(cleanup(sv))
+
+			got, err := i.Search(tt.Query, tt.Request)
+			require.NoError(t, err)
+			require.Equal(t, len(tt.Response.Hits), len(got.Hits))
+
+			gotJson, err := i.SearchRaw(tt.Query, tt.Request)
+			require.NoError(t, err)
+
+			var resp SearchResponse
+			err = json.Unmarshal(*gotJson, &resp)
+			require.NoError(t, err, "error unmarshalling raw got SearchResponse")
+			require.Equal(t, len(tt.Response.Hits), len(resp.Hits))
+
+			task, err := i.UpdateFilterableAttributes(&[]string{"tag"})
+			require.NoError(t, err)
+			testWaitForTask(t, i, task)
+
+			gotJson, err = i.FacetSearch(tt.FacetRequest)
+			require.NoError(t, err)
+			var gotFacet FacetSearchResponse
+			err = json.Unmarshal(*gotJson, &gotFacet)
+			require.NoError(t, err, "error unmarshalling raw got SearchResponse")
+			require.NoError(t, err)
+			require.Equal(t, len(gotFacet.FacetHits), len(tt.FacetResponse.FacetHits))
+		})
+	}
+}
+
 func TestIndex_SearchRaw(t *testing.T) {
 	sv := setup(t, "")
 
