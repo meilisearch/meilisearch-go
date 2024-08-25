@@ -18,17 +18,13 @@ type client struct {
 	apiKey          string
 	bufferPool      *sync.Pool
 	encoder         encoder
-	contentEncoding string
+	contentEncoding ContentEncoding
 }
 
 type internalRequest struct {
-	endpoint string
-	method   string
-
-	contentType  string
-	reqEncoding  bool
-	respEncoding bool
-
+	endpoint        string
+	method          string
+	contentType     string
 	withRequest     interface{}
 	withResponse    interface{}
 	withQueryParams map[string]string
@@ -51,7 +47,7 @@ func newClient(cli *http.Client, host, apiKey string, ce ContentEncoding, cl Enc
 	}
 
 	if !ce.IsZero() {
-		c.contentEncoding = ce.String()
+		c.contentEncoding = ce
 		c.encoder = newEncoding(ce, cl)
 	}
 
@@ -167,7 +163,7 @@ func (c *client) sendRequest(
 			body = buf
 		}
 
-		if req.reqEncoding && c.encoder != nil {
+		if !c.contentEncoding.IsZero() {
 			body, err = c.encoder.Encode(body)
 			if err != nil {
 				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
@@ -190,12 +186,12 @@ func (c *client) sendRequest(
 		request.Header.Set("Authorization", "Bearer "+c.apiKey)
 	}
 
-	if req.respEncoding && c.encoder != nil {
-		request.Header.Set("Accept-Encoding", c.contentEncoding)
+	if req.withResponse != nil && !c.contentEncoding.IsZero() {
+		request.Header.Set("Accept-Encoding", c.contentEncoding.String())
 	}
 
-	if req.reqEncoding && c.encoder != nil {
-		request.Header.Set("Content-Encoding", c.contentEncoding)
+	if req.withRequest != nil && !c.contentEncoding.IsZero() {
+		request.Header.Set("Content-Encoding", c.contentEncoding.String())
 	}
 
 	request.Header.Set("User-Agent", GetQualifiedVersion())
@@ -240,7 +236,7 @@ func (c *client) handleStatusCode(req *internalRequest, statusCode int, body []b
 
 func (c *client) handleResponse(req *internalRequest, body []byte, internalError *Error) (err error) {
 	if req.withResponse != nil {
-		if req.respEncoding && c.encoder != nil {
+		if !c.contentEncoding.IsZero() {
 			if err := c.encoder.Decode(body, req.withResponse); err != nil {
 				return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
 			}

@@ -72,10 +72,24 @@ func TestExecuteRequest(t *testing.T) {
 				_, _ = w.Write(res.Bytes())
 				w.WriteHeader(http.StatusOK)
 			}
-
 		} else if r.Method == http.MethodPost && r.URL.Path == "/test-post" {
 			w.WriteHeader(http.StatusCreated)
-			_, _ = w.Write([]byte(`{"message":"post successful"}`))
+			msg := []byte(`{"message":"post successful"}`)
+			_, _ = w.Write(msg)
+
+		} else if r.Method == http.MethodPost && r.URL.Path == "/test-post-encoding" {
+			w.WriteHeader(http.StatusCreated)
+			msg := []byte(`{"message":"post successful"}`)
+
+			enc := r.Header.Get("Accept-Encoding")
+			if len(enc) != 0 {
+				e := newEncoding(ContentEncoding(enc), DefaultCompression)
+				b, err := e.Encode(bytes.NewReader(msg))
+				require.NoError(t, err)
+				_, _ = w.Write(b.Bytes())
+				return
+			}
+			_, _ = w.Write(msg)
 		} else if r.URL.Path == "/test-bad-request" {
 			w.WriteHeader(http.StatusBadRequest)
 			_, _ = w.Write([]byte(`{"message":"bad request"}`))
@@ -236,11 +250,10 @@ func TestExecuteRequest(t *testing.T) {
 		{
 			name: "Test request encoding gzip",
 			internalReq: &internalRequest{
-				endpoint:            "/test-post",
+				endpoint:            "/test-post-encoding",
 				method:              http.MethodPost,
 				withRequest:         map[string]string{"key": "value"},
 				contentType:         contentTypeJSON,
-				reqEncoding:         true,
 				withResponse:        &mockResponse{},
 				acceptedStatusCodes: []int{http.StatusCreated},
 			},
@@ -251,11 +264,10 @@ func TestExecuteRequest(t *testing.T) {
 		{
 			name: "Test request encoding deflate",
 			internalReq: &internalRequest{
-				endpoint:            "/test-post",
+				endpoint:            "/test-post-encoding",
 				method:              http.MethodPost,
 				withRequest:         map[string]string{"key": "value"},
 				contentType:         contentTypeJSON,
-				reqEncoding:         true,
 				withResponse:        &mockResponse{},
 				acceptedStatusCodes: []int{http.StatusCreated},
 			},
@@ -266,11 +278,10 @@ func TestExecuteRequest(t *testing.T) {
 		{
 			name: "Test request encoding brotli",
 			internalReq: &internalRequest{
-				endpoint:            "/test-post",
+				endpoint:            "/test-post-encoding",
 				method:              http.MethodPost,
 				withRequest:         map[string]string{"key": "value"},
 				contentType:         contentTypeJSON,
-				reqEncoding:         true,
 				withResponse:        &mockResponse{},
 				acceptedStatusCodes: []int{http.StatusCreated},
 			},
@@ -284,7 +295,6 @@ func TestExecuteRequest(t *testing.T) {
 				endpoint:            "/test-get-encoding",
 				method:              http.MethodGet,
 				withRequest:         nil,
-				respEncoding:        true,
 				withResponse:        &mockData{},
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
@@ -298,7 +308,6 @@ func TestExecuteRequest(t *testing.T) {
 				endpoint:            "/test-get-encoding",
 				method:              http.MethodGet,
 				withRequest:         nil,
-				respEncoding:        true,
 				withResponse:        &mockData{},
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
@@ -312,7 +321,6 @@ func TestExecuteRequest(t *testing.T) {
 				endpoint:            "/test-get-encoding",
 				method:              http.MethodGet,
 				withRequest:         nil,
-				respEncoding:        true,
 				withResponse:        &mockData{},
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
@@ -328,8 +336,6 @@ func TestExecuteRequest(t *testing.T) {
 				contentType:         contentTypeJSON,
 				withRequest:         &mockData{Name: "foo", Age: 30},
 				withResponse:        &mockData{},
-				reqEncoding:         true,
-				respEncoding:        true,
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
 			expectedResp:    &mockData{Name: "foo", Age: 30},
