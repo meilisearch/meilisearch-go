@@ -3,9 +3,9 @@ package meilisearch
 import (
 	"bytes"
 	"compress/flate"
+	"compress/gzip"
 	"encoding/json"
 	"github.com/andybalholm/brotli"
-	"github.com/klauspost/compress/gzip"
 	"io"
 	"sync"
 )
