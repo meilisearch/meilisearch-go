@@ -223,19 +223,27 @@ func TestCopyZeroAlloc(t *testing.T) {
 
 	t.Run("ConcurrentAccess", func(t *testing.T) {
 		var wg sync.WaitGroup
-		src := strings.NewReader("concurrent data")
+		data := "concurrent data"
+		var mu sync.Mutex
 		dst := &bytes.Buffer{}
 
 		for i := 0; i < 10; i++ {
 			wg.Add(1)
 			go func() {
 				defer wg.Done()
-				_, _ = copyZeroAlloc(dst, src)
+				src := strings.NewReader(data) // each goroutine gets its own reader
+				buf := &bytes.Buffer{}         // each goroutine uses a separate buffer
+				_, _ = copyZeroAlloc(buf, src)
+				mu.Lock()
+				defer mu.Unlock()
+				dst.Write(buf.Bytes()) // safely combine results
 			}()
 		}
 		wg.Wait()
 
-		assert.Equal(t, "concurrent data", dst.String(), "destination should contain the copied data")
+		mu.Lock()
+		assert.Equal(t, strings.Repeat(data, 10), dst.String(), "destination should contain the copied data")
+		mu.Unlock()
 	})
 }
 
