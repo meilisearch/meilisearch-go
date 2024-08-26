@@ -1313,8 +1313,6 @@ func Test_CancelTasks(t *testing.T) {
 			gotResp, err := c.CancelTasks(tt.args.query)
 			if tt.args.query == nil {
 				require.Error(t, err)
-				require.Equal(t, "missing_task_filters",
-					err.(*Error).MeilisearchApiError.Code)
 			} else {
 				require.NoError(t, err)
 

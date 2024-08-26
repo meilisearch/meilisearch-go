@@ -48,6 +48,6 @@ func TestOptions_WithContentEncoding(t *testing.T) {
 	m, ok := meili.(*meilisearch)
 	require.True(t, ok)
 
-	require.Equal(t, m.client.contentEncoding, GzipEncoding.String())
+	require.Equal(t, m.client.contentEncoding, GzipEncoding)
 	require.NotNil(t, m.client.encoder)
 }
