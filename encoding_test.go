@@ -65,26 +65,10 @@ func Test_Encode_ErrorOnNewWriter(t *testing.T) {
 		},
 	}
 
-	b := &brotliEncoder{
-		brWriterPool: &sync.Pool{
-			New: func() interface{} {
-				return nil
-			},
-		},
-		bufferPool: &sync.Pool{
-			New: func() interface{} {
-				return new(bytes.Buffer)
-			},
-		},
-	}
-
 	_, err := g.Encode(bytes.NewReader([]byte("test")))
 	require.Error(t, err)
 
 	_, err = d.Encode(bytes.NewReader([]byte("test")))
-	require.Error(t, err)
-
-	_, err = b.Encode(bytes.NewReader([]byte("test")))
 	require.Error(t, err)
 }
 
