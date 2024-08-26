@@ -65,6 +65,7 @@ func (c *client) executeRequest(ctx context.Context, req *internalRequest) error
 			Message: "empty meilisearch message",
 		},
 		StatusCodeExpected: req.acceptedStatusCodes,
+		encoder:            c.encoder,
 	}
 
 	resp, err := c.sendRequest(ctx, req, internalError)
