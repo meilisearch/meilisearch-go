@@ -2,9 +2,13 @@ package meilisearch
 
 import (
 	"bytes"
+	"compress/flate"
+	"compress/gzip"
 	"encoding/json"
 	"errors"
+	"github.com/andybalholm/brotli"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"io"
 	"strings"
 	"sync"
@@ -14,6 +18,137 @@ import (
 type mockData struct {
 	Name string
 	Age  int
+}
+
+type errorWriter struct{}
+
+func (e *errorWriter) Write(p []byte) (int, error) {
+	return 0, errors.New("write error")
+}
+
+type errorReader struct{}
+
+func (e *errorReader) Read(p []byte) (int, error) {
+	return 0, errors.New("read error")
+}
+
+func Test_Encode_ErrorOnNewWriter(t *testing.T) {
+	g := &gzipEncoder{
+		gzWriterPool: &sync.Pool{
+			New: func() interface{} {
+				return &gzipWriter{
+					writer: nil,
+					err:    errors.New("new writer error"),
+				}
+			},
+		},
+		bufferPool: &sync.Pool{
+			New: func() interface{} {
+				return new(bytes.Buffer)
+			},
+		},
+	}
+
+	d := &flateEncoder{
+		flWriterPool: &sync.Pool{
+			New: func() interface{} {
+				return &flateWriter{
+					writer: nil,
+					err:    errors.New("new writer error"),
+				}
+			},
+		},
+		bufferPool: &sync.Pool{
+			New: func() interface{} {
+				return new(bytes.Buffer)
+			},
+		},
+	}
+
+	b := &brotliEncoder{
+		brWriterPool: &sync.Pool{
+			New: func() interface{} {
+				return nil
+			},
+		},
+		bufferPool: &sync.Pool{
+			New: func() interface{} {
+				return new(bytes.Buffer)
+			},
+		},
+	}
+
+	_, err := g.Encode(bytes.NewReader([]byte("test")))
+	require.Error(t, err)
+
+	_, err = d.Encode(bytes.NewReader([]byte("test")))
+	require.Error(t, err)
+
+	_, err = b.Encode(bytes.NewReader([]byte("test")))
+	require.Error(t, err)
+}
+
+func Test_Encode_ErrorInCopyZeroAlloc(t *testing.T) {
+	g := &gzipEncoder{
+		gzWriterPool: &sync.Pool{
+			New: func() interface{} {
+				w, _ := gzip.NewWriterLevel(io.Discard, gzip.DefaultCompression)
+				return &gzipWriter{
+					writer: w,
+					err:    nil,
+				}
+			},
+		},
+		bufferPool: &sync.Pool{
+			New: func() interface{} {
+				return new(bytes.Buffer)
+			},
+		},
+	}
+
+	d := &flateEncoder{
+		flWriterPool: &sync.Pool{
+			New: func() interface{} {
+				w, err := flate.NewWriter(io.Discard, flate.DefaultCompression)
+				return &flateWriter{
+					writer: w,
+					err:    err,
+				}
+			},
+		},
+		bufferPool: &sync.Pool{
+			New: func() interface{} {
+				return new(bytes.Buffer)
+			},
+		},
+	}
+
+	b := &brotliEncoder{
+		brWriterPool: &sync.Pool{
+			New: func() interface{} {
+				return brotli.NewWriterLevel(io.Discard, brotli.DefaultCompression)
+			},
+		},
+		bufferPool: &sync.Pool{
+			New: func() interface{} {
+				return new(bytes.Buffer)
+			},
+		},
+	}
+
+	_, err := g.Encode(&errorReader{})
+	require.Error(t, err)
+
+	_, err = d.Encode(&errorReader{})
+	require.Error(t, err)
+
+	_, err = b.Encode(&errorReader{})
+	require.Error(t, err)
+}
+
+func Test_InvalidContentType(t *testing.T) {
+	enc := newEncoding("invalid", DefaultCompression)
+	require.Nil(t, enc)
 }
 
 func TestGzipEncoder(t *testing.T) {
@@ -35,6 +170,10 @@ func TestGzipEncoder(t *testing.T) {
 	err = encoder.Decode(encodedData.Bytes(), &decoded)
 	assert.NoError(t, err, "decoding should not produce an error")
 	assert.Equal(t, original, &decoded, "decoded data should match the original")
+
+	var invalidType int
+	err = encoder.Decode(encodedData.Bytes(), &invalidType)
+	assert.Error(t, err)
 }
 
 func TestDeflateEncoder(t *testing.T) {
@@ -56,6 +195,10 @@ func TestDeflateEncoder(t *testing.T) {
 	err = encoder.Decode(encodedData.Bytes(), &decoded)
 	assert.NoError(t, err, "decoding should not produce an error")
 	assert.Equal(t, original, &decoded, "decoded data should match the original")
+
+	var invalidType int
+	err = encoder.Decode(encodedData.Bytes(), &invalidType)
+	assert.Error(t, err)
 }
 
 func TestBrotliEncoder(t *testing.T) {
@@ -77,6 +220,10 @@ func TestBrotliEncoder(t *testing.T) {
 	err = encoder.Decode(encodedData.Bytes(), &decoded)
 	assert.NoError(t, err, "decoding should not produce an error")
 	assert.Equal(t, original, &decoded, "decoded data should match the original")
+
+	var invalidType int
+	err = encoder.Decode(encodedData.Bytes(), &invalidType)
+	assert.Error(t, err)
 }
 
 func TestGzipEncoder_EmptyData(t *testing.T) {
@@ -245,16 +392,4 @@ func TestCopyZeroAlloc(t *testing.T) {
 		assert.Equal(t, strings.Repeat(data, 10), dst.String(), "destination should contain the copied data")
 		mu.Unlock()
 	})
-}
-
-type errorWriter struct{}
-
-func (e *errorWriter) Write(p []byte) (int, error) {
-	return 0, errors.New("write error")
-}
-
-type errorReader struct{}
-
-func (e *errorReader) Read(p []byte) (int, error) {
-	return 0, errors.New("read error")
 }

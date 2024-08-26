@@ -87,15 +87,15 @@ func (g *gzipEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 		return nil, w.err
 	}
 
+	defer func() {
+		_ = w.writer.Close()
+	}()
+
 	buf := g.bufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
 	w.writer.Reset(buf)
 
 	if _, err := copyZeroAlloc(w.writer, rc); err != nil {
-		return nil, err
-	}
-
-	if err := w.writer.Close(); err != nil {
 		return nil, err
 	}
 
@@ -107,7 +107,9 @@ func (g *gzipEncoder) Decode(data []byte, vPtr interface{}) error {
 	if err != nil {
 		return err
 	}
-	defer r.Close()
+	defer func() {
+		_ = r.Close()
+	}()
 
 	if err := json.NewDecoder(r).Decode(vPtr); err != nil {
 		return err
@@ -134,6 +136,10 @@ func (d *flateEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 		return nil, w.err
 	}
 
+	defer func() {
+		_ = w.writer.Close()
+	}()
+
 	buf := d.bufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
 	w.writer.Reset(buf)
@@ -142,16 +148,14 @@ func (d *flateEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 		return nil, err
 	}
 
-	if err := w.writer.Close(); err != nil {
-		return nil, err
-	}
-
 	return buf, nil
 }
 
 func (d *flateEncoder) Decode(data []byte, vPtr interface{}) error {
 	r := flate.NewReader(bytes.NewBuffer(data))
-	defer r.Close()
+	defer func() {
+		_ = r.Close()
+	}()
 
 	if err := json.NewDecoder(r).Decode(vPtr); err != nil {
 		return err
@@ -167,17 +171,16 @@ type brotliEncoder struct {
 
 func (b *brotliEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 	w := b.brWriterPool.Get().(*brotli.Writer)
-	defer b.brWriterPool.Put(w)
+	defer func() {
+		_ = w.Close()
+		b.brWriterPool.Put(w)
+	}()
 
 	buf := b.bufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
 	w.Reset(buf)
 
 	if _, err := copyZeroAlloc(w, rc); err != nil {
-		return nil, err
-	}
-
-	if err := w.Close(); err != nil {
 		return nil, err
 	}
 
