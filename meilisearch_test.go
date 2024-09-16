@@ -2187,6 +2187,12 @@ func Test_ListIndex(t *testing.T) {
 			WantErr: false,
 		},
 		{
+			Name:            "Basic get list of indexes with deflate encoding",
+			Indexes:         []string{"foo", "bar"},
+			ContentEncoding: DeflateEncoding,
+			WantErr:         false,
+		},
+		{
 			Name:            "Basic get list of indexes with encoding",
 			Indexes:         []string{"foo", "bar"},
 			ContentEncoding: BrotliEncoding,

@@ -42,6 +42,30 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 			},
 		},
 		{
+			Name:            "TestIndexBasicAddDocumentsWithDeflate",
+			ContentEncoding: DeflateEncoding,
+			Request: []map[string]interface{}{
+				{"ID": "123", "Name": "Pride and Prejudice"},
+			},
+			Response: struct {
+				WantResp *TaskInfo
+				DocResp  DocumentsResult
+			}{WantResp: &TaskInfo{
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    TaskTypeDocumentAdditionOrUpdate,
+			},
+				DocResp: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"ID": "123", "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
+			},
+		},
+		{
 			Name:            "TestIndexBasicAddDocumentsWithBrotli",
 			ContentEncoding: BrotliEncoding,
 			Request: []map[string]interface{}{

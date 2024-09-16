@@ -2,8 +2,8 @@ package meilisearch
 
 import (
 	"bytes"
-	"compress/flate"
 	"compress/gzip"
+	"compress/zlib"
 	"encoding/json"
 	"github.com/andybalholm/brotli"
 	"io"
@@ -38,7 +38,7 @@ func newEncoding(ce ContentEncoding, level EncodingCompressionLevel) encoder {
 		return &flateEncoder{
 			flWriterPool: &sync.Pool{
 				New: func() interface{} {
-					w, err := flate.NewWriter(io.Discard, level.Int())
+					w, err := zlib.NewWriterLevel(io.Discard, level.Int())
 					return &flateWriter{
 						writer: w,
 						err:    err,
@@ -124,7 +124,7 @@ type flateEncoder struct {
 }
 
 type flateWriter struct {
-	writer *flate.Writer
+	writer *zlib.Writer
 	err    error
 }
 
@@ -152,7 +152,11 @@ func (d *flateEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 }
 
 func (d *flateEncoder) Decode(data []byte, vPtr interface{}) error {
-	r := flate.NewReader(bytes.NewBuffer(data))
+	r, err := zlib.NewReader(bytes.NewBuffer(data))
+	if err != nil {
+		return err
+	}
+
 	defer func() {
 		_ = r.Close()
 	}()

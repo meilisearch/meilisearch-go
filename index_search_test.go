@@ -51,6 +51,39 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			},
 		},
 		{
+			Name:            "SearchResultWithDeflateEncoding",
+			ContentEncoding: DeflateEncoding,
+			Query:           "prince",
+			Request: &SearchRequest{
+				IndexUID: "indexUID",
+			},
+			Response: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(456), "title": "Le Petit Prince",
+					},
+					map[string]interface{}{
+						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					},
+				},
+				EstimatedTotalHits: 2,
+				Offset:             0,
+				Limit:              20,
+			},
+			FacetRequest: &FacetSearchRequest{
+				FacetName:  "tag",
+				FacetQuery: "Novel",
+			},
+			FacetResponse: &FacetSearchResponse{
+				FacetHits: []interface{}{
+					map[string]interface{}{
+						"value": "Novel", "count": float64(5),
+					},
+				},
+				FacetQuery: "Novel",
+			},
+		},
+		{
 			Name:            "SearchResultWithBrotliEncoding",
 			ContentEncoding: BrotliEncoding,
 			Query:           "prince",

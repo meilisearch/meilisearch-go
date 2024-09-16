@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/flate"
 	"compress/gzip"
+	"compress/zlib"
 	"encoding/json"
 	"errors"
 	"github.com/andybalholm/brotli"
@@ -54,7 +55,6 @@ func Test_Encode_ErrorOnNewWriter(t *testing.T) {
 			New: func() interface{} {
 				return &flateWriter{
 					writer: nil,
-					err:    errors.New("new writer error"),
 				}
 			},
 		},
@@ -93,7 +93,7 @@ func Test_Encode_ErrorInCopyZeroAlloc(t *testing.T) {
 	d := &flateEncoder{
 		flWriterPool: &sync.Pool{
 			New: func() interface{} {
-				w, err := flate.NewWriter(io.Discard, flate.DefaultCompression)
+				w, err := zlib.NewWriterLevel(io.Discard, flate.DefaultCompression)
 				return &flateWriter{
 					writer: w,
 					err:    err,
