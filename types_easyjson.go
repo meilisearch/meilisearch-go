@@ -5369,6 +5369,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo36(in *jlexer.Lexer,
 		switch key {
 		case "source":
 			out.Source = string(in.String())
+		case "url":
+			out.URL = string(in.String())
 		case "apiKey":
 			out.ApiKey = string(in.String())
 		case "model":
@@ -5395,6 +5397,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo36(out *jwriter.Writ
 		const prefix string = ",\"source\":"
 		out.RawString(prefix[1:])
 		out.String(string(in.Source))
+	}
+	if in.URL != "" {
+		const prefix string = ",\"url\":"
+		out.RawString(prefix)
+		out.String(string(in.URL))
 	}
 	if in.ApiKey != "" {
 		const prefix string = ",\"apiKey\":"
