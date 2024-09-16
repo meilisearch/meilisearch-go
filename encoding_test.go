@@ -55,6 +55,7 @@ func Test_Encode_ErrorOnNewWriter(t *testing.T) {
 			New: func() interface{} {
 				return &flateWriter{
 					writer: nil,
+					err:    errors.New("new writer error"),
 				}
 			},
 		},
