@@ -4,14 +4,14 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 	"math"
-	"reflect"
 	"strings"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func Test_Version(t *testing.T) {
@@ -1985,7 +1985,7 @@ func TestClient_MultiSearch(t *testing.T) {
 			args: args{
 				client: sv,
 				queries: &MultiSearchRequest{
-					[]*SearchRequest{
+					Queries: []*SearchRequest{
 						{
 							IndexUID: "TestClientMultiSearchOneIndex",
 							Query:    "wonder",
@@ -2017,7 +2017,7 @@ func TestClient_MultiSearch(t *testing.T) {
 			args: args{
 				client: sv,
 				queries: &MultiSearchRequest{
-					[]*SearchRequest{
+					Queries: []*SearchRequest{
 						{
 							IndexUID: "TestClientMultiSearchOnTwoIndexes1",
 							Query:    "wonder",
@@ -2066,11 +2066,43 @@ func TestClient_MultiSearch(t *testing.T) {
 			},
 		},
 		{
+			name: "TestClientMultiSearchWithFederation",
+			args: args{
+				client: sv,
+				queries: &MultiSearchRequest{
+					Queries: []*SearchRequest{
+						{
+							IndexUID: "TestClientMultiSearchOnTwoIndexes1",
+							Query:    "wonder",
+						},
+						{
+							IndexUID: "TestClientMultiSearchOnTwoIndexes2",
+							Query:    "prince",
+						},
+					},
+					Federation: &MultiSearchFederation{},
+				},
+				UIDS: []string{"TestClientMultiSearchOnTwoIndexes1", "TestClientMultiSearchOnTwoIndexes2"},
+			},
+			want: &MultiSearchResponse{
+				Results: nil,
+				Hits: []interface{}{
+					map[string]interface{}{"_federation": map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes2", "queriesPosition": 1.0, "weightedRankingScore": 0.8787878787878788}, "book_id": 456.0, "title": "Le Petit Prince"},
+					map[string]interface{}{"_federation": map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes1", "queriesPosition": 0.0, "weightedRankingScore": 0.8712121212121212}, "book_id": 1.0, "title": "Alice In Wonderland"},
+					map[string]interface{}{"_federation": map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes2", "queriesPosition": 1.0, "weightedRankingScore": 0.8333333333333334}, "book_id": 4.0, "title": "Harry Potter and the Half-Blood Prince"}},
+				ProcessingTimeMs:   0,
+				Offset:             0,
+				Limit:              20,
+				EstimatedTotalHits: 3,
+				SemanticHitCount:   0,
+			},
+		},
+		{
 			name: "TestClientMultiSearchNoIndex",
 			args: args{
 				client: sv,
 				queries: &MultiSearchRequest{
-					[]*SearchRequest{
+					Queries: []*SearchRequest{
 						{
 							Query: "",
 						},
@@ -2094,17 +2126,10 @@ func TestClient_MultiSearch(t *testing.T) {
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {
+				require.NoError(t, err)
 				require.NotNil(t, got)
-				for i := 0; i < len(tt.want.Results); i++ {
-					if !reflect.DeepEqual(got.Results[i].Hits, tt.want.Results[i].Hits) {
-						t.Errorf("Client.MultiSearch() = %v, want %v", got.Results[i].Hits, tt.want.Results[i].Hits)
-					}
-					require.Equal(t, tt.want.Results[i].EstimatedTotalHits, got.Results[i].EstimatedTotalHits)
-					require.Equal(t, tt.want.Results[i].Offset, got.Results[i].Offset)
-					require.Equal(t, tt.want.Results[i].Limit, got.Results[i].Limit)
-					require.Equal(t, tt.want.Results[i].Query, got.Results[i].Query)
-					require.Equal(t, tt.want.Results[i].IndexUID, got.Results[i].IndexUID)
-				}
+				got.ProcessingTimeMs = 0 // Can vary.
+				require.Equal(t, got, tt.want)
 			}
 		})
 	}
