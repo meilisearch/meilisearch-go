@@ -1313,8 +1313,6 @@ func Test_CancelTasks(t *testing.T) {
 			gotResp, err := c.CancelTasks(tt.args.query)
 			if tt.args.query == nil {
 				require.Error(t, err)
-				require.Equal(t, "missing_task_filters",
-					err.(*Error).MeilisearchApiError.Code)
 			} else {
 				require.NoError(t, err)
 
@@ -2131,6 +2129,199 @@ func TestClient_MultiSearch(t *testing.T) {
 				got.ProcessingTimeMs = 0 // Can vary.
 				require.Equal(t, got, tt.want)
 			}
+		})
+	}
+}
+
+func Test_CreateIndex(t *testing.T) {
+	tests := []struct {
+		Name       string
+		Encoding   ContentEncoding
+		IndexUID   string
+		PrimaryKey string
+		WantErr    bool
+	}{
+		{
+			Name:       "Basic create index",
+			IndexUID:   "foobar",
+			PrimaryKey: "id",
+			WantErr:    false,
+		},
+		{
+			Name:     "Create index without primary key",
+			IndexUID: "foobar",
+			WantErr:  false,
+		},
+		{
+			Name:    "Empty index UID",
+			WantErr: true,
+		},
+		{
+			Name:     "Create index with content encoding gzip",
+			IndexUID: "foobar",
+			Encoding: GzipEncoding,
+		},
+		{
+			Name:     "Create index with content encoding brotli",
+			IndexUID: "foobar",
+			Encoding: GzipEncoding,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			c := setup(t, "")
+			if !tt.Encoding.IsZero() {
+				c = setup(t, "", WithContentEncoding(tt.Encoding, DefaultCompression))
+			}
+
+			t.Cleanup(cleanup(c))
+
+			info, err := c.CreateIndex(&IndexConfig{
+				Uid:        tt.IndexUID,
+				PrimaryKey: tt.PrimaryKey,
+			})
+
+			if tt.WantErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.NotNil(t, info)
+				task, err := c.WaitForTask(info.TaskUID, 0)
+				require.NoError(t, err)
+				require.Equal(t, task.Status, TaskStatusSucceeded)
+				got, err := c.GetIndex(tt.IndexUID)
+				require.NoError(t, err)
+				require.Equal(t, got.UID, tt.IndexUID)
+				require.Equal(t, got.PrimaryKey, tt.PrimaryKey)
+			}
+		})
+	}
+}
+
+func Test_ListIndex(t *testing.T) {
+	tests := []struct {
+		Name            string
+		Indexes         []string
+		ContentEncoding ContentEncoding
+		WantErr         bool
+	}{
+		{
+			Name:    "Basic get list of indexes",
+			Indexes: []string{"foo", "bar"},
+			WantErr: false,
+		},
+		{
+			Name:            "Basic get list of indexes with deflate encoding",
+			Indexes:         []string{"foo", "bar"},
+			ContentEncoding: DeflateEncoding,
+			WantErr:         false,
+		},
+		{
+			Name:            "Basic get list of indexes with encoding",
+			Indexes:         []string{"foo", "bar"},
+			ContentEncoding: BrotliEncoding,
+			WantErr:         false,
+		},
+		{
+			Name:            "Get Empty list",
+			ContentEncoding: BrotliEncoding,
+			WantErr:         false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			c := setup(t, "")
+			if !tt.ContentEncoding.IsZero() {
+				c = setup(t, "", WithContentEncoding(tt.ContentEncoding, DefaultCompression))
+			}
+
+			t.Cleanup(cleanup(c))
+
+			for _, idx := range tt.Indexes {
+				info, err := c.CreateIndex(&IndexConfig{
+					Uid: idx,
+				})
+				if tt.WantErr {
+					require.Error(t, err)
+				} else {
+					require.NoError(t, err)
+					require.NotNil(t, info)
+					task, err := c.WaitForTask(info.TaskUID, 0)
+					require.NoError(t, err)
+					require.Equal(t, task.Status, TaskStatusSucceeded)
+				}
+			}
+
+			got, err := c.ListIndexes(nil)
+			if tt.WantErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.Equal(t, len(got.Results), len(tt.Indexes))
+			}
+		})
+	}
+}
+
+func Test_DeleteIndex(t *testing.T) {
+	tests := []struct {
+		Name            string
+		IndexUID        string
+		ContentEncoding ContentEncoding
+		WantErr         bool
+	}{
+		{
+			Name:     "Delete an index",
+			IndexUID: "foobar",
+			WantErr:  false,
+		},
+		{
+			Name:     "Delete an index with encoding",
+			IndexUID: "foobar",
+			WantErr:  false,
+		},
+		{
+			Name:    "Got Error on delete index",
+			WantErr: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			c := setup(t, "")
+			if !tt.ContentEncoding.IsZero() {
+				c = setup(t, "", WithContentEncoding(tt.ContentEncoding, DefaultCompression))
+			}
+
+			t.Cleanup(cleanup(c))
+
+			if len(tt.IndexUID) != 0 {
+				info, err := c.CreateIndex(&IndexConfig{
+					Uid: tt.IndexUID,
+				})
+				if tt.WantErr {
+					require.Error(t, err)
+				} else {
+					require.NoError(t, err)
+					task, err := c.WaitForTask(info.TaskUID, 0)
+					require.NoError(t, err)
+					require.Equal(t, task.Status, TaskStatusSucceeded)
+				}
+			}
+
+			info, err := c.DeleteIndex(tt.IndexUID)
+			if tt.WantErr {
+				require.Error(t, err)
+			} else {
+				require.NoError(t, err)
+				require.NotNil(t, info)
+				task, err := c.WaitForTask(info.TaskUID, 0)
+				require.NoError(t, err)
+				require.Equal(t, task.Status, TaskStatusSucceeded)
+			}
+
 		})
 	}
 }

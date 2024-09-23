@@ -178,6 +178,8 @@ func New(host string, options ...Option) ServiceManager {
 			defOpt.client,
 			host,
 			defOpt.apiKey,
+			defOpt.contentEncoding.encodingType,
+			defOpt.contentEncoding.level,
 		),
 	}
 }

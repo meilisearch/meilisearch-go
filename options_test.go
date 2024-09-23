@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"crypto/tls"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"
@@ -8,7 +9,45 @@ import (
 
 func TestOptions_WithCustomClient(t *testing.T) {
 	meili := setup(t, "", WithCustomClient(http.DefaultClient))
-	v, err := meili.Version()
-	require.NoError(t, err)
-	require.NotZero(t, v.PkgVersion)
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+
+	require.Equal(t, m.client.client, http.DefaultClient)
+}
+
+func TestOptions_WithCustomClientWithTLS(t *testing.T) {
+	tl := new(tls.Config)
+	meili := setup(t, "", WithCustomClientWithTLS(tl))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+
+	tr, ok := m.client.client.Transport.(*http.Transport)
+	require.True(t, ok)
+
+	require.Equal(t, tr.TLSClientConfig, tl)
+}
+
+func TestOptions_WithAPIKey(t *testing.T) {
+	meili := setup(t, "", WithAPIKey("foobar"))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+
+	require.Equal(t, m.client.apiKey, "foobar")
+}
+
+func TestOptions_WithContentEncoding(t *testing.T) {
+	meili := setup(t, "", WithContentEncoding(GzipEncoding, DefaultCompression))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+
+	require.Equal(t, m.client.contentEncoding, GzipEncoding)
+	require.NotNil(t, m.client.encoder)
 }

@@ -13,17 +13,18 @@ import (
 )
 
 type client struct {
-	client     *http.Client
-	host       string
-	apiKey     string
-	bufferPool *sync.Pool
+	client          *http.Client
+	host            string
+	apiKey          string
+	bufferPool      *sync.Pool
+	encoder         encoder
+	contentEncoding ContentEncoding
 }
 
 type internalRequest struct {
-	endpoint    string
-	method      string
-	contentType string
-
+	endpoint        string
+	method          string
+	contentType     string
 	withRequest     interface{}
 	withResponse    interface{}
 	withQueryParams map[string]string
@@ -33,8 +34,8 @@ type internalRequest struct {
 	functionName string
 }
 
-func newClient(cli *http.Client, host, apiKey string) *client {
-	return &client{
+func newClient(cli *http.Client, host, apiKey string, ce ContentEncoding, cl EncodingCompressionLevel) *client {
+	c := &client{
 		client: cli,
 		host:   host,
 		apiKey: apiKey,
@@ -44,6 +45,13 @@ func newClient(cli *http.Client, host, apiKey string) *client {
 			},
 		},
 	}
+
+	if !ce.IsZero() {
+		c.contentEncoding = ce
+		c.encoder = newEncoding(ce, cl)
+	}
+
+	return c
 }
 
 func (c *client) executeRequest(ctx context.Context, req *internalRequest) error {
@@ -57,6 +65,7 @@ func (c *client) executeRequest(ctx context.Context, req *internalRequest) error
 			Message: "empty meilisearch message",
 		},
 		StatusCodeExpected: req.acceptedStatusCodes,
+		encoder:            c.encoder,
 	}
 
 	resp, err := c.sendRequest(ctx, req, internalError)
@@ -118,10 +127,11 @@ func (c *client) sendRequest(
 		}
 
 		rawRequest := req.withRequest
+
+		buf := c.bufferPool.Get().(*bytes.Buffer)
+		buf.Reset()
+
 		if b, ok := rawRequest.([]byte); ok {
-			// If the request body is already a []byte then use it directly
-			buf := c.bufferPool.Get().(*bytes.Buffer)
-			buf.Reset()
 			buf.Write(b)
 			body = buf
 		} else if reader, ok := rawRequest.(io.Reader); ok {
@@ -136,21 +146,30 @@ func (c *client) sendRequest(
 			if marshaler, ok := rawRequest.(json.Marshaler); ok {
 				data, err = marshaler.MarshalJSON()
 				if err != nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest, fmt.Errorf("failed to marshal with MarshalJSON: %w", err))
+					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
+						fmt.Errorf("failed to marshal with MarshalJSON: %w", err))
 				}
 				if data == nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest, errors.New("MarshalJSON returned nil data"))
+					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
+						errors.New("MarshalJSON returned nil data"))
 				}
 			} else {
 				data, err = json.Marshal(rawRequest)
 				if err != nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest, fmt.Errorf("failed to marshal with json.Marshal: %w", err))
+					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
+						fmt.Errorf("failed to marshal with json.Marshal: %w", err))
 				}
 			}
-			buf := c.bufferPool.Get().(*bytes.Buffer)
-			buf.Reset()
 			buf.Write(data)
 			body = buf
+		}
+
+		if !c.contentEncoding.IsZero() {
+			body, err = c.encoder.Encode(body)
+			if err != nil {
+				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
+					fmt.Errorf("failed to marshal with json.Marshal: %w", err))
+			}
 		}
 	}
 
@@ -166,6 +185,14 @@ func (c *client) sendRequest(
 	}
 	if c.apiKey != "" {
 		request.Header.Set("Authorization", "Bearer "+c.apiKey)
+	}
+
+	if req.withResponse != nil && !c.contentEncoding.IsZero() {
+		request.Header.Set("Accept-Encoding", c.contentEncoding.String())
+	}
+
+	if req.withRequest != nil && !c.contentEncoding.IsZero() {
+		request.Header.Set("Content-Encoding", c.contentEncoding.String())
 	}
 
 	request.Header.Set("User-Agent", GetQualifiedVersion())
@@ -210,18 +237,23 @@ func (c *client) handleStatusCode(req *internalRequest, statusCode int, body []b
 
 func (c *client) handleResponse(req *internalRequest, body []byte, internalError *Error) (err error) {
 	if req.withResponse != nil {
-
-		internalError.ResponseToString = string(body)
-
-		var err error
-		if resp, ok := req.withResponse.(json.Unmarshaler); ok {
-			err = resp.UnmarshalJSON(body)
-			req.withResponse = resp
+		if !c.contentEncoding.IsZero() {
+			if err := c.encoder.Decode(body, req.withResponse); err != nil {
+				return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
+			}
 		} else {
-			err = json.Unmarshal(body, req.withResponse)
-		}
-		if err != nil {
-			return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
+			internalError.ResponseToString = string(body)
+
+			var err error
+			if resp, ok := req.withResponse.(json.Unmarshaler); ok {
+				err = resp.UnmarshalJSON(body)
+				req.withResponse = resp
+			} else {
+				err = json.Unmarshal(body, req.withResponse)
+			}
+			if err != nil {
+				return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
+			}
 		}
 	}
 	return nil

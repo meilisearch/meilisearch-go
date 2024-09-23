@@ -1,10 +1,12 @@
 package meilisearch
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
 	"github.com/stretchr/testify/require"
+	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
@@ -29,9 +31,65 @@ func TestExecuteRequest(t *testing.T) {
 		if r.Method == http.MethodGet && r.URL.Path == "/test-get" {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(`{"message":"get successful"}`))
+		} else if r.Method == http.MethodGet && r.URL.Path == "/test-get-encoding" {
+			encode := r.Header.Get("Accept-Encoding")
+			if len(encode) != 0 {
+				enc := newEncoding(ContentEncoding(encode), DefaultCompression)
+				d := &mockData{Name: "foo", Age: 30}
+
+				b, err := json.Marshal(d)
+				require.NoError(t, err)
+
+				res, err := enc.Encode(bytes.NewReader(b))
+				require.NoError(t, err)
+				_, _ = w.Write(res.Bytes())
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+			_, _ = w.Write([]byte("invalid message"))
+			w.WriteHeader(http.StatusInternalServerError)
+		} else if r.Method == http.MethodPost && r.URL.Path == "/test-req-resp-encoding" {
+			accept := r.Header.Get("Accept-Encoding")
+			ce := r.Header.Get("Content-Encoding")
+
+			reqEnc := newEncoding(ContentEncoding(ce), DefaultCompression)
+			respEnc := newEncoding(ContentEncoding(accept), DefaultCompression)
+			req := new(mockData)
+
+			if len(ce) != 0 {
+				b, err := io.ReadAll(r.Body)
+				require.NoError(t, err)
+
+				err = reqEnc.Decode(b, req)
+				require.NoError(t, err)
+			}
+
+			if len(accept) != 0 {
+				d, err := json.Marshal(req)
+				require.NoError(t, err)
+				res, err := respEnc.Encode(bytes.NewReader(d))
+				require.NoError(t, err)
+				_, _ = w.Write(res.Bytes())
+				w.WriteHeader(http.StatusOK)
+			}
 		} else if r.Method == http.MethodPost && r.URL.Path == "/test-post" {
 			w.WriteHeader(http.StatusCreated)
-			_, _ = w.Write([]byte(`{"message":"post successful"}`))
+			msg := []byte(`{"message":"post successful"}`)
+			_, _ = w.Write(msg)
+
+		} else if r.Method == http.MethodPost && r.URL.Path == "/test-post-encoding" {
+			w.WriteHeader(http.StatusCreated)
+			msg := []byte(`{"message":"post successful"}`)
+
+			enc := r.Header.Get("Accept-Encoding")
+			if len(enc) != 0 {
+				e := newEncoding(ContentEncoding(enc), DefaultCompression)
+				b, err := e.Encode(bytes.NewReader(msg))
+				require.NoError(t, err)
+				_, _ = w.Write(b.Bytes())
+				return
+			}
+			_, _ = w.Write(msg)
 		} else if r.URL.Path == "/test-bad-request" {
 			w.WriteHeader(http.StatusBadRequest)
 			_, _ = w.Write([]byte(`{"message":"bad request"}`))
@@ -47,13 +105,12 @@ func TestExecuteRequest(t *testing.T) {
 	}))
 	defer ts.Close()
 
-	client := newClient(&http.Client{}, ts.URL, "testApiKey")
-
 	tests := []struct {
-		name         string
-		internalReq  *internalRequest
-		expectedResp interface{}
-		wantErr      bool
+		name            string
+		internalReq     *internalRequest
+		expectedResp    interface{}
+		contentEncoding ContentEncoding
+		wantErr         bool
 	}{
 		{
 			name: "Successful GET request",
@@ -190,11 +247,108 @@ func TestExecuteRequest(t *testing.T) {
 			expectedResp: nil,
 			wantErr:      true,
 		},
+		{
+			name: "Test request encoding gzip",
+			internalReq: &internalRequest{
+				endpoint:            "/test-post-encoding",
+				method:              http.MethodPost,
+				withRequest:         map[string]string{"key": "value"},
+				contentType:         contentTypeJSON,
+				withResponse:        &mockResponse{},
+				acceptedStatusCodes: []int{http.StatusCreated},
+			},
+			expectedResp:    &mockResponse{Message: "post successful"},
+			contentEncoding: GzipEncoding,
+			wantErr:         false,
+		},
+		{
+			name: "Test request encoding deflate",
+			internalReq: &internalRequest{
+				endpoint:            "/test-post-encoding",
+				method:              http.MethodPost,
+				withRequest:         map[string]string{"key": "value"},
+				contentType:         contentTypeJSON,
+				withResponse:        &mockResponse{},
+				acceptedStatusCodes: []int{http.StatusCreated},
+			},
+			expectedResp:    &mockResponse{Message: "post successful"},
+			contentEncoding: DeflateEncoding,
+			wantErr:         false,
+		},
+		{
+			name: "Test request encoding brotli",
+			internalReq: &internalRequest{
+				endpoint:            "/test-post-encoding",
+				method:              http.MethodPost,
+				withRequest:         map[string]string{"key": "value"},
+				contentType:         contentTypeJSON,
+				withResponse:        &mockResponse{},
+				acceptedStatusCodes: []int{http.StatusCreated},
+			},
+			expectedResp:    &mockResponse{Message: "post successful"},
+			contentEncoding: BrotliEncoding,
+			wantErr:         false,
+		},
+		{
+			name: "Test response decoding gzip",
+			internalReq: &internalRequest{
+				endpoint:            "/test-get-encoding",
+				method:              http.MethodGet,
+				withRequest:         nil,
+				withResponse:        &mockData{},
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp:    &mockData{Name: "foo", Age: 30},
+			contentEncoding: GzipEncoding,
+			wantErr:         false,
+		},
+		{
+			name: "Test response decoding deflate",
+			internalReq: &internalRequest{
+				endpoint:            "/test-get-encoding",
+				method:              http.MethodGet,
+				withRequest:         nil,
+				withResponse:        &mockData{},
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp:    &mockData{Name: "foo", Age: 30},
+			contentEncoding: DeflateEncoding,
+			wantErr:         false,
+		},
+		{
+			name: "Test response decoding brotli",
+			internalReq: &internalRequest{
+				endpoint:            "/test-get-encoding",
+				method:              http.MethodGet,
+				withRequest:         nil,
+				withResponse:        &mockData{},
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp:    &mockData{Name: "foo", Age: 30},
+			contentEncoding: BrotliEncoding,
+			wantErr:         false,
+		},
+		{
+			name: "Test request and response encoding",
+			internalReq: &internalRequest{
+				endpoint:            "/test-req-resp-encoding",
+				method:              http.MethodPost,
+				contentType:         contentTypeJSON,
+				withRequest:         &mockData{Name: "foo", Age: 30},
+				withResponse:        &mockData{},
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp:    &mockData{Name: "foo", Age: 30},
+			contentEncoding: GzipEncoding,
+			wantErr:         false,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			err := client.executeRequest(context.Background(), tt.internalReq)
+			c := newClient(&http.Client{}, ts.URL, "testApiKey", tt.contentEncoding, DefaultCompression)
+
+			err := c.executeRequest(context.Background(), tt.internalReq)
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {

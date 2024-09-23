@@ -7,6 +7,123 @@ import (
 	"testing"
 )
 
+func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
+	tests := []struct {
+		Name            string
+		ContentEncoding ContentEncoding
+		Request         interface{}
+		Response        struct {
+			WantResp *TaskInfo
+			DocResp  DocumentsResult
+		}
+	}{
+		{
+			Name:            "TestIndexBasicAddDocumentsWithGzip",
+			ContentEncoding: GzipEncoding,
+			Request: []map[string]interface{}{
+				{"ID": "123", "Name": "Pride and Prejudice"},
+			},
+			Response: struct {
+				WantResp *TaskInfo
+				DocResp  DocumentsResult
+			}{WantResp: &TaskInfo{
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    TaskTypeDocumentAdditionOrUpdate,
+			},
+				DocResp: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"ID": "123", "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
+			},
+		},
+		{
+			Name:            "TestIndexBasicAddDocumentsWithDeflate",
+			ContentEncoding: DeflateEncoding,
+			Request: []map[string]interface{}{
+				{"ID": "123", "Name": "Pride and Prejudice"},
+			},
+			Response: struct {
+				WantResp *TaskInfo
+				DocResp  DocumentsResult
+			}{WantResp: &TaskInfo{
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    TaskTypeDocumentAdditionOrUpdate,
+			},
+				DocResp: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"ID": "123", "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
+			},
+		},
+		{
+			Name:            "TestIndexBasicAddDocumentsWithBrotli",
+			ContentEncoding: BrotliEncoding,
+			Request: []map[string]interface{}{
+				{"ID": "123", "Name": "Pride and Prejudice"},
+			},
+			Response: struct {
+				WantResp *TaskInfo
+				DocResp  DocumentsResult
+			}{WantResp: &TaskInfo{
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    TaskTypeDocumentAdditionOrUpdate,
+			},
+				DocResp: DocumentsResult{
+					Results: []map[string]interface{}{
+						{"ID": "123", "Name": "Pride and Prejudice"},
+					},
+					Limit:  3,
+					Offset: 0,
+					Total:  1,
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.Name, func(t *testing.T) {
+			sv := setup(t, "", WithContentEncoding(tt.ContentEncoding, DefaultCompression))
+			t.Cleanup(cleanup(sv))
+
+			i := sv.Index("indexUID")
+			gotResp, err := i.AddDocuments(&tt.Request)
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.Response.WantResp.TaskUID)
+			require.Equal(t, gotResp.Status, tt.Response.WantResp.Status)
+			require.Equal(t, gotResp.Type, tt.Response.WantResp.Type)
+			require.Equal(t, gotResp.IndexUID, "indexUID")
+			require.NotZero(t, gotResp.EnqueuedAt)
+			require.NoError(t, err)
+
+			testWaitForTask(t, i, gotResp)
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{
+				Limit: 3,
+			}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, tt.Response.DocResp, documents)
+
+			gotResp, err = i.UpdateDocuments(&tt.Request)
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.Response.WantResp.TaskUID)
+			require.Equal(t, gotResp.Status, tt.Response.WantResp.Status)
+			require.Equal(t, gotResp.Type, tt.Response.WantResp.Type)
+			require.NotZero(t, gotResp.EnqueuedAt)
+		})
+	}
+}
+
 func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 	sv := setup(t, "")
 	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{

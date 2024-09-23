@@ -99,6 +99,8 @@ type Error struct {
 	// ErrCode is the internal error code that represent the different step when executing a request that can produce
 	// an error.
 	ErrCode ErrCode
+
+	encoder
 }
 
 // Error return a well human formatted message.
@@ -136,8 +138,20 @@ func (e *Error) WithErrCode(err ErrCode, errs ...error) *Error {
 
 // ErrorBody add a body to an error
 func (e *Error) ErrorBody(body []byte) {
-	e.ResponseToString = string(body)
 	msg := meilisearchApiError{}
+
+	if e.encoder != nil {
+		err := e.encoder.Decode(body, &msg)
+		if err == nil {
+			e.MeilisearchApiError.Message = msg.Message
+			e.MeilisearchApiError.Code = msg.Code
+			e.MeilisearchApiError.Type = msg.Type
+			e.MeilisearchApiError.Link = msg.Link
+		}
+		return
+	}
+
+	e.ResponseToString = string(body)
 	err := json.Unmarshal(body, &msg)
 	if err == nil {
 		e.MeilisearchApiError.Message = msg.Message
