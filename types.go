@@ -542,15 +542,19 @@ type DocumentsResult struct {
 
 // ExperimentalFeaturesResult represents the experimental features result from the API.
 type ExperimentalFeaturesBase struct {
-	VectorStore *bool `json:"vectorStore,omitempty"`
-	LogsRoute   *bool `json:"logsRoute,omitempty"`
-	Metrics     *bool `json:"metrics,omitempty"`
+	VectorStore             *bool `json:"vectorStore,omitempty"`
+	LogsRoute               *bool `json:"logsRoute,omitempty"`
+	Metrics                 *bool `json:"metrics,omitempty"`
+	EditDocumentsByFunction *bool `json:"editDocumentsByFunction,omitempty"`
+	ContainsFilter          *bool `json:"containsFilter,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
-	VectorStore bool `json:"vectorStore"`
-	LogsRoute   bool `json:"logsRoute"`
-	Metrics     bool `json:"metrics"`
+	VectorStore             bool `json:"vectorStore"`
+	LogsRoute               bool `json:"logsRoute"`
+	Metrics                 bool `json:"metrics"`
+	EditDocumentsByFunction bool `json:"editDocumentsByFunction"`
+	ContainsFilter          bool `json:"containsFilter"`
 }
 
 type SwapIndexesParams struct {

@@ -30,6 +30,16 @@ func (ef *ExperimentalFeatures) SetMetrics(metrics bool) *ExperimentalFeatures {
 	return ef
 }
 
+func (ef *ExperimentalFeatures) SetEditDocumentsByFunction(editDocumentsByFunction bool) *ExperimentalFeatures {
+	ef.EditDocumentsByFunction = &editDocumentsByFunction
+	return ef
+}
+
+func (ef *ExperimentalFeatures) SetContainsFilter(containsFilter bool) *ExperimentalFeatures {
+	ef.ContainsFilter = &containsFilter
+	return ef
+}
+
 func (ef *ExperimentalFeatures) Get() (*ExperimentalFeaturesResult, error) {
 	return ef.GetWithContext(context.Background())
 }
@@ -59,9 +69,11 @@ func (ef *ExperimentalFeatures) Update() (*ExperimentalFeaturesResult, error) {
 
 func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*ExperimentalFeaturesResult, error) {
 	request := ExperimentalFeaturesBase{
-		VectorStore: ef.VectorStore,
-		LogsRoute:   ef.LogsRoute,
-		Metrics:     ef.Metrics,
+		VectorStore:             ef.VectorStore,
+		LogsRoute:               ef.LogsRoute,
+		Metrics:                 ef.Metrics,
+		EditDocumentsByFunction: ef.EditDocumentsByFunction,
+		ContainsFilter:          ef.ContainsFilter,
 	}
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{
