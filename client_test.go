@@ -77,6 +77,10 @@ func TestExecuteRequest(t *testing.T) {
 			msg := []byte(`{"message":"post successful"}`)
 			_, _ = w.Write(msg)
 
+		} else if r.Method == http.MethodGet && r.URL.Path == "/test-null-body" {
+			w.WriteHeader(http.StatusOK)
+			msg := []byte(`null`)
+			_, _ = w.Write(msg)
 		} else if r.Method == http.MethodPost && r.URL.Path == "/test-post-encoding" {
 			w.WriteHeader(http.StatusCreated)
 			msg := []byte(`{"message":"post successful"}`)
@@ -231,6 +235,18 @@ func TestExecuteRequest(t *testing.T) {
 				withResponse:        nil,
 				contentType:         "text/plain",
 				withRequest:         strings.NewReader("foobar"),
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp: nil,
+			wantErr:      false,
+		},
+		{
+			name: "Test null body response",
+			internalReq: &internalRequest{
+				endpoint:            "/test-null-body",
+				method:              http.MethodGet,
+				withResponse:        make([]byte, 0),
+				contentType:         "application/json",
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
 			expectedResp: nil,
