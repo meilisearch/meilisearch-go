@@ -35,8 +35,13 @@
 - [💫 Supercharge your Meilisearch experience](#-supercharge-your-meilisearch-experience)
 - [🔧 Installation](#-installation)
 - [🚀 Getting started](#-getting-started)
+  - [Add documents](#add-documents----omit-in-toc---)
+  - [Basic search](#basic-search----omit-in-toc---)
+  - [Custom search](#custom-search----omit-in-toc---)
+  - [Custom search with filter](#custom-search-with-filters----omit-in-toc---)
+  - [Customize client](#customize-client----omit-in-toc---)
 - [🤖 Compatibility with Meilisearch](#-compatibility-with-meilisearch)
-- [⚡️ Benchmark Performance](#-benchmark-performance)
+- [⚡️ Benchmark performance](#-benchmark-performance)
 - [💡 Learn more](#-learn-more)
 - [⚙️ Contributing](#️-contributing)
 
@@ -232,6 +237,35 @@ searchRes, err := index.Search("wonder",
   "estimatedTotalHits": 1,
   "processingTimeMs": 0,
   "query": "wonder"
+}
+```
+
+#### Customize Client <!-- omit in toc -->
+
+The client supports many customization options:
+
+- `WithCustomClient` sets a custom `http.Client`.
+- `WithCustomClientWithTLS` enables TLS for the HTTP client.
+- `WithAPIKey` sets the API key or master [key](https://www.meilisearch.com/docs/reference/api/keys).
+- `WithContentEncoding` configures [content encoding](https://www.meilisearch.com/docs/reference/api/overview#content-encoding) for requests and responses. Currently, gzip, deflate, and brotli are supported.
+- `WithCustomRetries` customizes retry behavior based on specific HTTP status codes (`retryOnStatus`, defaults to 502, 503, and 504) and allows setting the maximum number of retries.
+- `DisableRetries` disables the retry logic. By default, retries are enabled.
+
+```go
+package main
+
+import (
+    "net/http"
+    "github.com/meilisearch/meilisearch-go"
+)
+
+func main() {
+	client := meilisearch.New("http://localhost:7700",
+        meilisearch.WithAPIKey("foobar"),
+        meilisearch.WithCustomClient(http.DefaultClient),
+        meilisearch.WithContentEncoding(meilisearch.GzipEncoding, meilisearch.BestCompression),
+        meilisearch.WithCustomRetries([]int{502}, 20),
+    )
 }
 ```
 
