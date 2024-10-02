@@ -742,7 +742,7 @@ func TestIndex_Search(t *testing.T) {
 				client: sv,
 				query:  "王子",
 				request: &SearchRequest{
-					Locates: []Locate{JPN},
+					Locates: []string{"jpn"},
 				},
 			},
 			want: &SearchResponse{

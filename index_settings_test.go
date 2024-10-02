@@ -1704,7 +1704,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					LocalizedAttributes: []*LocalizedAttributes{
 						{
-							Locales:           []Locate{JPN, ENG},
+							Locales:           []string{"jpn", "eng"},
 							AttributePatterns: []string{"*_ja"},
 						},
 					},
@@ -1732,7 +1732,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				LocalizedAttributes: []*LocalizedAttributes{
 					{
-						Locales:           []Locate{JPN, ENG},
+						Locales:           []string{"jpn", "eng"},
 						AttributePatterns: []string{"*_ja"},
 					},
 				},
@@ -3722,7 +3722,7 @@ func Test_LocalizedAttributes(t *testing.T) {
 		require.Len(t, got, 0)
 
 		localized := &LocalizedAttributes{
-			Locales:           []Locate{JPN, ENG},
+			Locales:           []string{"jpn", "eng"},
 			AttributePatterns: []string{"*_ja"},
 		}
 
@@ -3748,7 +3748,7 @@ func Test_LocalizedAttributes(t *testing.T) {
 
 	t.Run("Test invalid locate", func(t *testing.T) {
 		invalidLocalized := &LocalizedAttributes{
-			Locales:           []Locate{"foo"},
+			Locales:           []string{"foo"},
 			AttributePatterns: []string{"*_ja"},
 		}
 

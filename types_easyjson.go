@@ -3272,16 +3272,16 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo18(in *jlexer.Lexer,
 				in.Delim('[')
 				if out.Locates == nil {
 					if !in.IsDelim(']') {
-						out.Locates = make([]Locate, 0, 4)
+						out.Locates = make([]string, 0, 4)
 					} else {
-						out.Locates = []Locate{}
+						out.Locates = []string{}
 					}
 				} else {
 					out.Locates = (out.Locates)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v85 Locate
-					v85 = Locate(in.String())
+					var v85 string
+					v85 = string(in.String())
 					out.Locates = append(out.Locates, v85)
 					in.WantComma()
 				}
@@ -4310,16 +4310,16 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo25(in *jlexer.Lexer,
 				in.Delim('[')
 				if out.Locales == nil {
 					if !in.IsDelim(']') {
-						out.Locales = make([]Locate, 0, 4)
+						out.Locales = make([]string, 0, 4)
 					} else {
-						out.Locales = []Locate{}
+						out.Locales = []string{}
 					}
 				} else {
 					out.Locales = (out.Locales)[:0]
 				}
 				for !in.IsDelim(']') {
-					var v111 Locate
-					v111 = Locate(in.String())
+					var v111 string
+					v111 = string(in.String())
 					out.Locales = append(out.Locales, v111)
 					in.WantComma()
 				}

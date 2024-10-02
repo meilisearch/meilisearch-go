@@ -90,7 +90,7 @@ type Settings struct {
 }
 
 type LocalizedAttributes struct {
-	Locales           []Locate `json:"locales,omitempty"`
+	Locales           []string `json:"locales,omitempty"`
 	AttributePatterns []string `json:"attributePatterns,omitempty"`
 }
 
@@ -437,7 +437,7 @@ type SearchRequest struct {
 	RetrieveVectors         bool                     `json:"retrieveVectors,omitempty"`
 	RankingScoreThreshold   float64                  `json:"rankingScoreThreshold,omitempty"`
 	FederationOptions       *SearchFederationOptions `json:"federationOptions,omitempty"`
-	Locates                 []Locate                 `json:"locales,omitempty"`
+	Locates                 []string                 `json:"locales,omitempty"`
 }
 
 type SearchFederationOptions struct {
