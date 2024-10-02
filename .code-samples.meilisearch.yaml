@@ -939,3 +939,15 @@ update_proximity_precision_settings_1: |-
   client.Index("books").UpdateProximityPrecision(ByAttribute)
 reset_proximity_precision_settings_1: |-
   client.Index("books").ResetProximityPrecision()
+search_parameter_reference_locales_1: |-
+  client.index("INDEX_NAME").Search("進撃の巨人", &meilisearch.SearchRequest{
+      Locates: []string{"jpn"}
+  })
+get_localized_attribute_settings_1: |-
+  client.index("INDEX_NAME").GetLocalizedAttributes()
+update_localized_attribute_settings_1: |-
+  client.index("INDEX_NAME").UpdateLocalizedAttributes([]*LocalizedAttributes{
+      { AttributePatterns: ["*_ja"], Locales: ["jpn"] },
+  })
+reset_localized_attribute_settings_1: |-
+  client.index("INDEX_NAME").ResetLocalizedAttributes()

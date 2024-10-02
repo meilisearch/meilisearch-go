@@ -323,6 +323,11 @@ func (c *client) handleResponse(req *internalRequest, body []byte, internalError
 		} else {
 			internalError.ResponseToString = string(body)
 
+			if internalError.ResponseToString == nullBody {
+				req.withResponse = nil
+				return nil
+			}
+
 			var err error
 			if resp, ok := req.withResponse.(json.Unmarshaler); ok {
 				err = resp.UnmarshalJSON(body)
