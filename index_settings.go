@@ -1102,3 +1102,65 @@ func (i *index) ResetProximityPrecisionWithContext(ctx context.Context) (*TaskIn
 	}
 	return resp, nil
 }
+
+func (i *index) GetLocalizedAttributes() ([]*LocalizedAttributes, error) {
+	return i.GetLocalizedAttributesWithContext(context.Background())
+}
+
+func (i *index) GetLocalizedAttributesWithContext(ctx context.Context) ([]*LocalizedAttributes, error) {
+	resp := make([]*LocalizedAttributes, 0)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/localized-attributes",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetLocalizedAttributes",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) UpdateLocalizedAttributes(request []*LocalizedAttributes) (*TaskInfo, error) {
+	return i.UpdateLocalizedAttributesWithContext(context.Background(), request)
+}
+
+func (i *index) UpdateLocalizedAttributesWithContext(ctx context.Context, request []*LocalizedAttributes) (*TaskInfo, error) {
+
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/localized-attributes",
+		method:              http.MethodPut,
+		withRequest:         request,
+		withResponse:        resp,
+		contentType:         contentTypeJSON,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateLocalizedAttributes",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) ResetLocalizedAttributes() (*TaskInfo, error) {
+	return i.ResetLocalizedAttributesWithContext(context.Background())
+}
+
+func (i *index) ResetLocalizedAttributesWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/localized-attributes",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetLocalizedAttributes",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

@@ -29,6 +29,8 @@ const (
 	HuffmanOnlyCompression EncodingCompressionLevel = -2
 	ConstantCompression    EncodingCompressionLevel = -2
 	StatelessCompression   EncodingCompressionLevel = -3
+
+	nullBody = "null"
 )
 
 func (c ContentEncoding) String() string { return string(c) }
@@ -80,10 +82,16 @@ type Settings struct {
 	Synonyms             map[string][]string    `json:"synonyms,omitempty"`
 	FilterableAttributes []string               `json:"filterableAttributes,omitempty"`
 	SortableAttributes   []string               `json:"sortableAttributes,omitempty"`
+	LocalizedAttributes  []*LocalizedAttributes `json:"localizedAttributes,omitempty"`
 	TypoTolerance        *TypoTolerance         `json:"typoTolerance,omitempty"`
 	Pagination           *Pagination            `json:"pagination,omitempty"`
 	Faceting             *Faceting              `json:"faceting,omitempty"`
 	Embedders            map[string]Embedder    `json:"embedders,omitempty"`
+}
+
+type LocalizedAttributes struct {
+	Locales           []string `json:"locales,omitempty"`
+	AttributePatterns []string `json:"attributePatterns,omitempty"`
 }
 
 // TypoTolerance is the type that represents the typo tolerance setting in meilisearch
@@ -429,6 +437,7 @@ type SearchRequest struct {
 	RetrieveVectors         bool                     `json:"retrieveVectors,omitempty"`
 	RankingScoreThreshold   float64                  `json:"rankingScoreThreshold,omitempty"`
 	FederationOptions       *SearchFederationOptions `json:"federationOptions,omitempty"`
+	Locates                 []string                 `json:"locales,omitempty"`
 }
 
 type SearchFederationOptions struct {

@@ -580,6 +580,28 @@ type IndexManager interface {
 	// https://www.meilisearch.com/docs/reference/api/settings#reset-proximity-precision-settings
 	ResetProximityPrecisionWithContext(ctx context.Context) (*TaskInfo, error)
 
+	// GetLocalizedAttributes get the localized attributes settings of an index
+	// https://www.meilisearch.com/docs/reference/api/settings#get-localized-attributes-settings
+	GetLocalizedAttributes() ([]*LocalizedAttributes, error)
+
+	// GetLocalizedAttributesWithContext get the localized attributes settings of an index using the provided context for cancellation
+	// https://www.meilisearch.com/docs/reference/api/settings#get-localized-attributes-settings
+	GetLocalizedAttributesWithContext(ctx context.Context) ([]*LocalizedAttributes, error)
+
+	// UpdateLocalizedAttributes update the localized attributes settings of an index
+	// https://www.meilisearch.com/docs/reference/api/settings#update-localized-attribute-settings
+	UpdateLocalizedAttributes(request []*LocalizedAttributes) (*TaskInfo, error)
+
+	// UpdateLocalizedAttributesWithContext update the localized attributes settings of an index using the provided context for cancellation
+	// https://www.meilisearch.com/docs/reference/api/settings#update-localized-attribute-settings
+	UpdateLocalizedAttributesWithContext(ctx context.Context, request []*LocalizedAttributes) (*TaskInfo, error)
+
+	// ResetLocalizedAttributes reset the localized attributes settings
+	ResetLocalizedAttributes() (*TaskInfo, error)
+
+	// ResetLocalizedAttributesWithContext reset the localized attributes settings using the provided context for cancellation
+	ResetLocalizedAttributesWithContext(ctx context.Context) (*TaskInfo, error)
+
 	// WaitForTask waits for a task to complete by its UID with the given interval.
 	WaitForTask(taskUID int64, interval time.Duration) (*Task, error)
 
