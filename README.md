@@ -29,17 +29,17 @@
 
 **Meilisearch** is an open-source search engine. [Learn more about Meilisearch.](https://github.com/meilisearch/Meilisearch)
 
-## Table of Contents <!-- omit in TOC -->
+## Table of Contents
 
 - [📖 Documentation](#-documentation)
 - [💫 Supercharge your Meilisearch experience](#-supercharge-your-meilisearch-experience)
 - [🔧 Installation](#-installation)
 - [🚀 Getting started](#-getting-started)
-  - [Add documents](#add-documents----omit-in-toc---)
-  - [Basic search](#basic-search----omit-in-toc---)
-  - [Custom search](#custom-search----omit-in-toc---)
-  - [Custom search with filter](#custom-search-with-filters----omit-in-toc---)
-  - [Customize client](#customize-client----omit-in-toc---)
+  - [Add documents](#add-documents)
+  - [Basic search](#basic-search)
+  - [Custom search](#custom-search)
+  - [Custom search with filter](#custom-search-with-filters)
+  - [Customize client](#customize-client)
 - [🤖 Compatibility with Meilisearch](#-compatibility-with-meilisearch)
 - [⚡️ Benchmark performance](#-benchmark-performance)
 - [💡 Learn more](#-learn-more)
@@ -63,7 +63,7 @@ With `go get` in command line:
 go get github.com/meilisearch/meilisearch-go
 ```
 
-### Run Meilisearch <!-- omit in toc -->
+### Run Meilisearch
 
 There are many easy ways to [download and run a Meilisearch instance](https://www.meilisearch.com/docs/learn/getting_started/installation).
 
@@ -81,7 +81,7 @@ NB: you can also download Meilisearch from **Homebrew** or **APT** or even run i
 
 ## 🚀 Getting started
 
-#### Add documents <!-- omit in toc -->
+#### Add documents
 
 ```go
 package main
@@ -120,7 +120,7 @@ func main() {
 
 With the `taskUID`, you can check the status (`enqueued`, `canceled`, `processing`, `succeeded` or `failed`) of your documents addition using the [task endpoint](https://www.meilisearch.com/docs/reference/api/tasks).
 
-#### Basic Search <!-- omit in toc -->
+#### Basic Search
 
 ```go
 package main
@@ -162,7 +162,7 @@ JSON output:
 }
 ```
 
-#### Custom Search <!-- omit in toc -->
+#### Custom Search
 
 All the supported options are described in the [search parameters](https://www.meilisearch.com/docs/reference/api/search#search-parameters) section of the documentation.
 
@@ -202,7 +202,7 @@ JSON output:
 }
 ```
 
-#### Custom Search With Filters <!-- omit in toc -->
+#### Custom Search With Filters
 
 If you want to enable filtering, you must add your attributes to the `filterableAttributes` index setting.
 
@@ -240,7 +240,7 @@ searchRes, err := index.Search("wonder",
 }
 ```
 
-#### Customize Client <!-- omit in toc -->
+#### Customize Client
 
 The client supports many customization options:
 
