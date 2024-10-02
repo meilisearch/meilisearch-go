@@ -940,12 +940,14 @@ update_proximity_precision_settings_1: |-
 reset_proximity_precision_settings_1: |-
   client.Index("books").ResetProximityPrecision()
 search_parameter_reference_locales_1: |-
-  client.index('INDEX_NAME').search('進撃の巨人', { locales: ['jpn'] })
+  client.index('INDEX_NAME').Search('進撃の巨人', &meilisearch.SearchRequest{
+      Locates: []Locate{JPN}
+  })
 get_localized_attribute_settings_1: |-
   client.index('INDEX_NAME').GetLocalizedAttributes()
 update_localized_attribute_settings_1: |-
-  client.index('INDEX_NAME').UpdateLocalizedAttributes([
-      { attributePatterns: ['jpn'], locales: ['*_ja'] },
-  ])
+  client.index('INDEX_NAME').UpdateLocalizedAttributes([]*LocalizedAttributes{
+      { AttributePatterns: ['*_ja'], Locales: [JPN] },
+  })
 reset_localized_attribute_settings_1: |-
   client.index('INDEX_NAME').ResetLocalizedAttributes()
