@@ -100,6 +100,10 @@ multi_search_1: |-
       },
     },
   })
+get_experimental_features_1: |-
+  client.ExperimentalFeatures().Get()
+update_experimental_features_1: |-
+  client.ExperimentalFeatures().SetMetrics(true).Update()
 facet_search_1: |-
   client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
     FacetQuery: "fiction",
@@ -919,7 +923,7 @@ update_separator_tokens_1: |-
     "&hellip;",
   })
 reset_separator_tokens_1: |-
-    client.Index("articles").ResetSeparatorTokens()
+  client.Index("articles").ResetSeparatorTokens()
 get_non_separator_tokens_1: |-
   client.Index("articles").GetNonSeparatorTokens()
 update_non_separator_tokens_1: |-
