@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/url"
 	"sync"
+	"time"
 )
 
 type client struct {
@@ -19,6 +20,18 @@ type client struct {
 	bufferPool      *sync.Pool
 	encoder         encoder
 	contentEncoding ContentEncoding
+	retryOnStatus   map[int]bool
+	disableRetry    bool
+	maxRetries      uint8
+	retryBackoff    func(attempt uint8) time.Duration
+}
+
+type clientConfig struct {
+	contentEncoding          ContentEncoding
+	encodingCompressionLevel EncodingCompressionLevel
+	retryOnStatus            map[int]bool
+	disableRetry             bool
+	maxRetries               uint8
 }
 
 type internalRequest struct {
@@ -34,7 +47,7 @@ type internalRequest struct {
 	functionName string
 }
 
-func newClient(cli *http.Client, host, apiKey string, ce ContentEncoding, cl EncodingCompressionLevel) *client {
+func newClient(cli *http.Client, host, apiKey string, cfg clientConfig) *client {
 	c := &client{
 		client: cli,
 		host:   host,
@@ -44,11 +57,28 @@ func newClient(cli *http.Client, host, apiKey string, ce ContentEncoding, cl Enc
 				return new(bytes.Buffer)
 			},
 		},
+		disableRetry:  cfg.disableRetry,
+		maxRetries:    cfg.maxRetries,
+		retryOnStatus: cfg.retryOnStatus,
 	}
 
-	if !ce.IsZero() {
-		c.contentEncoding = ce
-		c.encoder = newEncoding(ce, cl)
+	if c.retryOnStatus == nil {
+		c.retryOnStatus = map[int]bool{
+			502: true,
+			503: true,
+			504: true,
+		}
+	}
+
+	if !c.disableRetry && c.retryBackoff == nil {
+		c.retryBackoff = func(attempt uint8) time.Duration {
+			return time.Second * time.Duration(attempt)
+		}
+	}
+
+	if !cfg.contentEncoding.IsZero() {
+		c.contentEncoding = cfg.contentEncoding
+		c.encoder = newEncoding(cfg.contentEncoding, cfg.encodingCompressionLevel)
 	}
 
 	return c
@@ -197,12 +227,9 @@ func (c *client) sendRequest(
 
 	request.Header.Set("User-Agent", GetQualifiedVersion())
 
-	resp, err := c.client.Do(request)
+	resp, err := c.do(request, internalError)
 	if err != nil {
-		if errors.Is(err, context.DeadlineExceeded) {
-			return nil, internalError.WithErrCode(MeilisearchTimeoutError, err)
-		}
-		return nil, internalError.WithErrCode(MeilisearchCommunicationError, err)
+		return nil, err
 	}
 
 	if body != nil {
@@ -210,6 +237,58 @@ func (c *client) sendRequest(
 			c.bufferPool.Put(buf)
 		}
 	}
+	return resp, nil
+}
+
+func (c *client) do(req *http.Request, internalError *Error) (resp *http.Response, err error) {
+	retriesCount := uint8(0)
+
+	for {
+		resp, err = c.client.Do(req)
+		if err != nil {
+			if errors.Is(err, context.DeadlineExceeded) {
+				return nil, internalError.WithErrCode(MeilisearchTimeoutError, err)
+			}
+			return nil, internalError.WithErrCode(MeilisearchCommunicationError, err)
+		}
+
+		// Exit if retries are disabled
+		if c.disableRetry {
+			break
+		}
+
+		// Check if response status is retryable and we haven't exceeded max retries
+		if c.retryOnStatus[resp.StatusCode] && retriesCount < c.maxRetries {
+			retriesCount++
+
+			// Close response body to prevent memory leaks
+			resp.Body.Close()
+
+			// Handle backoff with context cancellation support
+			backoff := c.retryBackoff(retriesCount)
+			timer := time.NewTimer(backoff)
+
+			select {
+			case <-req.Context().Done():
+				err := req.Context().Err()
+				timer.Stop()
+				return nil, internalError.WithErrCode(MeilisearchTimeoutError, err)
+			case <-timer.C:
+				// Retry after backoff
+				timer.Stop()
+			}
+
+			continue
+		}
+
+		break
+	}
+
+	// Return error if retries exceeded the maximum limit
+	if !c.disableRetry && retriesCount >= c.maxRetries {
+		return nil, internalError.WithErrCode(MeilisearchMaxRetriesExceeded, nil)
+	}
+
 	return resp, nil
 }
 

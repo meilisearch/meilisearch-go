@@ -25,6 +25,8 @@ const (
 	MeilisearchTimeoutError
 	// MeilisearchCommunicationError impossible execute a request
 	MeilisearchCommunicationError
+	// MeilisearchMaxRetriesExceeded used max retries and exceeded
+	MeilisearchMaxRetriesExceeded
 )
 
 const (
@@ -35,6 +37,7 @@ const (
 	rawStringMeilisearchApiErrorWithoutMessage = `unaccepted status code found: ${statusCode} expected: ${statusCodeExpected}, MeilisearchApiError Message: ${message}`
 	rawStringMeilisearchTimeoutError           = `MeilisearchTimeoutError`
 	rawStringMeilisearchCommunicationError     = `MeilisearchCommunicationError unable to execute request`
+	rawStringMeilisearchMaxRetriesExceeded     = "failed to request and max retries exceeded"
 )
 
 func (e ErrCode) rawMessage() string {
@@ -51,6 +54,8 @@ func (e ErrCode) rawMessage() string {
 		return rawStringMeilisearchTimeoutError + " " + rawStringCtx
 	case MeilisearchCommunicationError:
 		return rawStringMeilisearchCommunicationError + " " + rawStringCtx
+	case MeilisearchMaxRetriesExceeded:
+		return rawStringMeilisearchMaxRetriesExceeded + " " + rawStringCtx
 	default:
 		return rawStringCtx
 	}

@@ -11,6 +11,7 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"time"
 )
 
 // Mock structures for testing
@@ -26,6 +27,8 @@ type mockJsonMarshaller struct {
 }
 
 func TestExecuteRequest(t *testing.T) {
+	retryCount := 0
+
 	// Create a mock server
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.Method == http.MethodGet && r.URL.Path == "/test-get" {
@@ -103,6 +106,15 @@ func TestExecuteRequest(t *testing.T) {
 		} else if r.URL.Path == "/io-reader" {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(`{"message":"io reader"}`))
+		} else if r.URL.Path == "/failed-retry" {
+			w.WriteHeader(http.StatusBadGateway)
+		} else if r.URL.Path == "/success-retry" {
+			if retryCount == 2 {
+				w.WriteHeader(http.StatusOK)
+				return
+			}
+			w.WriteHeader(http.StatusBadGateway)
+			retryCount++
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
@@ -114,6 +126,8 @@ func TestExecuteRequest(t *testing.T) {
 		internalReq     *internalRequest
 		expectedResp    interface{}
 		contentEncoding ContentEncoding
+		withTimeout     bool
+		disableRetry    bool
 		wantErr         bool
 	}{
 		{
@@ -358,13 +372,81 @@ func TestExecuteRequest(t *testing.T) {
 			contentEncoding: GzipEncoding,
 			wantErr:         false,
 		},
+		{
+			name: "Test successful retries",
+			internalReq: &internalRequest{
+				endpoint:            "/success-retry",
+				method:              http.MethodGet,
+				withResponse:        nil,
+				withRequest:         nil,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp: nil,
+			wantErr:      false,
+		},
+		{
+			name: "Test failed retries",
+			internalReq: &internalRequest{
+				endpoint:            "/failed-retry",
+				method:              http.MethodGet,
+				withResponse:        nil,
+				withRequest:         nil,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp: nil,
+			wantErr:      true,
+		},
+		{
+			name: "Test disable retries",
+			internalReq: &internalRequest{
+				endpoint:            "/test-get",
+				method:              http.MethodGet,
+				withResponse:        nil,
+				withRequest:         nil,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp: nil,
+			disableRetry: true,
+			wantErr:      false,
+		},
+		{
+			name: "Test request timeout on retries",
+			internalReq: &internalRequest{
+				endpoint:            "/failed-retry",
+				method:              http.MethodGet,
+				withResponse:        nil,
+				withRequest:         nil,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp: nil,
+			withTimeout:  true,
+			wantErr:      true,
+		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := newClient(&http.Client{}, ts.URL, "testApiKey", tt.contentEncoding, DefaultCompression)
+			c := newClient(&http.Client{}, ts.URL, "testApiKey", clientConfig{
+				contentEncoding:          tt.contentEncoding,
+				encodingCompressionLevel: DefaultCompression,
+				maxRetries:               3,
+				disableRetry:             tt.disableRetry,
+				retryOnStatus: map[int]bool{
+					502: true,
+					503: true,
+					504: true,
+				},
+			})
 
-			err := c.executeRequest(context.Background(), tt.internalReq)
+			ctx := context.Background()
+
+			if tt.withTimeout {
+				timeoutCtx, cancel := context.WithTimeout(ctx, 1*time.Second)
+				ctx = timeoutCtx
+				defer cancel()
+			}
+
+			err := c.executeRequest(ctx, tt.internalReq)
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {
@@ -373,6 +455,15 @@ func TestExecuteRequest(t *testing.T) {
 			}
 		})
 	}
+}
+
+func TestNewClientNilRetryOnStatus(t *testing.T) {
+	c := newClient(&http.Client{}, "", "", clientConfig{
+		maxRetries:    3,
+		retryOnStatus: nil,
+	})
+
+	require.NotNil(t, c.retryOnStatus)
 }
 
 func (m mockJsonMarshaller) MarshalJSON() ([]byte, error) {

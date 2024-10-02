@@ -182,8 +182,13 @@ func New(host string, options ...Option) ServiceManager {
 			defOpt.client,
 			host,
 			defOpt.apiKey,
-			defOpt.contentEncoding.encodingType,
-			defOpt.contentEncoding.level,
+			clientConfig{
+				contentEncoding:          defOpt.contentEncoding.encodingType,
+				encodingCompressionLevel: defOpt.contentEncoding.level,
+				disableRetry:             defOpt.disableRetry,
+				retryOnStatus:            defOpt.retryOnStatus,
+				maxRetries:               defOpt.maxRetries,
+			},
 		),
 	}
 }
