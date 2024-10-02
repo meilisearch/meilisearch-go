@@ -51,3 +51,22 @@ func TestOptions_WithContentEncoding(t *testing.T) {
 	require.Equal(t, m.client.contentEncoding, GzipEncoding)
 	require.NotNil(t, m.client.encoder)
 }
+
+func TestOptions_WithCustomRetries(t *testing.T) {
+	meili := setup(t, "", WithCustomRetries([]int{http.StatusInternalServerError}, 10))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+	require.True(t, m.client.retryOnStatus[http.StatusInternalServerError])
+	require.Equal(t, m.client.maxRetries, uint8(10))
+}
+
+func TestOptions_DisableRetries(t *testing.T) {
+	meili := setup(t, "", DisableRetries())
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+	require.Equal(t, m.client.disableRetry, true)
+}

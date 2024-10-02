@@ -15,6 +15,13 @@ var (
 		contentEncoding: &encodingOpt{
 			level: DefaultCompression,
 		},
+		retryOnStatus: map[int]bool{
+			502: true,
+			503: true,
+			504: true,
+		},
+		disableRetry: false,
+		maxRetries:   3,
 	}
 )
 
@@ -22,6 +29,9 @@ type meiliOpt struct {
 	client          *http.Client
 	apiKey          string
 	contentEncoding *encodingOpt
+	retryOnStatus   map[int]bool
+	disableRetry    bool
+	maxRetries      uint8
 }
 
 type encodingOpt struct {
@@ -67,6 +77,29 @@ func WithContentEncoding(encodingType ContentEncoding, level EncodingCompression
 			encodingType: encodingType,
 			level:        level,
 		}
+	}
+}
+
+// WithCustomRetries set retry on specific http error code and max retries (min: 1, max: 255)
+func WithCustomRetries(retryOnStatus []int, maxRetries uint8) Option {
+	return func(opt *meiliOpt) {
+		opt.retryOnStatus = make(map[int]bool)
+		for _, status := range retryOnStatus {
+			opt.retryOnStatus[status] = true
+		}
+
+		if maxRetries == 0 {
+			maxRetries = 1
+		}
+
+		opt.maxRetries = maxRetries
+	}
+}
+
+// DisableRetries disable retry logic in client
+func DisableRetries() Option {
+	return func(opt *meiliOpt) {
+		opt.disableRetry = true
 	}
 }
 
