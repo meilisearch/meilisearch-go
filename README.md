@@ -32,10 +32,11 @@
 ## Table of Contents <!-- omit in TOC -->
 
 - [📖 Documentation](#-documentation)
-- [⚡ Supercharge your Meilisearch experience](#-supercharge-your-meilisearch-experience)
+- [💫 Supercharge your Meilisearch experience](#-supercharge-your-meilisearch-experience)
 - [🔧 Installation](#-installation)
 - [🚀 Getting started](#-getting-started)
 - [🤖 Compatibility with Meilisearch](#-compatibility-with-meilisearch)
+- [⚡️ Benchmark Performance](#-benchmark-performance)
 - [💡 Learn more](#-learn-more)
 - [⚙️ Contributing](#️-contributing)
 
@@ -237,6 +238,25 @@ searchRes, err := index.Search("wonder",
 ## 🤖 Compatibility with Meilisearch
 
 This package guarantees compatibility with [version v1.x of Meilisearch](https://github.com/meilisearch/meilisearch/releases/latest), but some features may not be present. Please check the [issues](https://github.com/meilisearch/meilisearch-go/issues?q=is%3Aissue+is%3Aopen+label%3A%22good+first+issue%22+label%3Aenhancement) for more info.
+
+## ⚡️ Benchmark Performance
+
+The Meilisearch client performance was tested in [client_bench_test.go](/client_bench_test.go).
+
+```shell
+goos: linux
+goarch: amd64
+pkg: github.com/meilisearch/meilisearch-go
+cpu: AMD Ryzen 7 5700U with Radeon Graphics
+```
+
+**Results**
+
+```shell
+Benchmark_ExecuteRequest-16                  	   10000	    105880 ns/op	    7241 B/op	      87 allocs/op
+Benchmark_ExecuteRequestWithEncoding-16      	    2716	    455548 ns/op	 1041998 B/op	     169 allocs/op
+Benchmark_ExecuteRequestWithoutRetries-16    	       1	3002787257 ns/op	   56528 B/op	     332 allocs/op
+```
 
 ## 💡 Learn more
 
