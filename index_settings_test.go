@@ -259,6 +259,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				LocalizedAttributes:  nil,
 			},
 		},
 		{
@@ -284,6 +285,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				LocalizedAttributes:  nil,
 			},
 		},
 	}
@@ -893,6 +895,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				LocalizedAttributes:  nil,
 			},
 		},
 		{
@@ -920,6 +923,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				LocalizedAttributes:  nil,
 			},
 		},
 	}
@@ -1698,6 +1702,12 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					LocalizedAttributes: []*LocalizedAttributes{
+						{
+							Locales:           []Locate{JPN, ENG},
+							AttributePatterns: []string{"*_ja"},
+						},
+					},
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1720,6 +1730,12 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				LocalizedAttributes: []*LocalizedAttributes{
+					{
+						Locales:           []Locate{JPN, ENG},
+						AttributePatterns: []string{"*_ja"},
+					},
+				},
 			},
 		},
 		{
@@ -3686,4 +3702,57 @@ func Test_ProximityPrecision(t *testing.T) {
 	got, err = i.GetProximityPrecision()
 	require.NoError(t, err)
 	require.Equal(t, ByWord, got)
+}
+
+func Test_LocalizedAttributes(t *testing.T) {
+	c := setup(t, "")
+	t.Cleanup(cleanup(c))
+
+	indexID := "newIndexUID"
+	i := c.Index(indexID)
+	taskInfo, err := c.CreateIndex(&IndexConfig{Uid: indexID})
+	require.NoError(t, err)
+	testWaitForTask(t, i, taskInfo)
+
+	defer t.Cleanup(cleanup(c))
+
+	t.Run("Test valid locate", func(t *testing.T) {
+		got, err := i.GetLocalizedAttributes()
+		require.NoError(t, err)
+		require.Len(t, got, 0)
+
+		localized := &LocalizedAttributes{
+			Locales:           []Locate{JPN, ENG},
+			AttributePatterns: []string{"*_ja"},
+		}
+
+		task, err := i.UpdateLocalizedAttributes([]*LocalizedAttributes{localized})
+		require.NoError(t, err)
+		testWaitForTask(t, i, task)
+
+		got, err = i.GetLocalizedAttributes()
+		require.NoError(t, err)
+		require.NotNil(t, got)
+
+		require.Equal(t, localized.Locales, got[0].Locales)
+		require.Equal(t, localized.AttributePatterns, got[0].AttributePatterns)
+
+		task, err = i.ResetLocalizedAttributes()
+		require.NoError(t, err)
+		testWaitForTask(t, i, task)
+
+		got, err = i.GetLocalizedAttributes()
+		require.NoError(t, err)
+		require.Len(t, got, 0)
+	})
+
+	t.Run("Test invalid locate", func(t *testing.T) {
+		invalidLocalized := &LocalizedAttributes{
+			Locales:           []Locate{"foo"},
+			AttributePatterns: []string{"*_ja"},
+		}
+
+		_, err := i.UpdateLocalizedAttributes([]*LocalizedAttributes{invalidLocalized})
+		require.Error(t, err)
+	})
 }

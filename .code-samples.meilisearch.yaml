@@ -935,3 +935,13 @@ update_proximity_precision_settings_1: |-
   client.Index("books").UpdateProximityPrecision(ByAttribute)
 reset_proximity_precision_settings_1: |-
   client.Index("books").ResetProximityPrecision()
+search_parameter_reference_locales_1: |-
+  client.index('INDEX_NAME').search('進撃の巨人', { locales: ['jpn'] })
+get_localized_attribute_settings_1: |-
+  client.index('INDEX_NAME').GetLocalizedAttributes()
+update_localized_attribute_settings_1: |-
+  client.index('INDEX_NAME').UpdateLocalizedAttributes([
+      { attributePatterns: ['jpn'], locales: ['*_ja'] },
+  ])
+reset_localized_attribute_settings_1: |-
+  client.index('INDEX_NAME').ResetLocalizedAttributes()
