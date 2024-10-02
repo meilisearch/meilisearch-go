@@ -441,6 +441,15 @@ func TestExecuteRequest(t *testing.T) {
 	}
 }
 
+func TestNewClientNilRetryOnStatus(t *testing.T) {
+	c := newClient(&http.Client{}, "", "", clientConfig{
+		maxRetries:    3,
+		retryOnStatus: nil,
+	})
+
+	require.NotNil(t, c.retryOnStatus)
+}
+
 func (m mockJsonMarshaller) MarshalJSON() ([]byte, error) {
 	type Alias mockJsonMarshaller
 
