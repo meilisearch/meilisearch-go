@@ -60,6 +60,14 @@ func TestOptions_WithCustomRetries(t *testing.T) {
 	require.True(t, ok)
 	require.True(t, m.client.retryOnStatus[http.StatusInternalServerError])
 	require.Equal(t, m.client.maxRetries, uint8(10))
+
+	meili = setup(t, "", WithCustomRetries([]int{http.StatusInternalServerError}, 0))
+	require.NotNil(t, meili)
+
+	m, ok = meili.(*meilisearch)
+	require.True(t, ok)
+	require.True(t, m.client.retryOnStatus[http.StatusInternalServerError])
+	require.Equal(t, m.client.maxRetries, uint8(1))
 }
 
 func TestOptions_DisableRetries(t *testing.T) {
