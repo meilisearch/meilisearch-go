@@ -29,6 +29,8 @@ const (
 	HuffmanOnlyCompression EncodingCompressionLevel = -2
 	ConstantCompression    EncodingCompressionLevel = -2
 	StatelessCompression   EncodingCompressionLevel = -3
+
+	nullBody = "null"
 )
 
 func (c ContentEncoding) String() string { return string(c) }
@@ -80,10 +82,16 @@ type Settings struct {
 	Synonyms             map[string][]string    `json:"synonyms,omitempty"`
 	FilterableAttributes []string               `json:"filterableAttributes,omitempty"`
 	SortableAttributes   []string               `json:"sortableAttributes,omitempty"`
+	LocalizedAttributes  []*LocalizedAttributes `json:"localizedAttributes,omitempty"`
 	TypoTolerance        *TypoTolerance         `json:"typoTolerance,omitempty"`
 	Pagination           *Pagination            `json:"pagination,omitempty"`
 	Faceting             *Faceting              `json:"faceting,omitempty"`
 	Embedders            map[string]Embedder    `json:"embedders,omitempty"`
+}
+
+type LocalizedAttributes struct {
+	Locales           []string `json:"locales,omitempty"`
+	AttributePatterns []string `json:"attributePatterns,omitempty"`
 }
 
 // TypoTolerance is the type that represents the typo tolerance setting in meilisearch
@@ -429,6 +437,7 @@ type SearchRequest struct {
 	RetrieveVectors         bool                     `json:"retrieveVectors,omitempty"`
 	RankingScoreThreshold   float64                  `json:"rankingScoreThreshold,omitempty"`
 	FederationOptions       *SearchFederationOptions `json:"federationOptions,omitempty"`
+	Locates                 []string                 `json:"locales,omitempty"`
 }
 
 type SearchFederationOptions struct {
@@ -538,6 +547,23 @@ type DocumentsResult struct {
 	Limit   int64                    `json:"limit"`
 	Offset  int64                    `json:"offset"`
 	Total   int64                    `json:"total"`
+}
+
+// ExperimentalFeaturesResult represents the experimental features result from the API.
+type ExperimentalFeaturesBase struct {
+	VectorStore             *bool `json:"vectorStore,omitempty"`
+	LogsRoute               *bool `json:"logsRoute,omitempty"`
+	Metrics                 *bool `json:"metrics,omitempty"`
+	EditDocumentsByFunction *bool `json:"editDocumentsByFunction,omitempty"`
+	ContainsFilter          *bool `json:"containsFilter,omitempty"`
+}
+
+type ExperimentalFeaturesResult struct {
+	VectorStore             bool `json:"vectorStore"`
+	LogsRoute               bool `json:"logsRoute"`
+	Metrics                 bool `json:"metrics"`
+	EditDocumentsByFunction bool `json:"editDocumentsByFunction"`
+	ContainsFilter          bool `json:"containsFilter"`
 }
 
 type SwapIndexesParams struct {

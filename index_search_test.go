@@ -381,7 +381,7 @@ func TestIndex_Search(t *testing.T) {
 						"book_id": float64(123), "title": "Pride and Prejudice",
 					},
 				},
-				EstimatedTotalHits: 21,
+				EstimatedTotalHits: 22,
 				Offset:             0,
 				Limit:              1,
 			},
@@ -734,6 +734,28 @@ func TestIndex_Search(t *testing.T) {
 			},
 			want:    nil,
 			wantErr: true,
+		},
+		{
+			name: "TestIndexSearchWithLocate",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				query:  "王子",
+				request: &SearchRequest{
+					Locates: []string{"jpn"},
+				},
+			},
+			want: &SearchResponse{
+				Hits: []interface{}{
+					map[string]interface{}{
+						"book_id": float64(1050), "title": "星の王子さま",
+					},
+				},
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
+			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
@@ -1463,7 +1485,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 						"book_id": float64(7), "title": "Don Quixote",
 					},
 				},
-				EstimatedTotalHits: 21,
+				EstimatedTotalHits: 22,
 				Offset:             0,
 				Limit:              4,
 			},
