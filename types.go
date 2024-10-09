@@ -433,7 +433,7 @@ type SearchRequest struct {
 	IndexUID                string                   `json:"indexUid,omitempty"`
 	Query                   string                   `json:"q"`
 	Distinct                string                   `json:"distinct,omitempty"`
-	Hybrid                  *SearchRequestHybrid     `json:"hybrid,omitempty"`
+	Hybrid                  *SearchRequestHybrid     `json:"hybrid"`
 	RetrieveVectors         bool                     `json:"retrieveVectors,omitempty"`
 	RankingScoreThreshold   float64                  `json:"rankingScoreThreshold,omitempty"`
 	FederationOptions       *SearchFederationOptions `json:"federationOptions,omitempty"`
@@ -446,7 +446,7 @@ type SearchFederationOptions struct {
 
 type SearchRequestHybrid struct {
 	SemanticRatio float64 `json:"semanticRatio,omitempty"`
-	Embedder      string  `json:"embedder,omitempty"`
+	Embedder      string  `json:"embedder"`
 }
 
 type MultiSearchRequest struct {
@@ -517,7 +517,7 @@ type DocumentsQuery struct {
 // SimilarDocumentQuery is query parameters of similar documents
 type SimilarDocumentQuery struct {
 	Id                      interface{} `json:"id,omitempty"`
-	Embedder                string      `json:"embedder,omitempty"`
+	Embedder                string      `json:"embedder"`
 	AttributesToRetrieve    []string    `json:"attributesToRetrieve,omitempty"`
 	Offset                  int64       `json:"offset,omitempty"`
 	Limit                   int64       `json:"limit,omitempty"`
