@@ -3422,7 +3422,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 						"default": {
 							Source:           "openAi",
 							ApiKey:           "xxx",
-							Model:            "text-embedding-ada-002",
+							Model:            "text-embedding-3-small",
 							DocumentTemplate: "A movie titled '{{doc.title}}'",
 						},
 					},
