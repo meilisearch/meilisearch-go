@@ -398,3 +398,8 @@ func testParseNdjsonDocuments(t *testing.T, documents io.Reader) []map[string]in
 	require.NoError(t, scanner.Err())
 	return docs
 }
+
+func jsonRaw(v interface{}) []byte {
+	b, _ := json.Marshal(v)
+	return b
+}
