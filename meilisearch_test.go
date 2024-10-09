@@ -3,6 +3,7 @@ package meilisearch
 import (
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"math"
 	"strings"
@@ -1995,10 +1996,10 @@ func TestClient_MultiSearch(t *testing.T) {
 			want: &MultiSearchResponse{
 				Results: []SearchResponse{
 					{
-						Hits: []interface{}{
-							map[string]interface{}{
-								"book_id": float64(1),
-								"title":   "Alice In Wonderland",
+						Hits: []map[string]json.RawMessage{
+							{
+								"book_id": jsonRaw(float64(1)),
+								"title":   jsonRaw("Alice In Wonderland"),
 							},
 						},
 						EstimatedTotalHits: 1,
@@ -2031,10 +2032,10 @@ func TestClient_MultiSearch(t *testing.T) {
 			want: &MultiSearchResponse{
 				Results: []SearchResponse{
 					{
-						Hits: []interface{}{
-							map[string]interface{}{
-								"book_id": float64(1),
-								"title":   "Alice In Wonderland",
+						Hits: []map[string]json.RawMessage{
+							{
+								"book_id": jsonRaw(float64(1)),
+								"title":   jsonRaw("Alice In Wonderland"),
 							},
 						},
 						EstimatedTotalHits: 1,
@@ -2044,14 +2045,14 @@ func TestClient_MultiSearch(t *testing.T) {
 						IndexUID:           "TestClientMultiSearchOnTwoIndexes1",
 					},
 					{
-						Hits: []interface{}{
-							map[string]interface{}{
-								"book_id": float64(456),
-								"title":   "Le Petit Prince",
+						Hits: []map[string]json.RawMessage{
+							{
+								"book_id": jsonRaw(float64(456)),
+								"title":   jsonRaw("Le Petit Prince"),
 							},
-							map[string]interface{}{
-								"book_id": float64(4),
-								"title":   "Harry Potter and the Half-Blood Prince",
+							{
+								"book_id": jsonRaw(float64(4)),
+								"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 							},
 						},
 						EstimatedTotalHits: 2,
@@ -2084,10 +2085,23 @@ func TestClient_MultiSearch(t *testing.T) {
 			},
 			want: &MultiSearchResponse{
 				Results: nil,
-				Hits: []interface{}{
-					map[string]interface{}{"_federation": map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes2", "queriesPosition": 1.0, "weightedRankingScore": 0.8787878787878788}, "book_id": 456.0, "title": "Le Petit Prince"},
-					map[string]interface{}{"_federation": map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes1", "queriesPosition": 0.0, "weightedRankingScore": 0.8712121212121212}, "book_id": 1.0, "title": "Alice In Wonderland"},
-					map[string]interface{}{"_federation": map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes2", "queriesPosition": 1.0, "weightedRankingScore": 0.8333333333333334}, "book_id": 4.0, "title": "Harry Potter and the Half-Blood Prince"}},
+				Hits: []map[string]json.RawMessage{
+					{
+						"_federation": jsonRaw(map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes2", "queriesPosition": 1.0, "weightedRankingScore": 0.8787878787878788}),
+						"book_id":     jsonRaw(456.0),
+						"title":       jsonRaw("Le Petit Prince"),
+					},
+					{
+						"_federation": jsonRaw(map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes1", "queriesPosition": 0.0, "weightedRankingScore": 0.8712121212121212}),
+						"book_id":     jsonRaw(1.0),
+						"title":       jsonRaw("Alice In Wonderland"),
+					},
+					{
+						"_federation": jsonRaw(map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes2", "queriesPosition": 1.0, "weightedRankingScore": 0.8333333333333334}),
+						"book_id":     jsonRaw(4.0),
+						"title":       jsonRaw("Harry Potter and the Half-Blood Prince"),
+					},
+				},
 				ProcessingTimeMs:   0,
 				Offset:             0,
 				Limit:              20,

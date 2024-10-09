@@ -29,20 +29,24 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 				FacetQuery: "Novel",
 			},
 			FacetResponse: &FacetSearchResponse{
-				FacetHits: []interface{}{
-					map[string]interface{}{
-						"value": "Novel", "count": float64(5),
+				FacetHits: []map[string]json.RawMessage{
+					{
+						"value": jsonRaw("Novel"),
+						"count": jsonRaw(float64(5)),
 					},
 				},
 				FacetQuery: "Novel",
 			},
 			Response: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"Tag":     jsonRaw("Epic fantasy"),
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -58,12 +62,15 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 				IndexUID: "indexUID",
 			},
 			Response: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"Tag":     jsonRaw("Epic fantasy"),
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -75,9 +82,10 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 				FacetQuery: "Novel",
 			},
 			FacetResponse: &FacetSearchResponse{
-				FacetHits: []interface{}{
-					map[string]interface{}{
-						"value": "Novel", "count": float64(5),
+				FacetHits: []map[string]json.RawMessage{
+					{
+						"value": jsonRaw("Novel"),
+						"count": jsonRaw(float64(5)),
 					},
 				},
 				FacetQuery: "Novel",
@@ -91,12 +99,15 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 				IndexUID: "indexUID",
 			},
 			Response: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"Tag":     jsonRaw("Epic fantasy"),
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -108,9 +119,10 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 				FacetQuery: "Novel",
 			},
 			FacetResponse: &FacetSearchResponse{
-				FacetHits: []interface{}{
-					map[string]interface{}{
-						"value": "Novel", "count": float64(5),
+				FacetHits: []map[string]json.RawMessage{
+					{
+						"value": jsonRaw("Novel"),
+						"count": jsonRaw(float64(5)),
 					},
 				},
 				FacetQuery: "Novel",
@@ -180,12 +192,15 @@ func TestIndex_SearchRaw(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"Tag":     jsonRaw("Epic fantasy"),
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -228,13 +243,6 @@ func TestIndex_SearchRaw(t *testing.T) {
 			require.NoError(t, err, "error unmarshalling raw got SearchResponse")
 
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
-			for len := range got.Hits {
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
-			}
-			if tt.want.Hits[0].(map[string]interface{})["_formatted"] != nil {
-				require.Equal(t, tt.want.Hits[0].(map[string]interface{})["_formatted"], got.Hits[0].(map[string]interface{})["_formatted"])
-			}
 			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
 			require.Equal(t, tt.want.Limit, got.Limit)
@@ -282,12 +290,15 @@ func TestIndex_Search(t *testing.T) {
 				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"Tag":     jsonRaw("Epic fantasy"),
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -307,12 +318,15 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"Tag":     jsonRaw("Epic fantasy"),
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -330,12 +344,15 @@ func TestIndex_Search(t *testing.T) {
 				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"Tag": "Epic fantasy", "book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"Tag":     jsonRaw("Epic fantasy"),
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -355,9 +372,10 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -376,9 +394,10 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
 				},
 				EstimatedTotalHits: 22,
@@ -398,9 +417,10 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -420,12 +440,15 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"Tag":     jsonRaw("Epic fantasy"),
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -445,12 +468,15 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"Tag":     jsonRaw("Epic fantasy"),
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -471,12 +497,16 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(42), "title": "The Hitchhiker's Guide to the Galaxy",
-						"_formatted": map[string]interface{}{
-							"book_id": "42", "tag": "Epic fantasy", "title": "…Guide to…", "year": "1978",
-						},
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(42)),
+						"title":   jsonRaw("The Hitchhiker's Guide to the Galaxy"),
+						"_formatted": jsonRaw(map[string]interface{}{
+							"book_id": "42",
+							"tag":     "Epic fantasy",
+							"title":   "…Guide to…",
+							"year":    "1978",
+						}),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -498,12 +528,16 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(42), "title": "The Hitchhiker's Guide to the Galaxy",
-						"_formatted": map[string]interface{}{
-							"book_id": "42", "tag": "Epic fantasy", "title": "(ꈍᴗꈍ)Guide to(ꈍᴗꈍ)", "year": "1978",
-						},
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(42)),
+						"title":   jsonRaw("The Hitchhiker's Guide to the Galaxy"),
+						"_formatted": jsonRaw(map[string]interface{}{
+							"book_id": "42",
+							"tag":     "Epic fantasy",
+							"title":   "(ꈍᴗꈍ)Guide to(ꈍᴗꈍ)",
+							"year":    "1978",
+						}),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -524,12 +558,16 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
-						"_formatted": map[string]interface{}{
-							"book_id": "456", "tag": "Tale", "title": "Le Petit <em>Prince</em>", "year": "1943",
-						},
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
+						"_formatted": jsonRaw(map[string]interface{}{
+							"book_id": "456",
+							"title":   "Le Petit <em>Prince</em>",
+							"tag":     "Tale",
+							"year":    "1943",
+						}),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -552,12 +590,16 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
-						"_formatted": map[string]interface{}{
-							"book_id": "456", "tag": "Tale", "title": "Le Petit (⊃｡•́‿•̀｡)⊃ Prince ⊂(´• ω •`⊂)", "year": "1943",
-						},
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
+						"_formatted": jsonRaw(map[string]interface{}{
+							"book_id": "456",
+							"title":   "Le Petit (⊃｡•́‿•̀｡)⊃ Prince ⊂(´• ω •`⊂)",
+							"tag":     "Tale",
+							"year":    "1943",
+						}),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -577,18 +619,22 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
-					map[string]interface{}{
-						"book_id": float64(730), "title": "War and Peace",
+					{
+						"book_id": jsonRaw(float64(730)),
+						"title":   jsonRaw("War and Peace"),
 					},
-					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
+					{
+						"book_id": jsonRaw(float64(1032)),
+						"title":   jsonRaw("Crime and Punishment"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 4,
@@ -606,9 +652,10 @@ func TestIndex_Search(t *testing.T) {
 				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -630,9 +677,10 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -654,12 +702,15 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"Tag":     jsonRaw("Epic fantasy"),
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -681,15 +732,18 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 3,
@@ -709,9 +763,10 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(1039), "title": "The Girl in the white shirt",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(1039)),
+						"title":   jsonRaw("The Girl in the white shirt"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -746,9 +801,10 @@ func TestIndex_Search(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(1050), "title": "星の王子さま",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(1050)),
+						"title":   jsonRaw("星の王子さま"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -775,12 +831,22 @@ func TestIndex_Search(t *testing.T) {
 
 			require.NoError(t, err)
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
-			for len := range got.Hits {
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+			for i := range got.Hits {
+				require.Equal(t, tt.want.Hits[i]["title"], got.Hits[i]["title"])
+				require.Equal(t, tt.want.Hits[i]["book_id"], got.Hits[i]["book_id"])
 			}
-			if tt.want.Hits[0].(map[string]interface{})["_formatted"] != nil {
-				require.Equal(t, tt.want.Hits[0].(map[string]interface{})["_formatted"], got.Hits[0].(map[string]interface{})["_formatted"])
+			if tt.want.Hits[0]["_formatted"] != nil {
+				var (
+					gotdec, wantdec map[string]interface{}
+				)
+
+				err := json.Unmarshal(tt.want.Hits[0]["_formatted"], &wantdec)
+				require.NoError(t, err)
+
+				err = json.Unmarshal(got.Hits[0]["_formatted"], &gotdec)
+				require.NoError(t, err)
+
+				require.Equal(t, gotdec, wantdec)
 			}
 			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
@@ -833,12 +899,14 @@ func TestIndex_SearchFacets(t *testing.T) {
 				filterableAttributes: []string{"tag"},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -865,12 +933,14 @@ func TestIndex_SearchFacets(t *testing.T) {
 				filterableAttributes: []string{"tag"},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -897,12 +967,14 @@ func TestIndex_SearchFacets(t *testing.T) {
 				filterableAttributes: []string{"book_id"},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -946,8 +1018,8 @@ func TestIndex_SearchFacets(t *testing.T) {
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 
 			for len := range got.Hits {
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+				require.Equal(t, tt.want.Hits[len]["title"], got.Hits[len]["title"])
+				require.Equal(t, tt.want.Hits[len]["book_id"], got.Hits[len]["book_id"])
 			}
 			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
@@ -991,9 +1063,10 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1016,9 +1089,10 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1043,9 +1117,10 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1072,9 +1147,10 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1098,12 +1174,14 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -1126,15 +1204,18 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(742), "title": "The Great Gatsby",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(742)),
+						"title":   jsonRaw("The Great Gatsby"),
 					},
-					map[string]interface{}{
-						"book_id": float64(17), "title": "In Search of Lost Time",
+					{
+						"book_id": jsonRaw(float64(17)),
+						"title":   jsonRaw("In Search of Lost Time"),
 					},
-					map[string]interface{}{
-						"book_id": float64(204), "title": "Ulysses",
+					{
+						"book_id": jsonRaw(float64(204)),
+						"title":   jsonRaw("Ulysses"),
 					},
 				},
 				EstimatedTotalHits: 3,
@@ -1158,9 +1239,10 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(1), "title": "Alice In Wonderland",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(1)),
+						"title":   jsonRaw("Alice In Wonderland"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1184,15 +1266,18 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
-					map[string]interface{}{
-						"book_id": float64(1), "title": "Alice In Wonderland",
+					{
+						"book_id": jsonRaw(float64(1)),
+						"title":   jsonRaw("Alice In Wonderland"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 3,
@@ -1216,9 +1301,10 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(456), "title": "Le Petit Prince",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(456)),
+						"title":   jsonRaw("Le Petit Prince"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1241,9 +1327,10 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(1032)),
+						"title":   jsonRaw("Crime and Punishment"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1275,8 +1362,8 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 
 			for len := range got.Hits {
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+				require.Equal(t, tt.want.Hits[len]["title"], got.Hits[len]["title"])
+				require.Equal(t, tt.want.Hits[len]["book_id"], got.Hits[len]["book_id"])
 			}
 			require.Equal(t, tt.args.query, got.Query)
 			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
@@ -1320,18 +1407,22 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
-					map[string]interface{}{
-						"book_id": float64(730), "title": "War and Peace",
+					{
+						"book_id": jsonRaw(float64(730)),
+						"title":   jsonRaw("War and Peace"),
 					},
-					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
+					{
+						"book_id": jsonRaw(float64(1032)),
+						"title":   jsonRaw("Crime and Punishment"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 4,
@@ -1356,18 +1447,22 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(1032)),
+						"title":   jsonRaw("Crime and Punishment"),
 					},
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
-					map[string]interface{}{
-						"book_id": float64(730), "title": "War and Peace",
+					{
+						"book_id": jsonRaw(float64(730)),
+						"title":   jsonRaw("War and Peace"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 4,
@@ -1394,18 +1489,22 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(1032)),
+						"title":   jsonRaw("Crime and Punishment"),
 					},
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
-					map[string]interface{}{
-						"book_id": float64(730), "title": "War and Peace",
+					{
+						"book_id": jsonRaw(float64(730)),
+						"title":   jsonRaw("War and Peace"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 4,
@@ -1432,18 +1531,22 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
-					map[string]interface{}{
-						"book_id": float64(730), "title": "War and Peace",
+					{
+						"book_id": jsonRaw(float64(730)),
+						"title":   jsonRaw("War and Peace"),
 					},
-					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
+					{
+						"book_id": jsonRaw(float64(1032)),
+						"title":   jsonRaw("Crime and Punishment"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				EstimatedTotalHits: 4,
@@ -1471,18 +1574,22 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(56), "title": "The Divine Comedy",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(56)),
+						"title":   jsonRaw("The Divine Comedy"),
 					},
-					map[string]interface{}{
-						"book_id": float64(32), "title": "The Odyssey",
+					{
+						"book_id": jsonRaw(float64(32)),
+						"title":   jsonRaw("The Odyssey"),
 					},
-					map[string]interface{}{
-						"book_id": float64(69), "title": "Hamlet",
+					{
+						"book_id": jsonRaw(float64(69)),
+						"title":   jsonRaw("Hamlet"),
 					},
-					map[string]interface{}{
-						"book_id": float64(7), "title": "Don Quixote",
+					{
+						"book_id": jsonRaw(float64(7)),
+						"title":   jsonRaw("Don Quixote"),
 					},
 				},
 				EstimatedTotalHits: 22,
@@ -1514,8 +1621,8 @@ func TestIndex_SearchWithSort(t *testing.T) {
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 
 			for len := range got.Hits {
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+				require.Equal(t, tt.want.Hits[len]["title"], got.Hits[len]["title"])
+				require.Equal(t, tt.want.Hits[len]["book_id"], got.Hits[len]["book_id"])
 			}
 			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 			require.Equal(t, tt.want.Offset, got.Offset)
@@ -1555,13 +1662,14 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"id": float64(5), "title": "The Hobbit",
-						"info": map[string]interface{}{
+				Hits: []map[string]json.RawMessage{
+					{
+						"id":    jsonRaw(float64(5)),
+						"title": jsonRaw("The Hobbit"),
+						"info": jsonRaw(map[string]interface{}{
 							"comment":  "An awesome book",
 							"reviewNb": float64(900),
-						},
+						}),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1579,13 +1687,14 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"id": float64(5), "title": "The Hobbit",
-						"info": map[string]interface{}{
+				Hits: []map[string]json.RawMessage{
+					{
+						"id":    jsonRaw(float64(5)),
+						"title": jsonRaw("The Hobbit"),
+						"info": jsonRaw(map[string]interface{}{
 							"comment":  "An awesome book",
 							"reviewNb": float64(900),
-						},
+						}),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1603,20 +1712,22 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				request: &SearchRequest{},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"id": float64(2), "title": "Le Petit Prince",
-						"info": map[string]interface{}{
+				Hits: []map[string]json.RawMessage{
+					{
+						"id":    jsonRaw(float64(2)),
+						"title": jsonRaw("Le Petit Prince"),
+						"info": jsonRaw(map[string]interface{}{
 							"comment":  "A french book",
 							"reviewNb": float64(600),
-						},
+						}),
 					},
-					map[string]interface{}{
-						"id": float64(3), "title": "Le Rouge et le Noir",
-						"info": map[string]interface{}{
+					{
+						"id":    jsonRaw(float64(3)),
+						"title": jsonRaw("Le Rouge et le Noir"),
+						"info": jsonRaw(map[string]interface{}{
 							"comment":  "Another french book",
 							"reviewNb": float64(700),
-						},
+						}),
 					},
 				},
 				EstimatedTotalHits: 2,
@@ -1636,13 +1747,14 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"id": float64(5), "title": "The Hobbit",
-						"info": map[string]interface{}{
+				Hits: []map[string]json.RawMessage{
+					{
+						"id":    jsonRaw(float64(5)),
+						"title": jsonRaw("The Hobbit"),
+						"info": jsonRaw(map[string]interface{}{
 							"comment":  "An awesome book",
 							"reviewNb": float64(900),
-						},
+						}),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1670,13 +1782,14 @@ func TestIndex_SearchOnNestedFileds(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"id": float64(5), "title": "The Hobbit",
-						"info": map[string]interface{}{
+				Hits: []map[string]json.RawMessage{
+					{
+						"id":    jsonRaw(float64(5)),
+						"title": jsonRaw("The Hobbit"),
+						"info": jsonRaw(map[string]interface{}{
 							"comment":  "An awesome book",
 							"reviewNb": float64(900),
-						},
+						}),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1752,18 +1865,22 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
-					map[string]interface{}{
-						"book_id": float64(730), "title": "War and Peace",
+					{
+						"book_id": jsonRaw(float64(730)),
+						"title":   jsonRaw("War and Peace"),
 					},
-					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
+					{
+						"book_id": jsonRaw(float64(1032)),
+						"title":   jsonRaw("Crime and Punishment"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				HitsPerPage: 10,
@@ -1784,18 +1901,22 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
-					map[string]interface{}{
-						"book_id": float64(730), "title": "War and Peace",
+					{
+						"book_id": jsonRaw(float64(730)),
+						"title":   jsonRaw("War and Peace"),
 					},
-					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
+					{
+						"book_id": jsonRaw(float64(1032)),
+						"title":   jsonRaw("Crime and Punishment"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				HitsPerPage: 20,
@@ -1817,18 +1938,22 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				},
 			},
 			want: &SearchResponse{
-				Hits: []interface{}{
-					map[string]interface{}{
-						"book_id": float64(123), "title": "Pride and Prejudice",
+				Hits: []map[string]json.RawMessage{
+					{
+						"book_id": jsonRaw(float64(123)),
+						"title":   jsonRaw("Pride and Prejudice"),
 					},
-					map[string]interface{}{
-						"book_id": float64(730), "title": "War and Peace",
+					{
+						"book_id": jsonRaw(float64(730)),
+						"title":   jsonRaw("War and Peace"),
 					},
-					map[string]interface{}{
-						"book_id": float64(1032), "title": "Crime and Punishment",
+					{
+						"book_id": jsonRaw(float64(1032)),
+						"title":   jsonRaw("Crime and Punishment"),
 					},
-					map[string]interface{}{
-						"book_id": float64(4), "title": "Harry Potter and the Half-Blood Prince",
+					{
+						"book_id": jsonRaw(float64(4)),
+						"title":   jsonRaw("Harry Potter and the Half-Blood Prince"),
 					},
 				},
 				HitsPerPage: 10,
@@ -1851,8 +1976,8 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 
 			for len := range got.Hits {
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["title"], got.Hits[len].(map[string]interface{})["title"])
-				require.Equal(t, tt.want.Hits[len].(map[string]interface{})["book_id"], got.Hits[len].(map[string]interface{})["book_id"])
+				require.Equal(t, tt.want.Hits[len]["title"], got.Hits[len]["title"])
+				require.Equal(t, tt.want.Hits[len]["book_id"], got.Hits[len]["book_id"])
 			}
 			require.Equal(t, tt.args.query, got.Query)
 			require.Equal(t, tt.want.HitsPerPage, got.HitsPerPage)
@@ -1888,7 +2013,7 @@ func TestIndex_SearchWithShowRankingScore(t *testing.T) {
 
 	got, err := i.Search(testArg.query, &testArg.request)
 	require.NoError(t, err)
-	require.NotNil(t, got.Hits[0].(map[string]interface{})["_rankingScore"])
+	require.NotNil(t, got.Hits[0]["_rankingScore"])
 }
 
 func TestIndex_SearchWithShowRankingScoreDetails(t *testing.T) {
@@ -1916,7 +2041,7 @@ func TestIndex_SearchWithShowRankingScoreDetails(t *testing.T) {
 
 	got, err := i.Search(testArg.query, &testArg.request)
 	require.NoError(t, err)
-	require.NotNil(t, got.Hits[0].(map[string]interface{})["_rankingScoreDetails"])
+	require.NotNil(t, got.Hits[0]["_rankingScoreDetails"])
 }
 
 func TestIndex_SearchWithVectorStore(t *testing.T) {
@@ -1972,7 +2097,6 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 			require.NoError(t, err)
 
 			for _, hit := range got.Hits {
-				hit := hit.(map[string]interface{})
 				require.NotNil(t, hit["_vectors"])
 			}
 		})
@@ -2090,9 +2214,10 @@ func TestIndex_FacetSearch(t *testing.T) {
 				filterableAttributes: []string{"tag"},
 			},
 			want: &FacetSearchResponse{
-				FacetHits: []interface{}{
-					map[string]interface{}{
-						"value": "Novel", "count": float64(5),
+				FacetHits: []map[string]json.RawMessage{
+					{
+						"value": jsonRaw("Novel"),
+						"count": jsonRaw(float64(5)),
 					},
 				},
 				FacetQuery: "Novel",
@@ -2112,9 +2237,10 @@ func TestIndex_FacetSearch(t *testing.T) {
 				filterableAttributes: []string{"tag"},
 			},
 			want: &FacetSearchResponse{
-				FacetHits: []interface{}{
-					map[string]interface{}{
-						"value": "Novel", "count": float64(5),
+				FacetHits: []map[string]json.RawMessage{
+					{
+						"value": jsonRaw("Novel"),
+						"count": jsonRaw(float64(5)),
 					},
 				},
 				FacetQuery: "Novel",
@@ -2134,9 +2260,10 @@ func TestIndex_FacetSearch(t *testing.T) {
 				filterableAttributes: []string{"tag"},
 			},
 			want: &FacetSearchResponse{
-				FacetHits: []interface{}{
-					map[string]interface{}{
-						"value": "Novel", "count": float64(5),
+				FacetHits: []map[string]json.RawMessage{
+					{
+						"value": jsonRaw("Novel"),
+						"count": jsonRaw(float64(5)),
 					},
 				},
 				FacetQuery: "Novel",
@@ -2156,9 +2283,10 @@ func TestIndex_FacetSearch(t *testing.T) {
 				filterableAttributes: []string{"tag"},
 			},
 			want: &FacetSearchResponse{
-				FacetHits: []interface{}{
-					map[string]interface{}{
-						"value": "Novel", "count": float64(5),
+				FacetHits: []map[string]json.RawMessage{
+					{
+						"value": jsonRaw("Novel"),
+						"count": jsonRaw(float64(5)),
 					},
 				},
 				FacetQuery: "Novel",
@@ -2224,7 +2352,7 @@ func TestIndex_FacetSearch(t *testing.T) {
 				filterableAttributes: []string{"tag"},
 			},
 			want: &FacetSearchResponse{
-				FacetHits:  []interface{}{},
+				FacetHits:  []map[string]json.RawMessage{},
 				FacetQuery: "",
 			},
 			wantErr: false,
@@ -2260,8 +2388,8 @@ func TestIndex_FacetSearch(t *testing.T) {
 
 			require.Equal(t, len(tt.want.FacetHits), len(got.FacetHits))
 			for len := range got.FacetHits {
-				require.Equal(t, tt.want.FacetHits[len].(map[string]interface{})["value"], got.FacetHits[len].(map[string]interface{})["value"])
-				require.Equal(t, tt.want.FacetHits[len].(map[string]interface{})["count"], got.FacetHits[len].(map[string]interface{})["count"])
+				require.Equal(t, tt.want.FacetHits[len]["value"], got.FacetHits[len]["value"])
+				require.Equal(t, tt.want.FacetHits[len]["count"], got.FacetHits[len]["count"])
 			}
 			require.Equal(t, tt.want.FacetQuery, got.FacetQuery)
 		})

@@ -161,38 +161,14 @@ func (c *client) sendRequest(
 		buf := c.bufferPool.Get().(*bytes.Buffer)
 		buf.Reset()
 
-		if b, ok := rawRequest.([]byte); ok {
-			buf.Write(b)
-			body = buf
-		} else if reader, ok := rawRequest.(io.Reader); ok {
-			// If the request body is an io.Reader then stream it directly
-			body = reader
-		} else {
-			// Otherwise convert it to JSON
-			var (
-				data []byte
-				err  error
-			)
-			if marshaler, ok := rawRequest.(json.Marshaler); ok {
-				data, err = marshaler.MarshalJSON()
-				if err != nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-						fmt.Errorf("failed to marshal with MarshalJSON: %w", err))
-				}
-				if data == nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-						errors.New("MarshalJSON returned nil data"))
-				}
-			} else {
-				data, err = json.Marshal(rawRequest)
-				if err != nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-						fmt.Errorf("failed to marshal with json.Marshal: %w", err))
-				}
-			}
-			buf.Write(data)
-			body = buf
+		data, err := json.Marshal(rawRequest)
+		if err != nil {
+			return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
+				fmt.Errorf("failed to marshal with json.Marshal: %w", err))
 		}
+
+		buf.Write(data)
+		body = buf
 
 		if !c.contentEncoding.IsZero() {
 			body, err = c.encoder.Encode(body)
@@ -314,31 +290,26 @@ func (c *client) handleStatusCode(req *internalRequest, statusCode int, body []b
 	return nil
 }
 
-func (c *client) handleResponse(req *internalRequest, body []byte, internalError *Error) (err error) {
+func (c *client) handleResponse(req *internalRequest, body []byte, internalError *Error) error {
 	if req.withResponse != nil {
 		if !c.contentEncoding.IsZero() {
 			if err := c.encoder.Decode(body, req.withResponse); err != nil {
 				return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
 			}
-		} else {
-			internalError.ResponseToString = string(body)
+			return nil
+		}
 
-			if internalError.ResponseToString == nullBody {
-				req.withResponse = nil
-				return nil
-			}
+		internalError.ResponseToString = string(body)
 
-			var err error
-			if resp, ok := req.withResponse.(json.Unmarshaler); ok {
-				err = resp.UnmarshalJSON(body)
-				req.withResponse = resp
-			} else {
-				err = json.Unmarshal(body, req.withResponse)
-			}
-			if err != nil {
-				return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
-			}
+		if internalError.ResponseToString == nullBody {
+			req.withResponse = nil
+			return nil
+		}
+
+		if err := json.Unmarshal(body, req.withResponse); err != nil {
+			return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
 		}
 	}
+
 	return nil
 }

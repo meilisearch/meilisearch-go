@@ -1,8 +1,5 @@
 .PHONY: test easyjson requirements
 
-easyjson:
-	easyjson -all types.go
-
 test:
 	docker compose run --rm package bash -c "go get && golangci-lint run -v && go test -v"
 

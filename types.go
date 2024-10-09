@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -461,29 +462,29 @@ type MultiSearchFederation struct {
 
 // SearchResponse is the response body for search method
 type SearchResponse struct {
-	Hits               []interface{} `json:"hits"`
-	EstimatedTotalHits int64         `json:"estimatedTotalHits,omitempty"`
-	Offset             int64         `json:"offset,omitempty"`
-	Limit              int64         `json:"limit,omitempty"`
-	ProcessingTimeMs   int64         `json:"processingTimeMs"`
-	Query              string        `json:"query"`
-	FacetDistribution  interface{}   `json:"facetDistribution,omitempty"`
-	TotalHits          int64         `json:"totalHits,omitempty"`
-	HitsPerPage        int64         `json:"hitsPerPage,omitempty"`
-	Page               int64         `json:"page,omitempty"`
-	TotalPages         int64         `json:"totalPages,omitempty"`
-	FacetStats         interface{}   `json:"facetStats,omitempty"`
-	IndexUID           string        `json:"indexUid,omitempty"`
+	Hits               []map[string]json.RawMessage `json:"hits"`
+	EstimatedTotalHits int64                        `json:"estimatedTotalHits,omitempty"`
+	Offset             int64                        `json:"offset,omitempty"`
+	Limit              int64                        `json:"limit,omitempty"`
+	ProcessingTimeMs   int64                        `json:"processingTimeMs"`
+	Query              string                       `json:"query"`
+	FacetDistribution  interface{}                  `json:"facetDistribution,omitempty"`
+	TotalHits          int64                        `json:"totalHits,omitempty"`
+	HitsPerPage        int64                        `json:"hitsPerPage,omitempty"`
+	Page               int64                        `json:"page,omitempty"`
+	TotalPages         int64                        `json:"totalPages,omitempty"`
+	FacetStats         interface{}                  `json:"facetStats,omitempty"`
+	IndexUID           string                       `json:"indexUid,omitempty"`
 }
 
 type MultiSearchResponse struct {
-	Results            []SearchResponse `json:"results,omitempty"`
-	Hits               []interface{}    `json:"hits,omitempty"`
-	ProcessingTimeMs   int64            `json:"processingTimeMs,omitempty"`
-	Offset             int64            `json:"offset,omitempty"`
-	Limit              int64            `json:"limit,omitempty"`
-	EstimatedTotalHits int64            `json:"estimatedTotalHits,omitempty"`
-	SemanticHitCount   int64            `json:"semanticHitCount,omitempty"`
+	Results            []SearchResponse             `json:"results,omitempty"`
+	Hits               []map[string]json.RawMessage `json:"hits,omitempty"`
+	ProcessingTimeMs   int64                        `json:"processingTimeMs,omitempty"`
+	Offset             int64                        `json:"offset,omitempty"`
+	Limit              int64                        `json:"limit,omitempty"`
+	EstimatedTotalHits int64                        `json:"estimatedTotalHits,omitempty"`
+	SemanticHitCount   int64                        `json:"semanticHitCount,omitempty"`
 }
 
 type FacetSearchRequest struct {
@@ -496,9 +497,9 @@ type FacetSearchRequest struct {
 }
 
 type FacetSearchResponse struct {
-	FacetHits        []interface{} `json:"facetHits"`
-	FacetQuery       string        `json:"facetQuery"`
-	ProcessingTimeMs int64         `json:"processingTimeMs"`
+	FacetHits        []map[string]json.RawMessage `json:"facetHits"`
+	FacetQuery       string                       `json:"facetQuery"`
+	ProcessingTimeMs int64                        `json:"processingTimeMs"`
 }
 
 // DocumentQuery is the request body get one documents method
@@ -529,12 +530,12 @@ type SimilarDocumentQuery struct {
 }
 
 type SimilarDocumentResult struct {
-	Hits               []interface{} `json:"hits,omitempty"`
-	ID                 string        `json:"id,omitempty"`
-	ProcessingTimeMS   int64         `json:"processingTimeMs,omitempty"`
-	Limit              int64         `json:"limit,omitempty"`
-	Offset             int64         `json:"offset,omitempty"`
-	EstimatedTotalHits int64         `json:"estimatedTotalHits,omitempty"`
+	Hits               []map[string]json.RawMessage `json:"hits,omitempty"`
+	ID                 string                       `json:"id,omitempty"`
+	ProcessingTimeMS   int64                        `json:"processingTimeMs,omitempty"`
+	Limit              int64                        `json:"limit,omitempty"`
+	Offset             int64                        `json:"offset,omitempty"`
+	EstimatedTotalHits int64                        `json:"estimatedTotalHits,omitempty"`
 }
 
 type CsvDocumentsQuery struct {
@@ -582,9 +583,6 @@ type Health struct {
 type UpdateIndexRequest struct {
 	PrimaryKey string `json:"primaryKey"`
 }
-
-// Unknown is unknown json type
-type Unknown map[string]interface{}
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (b *RawType) UnmarshalJSON(data []byte) error {
