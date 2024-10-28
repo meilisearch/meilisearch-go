@@ -2068,19 +2068,6 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 				RetrieveVectors: true,
 			},
 		},
-		{
-			name:   "empty Embedder",
-			UID:    "indexUID",
-			client: sv,
-			query:  "Pride and Prejudice",
-			request: SearchRequest{
-				Hybrid: &SearchRequestHybrid{
-					SemanticRatio: 0.5,
-					Embedder:      "",
-				},
-				RetrieveVectors: true,
-			},
-		},
 	}
 
 	for _, tt := range tests {
@@ -2153,6 +2140,7 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 			client: sv,
 			request: &SimilarDocumentQuery{
 				Id: "123",
+				Embedder: "default",
 			},
 			resp:    new(SimilarDocumentResult),
 			wantErr: false,
@@ -2160,7 +2148,9 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 		{
 			UID:     "indexUID",
 			client:  sv,
-			request: &SimilarDocumentQuery{},
+			request: &SimilarDocumentQuery{
+				Embedder: "default",
+			},
 			resp:    new(SimilarDocumentResult),
 			wantErr: true,
 		},

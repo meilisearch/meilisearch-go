@@ -895,6 +895,7 @@ get_similar_post_1: |-
   resp := new(meilisearch.SimilarDocumentResult)
   client.Index("INDEX_NAME").SearchSimilarDocuments(&meilisearch.SimilarDocumentQuery{
     Id: "TARGET_DOCUMENT_ID",
+    Embedder: "default",
   }, resp)
 search_parameter_reference_ranking_score_threshold_1: |-
   client.Index("INDEX_NAME").Search("badman", &meilisearch.SearchRequest{
@@ -940,7 +941,7 @@ update_proximity_precision_settings_1: |-
 reset_proximity_precision_settings_1: |-
   client.Index("books").ResetProximityPrecision()
 search_parameter_reference_locales_1: |-
-  client.index("INDEX_NAME").Search("進撃の巨人", &meilisearch.SearchRequest{
+  client.index("INDEX_NAME").Search("QUERY TEXT IN JAPANESE", &meilisearch.SearchRequest{
       Locates: []string{"jpn"}
   })
 get_localized_attribute_settings_1: |-
