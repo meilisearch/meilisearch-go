@@ -139,6 +139,22 @@ func TestIndex_GetTasks(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "TestTasksWithParams",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				document: []docTest{
+					{ID: "123", Name: "Pride and Prejudice"},
+				},
+				query: &TasksQuery{
+					Limit:    5,
+					From:     1,
+					Statuses: []TaskStatus{TaskStatusSucceeded},
+					Types:    []TaskType{TaskTypeDocumentAdditionOrUpdate},
+				},
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
