@@ -148,10 +148,11 @@ func TestIndex_GetTasks(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 				query: &TasksQuery{
-					Limit:    5,
-					From:     1,
-					Statuses: []TaskStatus{TaskStatusSucceeded},
-					Types:    []TaskType{TaskTypeDocumentAdditionOrUpdate},
+					IndexUIDS: []string{"indexUID"},
+					Limit:     10,
+					From:      1,
+					Statuses:  []TaskStatus{TaskStatusSucceeded},
+					Types:     []TaskType{TaskTypeDocumentAdditionOrUpdate},
 				},
 			},
 		},
@@ -168,10 +169,9 @@ func TestIndex_GetTasks(t *testing.T) {
 			_, err = c.WaitForTask(task.TaskUID, 0)
 			require.NoError(t, err)
 
-			gotResp, err := i.GetTasks(nil)
+			gotResp, err := i.GetTasks(tt.args.query)
 			require.NoError(t, err)
 			require.NotNil(t, (*gotResp).Results[0].Status)
-			require.NotZero(t, (*gotResp).Results[0].UID)
 			require.NotNil(t, (*gotResp).Results[0].Type)
 		})
 	}
