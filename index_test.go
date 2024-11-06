@@ -403,3 +403,16 @@ func TestIndex_UpdateIndex(t *testing.T) {
 		})
 	}
 }
+
+func TestIndexManagerAndReaders(t *testing.T) {
+	c := setup(t, "")
+	idx := c.Index("indexUID")
+	require.NotNil(t, idx)
+	require.NotNil(t, idx.GetIndexReader())
+	require.NotNil(t, idx.GetTaskReader())
+	require.NotNil(t, idx.GetSettingsManager())
+	require.NotNil(t, idx.GetSettingsReader())
+	require.NotNil(t, idx.GetSearch())
+	require.NotNil(t, idx.GetDocumentManager())
+	require.NotNil(t, idx.GetDocumentReader())
+}

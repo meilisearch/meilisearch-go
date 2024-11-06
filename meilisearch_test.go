@@ -2332,3 +2332,12 @@ func Test_CreateSnapshot(t *testing.T) {
 	require.NoError(t, err)
 	testWaitForTask(t, c.Index("indexUID"), task)
 }
+
+func TestGetServiceManagerAndReaders(t *testing.T) {
+	c := setup(t, "")
+	require.NotNil(t, c.GetServiceReader())
+	require.NotNil(t, c.GetTaskManager())
+	require.NotNil(t, c.GetTaskReader())
+	require.NotNil(t, c.GetKeyManager())
+	require.NotNil(t, c.GetKeyReader())
+}
