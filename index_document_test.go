@@ -1669,6 +1669,7 @@ func TestIndex_UpdateDocumentsByFunction(t *testing.T) {
 	require.True(t, res.EditDocumentsByFunction)
 
 	idx := setupMovieIndex(t, c)
+	t.Cleanup(cleanup(c))
 
 	t.Run("Test Upper Case and Add Sparkles around Movie Titles", func(t *testing.T) {
 		task, err := idx.UpdateDocumentsByFunction(&UpdateDocumentByFunctionRequest{
