@@ -210,6 +210,30 @@ func setUpBasicIndex(sv ServiceManager, indexUID string) {
 	}
 }
 
+func setupMovieIndex(t *testing.T, client ServiceManager) IndexManager {
+	t.Helper()
+
+	idx := client.Index("indexUID")
+
+	testdata, err := os.Open("./testdata/movies.json")
+	require.NoError(t, err)
+	defer testdata.Close()
+
+	tests := make([]map[string]interface{}, 0)
+
+	require.NoError(t, json.NewDecoder(testdata).Decode(&tests))
+
+	task, err := idx.AddDocuments(tests)
+	require.NoError(t, err)
+	testWaitForTask(t, idx, task)
+
+	task, err = idx.UpdateFilterableAttributes(&[]string{"id"})
+	require.NoError(t, err)
+	testWaitForTask(t, idx, task)
+
+	return idx
+}
+
 func setUpIndexForFaceting(client ServiceManager) {
 	idx := client.Index("indexUID")
 
