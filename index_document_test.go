@@ -1658,3 +1658,36 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 		})
 	}
 }
+
+func TestIndex_UpdateDocumentsByFunction(t *testing.T) {
+	c := setup(t, "")
+
+	exp := c.ExperimentalFeatures()
+	exp.SetEditDocumentsByFunction(true)
+	res, err := exp.Update()
+	require.NoError(t, err)
+	require.True(t, res.EditDocumentsByFunction)
+
+	idx := setupMovieIndex(t, c)
+	t.Cleanup(cleanup(c))
+
+	t.Run("Test Upper Case and Add Sparkles around Movie Titles", func(t *testing.T) {
+		task, err := idx.UpdateDocumentsByFunction(&UpdateDocumentByFunctionRequest{
+			Filter:   "id > 3000",
+			Function: "doc.title = `✨ ${doc.title.to_upper()} ✨`",
+		})
+		require.NoError(t, err)
+		testWaitForTask(t, idx, task)
+	})
+
+	t.Run("Test User-defined Context", func(t *testing.T) {
+		task, err := idx.UpdateDocumentsByFunction(&UpdateDocumentByFunctionRequest{
+			Context: map[string]interface{}{
+				"idmax": 50,
+			},
+			Function: "if doc.id >= context.idmax {\n\t\t    doc = ()\n\t\t  } else {\n\t\t\t  doc.title = `✨ ${doc.title} ✨`\n\t\t\t}",
+		})
+		require.NoError(t, err)
+		testWaitForTask(t, idx, task)
+	})
+}

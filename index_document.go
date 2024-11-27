@@ -223,6 +223,27 @@ func (i *index) UpdateDocumentsNdjsonInBatchesWithContext(ctx context.Context, d
 	return i.updateDocumentsNdjsonFromReaderInBatches(ctx, bytes.NewReader(documents), batchSize, primaryKey...)
 }
 
+func (i *index) UpdateDocumentsByFunction(req *UpdateDocumentByFunctionRequest) (*TaskInfo, error) {
+	return i.UpdateDocumentsByFunctionWithContext(context.Background(), req)
+}
+
+func (i *index) UpdateDocumentsByFunctionWithContext(ctx context.Context, req *UpdateDocumentByFunctionRequest) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	r := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/documents/edit",
+		method:              http.MethodPost,
+		withRequest:         req,
+		withResponse:        resp,
+		contentType:         contentTypeJSON,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateDocumentsByFunction",
+	}
+	if err := i.client.executeRequest(ctx, r); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (i *index) GetDocument(identifier string, request *DocumentQuery, documentPtr interface{}) error {
 	return i.GetDocumentWithContext(context.Background(), identifier, request, documentPtr)
 }

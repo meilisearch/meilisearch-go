@@ -153,6 +153,12 @@ type DocumentManager interface {
 	// UpdateDocumentsNdjsonInBatchesWithContext updates documents in the index from a NDJSON byte array in batches of specified size using the provided context for cancellation.
 	UpdateDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchsize int, primaryKey ...string) ([]TaskInfo, error)
 
+	// UpdateDocumentsByFunction update documents by using function
+	UpdateDocumentsByFunction(req *UpdateDocumentByFunctionRequest) (*TaskInfo, error)
+
+	// UpdateDocumentsByFunctionWithContext update documents by using function then provided context for cancellation.
+	UpdateDocumentsByFunctionWithContext(ctx context.Context, req *UpdateDocumentByFunctionRequest) (*TaskInfo, error)
+
 	// DeleteDocument deletes a single document from the index by identifier.
 	DeleteDocument(identifier string) (*TaskInfo, error)
 

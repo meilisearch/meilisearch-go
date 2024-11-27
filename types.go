@@ -549,6 +549,12 @@ type DocumentsResult struct {
 	Total   int64                    `json:"total"`
 }
 
+type UpdateDocumentByFunctionRequest struct {
+	Filter   string                 `json:"filter,omitempty"`
+	Function string                 `json:"function"`
+	Context  map[string]interface{} `json:"context,omitempty"`
+}
+
 // ExperimentalFeaturesResult represents the experimental features result from the API.
 type ExperimentalFeaturesBase struct {
 	VectorStore             *bool `json:"vectorStore,omitempty"`
