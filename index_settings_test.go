@@ -3421,7 +3421,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 					Embedders: map[string]Embedder{
 						"default": {
 							Source:           "openAi",
-							ApiKey:           "xxx",
+							APIKey:           "xxx",
 							Model:            "text-embedding-3-small",
 							DocumentTemplate: "A movie titled '{{doc.title}}'",
 						},
@@ -3444,6 +3444,47 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 						"default": {
 							Source:     "userProvided",
 							Dimensions: 3,
+						},
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
+			name: "TestIndexUpdateSettingsEmbeddersWithRestSource",
+			args: args{
+				newIndex: true,
+				UID:      "newIndexUID",
+				client:   meili,
+				request: Settings{
+					Embedders: map[string]Embedder{
+						"default": {
+							Source:           "rest",
+							URL:              "https://api.openai.com/v1/embeddings",
+							APIKey:           "<your-openai-api-key>",
+							Dimensions:       1536,
+							DocumentTemplate: "A movie titled '{{doc.title}}' whose description starts with {{doc.overview|truncatewords: 20}}",
+							Distribution: &Distribution{
+								Mean:  0.7,
+								Sigma: 0.3,
+							},
+							Request: map[string]interface{}{
+								"model": "text-embedding-3-small",
+								"input": []string{"{{text}}", "{{..}}"},
+							},
+							Response: map[string]interface{}{
+								"data": []interface{}{
+									map[string]interface{}{
+										"embedding": "{{embedding}}",
+									},
+									"{{..}}",
+								},
+							},
+							Headers: map[string]string{
+								"Custom-Header": "CustomValue",
+							},
 						},
 					},
 				},

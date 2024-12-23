@@ -120,13 +120,25 @@ type Faceting struct {
 	SortFacetValuesBy map[string]SortFacetType `json:"sortFacetValuesBy"`
 }
 
+// Embedder represents a unified configuration for various embedder types.
 type Embedder struct {
-	Source           string `json:"source"`
-	URL              string `json:"url,omitempty"`
-	ApiKey           string `json:"apiKey,omitempty"`
-	Model            string `json:"model,omitempty"`
-	Dimensions       int    `json:"dimensions,omitempty"`
-	DocumentTemplate string `json:"documentTemplate,omitempty"`
+	Source           string                 `json:"source"`                     // The type of embedder: "openAi", "huggingFace", "userProvided", "rest", "ollama"
+	Model            string                 `json:"model,omitempty"`            // Optional for "openAi", "huggingFace", "ollama"
+	APIKey           string                 `json:"apiKey,omitempty"`           // Optional for "openAi", "rest", "ollama"
+	DocumentTemplate string                 `json:"documentTemplate,omitempty"` // Optional for most embedders
+	Dimensions       int                    `json:"dimensions,omitempty"`       // Optional for "openAi", "rest", "userProvided", "ollama"
+	Distribution     *Distribution          `json:"distribution,omitempty"`     // Optional for all embedders
+	URL              string                 `json:"url,omitempty"`              // Optional for "openAi", "rest", "ollama"
+	Revision         string                 `json:"revision,omitempty"`         // Optional for "huggingFace"
+	Request          map[string]interface{} `json:"request,omitempty"`          // Optional for "rest"
+	Response         map[string]interface{} `json:"response,omitempty"`         // Optional for "rest"
+	Headers          map[string]string      `json:"headers,omitempty"`          // Optional for "rest"
+}
+
+// Distribution represents a statistical distribution with mean and standard deviation (sigma).
+type Distribution struct {
+	Mean  float64 `json:"mean"`  // Mean of the distribution
+	Sigma float64 `json:"sigma"` // Sigma (standard deviation) of the distribution
 }
 
 // Version is the type that represents the versions in meilisearch
