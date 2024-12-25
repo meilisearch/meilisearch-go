@@ -49,23 +49,23 @@ func Connect(host string, options ...Option) (ServiceManager, error) {
 	return meili, nil
 }
 
-func (m *meilisearch) GetServiceReader() ServiceReader {
+func (m *meilisearch) ServiceReader() ServiceReader {
 	return m
 }
 
-func (m *meilisearch) GetTaskManager() TaskManager {
+func (m *meilisearch) TaskManager() TaskManager {
 	return m
 }
 
-func (m *meilisearch) GetTaskReader() TaskReader {
+func (m *meilisearch) TaskReader() TaskReader {
 	return m
 }
 
-func (m *meilisearch) GetKeyManager() KeyManager {
+func (m *meilisearch) KeyManager() KeyManager {
 	return m
 }
 
-func (m *meilisearch) GetKeyReader() KeyReader {
+func (m *meilisearch) KeyReader() KeyReader {
 	return m
 }
 
