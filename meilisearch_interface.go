@@ -10,11 +10,13 @@ type ServiceManager interface {
 	KeyManager
 	TaskManager
 
-	GetServiceReader() ServiceReader
-	GetTaskManager() TaskManager
-	GetTaskReader() TaskReader
-	GetKeyManager() KeyManager
-	GetKeyReader() KeyReader
+	ServiceReader() ServiceReader
+
+	TaskManager() TaskManager
+	TaskReader() TaskReader
+
+	KeyManager() KeyManager
+	KeyReader() KeyReader
 
 	// CreateIndex creates a new index.
 	CreateIndex(config *IndexConfig) (*TaskInfo, error)

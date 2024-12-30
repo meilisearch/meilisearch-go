@@ -2335,9 +2335,9 @@ func Test_CreateSnapshot(t *testing.T) {
 
 func TestGetServiceManagerAndReaders(t *testing.T) {
 	c := setup(t, "")
-	require.NotNil(t, c.GetServiceReader())
-	require.NotNil(t, c.GetTaskManager())
-	require.NotNil(t, c.GetTaskReader())
-	require.NotNil(t, c.GetKeyManager())
-	require.NotNil(t, c.GetKeyReader())
+	require.NotNil(t, c.ServiceReader())
+	require.NotNil(t, c.TaskManager())
+	require.NotNil(t, c.TaskReader())
+	require.NotNil(t, c.KeyManager())
+	require.NotNil(t, c.KeyReader())
 }
