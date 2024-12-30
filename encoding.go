@@ -92,6 +92,8 @@ func (g *gzipEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 	}()
 
 	buf := g.bufferPool.Get().(*bytes.Buffer)
+	defer g.bufferPool.Put(buf)
+
 	buf.Reset()
 	w.writer.Reset(buf)
 
