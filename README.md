@@ -32,7 +32,6 @@
 ## Table of Contents
 
 - [📖 Documentation](#-documentation)
-- [💫 Supercharge your Meilisearch experience](#-supercharge-your-meilisearch-experience)
 - [🔧 Installation](#-installation)
 - [🚀 Getting started](#-getting-started)
   - [Add documents](#add-documents)
@@ -52,10 +51,6 @@ This readme contains all the documentation you need to start using this Meilisea
 For general information on how to use Meilisearch—such as our API reference, tutorials, guides, and in-depth articles—refer to our [main documentation website](https://www.meilisearch.com/docs/).
 
 
-## ⚡ Supercharge your Meilisearch experience
-
-Say goodbye to server deployment and manual updates with [Meilisearch Cloud](https://www.meilisearch.com/cloud?utm_campaign=oss&utm_source=github&utm_medium=meilisearch-go). Get started with a 14-day free trial! No credit card required.
-
 ## 🔧 Installation
 
 With `go get` in command line:
@@ -63,21 +58,11 @@ With `go get` in command line:
 go get github.com/meilisearch/meilisearch-go
 ```
 
-### Run Meilisearch
+### Run Meilisearch <!-- omit in toc -->
 
-There are many easy ways to [download and run a Meilisearch instance](https://www.meilisearch.com/docs/learn/getting_started/installation).
+⚡️ **Launch, scale, and streamline in minutes with Meilisearch Cloud**—no maintenance, no commitment, cancel anytime. [Try it free now](https://cloud.meilisearch.com/login?utm_campaign=oss&utm_source=github&utm_medium=meilisearch-go).
 
-For example, using the `curl` command in [your Terminal](https://itconnect.uw.edu/learn/workshops/online-tutorials/web-publishing/what-is-a-terminal/):
-
-```bash
-# Install Meilisearch
-curl -L https://install.meilisearch.com | sh
-
-# Launch Meilisearch
-./meilisearch --master-key=masterKey
-```
-
-NB: you can also download Meilisearch from **Homebrew** or **APT** or even run it using **Docker**.
+🪨  Prefer to self-host? [Download and deploy](https://www.meilisearch.com/docs/learn/self_hosted/getting_started_with_self_hosted_meilisearch?utm_campaign=oss&utm_source=github&utm_medium=meilisearch-go) our fast, open-source search engine on your own infrastructure.
 
 ## 🚀 Getting started
 
