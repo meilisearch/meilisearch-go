@@ -59,6 +59,10 @@ func (i *index) GetTasksWithContext(ctx context.Context, param *TasksQuery) (*Ta
 		} else {
 			req.withQueryParams["indexUids"] = i.uid
 		}
+
+		if param.Reverse {
+			req.withQueryParams["reverse"] = "true"
+		}
 	}
 	if err := i.client.executeRequest(ctx, req); err != nil {
 		return nil, err
