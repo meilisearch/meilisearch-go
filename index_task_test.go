@@ -153,6 +153,7 @@ func TestIndex_GetTasks(t *testing.T) {
 					From:      1,
 					Statuses:  []TaskStatus{TaskStatusSucceeded},
 					Types:     []TaskType{TaskTypeDocumentAdditionOrUpdate},
+					Reverse:   true,
 				},
 			},
 		},

@@ -844,6 +844,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo6(in *jlexer.Lexer, 
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.AfterFinishedAt).UnmarshalJSON(data))
 			}
+		case "Reverse":
+			out.Reverse = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -977,6 +979,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo6(out *jwriter.Write
 		const prefix string = ",\"AfterFinishedAt\":"
 		out.RawString(prefix)
 		out.Raw((in.AfterFinishedAt).MarshalJSON())
+	}
+	{
+		const prefix string = ",\"Reverse\":"
+		out.RawString(prefix)
+		out.Bool(bool(in.Reverse))
 	}
 	out.RawByte('}')
 }
