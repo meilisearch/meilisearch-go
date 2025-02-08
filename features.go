@@ -64,7 +64,6 @@ func (ef *ExperimentalFeatures) Update() (*ExperimentalFeaturesResult, error) {
 
 func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*ExperimentalFeaturesResult, error) {
 	request := ExperimentalFeaturesBase{
-		VectorStore:             ef.VectorStore,
 		LogsRoute:               ef.LogsRoute,
 		Metrics:                 ef.Metrics,
 		EditDocumentsByFunction: ef.EditDocumentsByFunction,
