@@ -60,14 +60,12 @@ func TestUpdate_ExperimentalFeatures(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ef := tt.client.ExperimentalFeatures()
-			ef.SetVectorStore(true)
 			ef.SetLogsRoute(true)
 			ef.SetMetrics(true)
 			ef.SetEditDocumentsByFunction(true)
 			ef.SetContainsFilter(true)
 			gotResp, err := ef.Update()
 			require.NoError(t, err)
-			require.Equal(t, true, gotResp.VectorStore, "ExperimentalFeatures.Update() should return vectorStore as true")
 			require.Equal(t, true, gotResp.LogsRoute, "ExperimentalFeatures.Update() should return logsRoute as true")
 			require.Equal(t, true, gotResp.Metrics, "ExperimentalFeatures.Update() should return metrics as true")
 			require.Equal(t, true, gotResp.EditDocumentsByFunction, "ExperimentalFeatures.Update() should return editDocumentsByFunction as true")
