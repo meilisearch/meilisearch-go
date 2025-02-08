@@ -150,7 +150,7 @@ func TestIndex_GetTasks(t *testing.T) {
 				query: &TasksQuery{
 					IndexUIDS: []string{"indexUID"},
 					Limit:     10,
-					From:      1,
+					From:      0,
 					Statuses:  []TaskStatus{TaskStatusSucceeded},
 					Types:     []TaskType{TaskTypeDocumentAdditionOrUpdate},
 				},

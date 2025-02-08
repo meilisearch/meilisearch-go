@@ -15,11 +15,6 @@ func (m *meilisearch) ExperimentalFeatures() *ExperimentalFeatures {
 	return &ExperimentalFeatures{client: m.client}
 }
 
-func (ef *ExperimentalFeatures) SetVectorStore(vectorStore bool) *ExperimentalFeatures {
-	ef.VectorStore = &vectorStore
-	return ef
-}
-
 func (ef *ExperimentalFeatures) SetLogsRoute(logsRoute bool) *ExperimentalFeatures {
 	ef.LogsRoute = &logsRoute
 	return ef
@@ -69,7 +64,6 @@ func (ef *ExperimentalFeatures) Update() (*ExperimentalFeaturesResult, error) {
 
 func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*ExperimentalFeaturesResult, error) {
 	request := ExperimentalFeaturesBase{
-		VectorStore:             ef.VectorStore,
 		LogsRoute:               ef.LogsRoute,
 		Metrics:                 ef.Metrics,
 		EditDocumentsByFunction: ef.EditDocumentsByFunction,

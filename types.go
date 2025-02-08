@@ -569,7 +569,6 @@ type UpdateDocumentByFunctionRequest struct {
 
 // ExperimentalFeaturesResult represents the experimental features result from the API.
 type ExperimentalFeaturesBase struct {
-	VectorStore             *bool `json:"vectorStore,omitempty"`
 	LogsRoute               *bool `json:"logsRoute,omitempty"`
 	Metrics                 *bool `json:"metrics,omitempty"`
 	EditDocumentsByFunction *bool `json:"editDocumentsByFunction,omitempty"`
@@ -577,7 +576,6 @@ type ExperimentalFeaturesBase struct {
 }
 
 type ExperimentalFeaturesResult struct {
-	VectorStore             bool `json:"vectorStore"`
 	LogsRoute               bool `json:"logsRoute"`
 	Metrics                 bool `json:"metrics"`
 	EditDocumentsByFunction bool `json:"editDocumentsByFunction"`
