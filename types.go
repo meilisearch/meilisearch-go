@@ -516,15 +516,17 @@ type FacetSearchResponse struct {
 
 // DocumentQuery is the request body get one documents method
 type DocumentQuery struct {
-	Fields []string `json:"fields,omitempty"`
+	Fields          []string `json:"fields,omitempty"`
+	RetrieveVectors bool     `json:"retrieveVectors,omitempty"`
 }
 
 // DocumentsQuery is the request body for list documents method
 type DocumentsQuery struct {
-	Offset int64       `json:"offset,omitempty"`
-	Limit  int64       `json:"limit,omitempty"`
-	Fields []string    `json:"fields,omitempty"`
-	Filter interface{} `json:"filter,omitempty"`
+	Offset          int64       `json:"offset,omitempty"`
+	Limit           int64       `json:"limit,omitempty"`
+	Fields          []string    `json:"fields,omitempty"`
+	Filter          interface{} `json:"filter,omitempty"`
+	RetrieveVectors bool        `json:"retrieveVectors,omitempty"`
 }
 
 // SimilarDocumentQuery is query parameters of similar documents
