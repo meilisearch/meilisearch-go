@@ -146,8 +146,7 @@ func (c *client) sendRequest(
 		apiURL.RawQuery = query.Encode()
 	}
 
-	// Create request body
-	var body io.Reader = nil
+	var body io.Reader
 	if req.withRequest != nil {
 		if req.method == http.MethodGet || req.method == http.MethodHead {
 			return nil, ErrInvalidRequestMethod
@@ -156,50 +155,24 @@ func (c *client) sendRequest(
 			return nil, ErrRequestBodyWithoutContentType
 		}
 
-		rawRequest := req.withRequest
-
 		buf := c.bufferPool.Get().(*bytes.Buffer)
 		buf.Reset()
 
-		if b, ok := rawRequest.([]byte); ok {
-			buf.Write(b)
-			body = buf
-		} else if reader, ok := rawRequest.(io.Reader); ok {
-			// If the request body is an io.Reader then stream it directly
-			body = reader
-		} else {
-			// Otherwise convert it to JSON
-			var (
-				data []byte
-				err  error
-			)
-			if marshaler, ok := rawRequest.(json.Marshaler); ok {
-				data, err = marshaler.MarshalJSON()
-				if err != nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-						fmt.Errorf("failed to marshal with MarshalJSON: %w", err))
-				}
-				if data == nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-						errors.New("MarshalJSON returned nil data"))
-				}
-			} else {
-				data, err = json.Marshal(rawRequest)
-				if err != nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-						fmt.Errorf("failed to marshal with json.Marshal: %w", err))
-				}
-			}
-			buf.Write(data)
-			body = buf
+		data, err := json.Marshal(req.withRequest)
+		if err != nil {
+			return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
+				fmt.Errorf("failed to marshal request with json.Marshal: %w", err))
 		}
+		buf.Write(data)
 
 		if !c.contentEncoding.IsZero() {
-			body, err = c.encoder.Encode(body)
+			body, err = c.encoder.Encode(buf)
 			if err != nil {
 				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-					fmt.Errorf("failed to marshal with json.Marshal: %w", err))
+					fmt.Errorf("failed to encode request body: %w", err))
 			}
+		} else {
+			body = buf
 		}
 	}
 
@@ -237,6 +210,7 @@ func (c *client) sendRequest(
 			c.bufferPool.Put(buf)
 		}
 	}
+
 	return resp, nil
 }
 

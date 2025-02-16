@@ -1,14 +1,11 @@
-package meilisearch
+package types
 
 import (
+	"encoding/json"
+	"github.com/meilisearch/meilisearch-go"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
-)
-
-type (
-	ContentEncoding          string
-	EncodingCompressionLevel int
 )
 
 const (
@@ -17,27 +14,8 @@ const (
 	contentTypeJSON   string = "application/json"
 	contentTypeNDJSON string = "application/x-ndjson"
 	contentTypeCSV    string = "text/csv"
-
-	GzipEncoding    ContentEncoding = "gzip"
-	DeflateEncoding ContentEncoding = "deflate"
-	BrotliEncoding  ContentEncoding = "br"
-
-	NoCompression          EncodingCompressionLevel = 0
-	BestSpeed              EncodingCompressionLevel = 1
-	BestCompression        EncodingCompressionLevel = 9
-	DefaultCompression     EncodingCompressionLevel = -1
-	HuffmanOnlyCompression EncodingCompressionLevel = -2
-	ConstantCompression    EncodingCompressionLevel = -2
-	StatelessCompression   EncodingCompressionLevel = -3
-
-	nullBody = "null"
+	nullBody                 = "null"
 )
-
-func (c ContentEncoding) String() string { return string(c) }
-
-func (c ContentEncoding) IsZero() bool { return c == "" }
-
-func (c EncodingCompressionLevel) Int() int { return int(c) }
 
 type IndexConfig struct {
 	// Uid is the unique identifier of a given index.
@@ -51,7 +29,7 @@ type IndexResult struct {
 	CreatedAt  time.Time `json:"createdAt"`
 	UpdatedAt  time.Time `json:"updatedAt"`
 	PrimaryKey string    `json:"primaryKey,omitempty"`
-	IndexManager
+	meilisearch.IndexManager
 }
 
 // IndexesResults return of multiple indexes is wrap in a IndexesResults
@@ -162,99 +140,22 @@ type Stats struct {
 	Indexes      map[string]StatsIndex `json:"indexes"`
 }
 
-type (
-	TaskType               string // TaskType is the type of a task
-	SortFacetType          string // SortFacetType is type of facet sorting, alpha or count
-	TaskStatus             string // TaskStatus is the status of a task.
-	ProximityPrecisionType string // ProximityPrecisionType accepts one of the ByWord or ByAttribute
-	MatchingStrategy       string // MatchingStrategy one of the Last, All, Frequency
-)
-
-const (
-	// Last returns documents containing all the query terms first. If there are not enough results containing all
-	// query terms to meet the requested limit, Meilisearch will remove one query term at a time,
-	// starting from the end of the query.
-	Last MatchingStrategy = "last"
-	// All only returns documents that contain all query terms. Meilisearch will not match any more documents even
-	// if there aren't enough to meet the requested limit.
-	All MatchingStrategy = "all"
-	// Frequency returns documents containing all the query terms first. If there are not enough results containing
-	//all query terms to meet the requested limit, Meilisearch will remove one query term at a time, starting
-	//with the word that is the most frequent in the dataset. frequency effectively gives more weight to terms
-	//that appear less frequently in a set of results.
-	Frequency MatchingStrategy = "frequency"
-)
-
-const (
-	// ByWord calculate the precise distance between query terms. Higher precision, but may lead to longer
-	// indexing time. This is the default setting
-	ByWord ProximityPrecisionType = "byWord"
-	// ByAttribute determine if multiple query terms are present in the same attribute.
-	// Lower precision, but shorter indexing time
-	ByAttribute ProximityPrecisionType = "byAttribute"
-)
-
-const (
-	// TaskStatusUnknown is the default TaskStatus, should not exist
-	TaskStatusUnknown TaskStatus = "unknown"
-	// TaskStatusEnqueued the task request has been received and will be processed soon
-	TaskStatusEnqueued TaskStatus = "enqueued"
-	// TaskStatusProcessing the task is being processed
-	TaskStatusProcessing TaskStatus = "processing"
-	// TaskStatusSucceeded the task has been successfully processed
-	TaskStatusSucceeded TaskStatus = "succeeded"
-	// TaskStatusFailed a failure occurred when processing the task, no changes were made to the database
-	TaskStatusFailed TaskStatus = "failed"
-	// TaskStatusCanceled the task was canceled
-	TaskStatusCanceled TaskStatus = "canceled"
-)
-
-const (
-	SortFacetTypeAlpha SortFacetType = "alpha"
-	SortFacetTypeCount SortFacetType = "count"
-)
-
-const (
-	// TaskTypeIndexCreation represents an index creation
-	TaskTypeIndexCreation TaskType = "indexCreation"
-	// TaskTypeIndexUpdate represents an index update
-	TaskTypeIndexUpdate TaskType = "indexUpdate"
-	// TaskTypeIndexDeletion represents an index deletion
-	TaskTypeIndexDeletion TaskType = "indexDeletion"
-	// TaskTypeIndexSwap represents an index swap
-	TaskTypeIndexSwap TaskType = "indexSwap"
-	// TaskTypeDocumentAdditionOrUpdate represents a document addition or update in an index
-	TaskTypeDocumentAdditionOrUpdate TaskType = "documentAdditionOrUpdate"
-	// TaskTypeDocumentDeletion represents a document deletion from an index
-	TaskTypeDocumentDeletion TaskType = "documentDeletion"
-	// TaskTypeSettingsUpdate represents a settings update
-	TaskTypeSettingsUpdate TaskType = "settingsUpdate"
-	// TaskTypeDumpCreation represents a dump creation
-	TaskTypeDumpCreation TaskType = "dumpCreation"
-	// TaskTypeTaskCancelation represents a task cancelation
-	TaskTypeTaskCancelation TaskType = "taskCancelation"
-	// TaskTypeTaskDeletion represents a task deletion
-	TaskTypeTaskDeletion TaskType = "taskDeletion"
-	// TaskTypeSnapshotCreation represents a snapshot creation
-	TaskTypeSnapshotCreation TaskType = "snapshotCreation"
-)
-
 // Task indicates information about a task resource
 //
 // Documentation: https://www.meilisearch.com/docs/learn/advanced/asynchronous_operations
 type Task struct {
-	Status     TaskStatus          `json:"status"`
-	UID        int64               `json:"uid,omitempty"`
-	TaskUID    int64               `json:"taskUid,omitempty"`
-	IndexUID   string              `json:"indexUid"`
-	Type       TaskType            `json:"type"`
-	Error      meilisearchApiError `json:"error,omitempty"`
-	Duration   string              `json:"duration,omitempty"`
-	EnqueuedAt time.Time           `json:"enqueuedAt"`
-	StartedAt  time.Time           `json:"startedAt,omitempty"`
-	FinishedAt time.Time           `json:"finishedAt,omitempty"`
-	Details    Details             `json:"details,omitempty"`
-	CanceledBy int64               `json:"canceledBy,omitempty"`
+	Status     TaskStatus                      `json:"status"`
+	UID        int64                           `json:"uid,omitempty"`
+	TaskUID    int64                           `json:"taskUid,omitempty"`
+	IndexUID   string                          `json:"indexUid"`
+	Type       TaskType                        `json:"type"`
+	Error      meilisearch.meilisearchApiError `json:"error,omitempty"`
+	Duration   string                          `json:"duration,omitempty"`
+	EnqueuedAt time.Time                       `json:"enqueuedAt"`
+	StartedAt  time.Time                       `json:"startedAt,omitempty"`
+	FinishedAt time.Time                       `json:"finishedAt,omitempty"`
+	Details    Details                         `json:"details,omitempty"`
+	CanceledBy int64                           `json:"canceledBy,omitempty"`
 }
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
@@ -474,24 +375,24 @@ type MultiSearchFederation struct {
 
 // SearchResponse is the response body for search method
 type SearchResponse struct {
-	Hits               []interface{} `json:"hits"`
-	EstimatedTotalHits int64         `json:"estimatedTotalHits,omitempty"`
-	Offset             int64         `json:"offset,omitempty"`
-	Limit              int64         `json:"limit,omitempty"`
-	ProcessingTimeMs   int64         `json:"processingTimeMs"`
-	Query              string        `json:"query"`
-	FacetDistribution  interface{}   `json:"facetDistribution,omitempty"`
-	TotalHits          int64         `json:"totalHits,omitempty"`
-	HitsPerPage        int64         `json:"hitsPerPage,omitempty"`
-	Page               int64         `json:"page,omitempty"`
-	TotalPages         int64         `json:"totalPages,omitempty"`
-	FacetStats         interface{}   `json:"facetStats,omitempty"`
-	IndexUID           string        `json:"indexUid,omitempty"`
+	Hits               Hits            `json:"hits"`
+	EstimatedTotalHits int64           `json:"estimatedTotalHits,omitempty"`
+	Offset             int64           `json:"offset,omitempty"`
+	Limit              int64           `json:"limit,omitempty"`
+	ProcessingTimeMs   int64           `json:"processingTimeMs"`
+	Query              string          `json:"query"`
+	FacetDistribution  json.RawMessage `json:"facetDistribution,omitempty"`
+	TotalHits          int64           `json:"totalHits,omitempty"`
+	HitsPerPage        int64           `json:"hitsPerPage,omitempty"`
+	Page               int64           `json:"page,omitempty"`
+	TotalPages         int64           `json:"totalPages,omitempty"`
+	FacetStats         json.RawMessage `json:"facetStats,omitempty"`
+	IndexUID           string          `json:"indexUid,omitempty"`
 }
 
 type MultiSearchResponse struct {
 	Results            []SearchResponse `json:"results,omitempty"`
-	Hits               []interface{}    `json:"hits,omitempty"`
+	Hits               Hits             `json:"hits,omitempty"`
 	ProcessingTimeMs   int64            `json:"processingTimeMs,omitempty"`
 	Offset             int64            `json:"offset,omitempty"`
 	Limit              int64            `json:"limit,omitempty"`
@@ -509,9 +410,9 @@ type FacetSearchRequest struct {
 }
 
 type FacetSearchResponse struct {
-	FacetHits        []interface{} `json:"facetHits"`
-	FacetQuery       string        `json:"facetQuery"`
-	ProcessingTimeMs int64         `json:"processingTimeMs"`
+	FacetHits        Hits   `json:"facetHits"`
+	FacetQuery       string `json:"facetQuery"`
+	ProcessingTimeMs int64  `json:"processingTimeMs"`
 }
 
 // DocumentQuery is the request body get one documents method
@@ -542,12 +443,12 @@ type SimilarDocumentQuery struct {
 }
 
 type SimilarDocumentResult struct {
-	Hits               []interface{} `json:"hits,omitempty"`
-	ID                 string        `json:"id,omitempty"`
-	ProcessingTimeMS   int64         `json:"processingTimeMs,omitempty"`
-	Limit              int64         `json:"limit,omitempty"`
-	Offset             int64         `json:"offset,omitempty"`
-	EstimatedTotalHits int64         `json:"estimatedTotalHits,omitempty"`
+	Hits               Hits   `json:"hits,omitempty"`
+	ID                 string `json:"id,omitempty"`
+	ProcessingTimeMS   int64  `json:"processingTimeMs,omitempty"`
+	Limit              int64  `json:"limit,omitempty"`
+	Offset             int64  `json:"offset,omitempty"`
+	EstimatedTotalHits int64  `json:"estimatedTotalHits,omitempty"`
 }
 
 type CsvDocumentsQuery struct {
@@ -556,10 +457,10 @@ type CsvDocumentsQuery struct {
 }
 
 type DocumentsResult struct {
-	Results []map[string]interface{} `json:"results"`
-	Limit   int64                    `json:"limit"`
-	Offset  int64                    `json:"offset"`
-	Total   int64                    `json:"total"`
+	Results Hits  `json:"results"`
+	Limit   int64 `json:"limit"`
+	Offset  int64 `json:"offset"`
+	Total   int64 `json:"total"`
 }
 
 type UpdateDocumentByFunctionRequest struct {
@@ -601,9 +502,6 @@ type Health struct {
 type UpdateIndexRequest struct {
 	PrimaryKey string `json:"primaryKey"`
 }
-
-// Unknown is unknown json type
-type Unknown map[string]interface{}
 
 // UnmarshalJSON supports json.Unmarshaler interface
 func (b *RawType) UnmarshalJSON(data []byte) error {
