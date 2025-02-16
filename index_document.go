@@ -390,7 +390,8 @@ func (i *index) DeleteAllDocumentsWithContext(ctx context.Context) (*TaskInfo, e
 	return resp, nil
 }
 
-func (i *index) addDocuments(ctx context.Context, documentsPtr interface{}, contentType string, options map[string]string) (resp *TaskInfo, err error) {
+func (i *index) addDocuments(ctx context.Context, documentsPtr interface{}, contentType string,
+	options map[string]string) (resp *TaskInfo, err error) {
 	resp = new(TaskInfo)
 	endpoint := ""
 	if options == nil {

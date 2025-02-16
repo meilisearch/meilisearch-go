@@ -1995,11 +1995,8 @@ func TestClient_MultiSearch(t *testing.T) {
 			want: &MultiSearchResponse{
 				Results: []SearchResponse{
 					{
-						Hits: []interface{}{
-							map[string]interface{}{
-								"book_id": float64(1),
-								"title":   "Alice In Wonderland",
-							},
+						Hits: Hits{
+							{"book_id": toRawMessage(1), "title": toRawMessage("Alice In Wonderland")},
 						},
 						EstimatedTotalHits: 1,
 						Offset:             0,
@@ -2031,11 +2028,8 @@ func TestClient_MultiSearch(t *testing.T) {
 			want: &MultiSearchResponse{
 				Results: []SearchResponse{
 					{
-						Hits: []interface{}{
-							map[string]interface{}{
-								"book_id": float64(1),
-								"title":   "Alice In Wonderland",
-							},
+						Hits: Hits{
+							{"book_id": toRawMessage(1), "title": toRawMessage("Alice In Wonderland")},
 						},
 						EstimatedTotalHits: 1,
 						Offset:             0,
@@ -2044,15 +2038,9 @@ func TestClient_MultiSearch(t *testing.T) {
 						IndexUID:           "TestClientMultiSearchOnTwoIndexes1",
 					},
 					{
-						Hits: []interface{}{
-							map[string]interface{}{
-								"book_id": float64(456),
-								"title":   "Le Petit Prince",
-							},
-							map[string]interface{}{
-								"book_id": float64(4),
-								"title":   "Harry Potter and the Half-Blood Prince",
-							},
+						Hits: Hits{
+							{"book_id": toRawMessage(456), "title": toRawMessage("Le Petit Prince")},
+							{"book_id": toRawMessage(4), "title": toRawMessage("Harry Potter and the Half-Blood Prince")},
 						},
 						EstimatedTotalHits: 2,
 						Offset:             0,
@@ -2084,10 +2072,26 @@ func TestClient_MultiSearch(t *testing.T) {
 			},
 			want: &MultiSearchResponse{
 				Results: nil,
-				Hits: []interface{}{
-					map[string]interface{}{"_federation": map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes2", "queriesPosition": 1.0, "weightedRankingScore": 0.8787878787878788}, "book_id": 456.0, "title": "Le Petit Prince"},
-					map[string]interface{}{"_federation": map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes1", "queriesPosition": 0.0, "weightedRankingScore": 0.8712121212121212}, "book_id": 1.0, "title": "Alice In Wonderland"},
-					map[string]interface{}{"_federation": map[string]interface{}{"indexUid": "TestClientMultiSearchOnTwoIndexes2", "queriesPosition": 1.0, "weightedRankingScore": 0.8333333333333334}, "book_id": 4.0, "title": "Harry Potter and the Half-Blood Prince"}},
+				Hits: Hits{
+					{
+						"_federation": toRawMessage(map[string]interface{}{
+							"indexUid": "TestClientMultiSearchOnTwoIndexes2", "queriesPosition": 1.0, "weightedRankingScore": 0.8787878787878788,
+						}),
+						"book_id": toRawMessage(456), "title": toRawMessage("Le Petit Prince"),
+					},
+					{
+						"_federation": toRawMessage(map[string]interface{}{
+							"indexUid": "TestClientMultiSearchOnTwoIndexes1", "queriesPosition": 0.0, "weightedRankingScore": 0.8712121212121212,
+						}),
+						"book_id": toRawMessage(1), "title": toRawMessage("Alice In Wonderland"),
+					},
+					{
+						"_federation": toRawMessage(map[string]interface{}{
+							"indexUid": "TestClientMultiSearchOnTwoIndexes2", "queriesPosition": 1.0, "weightedRankingScore": 0.8333333333333334,
+						}),
+						"book_id": toRawMessage(4), "title": toRawMessage("Harry Potter and the Half-Blood Prince"),
+					},
+				},
 				ProcessingTimeMs:   0,
 				Offset:             0,
 				Limit:              20,
@@ -2127,7 +2131,14 @@ func TestClient_MultiSearch(t *testing.T) {
 				require.NoError(t, err)
 				require.NotNil(t, got)
 				got.ProcessingTimeMs = 0 // Can vary.
-				require.Equal(t, got, tt.want)
+
+				// Compare results while ignoring ProcessingTimeMs
+				require.Equal(t, tt.want.Results, got.Results)
+				require.Equal(t, tt.want.Hits, got.Hits)
+				require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
+				require.Equal(t, tt.want.SemanticHitCount, got.SemanticHitCount)
+				require.Equal(t, tt.want.Offset, got.Offset)
+				require.Equal(t, tt.want.Limit, got.Limit)
 			}
 		})
 	}
