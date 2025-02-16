@@ -422,3 +422,11 @@ func testParseNdjsonDocuments(t *testing.T, documents io.Reader) []map[string]in
 	require.NoError(t, scanner.Err())
 	return docs
 }
+
+func toRawMessage(vPtr interface{}) json.RawMessage {
+	data, err := json.Marshal(vPtr)
+	if err != nil {
+		return nil
+	}
+	return data
+}

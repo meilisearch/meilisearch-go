@@ -1,8 +1,7 @@
-package types
+package meilisearch
 
 import (
 	"encoding/json"
-	"github.com/meilisearch/meilisearch-go"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
@@ -29,7 +28,7 @@ type IndexResult struct {
 	CreatedAt  time.Time `json:"createdAt"`
 	UpdatedAt  time.Time `json:"updatedAt"`
 	PrimaryKey string    `json:"primaryKey,omitempty"`
-	meilisearch.IndexManager
+	IndexManager
 }
 
 // IndexesResults return of multiple indexes is wrap in a IndexesResults
@@ -144,18 +143,18 @@ type Stats struct {
 //
 // Documentation: https://www.meilisearch.com/docs/learn/advanced/asynchronous_operations
 type Task struct {
-	Status     TaskStatus                      `json:"status"`
-	UID        int64                           `json:"uid,omitempty"`
-	TaskUID    int64                           `json:"taskUid,omitempty"`
-	IndexUID   string                          `json:"indexUid"`
-	Type       TaskType                        `json:"type"`
-	Error      meilisearch.meilisearchApiError `json:"error,omitempty"`
-	Duration   string                          `json:"duration,omitempty"`
-	EnqueuedAt time.Time                       `json:"enqueuedAt"`
-	StartedAt  time.Time                       `json:"startedAt,omitempty"`
-	FinishedAt time.Time                       `json:"finishedAt,omitempty"`
-	Details    Details                         `json:"details,omitempty"`
-	CanceledBy int64                           `json:"canceledBy,omitempty"`
+	Status     TaskStatus          `json:"status"`
+	UID        int64               `json:"uid,omitempty"`
+	TaskUID    int64               `json:"taskUid,omitempty"`
+	IndexUID   string              `json:"indexUid"`
+	Type       TaskType            `json:"type"`
+	Error      meilisearchApiError `json:"error,omitempty"`
+	Duration   string              `json:"duration,omitempty"`
+	EnqueuedAt time.Time           `json:"enqueuedAt"`
+	StartedAt  time.Time           `json:"startedAt,omitempty"`
+	FinishedAt time.Time           `json:"finishedAt,omitempty"`
+	Details    Details             `json:"details,omitempty"`
+	CanceledBy int64               `json:"canceledBy,omitempty"`
 }
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
@@ -490,9 +489,6 @@ type SwapIndexesParams struct {
 	Indexes []string `json:"indexes"`
 }
 
-// RawType is an alias for raw byte[]
-type RawType []byte
-
 // Health is the request body for set meilisearch health
 type Health struct {
 	Status string `json:"status"`
@@ -501,17 +497,6 @@ type Health struct {
 // UpdateIndexRequest is the request body for update Index primary key
 type UpdateIndexRequest struct {
 	PrimaryKey string `json:"primaryKey"`
-}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (b *RawType) UnmarshalJSON(data []byte) error {
-	*b = data
-	return nil
-}
-
-// MarshalJSON supports json.Marshaler interface
-func (b RawType) MarshalJSON() ([]byte, error) {
-	return b, nil
 }
 
 func (s *SearchRequest) validate() {
