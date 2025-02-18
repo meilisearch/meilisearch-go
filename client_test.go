@@ -5,13 +5,15 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/stretchr/testify/require"
+	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 // Mock structures for testing
@@ -106,6 +108,30 @@ func TestExecuteRequest(t *testing.T) {
 		} else if r.URL.Path == "/io-reader" {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(`{"message":"io reader"}`))
+		} else if r.URL.Path == "/io-reader-encoding" {
+			ce := r.Header.Get("Content-Encoding")
+			if ce == "" {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte("missing Content-Encoding header"))
+				return
+			}
+
+			// Read the raw request body
+			body, err := io.ReadAll(r.Body)
+			if err != nil {
+				w.WriteHeader(http.StatusInternalServerError)
+				_, _ = w.Write([]byte(fmt.Sprintf("failed to read body: %v", err)))
+				return
+			}
+
+			// For io.Reader, the client sends the raw data without encoding
+			// So we just need to compare it directly
+			if string(body) == "test data" {
+				w.WriteHeader(http.StatusOK)
+			} else {
+				w.WriteHeader(http.StatusBadRequest)
+				_, _ = w.Write([]byte(fmt.Sprintf("got: %s, want: test data", string(body))))
+			}
 		} else if r.URL.Path == "/failed-retry" {
 			w.WriteHeader(http.StatusBadGateway)
 		} else if r.URL.Path == "/success-retry" {
@@ -421,6 +447,19 @@ func TestExecuteRequest(t *testing.T) {
 			expectedResp: nil,
 			withTimeout:  true,
 			wantErr:      true,
+		},
+		{
+			name: "Test request encoding with io.Reader",
+			internalReq: &internalRequest{
+				endpoint:            "/io-reader-encoding",
+				method:              http.MethodPost,
+				contentType:         "text/plain",
+				withRequest:         strings.NewReader("test data"),
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp:    nil,
+			contentEncoding: GzipEncoding,
+			wantErr:         false,
 		},
 	}
 
