@@ -283,6 +283,7 @@ type TasksQuery struct {
 	AfterStartedAt   time.Time
 	BeforeFinishedAt time.Time
 	AfterFinishedAt  time.Time
+	Reverse          bool
 }
 
 // CancelTasksQuery is a list of filter available to send as query parameters
