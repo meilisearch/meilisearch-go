@@ -24,6 +24,8 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			Query:           "prince",
 			Request: &SearchRequest{
 				IndexUID: "indexUID",
+				Limit:    20,
+				Offset:   0,
 			},
 			FacetRequest: &FacetSearchRequest{
 				FacetName:  "tag",
@@ -57,6 +59,8 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			Query:           "prince",
 			Request: &SearchRequest{
 				IndexUID: "indexUID",
+				Limit:    20,
+				Offset:   0,
 			},
 			Response: &SearchResponse{
 				Hits: []interface{}{
@@ -90,6 +94,8 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			Query:           "prince",
 			Request: &SearchRequest{
 				IndexUID: "indexUID",
+				Limit:    20,
+				Offset:   0,
 			},
 			Response: &SearchResponse{
 				Hits: []interface{}{
