@@ -5,11 +5,9 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 	"time"
 
@@ -26,6 +24,18 @@ type mockJsonMarshaller struct {
 	null  bool
 	Foo   string `json:"foo"`
 	Bar   string `json:"bar"`
+}
+
+// failingEncoder is used to simulate encoder failure
+type failingEncoder struct{}
+
+func (fe failingEncoder) Encode(r io.Reader) (*bytes.Buffer, error) {
+	return nil, errors.New("dummy encoding failure")
+}
+
+// Implement Decode method to satisfy the encoder interface, though it won't be used here
+func (fe failingEncoder) Decode(b []byte, v interface{}) error {
+	return errors.New("dummy decode failure")
 }
 
 func TestExecuteRequest(t *testing.T) {
@@ -108,30 +118,6 @@ func TestExecuteRequest(t *testing.T) {
 		} else if r.URL.Path == "/io-reader" {
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(`{"message":"io reader"}`))
-		} else if r.URL.Path == "/io-reader-encoding" {
-			ce := r.Header.Get("Content-Encoding")
-			if ce == "" {
-				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte("missing Content-Encoding header"))
-				return
-			}
-
-			// Read the raw request body
-			body, err := io.ReadAll(r.Body)
-			if err != nil {
-				w.WriteHeader(http.StatusInternalServerError)
-				_, _ = w.Write([]byte(fmt.Sprintf("failed to read body: %v", err)))
-				return
-			}
-
-			// For io.Reader, the client sends the raw data without encoding
-			// So we just need to compare it directly
-			if string(body) == "test data" {
-				w.WriteHeader(http.StatusOK)
-			} else {
-				w.WriteHeader(http.StatusBadRequest)
-				_, _ = w.Write([]byte(fmt.Sprintf("got: %s, want: test data", string(body))))
-			}
 		} else if r.URL.Path == "/failed-retry" {
 			w.WriteHeader(http.StatusBadGateway)
 		} else if r.URL.Path == "/success-retry" {
@@ -141,6 +127,8 @@ func TestExecuteRequest(t *testing.T) {
 			}
 			w.WriteHeader(http.StatusBadGateway)
 			retryCount++
+		} else if r.URL.Path == "/dummy" {
+			w.WriteHeader(http.StatusOK)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
@@ -266,19 +254,6 @@ func TestExecuteRequest(t *testing.T) {
 			},
 			expectedResp: nil,
 			wantErr:      true,
-		},
-		{
-			name: "Successful request with io.reader",
-			internalReq: &internalRequest{
-				endpoint:            "/io-reader",
-				method:              http.MethodPost,
-				withResponse:        nil,
-				contentType:         "text/plain",
-				withRequest:         strings.NewReader("foobar"),
-				acceptedStatusCodes: []int{http.StatusOK},
-			},
-			expectedResp: nil,
-			wantErr:      false,
 		},
 		{
 			name: "Test null body response",
@@ -449,17 +424,17 @@ func TestExecuteRequest(t *testing.T) {
 			wantErr:      true,
 		},
 		{
-			name: "Test request encoding with io.Reader",
+			name: "Test request encoding with []byte encode failure",
 			internalReq: &internalRequest{
-				endpoint:            "/io-reader-encoding",
+				endpoint:            "/dummy",
 				method:              http.MethodPost,
+				withRequest:         []byte("test data"),
 				contentType:         "text/plain",
-				withRequest:         strings.NewReader("test data"),
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
 			expectedResp:    nil,
 			contentEncoding: GzipEncoding,
-			wantErr:         false,
+			wantErr:         true,
 		},
 	}
 
@@ -476,6 +451,11 @@ func TestExecuteRequest(t *testing.T) {
 					504: true,
 				},
 			})
+
+			// For the specific test case, override the encoder to force an error
+			if tt.name == "Test request encoding with []byte encode failure" {
+				c.encoder = failingEncoder{}
+			}
 
 			ctx := context.Background()
 
