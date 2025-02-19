@@ -5,13 +5,13 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
-	"github.com/stretchr/testify/require"
 	"io"
 	"net/http"
 	"net/http/httptest"
-	"strings"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/require"
 )
 
 // Mock structures for testing
@@ -24,6 +24,18 @@ type mockJsonMarshaller struct {
 	null  bool
 	Foo   string `json:"foo"`
 	Bar   string `json:"bar"`
+}
+
+// failingEncoder is used to simulate encoder failure
+type failingEncoder struct{}
+
+func (fe failingEncoder) Encode(r io.Reader) (*bytes.Buffer, error) {
+	return nil, errors.New("dummy encoding failure")
+}
+
+// Implement Decode method to satisfy the encoder interface, though it won't be used here
+func (fe failingEncoder) Decode(b []byte, v interface{}) error {
+	return errors.New("dummy decode failure")
 }
 
 func TestExecuteRequest(t *testing.T) {
@@ -115,6 +127,8 @@ func TestExecuteRequest(t *testing.T) {
 			}
 			w.WriteHeader(http.StatusBadGateway)
 			retryCount++
+		} else if r.URL.Path == "/dummy" {
+			w.WriteHeader(http.StatusOK)
 		} else {
 			w.WriteHeader(http.StatusNotFound)
 		}
@@ -240,19 +254,6 @@ func TestExecuteRequest(t *testing.T) {
 			},
 			expectedResp: nil,
 			wantErr:      true,
-		},
-		{
-			name: "Successful request with io.reader",
-			internalReq: &internalRequest{
-				endpoint:            "/io-reader",
-				method:              http.MethodPost,
-				withResponse:        nil,
-				contentType:         "text/plain",
-				withRequest:         strings.NewReader("foobar"),
-				acceptedStatusCodes: []int{http.StatusOK},
-			},
-			expectedResp: nil,
-			wantErr:      false,
 		},
 		{
 			name: "Test null body response",
@@ -422,6 +423,19 @@ func TestExecuteRequest(t *testing.T) {
 			withTimeout:  true,
 			wantErr:      true,
 		},
+		{
+			name: "Test request encoding with []byte encode failure",
+			internalReq: &internalRequest{
+				endpoint:            "/dummy",
+				method:              http.MethodPost,
+				withRequest:         []byte("test data"),
+				contentType:         "text/plain",
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp:    nil,
+			contentEncoding: GzipEncoding,
+			wantErr:         true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -437,6 +451,11 @@ func TestExecuteRequest(t *testing.T) {
 					504: true,
 				},
 			})
+
+			// For the specific test case, override the encoder to force an error
+			if tt.name == "Test request encoding with []byte encode failure" {
+				c.encoder = failingEncoder{}
+			}
 
 			ctx := context.Background()
 

@@ -3,8 +3,9 @@ package meilisearch
 import (
 	"crypto/tls"
 	"encoding/json"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func TestIndex_SearchWithContentEncoding(t *testing.T) {
@@ -23,6 +24,8 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			Query:           "prince",
 			Request: &SearchRequest{
 				IndexUID: "indexUID",
+				Limit:    20,
+				Offset:   0,
 			},
 			FacetRequest: &FacetSearchRequest{
 				FacetName:  "tag",
@@ -56,6 +59,8 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			Query:           "prince",
 			Request: &SearchRequest{
 				IndexUID: "indexUID",
+				Limit:    20,
+				Offset:   0,
 			},
 			Response: &SearchResponse{
 				Hits: []interface{}{
@@ -89,6 +94,8 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			Query:           "prince",
 			Request: &SearchRequest{
 				IndexUID: "indexUID",
+				Limit:    20,
+				Offset:   0,
 			},
 			Response: &SearchResponse{
 				Hits: []interface{}{
@@ -137,7 +144,8 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			require.NoError(t, err, "error unmarshalling raw got SearchResponse")
 			require.Equal(t, len(tt.Response.Hits), len(resp.Hits))
 
-			task, err := i.UpdateFilterableAttributes(&[]string{"tag"})
+			filterableAttrs := []string{"tag"}
+			task, err := i.UpdateFilterableAttributes(&filterableAttrs)
 			require.NoError(t, err)
 			testWaitForTask(t, i, task)
 
@@ -2015,15 +2023,15 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 			UID:    "indexUID",
 			client: sv,
 			request: &SimilarDocumentQuery{
-				Id: "123",
+				Id:       "123",
 				Embedder: "default",
 			},
 			resp:    new(SimilarDocumentResult),
 			wantErr: false,
 		},
 		{
-			UID:     "indexUID",
-			client:  sv,
+			UID:    "indexUID",
+			client: sv,
 			request: &SimilarDocumentQuery{
 				Embedder: "default",
 			},
