@@ -1674,6 +1674,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo13(in *jlexer.Lexer,
 		switch key {
 		case "databaseSize":
 			out.DatabaseSize = int64(in.Int64())
+		case "usedDatabaseSize":
+			out.UsedDatabaseSize = int64(in.Int64())
 		case "lastUpdate":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.LastUpdate).UnmarshalJSON(data))
@@ -1712,6 +1714,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo13(out *jwriter.Writ
 		const prefix string = ",\"databaseSize\":"
 		out.RawString(prefix[1:])
 		out.Int64(int64(in.DatabaseSize))
+	}
+	{
+		const prefix string = ",\"usedDatabaseSize\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.UsedDatabaseSize))
 	}
 	{
 		const prefix string = ",\"lastUpdate\":"
