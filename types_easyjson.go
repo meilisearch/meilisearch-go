@@ -5992,8 +5992,6 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo40(in *jlexer.Lexer,
 			continue
 		}
 		switch key {
-		case "vectorStore":
-			out.VectorStore = bool(in.Bool())
 		case "logsRoute":
 			out.LogsRoute = bool(in.Bool())
 		case "metrics":
@@ -6017,13 +6015,8 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo40(out *jwriter.Writ
 	first := true
 	_ = first
 	{
-		const prefix string = ",\"vectorStore\":"
-		out.RawString(prefix[1:])
-		out.Bool(bool(in.VectorStore))
-	}
-	{
 		const prefix string = ",\"logsRoute\":"
-		out.RawString(prefix)
+		out.RawString(prefix[1:])
 		out.Bool(bool(in.LogsRoute))
 	}
 	{
@@ -6086,16 +6079,6 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo41(in *jlexer.Lexer,
 			continue
 		}
 		switch key {
-		case "vectorStore":
-			if in.IsNull() {
-				in.Skip()
-				out.VectorStore = nil
-			} else {
-				if out.VectorStore == nil {
-					out.VectorStore = new(bool)
-				}
-				*out.VectorStore = bool(in.Bool())
-			}
 		case "logsRoute":
 			if in.IsNull() {
 				in.Skip()
@@ -6150,20 +6133,10 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo41(out *jwriter.Writ
 	out.RawByte('{')
 	first := true
 	_ = first
-	if in.VectorStore != nil {
-		const prefix string = ",\"vectorStore\":"
-		first = false
-		out.RawString(prefix[1:])
-		out.Bool(bool(*in.VectorStore))
-	}
 	if in.LogsRoute != nil {
 		const prefix string = ",\"logsRoute\":"
-		if first {
-			first = false
-			out.RawString(prefix[1:])
-		} else {
-			out.RawString(prefix)
-		}
+		first = false
+		out.RawString(prefix[1:])
 		out.Bool(bool(*in.LogsRoute))
 	}
 	if in.Metrics != nil {
