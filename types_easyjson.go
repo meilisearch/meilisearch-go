@@ -2508,6 +2508,26 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				in.Delim('}')
 			}
+		case "prefixSearch":
+			if in.IsNull() {
+				in.Skip()
+				out.PrefixSearch = nil
+			} else {
+				if out.PrefixSearch == nil {
+					out.PrefixSearch = new(string)
+				}
+				*out.PrefixSearch = string(in.String())
+			}
+		case "facetSearch":
+			if in.IsNull() {
+				in.Skip()
+				out.FacetSearch = nil
+			} else {
+				if out.FacetSearch == nil {
+					out.FacetSearch = new(bool)
+				}
+				*out.FacetSearch = bool(in.Bool())
+			}
 		default:
 			in.SkipRecursive()
 		}
@@ -2830,6 +2850,26 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 			}
 			out.RawByte('}')
 		}
+	}
+	if in.PrefixSearch != nil {
+		const prefix string = ",\"prefixSearch\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(*in.PrefixSearch))
+	}
+	if in.FacetSearch != nil {
+		const prefix string = ",\"facetSearch\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(*in.FacetSearch))
 	}
 	out.RawByte('}')
 }
