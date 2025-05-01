@@ -4208,5 +4208,5 @@ func stringPtr(s string) *string {
 }
 
 func boolPtr(b bool) bool {
-	return &b
+	return b
 }
