@@ -954,4 +954,4 @@ get_prefix_search_settings_1: |-
 update_prefix_search_settings_1: |-
   client.Index("books").UpdatePrefixSearch("disabled")
 reset_prefix_search_settings_1: |-
-client.Index("books").ResetPrefixSearch()
+  client.Index("books").ResetPrefixSearch()
