@@ -4054,7 +4054,7 @@ func TestIndex_GetFacetSearch(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *bool
+		wantResp bool
 	}{
 		{
 			name: "TestIndexBasicGetFacetSearch",
@@ -4102,7 +4102,7 @@ func TestIndex_UpdateFacetSearch(t *testing.T) {
 		name     string
 		args     args
 		wantTask *TaskInfo
-		wantResp *bool
+		wantResp bool
 	}{
 		{
 			name: "TestIndexBasicUpdateFacetSearch",
@@ -4158,7 +4158,7 @@ func TestIndex_ResetFacetSearch(t *testing.T) {
 		name     string
 		args     args
 		wantTask *TaskInfo
-		wantResp *bool
+		wantResp bool
 	}{
 		{
 			name: "TestIndexBasicResetFacetSearch",
@@ -4207,6 +4207,6 @@ func stringPtr(s string) *string {
 	return &s
 }
 
-func boolPtr(b bool) *bool {
+func boolPtr(b bool) bool {
 	return &b
 }
