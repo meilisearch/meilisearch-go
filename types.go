@@ -150,9 +150,11 @@ type Version struct {
 
 // StatsIndex is the type that represent the stats of an index in meilisearch
 type StatsIndex struct {
-	NumberOfDocuments int64            `json:"numberOfDocuments"`
-	IsIndexing        bool             `json:"isIndexing"`
-	FieldDistribution map[string]int64 `json:"fieldDistribution"`
+	NumberOfDocuments         int64            `json:"numberOfDocuments"`
+	IsIndexing                bool             `json:"isIndexing"`
+	FieldDistribution         map[string]int64 `json:"fieldDistribution"`
+	NumberOfEmbeddedDocuments int64            `json:"numberOfEmbeddedDocuments"`
+	NumberOfEmbeddings        int64            `json:"numberOfEmbeddings"`
 }
 
 // Stats is the type that represent all stats
