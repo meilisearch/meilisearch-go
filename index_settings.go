@@ -1226,22 +1226,22 @@ func (i *index) ResetPrefixSearchWithContext(ctx context.Context) (*TaskInfo, er
 	return resp, nil
 }
 
-func (i *index) GetFacetSearch() (*bool, error) {
+func (i *index) GetFacetSearch() (bool, error) {
 	return i.GetFacetSearchWithContext(context.Background())
 }
 
-func (i *index) GetFacetSearchWithContext(ctx context.Context) (*bool, error) {
-	resp := new(bool)
+func (i *index) GetFacetSearchWithContext(ctx context.Context) (bool, error) {
+	var resp bool
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/facet-search",
 		method:              http.MethodGet,
 		withRequest:         nil,
-		withResponse:        resp,
+		withResponse:        &resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetFacetSearch",
 	}
 	if err := i.client.executeRequest(ctx, req); err != nil {
-		return nil, err
+		return false, err
 	}
 	return resp, nil
 }

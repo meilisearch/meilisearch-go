@@ -88,7 +88,7 @@ type Settings struct {
 	Faceting             *Faceting              `json:"faceting,omitempty"`
 	Embedders            map[string]Embedder    `json:"embedders,omitempty"`
 	PrefixSearch         *string                `json:"prefixSearch,omitempty"`
-	FacetSearch          *bool                  `json:"facetSearch,omitempty"`
+	FacetSearch          bool                   `json:"facetSearch,omitempty"`
 }
 
 type LocalizedAttributes struct {

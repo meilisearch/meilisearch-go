@@ -2519,15 +2519,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				*out.PrefixSearch = string(in.String())
 			}
 		case "facetSearch":
-			if in.IsNull() {
-				in.Skip()
-				out.FacetSearch = nil
-			} else {
-				if out.FacetSearch == nil {
-					out.FacetSearch = new(bool)
-				}
-				*out.FacetSearch = bool(in.Bool())
-			}
+			out.FacetSearch = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -2861,7 +2853,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 		}
 		out.String(string(*in.PrefixSearch))
 	}
-	if in.FacetSearch != nil {
+	if in.FacetSearch {
 		const prefix string = ",\"facetSearch\":"
 		if first {
 			first = false
@@ -2869,7 +2861,7 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 		} else {
 			out.RawString(prefix)
 		}
-		out.Bool(bool(*in.FacetSearch))
+		out.Bool(bool(in.FacetSearch))
 	}
 	out.RawByte('}')
 }

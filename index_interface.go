@@ -646,8 +646,8 @@ type SettingsReader interface {
 	GetPrefixSearchWithContext(ctx context.Context) (*string, error)
 
 	// GetFacetSearch retrieves the facet search setting of the index.
-	GetFacetSearch() (*bool, error)
+	GetFacetSearch() (bool, error)
 
 	// GetFacetSearchWithContext retrieves the facet search setting of the index using the provided context for cancellation.
-	GetFacetSearchWithContext(ctx context.Context) (*bool, error)
+	GetFacetSearchWithContext(ctx context.Context) (bool, error)
 }
