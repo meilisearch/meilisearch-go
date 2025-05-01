@@ -943,3 +943,15 @@ update_localized_attribute_settings_1: |-
   })
 reset_localized_attribute_settings_1: |-
   client.index("INDEX_NAME").ResetLocalizedAttributes()
+get_facet_search_settings_1: |-
+  client.Index("books").GetFacetSearch()
+update_facet_search_settings_1: |-
+  client.Index("books").UpdateFacetSearch(false)
+reset_facet_search_settings_1: |-
+  client.Index("books").ResetFacetSearch()
+get_prefix_search_settings_1: |-
+  client.Index("books").GetPrefixSearch()
+update_prefix_search_settings_1: |-
+  client.Index("books").UpdatePrefixSearch("disabled")
+reset_prefix_search_settings_1: |-
+client.Index("books").ResetPrefixSearch()
