@@ -122,6 +122,8 @@ func TestIndex_GetStats(t *testing.T) {
 				NumberOfDocuments: 6,
 				IsIndexing:        false,
 				FieldDistribution: map[string]int64{"book_id": 6, "title": 6},
+				RawDocumentDbSize: 4096,
+				AvgDocumentSize:   674,
 			},
 		},
 		{
@@ -134,6 +136,8 @@ func TestIndex_GetStats(t *testing.T) {
 				NumberOfDocuments: 6,
 				IsIndexing:        false,
 				FieldDistribution: map[string]int64{"book_id": 6, "title": 6},
+				RawDocumentDbSize: 4096,
+				AvgDocumentSize:   674,
 			},
 		},
 	}
