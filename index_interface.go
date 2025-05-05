@@ -472,6 +472,30 @@ type SettingsManager interface {
 
 	// ResetLocalizedAttributesWithContext reset the localized attributes settings using the provided context for cancellation
 	ResetLocalizedAttributesWithContext(ctx context.Context) (*TaskInfo, error)
+
+	// UpdatePrefixSearch updates the prefix search setting of the index.
+	UpdatePrefixSearch(request string) (*TaskInfo, error)
+
+	// UpdatePrefixSearchWithContext updates the prefix search setting of the index using the provided context for cancellation.
+	UpdatePrefixSearchWithContext(ctx context.Context, request string) (*TaskInfo, error)
+
+	// ResetPrefixSearch resets the prefix search setting of the index to default value.
+	ResetPrefixSearch() (*TaskInfo, error)
+
+	// ResetPrefixSearchWithContext resets the prefix search setting of the index to default value using the provided context for cancellation.
+	ResetPrefixSearchWithContext(ctx context.Context) (*TaskInfo, error)
+
+	// UpdateFacetSearch updates the facet search setting of the index.
+	UpdateFacetSearch(request bool) (*TaskInfo, error)
+
+	// UpdateFacetSearchWithContext updates the facet search setting of the index using the provided context for cancellation.
+	UpdateFacetSearchWithContext(ctx context.Context, request bool) (*TaskInfo, error)
+
+	// ResetFacetSearch resets the facet search setting of the index to default value.
+	ResetFacetSearch() (*TaskInfo, error)
+
+	// ResetFacetSearchWithContext resets the facet search setting of the index to default value using the provided context for cancellation.
+	ResetFacetSearchWithContext(ctx context.Context) (*TaskInfo, error)
 }
 
 type SettingsReader interface {
@@ -614,4 +638,16 @@ type SettingsReader interface {
 	// GetLocalizedAttributesWithContext get the localized attributes settings of an index using the provided context for cancellation
 	// https://www.meilisearch.com/docs/reference/api/settings#get-localized-attributes-settings
 	GetLocalizedAttributesWithContext(ctx context.Context) ([]*LocalizedAttributes, error)
+
+	// GetPrefixSearch retrieves the prefix search setting of the index.
+	GetPrefixSearch() (*string, error)
+
+	// GetPrefixSearchWithContext retrieves the prefix search setting of the index using the provided context for cancellation.
+	GetPrefixSearchWithContext(ctx context.Context) (*string, error)
+
+	// GetFacetSearch retrieves the facet search setting of the index.
+	GetFacetSearch() (bool, error)
+
+	// GetFacetSearchWithContext retrieves the facet search setting of the index using the provided context for cancellation.
+	GetFacetSearchWithContext(ctx context.Context) (bool, error)
 }
