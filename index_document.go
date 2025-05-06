@@ -262,6 +262,9 @@ func (i *index) GetDocumentWithContext(ctx context.Context, identifier string, r
 		if len(request.Fields) != 0 {
 			req.withQueryParams["fields"] = strings.Join(request.Fields, ",")
 		}
+		if request.RetrieveVectors {
+			req.withQueryParams["retrieveVectors"] = "true"
+		}
 	}
 	if err := i.client.executeRequest(ctx, req); err != nil {
 		return err
@@ -294,6 +297,9 @@ func (i *index) GetDocumentsWithContext(ctx context.Context, param *DocumentsQue
 		}
 		if len(param.Fields) != 0 {
 			req.withQueryParams["fields"] = strings.Join(param.Fields, ",")
+		}
+		if param.RetrieveVectors {
+			req.withQueryParams["retrieveVectors"] = "true"
 		}
 	} else if param != nil && param.Filter != nil {
 		req.withRequest = param
