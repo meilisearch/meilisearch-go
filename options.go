@@ -2,13 +2,34 @@ package meilisearch
 
 import (
 	"crypto/tls"
+	"encoding/json"
+	"github.com/meilisearch/meilisearch-go/internal/utils"
 	"net"
 	"net/http"
 	"time"
 )
 
-var (
-	defaultMeiliOpt = &meiliOpt{
+type meiliOpt struct {
+	client          *http.Client
+	apiKey          string
+	contentEncoding *encodingOpt
+	retryOnStatus   map[int]bool
+	disableRetry    bool
+	maxRetries      uint8
+	jsonMarshaler   utils.JSONMarshal
+	jsonUnmarshaler utils.JSONUnmarshal
+}
+
+type encodingOpt struct {
+	encodingType ContentEncoding
+	level        EncodingCompressionLevel
+}
+
+type Option func(*meiliOpt)
+
+// _defaultOpts returns a new meiliOpt instance initialized with default client configuration, including HTTP client, retry policy, content encoding, and JSON marshal/unmarshal functions.
+func _defaultOpts() *meiliOpt {
+	return &meiliOpt{
 		client: &http.Client{
 			Transport: baseTransport(),
 		},
@@ -20,28 +41,14 @@ var (
 			503: true,
 			504: true,
 		},
-		disableRetry: false,
-		maxRetries:   3,
+		disableRetry:    false,
+		maxRetries:      3,
+		jsonMarshaler:   json.Marshal,
+		jsonUnmarshaler: json.Unmarshal,
 	}
-)
-
-type meiliOpt struct {
-	client          *http.Client
-	apiKey          string
-	contentEncoding *encodingOpt
-	retryOnStatus   map[int]bool
-	disableRetry    bool
-	maxRetries      uint8
 }
 
-type encodingOpt struct {
-	encodingType ContentEncoding
-	level        EncodingCompressionLevel
-}
-
-type Option func(*meiliOpt)
-
-// WithCustomClient set custom http.Client
+// WithCustomClient returns an option that sets a custom HTTP client for Meilisearch requests.
 func WithCustomClient(client *http.Client) Option {
 	return func(opt *meiliOpt) {
 		opt.client = client
@@ -80,7 +87,7 @@ func WithContentEncoding(encodingType ContentEncoding, level EncodingCompression
 	}
 }
 
-// WithCustomRetries set retry on specific http error code and max retries (min: 1, max: 255)
+// WithCustomRetries configures which HTTP status codes should trigger retries and sets the maximum number of retry attempts (clamped between 1 and 255).
 func WithCustomRetries(retryOnStatus []int, maxRetries uint8) Option {
 	return func(opt *meiliOpt) {
 		opt.retryOnStatus = make(map[int]bool)
@@ -90,19 +97,50 @@ func WithCustomRetries(retryOnStatus []int, maxRetries uint8) Option {
 
 		if maxRetries == 0 {
 			maxRetries = 1
+		} else if maxRetries > 255 {
+			maxRetries = 255
 		}
 
 		opt.maxRetries = maxRetries
 	}
 }
 
-// DisableRetries disable retry logic in client
+// DisableRetries returns an option that disables retry logic for the client.
 func DisableRetries() Option {
 	return func(opt *meiliOpt) {
 		opt.disableRetry = true
 	}
 }
 
+// WithCustomJsonMarshaler set custom marshal from external packages instead encoding/json.
+// we use encoding/json as default json library due to stability and producibility. However,
+// the standard library is a bit slow compared to 3rd party libraries. If you're not happy with
+// the performance of encoding/json.
+//
+// supported package: goccy/go-json, bytedance/sonic, segmentio/encoding, minio/simdjson-go, wI2L/jettison, mailru/easyjson.
+//
+// WithCustomJsonMarshaler sets a custom JSON marshaler function for serializing data sent to Meilisearch.
+func WithCustomJsonMarshaler(marshal utils.JSONMarshal) Option {
+	return func(opt *meiliOpt) {
+		opt.jsonMarshaler = marshal
+	}
+}
+
+// WithCustomJsonUnmarshaler set custom unmarshal from external packages instead encoding/json.
+// we use encoding/json as default json library due to stability and producibility. However,
+// the standard library is a bit slow compared to 3rd party libraries. If you're not happy with
+// the performance of encoding/json.
+//
+// supported package: goccy/go-json, bytedance/sonic, segmentio/encoding, minio/simdjson-go, wI2L/jettison, mailru/easyjson.
+//
+// WithCustomJsonUnmarshaler sets a custom JSON unmarshal function for decoding responses, replacing the default encoding/json implementation.
+func WithCustomJsonUnmarshaler(unmarshal utils.JSONUnmarshal) Option {
+	return func(opt *meiliOpt) {
+		opt.jsonUnmarshaler = unmarshal
+	}
+}
+
+// baseTransport returns a preconfigured HTTP transport with sensible defaults for timeouts, connection pooling, and proxy settings.
 func baseTransport() *http.Transport {
 	return &http.Transport{
 		Proxy: http.ProxyFromEnvironment,

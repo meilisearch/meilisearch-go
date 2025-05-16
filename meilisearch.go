@@ -14,25 +14,28 @@ type meilisearch struct {
 	client *client
 }
 
-// New create new service manager for operating on meilisearch
+// New creates a new service manager instance for interacting with a Meilisearch server.
+// The returned ServiceManager can be configured with optional parameters such as API key, retry policies, and custom JSON marshaling.
 func New(host string, options ...Option) ServiceManager {
-	defOpt := defaultMeiliOpt
+	opts := _defaultOpts()
 
 	for _, opt := range options {
-		opt(defOpt)
+		opt(opts)
 	}
 
 	return &meilisearch{
 		client: newClient(
-			defOpt.client,
+			opts.client,
 			host,
-			defOpt.apiKey,
-			clientConfig{
-				contentEncoding:          defOpt.contentEncoding.encodingType,
-				encodingCompressionLevel: defOpt.contentEncoding.level,
-				disableRetry:             defOpt.disableRetry,
-				retryOnStatus:            defOpt.retryOnStatus,
-				maxRetries:               defOpt.maxRetries,
+			opts.apiKey,
+			&clientConfig{
+				contentEncoding:          opts.contentEncoding.encodingType,
+				encodingCompressionLevel: opts.contentEncoding.level,
+				disableRetry:             opts.disableRetry,
+				retryOnStatus:            opts.retryOnStatus,
+				maxRetries:               opts.maxRetries,
+				jsonMarshal:              opts.jsonMarshaler,
+				jsonUnmarshal:            opts.jsonUnmarshaler,
 			},
 		),
 	}
