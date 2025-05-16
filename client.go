@@ -52,7 +52,7 @@ type internalRequest struct {
 	functionName string
 }
 
-func newClient(cli *http.Client, host, apiKey string, cfg clientConfig) *client {
+func newClient(cli *http.Client, host, apiKey string, cfg *clientConfig) *client {
 	c := &client{
 		client: cli,
 		host:   host,
@@ -153,34 +153,9 @@ func (c *client) sendRequest(
 		apiURL.RawQuery = query.Encode()
 	}
 
-	var body io.Reader
-	if req.withRequest != nil {
-		if req.method == http.MethodGet || req.method == http.MethodHead {
-			return nil, ErrInvalidRequestMethod
-		}
-		if req.contentType == "" {
-			return nil, ErrRequestBodyWithoutContentType
-		}
-
-		buf := c.bufferPool.Get().(*bytes.Buffer)
-		buf.Reset()
-
-		data, err := c.jsonMarshal(req.withRequest)
-		if err != nil {
-			return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-				fmt.Errorf("failed to marshal request with json.Marshal: %w", err))
-		}
-		buf.Write(data)
-
-		if !c.contentEncoding.IsZero() {
-			body, err = c.encoder.Encode(buf)
-			if err != nil {
-				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-					fmt.Errorf("failed to encode request body: %w", err))
-			}
-		} else {
-			body = buf
-		}
+	body, err := c.buildBody(req, internalError)
+	if err != nil {
+		return nil, err
 	}
 
 	// Create the HTTP request
@@ -314,4 +289,59 @@ func (c *client) handleResponse(req *internalRequest, body []byte, internalError
 		}
 	}
 	return nil
+}
+
+func (c *client) buildBody(req *internalRequest, internalError *Error) (io.Reader, error) {
+	var body io.Reader
+	var buf *bytes.Buffer
+
+	if req.withRequest != nil {
+		if req.method == http.MethodGet || req.method == http.MethodHead {
+			return nil, ErrInvalidRequestMethod
+		}
+		if req.contentType == "" {
+			return nil, ErrRequestBodyWithoutContentType
+		}
+
+		switch v := req.withRequest.(type) {
+		case io.Reader:
+			// NDJSON, CSV, or other streaming types
+			body = v
+
+		case []byte:
+			// NDJSON, CSV, or any raw data as bytes
+			body = bytes.NewReader(v)
+
+		default:
+			// For JSON API requests: marshal as JSON into a buffer
+			buf = c.bufferPool.Get().(*bytes.Buffer)
+			buf.Reset()
+
+			data, err := c.jsonMarshal(req.withRequest)
+			if err != nil {
+				c.bufferPool.Put(buf)
+				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
+					fmt.Errorf("failed to marshal request with json.Marshal: %w", err))
+			}
+			buf.Write(data)
+			body = buf
+		}
+
+		// Compression support (gzip, brotli, etc.)
+		if !c.contentEncoding.IsZero() {
+			// Only compress if body is not already a compressed stream
+			// (Usually you'd want to avoid double-compression on raw data like NDJSON, but that's user responsibility)
+			compressedBody, err := c.encoder.Encode(body)
+			if err != nil {
+				if buf != nil {
+					c.bufferPool.Put(buf)
+				}
+				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
+					fmt.Errorf("failed to encode request body: %w", err))
+			}
+			body = compressedBody
+		}
+	}
+
+	return body, nil
 }
