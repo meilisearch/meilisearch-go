@@ -9,26 +9,6 @@ import (
 	"time"
 )
 
-var (
-	defaultMeiliOpt = &meiliOpt{
-		client: &http.Client{
-			Transport: baseTransport(),
-		},
-		contentEncoding: &encodingOpt{
-			level: DefaultCompression,
-		},
-		retryOnStatus: map[int]bool{
-			502: true,
-			503: true,
-			504: true,
-		},
-		disableRetry:    false,
-		maxRetries:      3,
-		jsonMarshaler:   json.Marshal,
-		jsonUnmarshaler: json.Unmarshal,
-	}
-)
-
 type meiliOpt struct {
 	client          *http.Client
 	apiKey          string
@@ -46,6 +26,26 @@ type encodingOpt struct {
 }
 
 type Option func(*meiliOpt)
+
+func _defaultOpts() *meiliOpt {
+	return &meiliOpt{
+		client: &http.Client{
+			Transport: baseTransport(),
+		},
+		contentEncoding: &encodingOpt{
+			level: DefaultCompression,
+		},
+		retryOnStatus: map[int]bool{
+			502: true,
+			503: true,
+			504: true,
+		},
+		disableRetry:    false,
+		maxRetries:      3,
+		jsonMarshaler:   json.Marshal,
+		jsonUnmarshaler: json.Unmarshal,
+	}
+}
 
 // WithCustomClient set custom http.Client
 func WithCustomClient(client *http.Client) Option {
@@ -96,6 +96,8 @@ func WithCustomRetries(retryOnStatus []int, maxRetries uint8) Option {
 
 		if maxRetries == 0 {
 			maxRetries = 1
+		} else if maxRetries > 255 {
+			maxRetries = 255
 		}
 
 		opt.maxRetries = maxRetries
