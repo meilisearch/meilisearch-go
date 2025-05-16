@@ -6687,6 +6687,7 @@ func (v *DocumentsResult) UnmarshalJSON(data []byte) error {
 func (v *DocumentsResult) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo43(l, v)
 }
+// easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo44 decodes a JSON object into a DocumentsQuery struct, handling fields for offset, limit, fields, filter, and retrieveVectors.
 func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo44(in *jlexer.Lexer, out *DocumentsQuery) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
@@ -6741,6 +6742,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo44(in *jlexer.Lexer,
 			} else {
 				out.Filter = in.Interface()
 			}
+		case "retrieveVectors":
+			out.RetrieveVectors = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -6751,6 +6754,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo44(in *jlexer.Lexer,
 		in.Consumed()
 	}
 }
+// easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo44 serializes a DocumentsQuery struct into JSON using an easyjson writer.
 func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo44(out *jwriter.Writer, in DocumentsQuery) {
 	out.RawByte('{')
 	first := true
@@ -6806,6 +6810,16 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo44(out *jwriter.Writ
 			out.Raw(json.Marshal(in.Filter))
 		}
 	}
+	if in.RetrieveVectors {
+		const prefix string = ",\"retrieveVectors\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.RetrieveVectors))
+	}
 	out.RawByte('}')
 }
 
@@ -6832,6 +6846,7 @@ func (v *DocumentsQuery) UnmarshalJSON(data []byte) error {
 func (v *DocumentsQuery) UnmarshalEasyJSON(l *jlexer.Lexer) {
 	easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo44(l, v)
 }
+// easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo45 decodes a JSON object into a DocumentQuery struct, handling the "fields" and "retrieveVectors" fields.
 func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo45(in *jlexer.Lexer, out *DocumentQuery) {
 	isTopLevel := in.IsStart()
 	if in.IsNull() {
@@ -6874,6 +6889,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo45(in *jlexer.Lexer,
 				}
 				in.Delim(']')
 			}
+		case "retrieveVectors":
+			out.RetrieveVectors = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -6884,6 +6901,7 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo45(in *jlexer.Lexer,
 		in.Consumed()
 	}
 }
+// easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo45 encodes a DocumentQuery struct into JSON using the easyjson writer.
 func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo45(out *jwriter.Writer, in DocumentQuery) {
 	out.RawByte('{')
 	first := true
@@ -6902,6 +6920,16 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo45(out *jwriter.Writ
 			}
 			out.RawByte(']')
 		}
+	}
+	if in.RetrieveVectors {
+		const prefix string = ",\"retrieveVectors\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.RetrieveVectors))
 	}
 	out.RawByte('}')
 }
