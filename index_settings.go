@@ -1164,3 +1164,125 @@ func (i *index) ResetLocalizedAttributesWithContext(ctx context.Context) (*TaskI
 	}
 	return resp, nil
 }
+
+func (i *index) GetPrefixSearch() (*string, error) {
+	return i.GetPrefixSearchWithContext(context.Background())
+}
+
+func (i *index) GetPrefixSearchWithContext(ctx context.Context) (*string, error) {
+	resp := new(string)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/prefix-search",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetPrefixSearch",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) UpdatePrefixSearch(request string) (*TaskInfo, error) {
+	return i.UpdatePrefixSearchWithContext(context.Background(), request)
+}
+
+func (i *index) UpdatePrefixSearchWithContext(ctx context.Context, request string) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/prefix-search",
+		method:              http.MethodPut,
+		contentType:         contentTypeJSON,
+		withRequest:         &request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdatePrefixSearch",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) ResetPrefixSearch() (*TaskInfo, error) {
+	return i.ResetPrefixSearchWithContext(context.Background())
+}
+
+func (i *index) ResetPrefixSearchWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/prefix-search",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetPrefixSearch",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) GetFacetSearch() (bool, error) {
+	return i.GetFacetSearchWithContext(context.Background())
+}
+
+func (i *index) GetFacetSearchWithContext(ctx context.Context) (bool, error) {
+	var resp bool
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/facet-search",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetFacetSearch",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return false, err
+	}
+	return resp, nil
+}
+
+func (i *index) UpdateFacetSearch(request bool) (*TaskInfo, error) {
+	return i.UpdateFacetSearchWithContext(context.Background(), request)
+}
+
+func (i *index) UpdateFacetSearchWithContext(ctx context.Context, request bool) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/facet-search",
+		method:              http.MethodPut,
+		contentType:         contentTypeJSON,
+		withRequest:         &request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateFacetSearch",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) ResetFacetSearch() (*TaskInfo, error) {
+	return i.ResetFacetSearchWithContext(context.Background())
+}
+
+func (i *index) ResetFacetSearchWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/facet-search",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetFacetSearch",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

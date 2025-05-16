@@ -549,12 +549,11 @@ landing_getting_started_1: |-
   client.Index("movies").AddDocuments(documents)
 getting_started_check_task_status: |-
   client.GetTask(0)
-getting_started_add_documents_md: |-
-  ```bash
-  go get -u github.com/meilisearch/meilisearch-go
-  ```
+getting_started_add_documents: |-
+  // In the command line:
+  // go get -u github.com/meilisearch/meilisearch-go
 
-  ```go
+  // In your .go file:
   package main
 
   import (
@@ -580,16 +579,8 @@ getting_started_add_documents_md: |-
         panic(err)
     }
   }
-
-  ```
-
-  [About this SDK](https://github.com/meilisearch/meilisearch-go/)
-getting_started_search_md: |-
-  ```go
+getting_started_search: |-
   client.Index("movies").Search("botman", &meilisearch.SearchRequest{})
-  ```
-
-  [About this SDK](https://github.com/meilisearch/meilisearch-go/)
 getting_started_add_meteorites: |-
   client := meilisearch.New("http://localhost:7700")
 
@@ -952,3 +943,15 @@ update_localized_attribute_settings_1: |-
   })
 reset_localized_attribute_settings_1: |-
   client.index("INDEX_NAME").ResetLocalizedAttributes()
+get_facet_search_settings_1: |-
+  client.Index("books").GetFacetSearch()
+update_facet_search_settings_1: |-
+  client.Index("books").UpdateFacetSearch(false)
+reset_facet_search_settings_1: |-
+  client.Index("books").ResetFacetSearch()
+get_prefix_search_settings_1: |-
+  client.Index("books").GetPrefixSearch()
+update_prefix_search_settings_1: |-
+  client.Index("books").UpdatePrefixSearch("disabled")
+reset_prefix_search_settings_1: |-
+  client.Index("books").ResetPrefixSearch()
