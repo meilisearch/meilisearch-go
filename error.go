@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	client2 "github.com/meilisearch/meilisearch-go/internal/client"
 	"strings"
 )
 
@@ -105,7 +106,7 @@ type Error struct {
 	// an error.
 	ErrCode ErrCode
 
-	encoder
+	client2.encoder
 }
 
 // Error return a well human formatted message.
