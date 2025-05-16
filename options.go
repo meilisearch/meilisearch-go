@@ -96,8 +96,6 @@ func WithCustomRetries(retryOnStatus []int, maxRetries uint8) Option {
 
 		if maxRetries == 0 {
 			maxRetries = 1
-		} else if maxRetries > 255 {
-			maxRetries = 255
 		}
 
 		opt.maxRetries = maxRetries
