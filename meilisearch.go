@@ -27,7 +27,7 @@ func New(host string, options ...Option) ServiceManager {
 			defOpt.client,
 			host,
 			defOpt.apiKey,
-			clientConfig{
+			&clientConfig{
 				contentEncoding:          defOpt.contentEncoding.encodingType,
 				encodingCompressionLevel: defOpt.contentEncoding.level,
 				disableRetry:             defOpt.disableRetry,
