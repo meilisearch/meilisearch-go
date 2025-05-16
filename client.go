@@ -5,7 +5,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/meilisearch/meilisearch-go/internal/utils"
+	"github.com/meilisearch/meilisearch-go/utils"
 	"io"
 	"net/http"
 	"net/url"

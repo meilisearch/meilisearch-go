@@ -3,7 +3,7 @@ package meilisearch
 import (
 	"crypto/tls"
 	"encoding/json"
-	"github.com/meilisearch/meilisearch-go/internal/utils"
+	"github.com/meilisearch/meilisearch-go/utils"
 	"net"
 	"net/http"
 	"time"
