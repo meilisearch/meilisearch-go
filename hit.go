@@ -14,6 +14,10 @@ type (
 
 // Decode decodes a single Hit into the provided struct.
 func (h Hit) Decode(vPtr interface{}) error {
+	if vPtr == nil || reflect.ValueOf(vPtr).Kind() != reflect.Ptr {
+		return errors.New("vPtr must be a non-nil pointer")
+	}
+
 	raw, err := json.Marshal(h)
 	if err != nil {
 		return fmt.Errorf("failed to marshal hit: %w", err)
