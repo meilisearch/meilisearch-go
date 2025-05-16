@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
-	client2 "github.com/meilisearch/meilisearch-go/internal/client"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -48,9 +47,9 @@ func Benchmark_ExecuteRequestWithEncoding(b *testing.B) {
 			accept := r.Header.Get("Accept-Encoding")
 			ce := r.Header.Get("Content-Encoding")
 
-			reqEnc := client2.newEncoding(ContentEncoding(ce), DefaultCompression)
-			respEnc := client2.newEncoding(ContentEncoding(accept), DefaultCompression)
-			req := new(client2.mockData)
+			reqEnc := newEncoding(ContentEncoding(ce), DefaultCompression)
+			respEnc := newEncoding(ContentEncoding(accept), DefaultCompression)
+			req := new(mockData)
 
 			if len(ce) != 0 {
 				body, err := io.ReadAll(r.Body)
@@ -94,8 +93,8 @@ func Benchmark_ExecuteRequestWithEncoding(b *testing.B) {
 			endpoint:            "/test",
 			method:              http.MethodPost,
 			contentType:         contentTypeJSON,
-			withRequest:         &client2.mockData{Name: "foo", Age: 30},
-			withResponse:        &client2.mockData{},
+			withRequest:         &mockData{Name: "foo", Age: 30},
+			withResponse:        &mockData{},
 			acceptedStatusCodes: []int{http.StatusOK},
 		})
 		if err != nil {
