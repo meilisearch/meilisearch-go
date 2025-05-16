@@ -114,8 +114,10 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			i := sv.Index(tt.Request.IndexUID)
 			t.Cleanup(cleanup(sv))
 
+			require.NotNil(t, tt.Request)
+			require.NotEmpty(t, tt.Request.IndexUID)
 			got, err := i.Search(tt.Query, tt.Request)
-			require.NoError(t, err)
+			require.NoError(t, err, "Search request failed unexpectedly")
 			require.Equal(t, len(tt.Response.Hits), len(got.Hits))
 
 			gotJson, err := i.SearchRaw(tt.Query, tt.Request)
