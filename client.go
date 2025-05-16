@@ -294,6 +294,7 @@ func (c *client) handleResponse(req *internalRequest, body []byte, internalError
 func (c *client) buildBody(req *internalRequest, internalError *Error) (io.Reader, error) {
 	var body io.Reader
 	var buf *bytes.Buffer
+	var bufFromPool bool
 
 	if req.withRequest != nil {
 		if req.method == http.MethodGet || req.method == http.MethodHead {
@@ -305,17 +306,13 @@ func (c *client) buildBody(req *internalRequest, internalError *Error) (io.Reade
 
 		switch v := req.withRequest.(type) {
 		case io.Reader:
-			// NDJSON, CSV, or other streaming types
 			body = v
-
 		case []byte:
-			// NDJSON, CSV, or any raw data as bytes
 			body = bytes.NewReader(v)
-
 		default:
-			// For JSON API requests: marshal as JSON into a buffer
 			buf = c.bufferPool.Get().(*bytes.Buffer)
 			buf.Reset()
+			bufFromPool = true
 
 			data, err := c.jsonMarshal(req.withRequest)
 			if err != nil {
@@ -327,15 +324,12 @@ func (c *client) buildBody(req *internalRequest, internalError *Error) (io.Reade
 			body = buf
 		}
 
-		// Compression support (gzip, brotli, etc.)
 		if !c.contentEncoding.IsZero() {
-			// Only compress if body is not already a compressed stream
-			// (Usually you'd want to avoid double-compression on raw data like NDJSON, but that's user responsibility)
 			compressedBody, err := c.encoder.Encode(body)
+			if bufFromPool {
+				c.bufferPool.Put(buf)
+			}
 			if err != nil {
-				if buf != nil {
-					c.bufferPool.Put(buf)
-				}
 				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
 					fmt.Errorf("failed to encode request body: %w", err))
 			}
