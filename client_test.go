@@ -436,6 +436,8 @@ func TestExecuteRequest(t *testing.T) {
 					503: true,
 					504: true,
 				},
+				jsonMarshal:   json.Marshal,
+				jsonUnmarshal: json.Unmarshal,
 			})
 
 			ctx := context.Background()
