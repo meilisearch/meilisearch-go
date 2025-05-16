@@ -16,10 +16,11 @@ type meilisearch struct {
 
 // New create new service manager for operating on meilisearch
 func New(host string, options ...Option) ServiceManager {
-	defOpt := defaultMeiliOpt
+	defOpt := *defaultMeiliOpt
+	optCopy := &defOpt
 
 	for _, opt := range options {
-		opt(defOpt)
+		opt(optCopy)
 	}
 
 	return &meilisearch{
