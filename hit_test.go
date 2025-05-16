@@ -8,7 +8,6 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestStruct represents a sample struct for decoding tests.
 type TestStruct struct {
 	ID    int    `json:"id"`
 	Title string `json:"title"`
@@ -105,5 +104,61 @@ func TestHits_Decode(t *testing.T) {
 
 		assert.Error(t, err)
 		assert.Contains(t, err.Error(), "v must be a pointer to a slice")
+	})
+}
+
+func TestHit_Decode_Errors(t *testing.T) {
+	t.Run("Decode with nil pointer", func(t *testing.T) {
+		hit := Hit{
+			"id":    json.RawMessage(`123`),
+			"title": json.RawMessage(`"Test Book"`),
+		}
+
+		err := hit.Decode(nil)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "vPtr must be a non-nil pointer")
+	})
+
+	t.Run("Decode with non-pointer value", func(t *testing.T) {
+		hit := Hit{
+			"id":    json.RawMessage(`123`),
+			"title": json.RawMessage(`"Test Book"`),
+		}
+
+		var notPtr TestStruct
+		err := hit.Decode(notPtr)
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "vPtr must be a non-nil pointer")
+	})
+}
+
+func TestHits_Len(t *testing.T) {
+	t.Run("Returns correct length", func(t *testing.T) {
+		hits := Hits{
+			{"id": json.RawMessage(`1`)},
+			{"id": json.RawMessage(`2`)},
+		}
+		assert.Equal(t, 2, hits.Len())
+	})
+}
+
+func TestHits_Decode_HitDecodeError(t *testing.T) {
+	t.Run("One of hits causes decoding error", func(t *testing.T) {
+		hits := Hits{
+			{
+				"id":    json.RawMessage(`1`),
+				"title": json.RawMessage(`"Book One"`),
+			},
+			{
+				"id":    json.RawMessage(`invalid`),
+				"title": json.RawMessage(`"Book Two"`),
+			},
+		}
+
+		var results []TestStruct
+		err := hits.Decode(&results)
+
+		assert.Error(t, err)
+		assert.Contains(t, err.Error(), "failed to decode hit at index 1")
 	})
 }
