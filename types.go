@@ -8,8 +8,6 @@ import (
 )
 
 const (
-	DefaultLimit int64 = 20
-
 	contentTypeJSON   string = "application/json"
 	contentTypeNDJSON string = "application/x-ndjson"
 	contentTypeCSV    string = "text/csv"
