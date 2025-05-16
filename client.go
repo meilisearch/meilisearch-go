@@ -3,9 +3,9 @@ package meilisearch
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
+	"github.com/meilisearch/meilisearch-go/internal/utils"
 	"io"
 	"net/http"
 	"net/url"
@@ -24,6 +24,9 @@ type client struct {
 	disableRetry    bool
 	maxRetries      uint8
 	retryBackoff    func(attempt uint8) time.Duration
+
+	jsonMarshal   utils.JSONMarshal
+	jsonUnmarshal utils.JSONUnmarshal
 }
 
 type clientConfig struct {
@@ -32,6 +35,8 @@ type clientConfig struct {
 	retryOnStatus            map[int]bool
 	disableRetry             bool
 	maxRetries               uint8
+	jsonMarshal              utils.JSONMarshal
+	jsonUnmarshal            utils.JSONUnmarshal
 }
 
 type internalRequest struct {
@@ -60,6 +65,8 @@ func newClient(cli *http.Client, host, apiKey string, cfg clientConfig) *client 
 		disableRetry:  cfg.disableRetry,
 		maxRetries:    cfg.maxRetries,
 		retryOnStatus: cfg.retryOnStatus,
+		jsonMarshal:   cfg.jsonMarshal,
+		jsonUnmarshal: cfg.jsonUnmarshal,
 	}
 
 	if c.retryOnStatus == nil {
@@ -158,7 +165,7 @@ func (c *client) sendRequest(
 		buf := c.bufferPool.Get().(*bytes.Buffer)
 		buf.Reset()
 
-		data, err := json.Marshal(req.withRequest)
+		data, err := c.jsonMarshal(req.withRequest)
 		if err != nil {
 			return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
 				fmt.Errorf("failed to marshal request with json.Marshal: %w", err))
@@ -296,20 +303,11 @@ func (c *client) handleResponse(req *internalRequest, body []byte, internalError
 			}
 		} else {
 			internalError.ResponseToString = string(body)
-
 			if internalError.ResponseToString == nullBody {
-				req.withResponse = nil
 				return nil
 			}
 
-			var err error
-			if resp, ok := req.withResponse.(json.Unmarshaler); ok {
-				err = resp.UnmarshalJSON(body)
-				req.withResponse = resp
-			} else {
-				err = json.Unmarshal(body, req.withResponse)
-			}
-			if err != nil {
+			if err := c.jsonUnmarshal(body, req.withResponse); err != nil {
 				return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
 			}
 		}
