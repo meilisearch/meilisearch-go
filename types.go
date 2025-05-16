@@ -481,6 +481,7 @@ type ExperimentalFeaturesBase struct {
 	Metrics                 *bool `json:"metrics,omitempty"`
 	EditDocumentsByFunction *bool `json:"editDocumentsByFunction,omitempty"`
 	ContainsFilter          *bool `json:"containsFilter,omitempty"`
+	Network                 *bool `json:"network,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -488,6 +489,7 @@ type ExperimentalFeaturesResult struct {
 	Metrics                 bool `json:"metrics"`
 	EditDocumentsByFunction bool `json:"editDocumentsByFunction"`
 	ContainsFilter          bool `json:"containsFilter"`
+	Network                 bool `json:"network"`
 }
 
 type SwapIndexesParams struct {
