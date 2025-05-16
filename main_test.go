@@ -3,7 +3,6 @@ package meilisearch
 import (
 	"bufio"
 	"context"
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"github.com/stretchr/testify/require"
@@ -44,14 +43,6 @@ var testNdjsonDocuments = []byte(`{"id": 1, "name": "Alice In Wonderland"}
 {"id": 3, "name": "Le Petit Prince"}
 {"id": 4, "name": "The Great Gatsby"}
 {"id": 5, "name": "Don Quixote"}
-`)
-
-var testCsvDocuments = []byte(`id,name
-1,Alice In Wonderland
-2,Pride and Prejudice
-3,Le Petit Prince
-4,The Great Gatsby
-5,Don Quixote
 `)
 
 type docTest struct {
@@ -379,31 +370,6 @@ func setUpDistinctIndex(client ServiceManager, indexUID string) {
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
-}
-
-func testParseCsvDocuments(t *testing.T, documents io.Reader) []map[string]interface{} {
-	var (
-		docs   []map[string]interface{}
-		header []string
-	)
-	r := csv.NewReader(documents)
-	for {
-		record, err := r.Read()
-		if err == io.EOF {
-			break
-		}
-		require.NoError(t, err)
-		if header == nil {
-			header = record
-			continue
-		}
-		doc := make(map[string]interface{})
-		for i, key := range header {
-			doc[key] = record[i]
-		}
-		docs = append(docs, doc)
-	}
-	return docs
 }
 
 func testParseNdjsonDocuments(t *testing.T, documents io.Reader) Hits {

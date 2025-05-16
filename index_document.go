@@ -396,7 +396,7 @@ func (i *index) DeleteAllDocumentsWithContext(ctx context.Context) (*TaskInfo, e
 func (i *index) addDocuments(ctx context.Context, documents interface{}, contentType string, options map[string]string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	endpoint := "/indexes/" + i.uid + "/documents"
-	if options != nil && len(options) > 0 {
+	if len(options) > 0 {
 		for key, val := range options {
 			if key == "primaryKey" {
 				i.primaryKey = val
@@ -422,7 +422,7 @@ func (i *index) addDocuments(ctx context.Context, documents interface{}, content
 func (i *index) addDocumentsFromReader(ctx context.Context, r io.Reader, contentType string, options map[string]string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	endpoint := "/indexes/" + i.uid + "/documents"
-	if options != nil && len(options) > 0 {
+	if len(options) > 0 {
 		for key, val := range options {
 			if key == "primaryKey" {
 				i.primaryKey = val

@@ -114,7 +114,7 @@ func DisableRetries() Option {
 // the standard library is a bit slow compared to 3rd party libraries. If you're not happy with
 // the performance of encoding/json.
 //
-// supported package: goccy/go-json, bytedance/sonic, segmentio/encoding, minio/simdjson-go, wI2L/jettison.
+// supported package: goccy/go-json, bytedance/sonic, segmentio/encoding, minio/simdjson-go, wI2L/jettison, mailru/easyjson.
 //
 // default is encoding/json
 func WithCustomJsonMarshaler(marshal utils.JSONMarshal) Option {
@@ -128,7 +128,7 @@ func WithCustomJsonMarshaler(marshal utils.JSONMarshal) Option {
 // the standard library is a bit slow compared to 3rd party libraries. If you're not happy with
 // the performance of encoding/json.
 //
-// supported package: goccy/go-json, bytedance/sonic, segmentio/encoding, minio/simdjson-go, wI2L/jettison.
+// supported package: goccy/go-json, bytedance/sonic, segmentio/encoding, minio/simdjson-go, wI2L/jettison, mailru/easyjson.
 //
 // default is encoding/json
 func WithCustomJsonUnmarshaler(unmarshal utils.JSONUnmarshal) Option {
