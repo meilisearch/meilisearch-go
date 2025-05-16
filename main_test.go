@@ -406,15 +406,15 @@ func testParseCsvDocuments(t *testing.T, documents io.Reader) []map[string]inter
 	return docs
 }
 
-func testParseNdjsonDocuments(t *testing.T, documents io.Reader) []map[string]interface{} {
-	var docs []map[string]interface{}
+func testParseNdjsonDocuments(t *testing.T, documents io.Reader) Hits {
+	var docs Hits
 	scanner := bufio.NewScanner(documents)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if line == "" {
 			continue
 		}
-		doc := make(map[string]interface{})
+		doc := make(Hit)
 		err := json.Unmarshal([]byte(line), &doc)
 		require.NoError(t, err)
 		docs = append(docs, doc)
