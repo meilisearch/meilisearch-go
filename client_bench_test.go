@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	client2 "github.com/meilisearch/meilisearch-go/internal/client"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -22,7 +23,7 @@ func Benchmark_ExecuteRequest(b *testing.B) {
 	}))
 	defer ts.Close()
 
-	c := newClient(&http.Client{}, ts.URL, "testApiKey", clientConfig{
+	c := newClient(&http.Client{}, ts.URL, "testApiKey", &clientConfig{
 		disableRetry: true,
 	})
 
@@ -47,9 +48,9 @@ func Benchmark_ExecuteRequestWithEncoding(b *testing.B) {
 			accept := r.Header.Get("Accept-Encoding")
 			ce := r.Header.Get("Content-Encoding")
 
-			reqEnc := newEncoding(ContentEncoding(ce), DefaultCompression)
-			respEnc := newEncoding(ContentEncoding(accept), DefaultCompression)
-			req := new(mockData)
+			reqEnc := client2.newEncoding(ContentEncoding(ce), DefaultCompression)
+			respEnc := client2.newEncoding(ContentEncoding(accept), DefaultCompression)
+			req := new(client2.mockData)
 
 			if len(ce) != 0 {
 				body, err := io.ReadAll(r.Body)
@@ -81,7 +82,7 @@ func Benchmark_ExecuteRequestWithEncoding(b *testing.B) {
 	}))
 	defer ts.Close()
 
-	c := newClient(&http.Client{}, ts.URL, "testApiKey", clientConfig{
+	c := newClient(&http.Client{}, ts.URL, "testApiKey", &clientConfig{
 		disableRetry:             true,
 		contentEncoding:          GzipEncoding,
 		encodingCompressionLevel: DefaultCompression,
@@ -93,8 +94,8 @@ func Benchmark_ExecuteRequestWithEncoding(b *testing.B) {
 			endpoint:            "/test",
 			method:              http.MethodPost,
 			contentType:         contentTypeJSON,
-			withRequest:         &mockData{Name: "foo", Age: 30},
-			withResponse:        &mockData{},
+			withRequest:         &client2.mockData{Name: "foo", Age: 30},
+			withResponse:        &client2.mockData{},
 			acceptedStatusCodes: []int{http.StatusOK},
 		})
 		if err != nil {
@@ -120,7 +121,7 @@ func Benchmark_ExecuteRequestWithoutRetries(b *testing.B) {
 	}))
 	defer ts.Close()
 
-	c := newClient(&http.Client{}, ts.URL, "testApiKey", clientConfig{
+	c := newClient(&http.Client{}, ts.URL, "testApiKey", &clientConfig{
 		disableRetry: false,
 		maxRetries:   3,
 		retryOnStatus: map[int]bool{

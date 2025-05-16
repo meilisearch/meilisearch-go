@@ -5,6 +5,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	client2 "github.com/meilisearch/meilisearch-go/internal/client"
 	"io"
 	"net/http"
 	"net/http/httptest"
@@ -49,8 +50,8 @@ func TestExecuteRequest(t *testing.T) {
 		} else if r.Method == http.MethodGet && r.URL.Path == "/test-get-encoding" {
 			encode := r.Header.Get("Accept-Encoding")
 			if len(encode) != 0 {
-				enc := newEncoding(ContentEncoding(encode), DefaultCompression)
-				d := &mockData{Name: "foo", Age: 30}
+				enc := client2.newEncoding(ContentEncoding(encode), DefaultCompression)
+				d := &client2.mockData{Name: "foo", Age: 30}
 
 				b, err := json.Marshal(d)
 				require.NoError(t, err)
@@ -67,9 +68,9 @@ func TestExecuteRequest(t *testing.T) {
 			accept := r.Header.Get("Accept-Encoding")
 			ce := r.Header.Get("Content-Encoding")
 
-			reqEnc := newEncoding(ContentEncoding(ce), DefaultCompression)
-			respEnc := newEncoding(ContentEncoding(accept), DefaultCompression)
-			req := new(mockData)
+			reqEnc := client2.newEncoding(ContentEncoding(ce), DefaultCompression)
+			respEnc := client2.newEncoding(ContentEncoding(accept), DefaultCompression)
+			req := new(client2.mockData)
 
 			if len(ce) != 0 {
 				b, err := io.ReadAll(r.Body)
@@ -102,7 +103,7 @@ func TestExecuteRequest(t *testing.T) {
 
 			enc := r.Header.Get("Accept-Encoding")
 			if len(enc) != 0 {
-				e := newEncoding(ContentEncoding(enc), DefaultCompression)
+				e := client2.newEncoding(ContentEncoding(enc), DefaultCompression)
 				b, err := e.Encode(bytes.NewReader(msg))
 				require.NoError(t, err)
 				_, _ = w.Write(b.Bytes())
@@ -326,10 +327,10 @@ func TestExecuteRequest(t *testing.T) {
 				endpoint:            "/test-get-encoding",
 				method:              http.MethodGet,
 				withRequest:         nil,
-				withResponse:        &mockData{},
+				withResponse:        &client2.mockData{},
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
-			expectedResp:    &mockData{Name: "foo", Age: 30},
+			expectedResp:    &client2.mockData{Name: "foo", Age: 30},
 			contentEncoding: GzipEncoding,
 			wantErr:         false,
 		},
@@ -339,10 +340,10 @@ func TestExecuteRequest(t *testing.T) {
 				endpoint:            "/test-get-encoding",
 				method:              http.MethodGet,
 				withRequest:         nil,
-				withResponse:        &mockData{},
+				withResponse:        &client2.mockData{},
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
-			expectedResp:    &mockData{Name: "foo", Age: 30},
+			expectedResp:    &client2.mockData{Name: "foo", Age: 30},
 			contentEncoding: DeflateEncoding,
 			wantErr:         false,
 		},
@@ -352,10 +353,10 @@ func TestExecuteRequest(t *testing.T) {
 				endpoint:            "/test-get-encoding",
 				method:              http.MethodGet,
 				withRequest:         nil,
-				withResponse:        &mockData{},
+				withResponse:        &client2.mockData{},
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
-			expectedResp:    &mockData{Name: "foo", Age: 30},
+			expectedResp:    &client2.mockData{Name: "foo", Age: 30},
 			contentEncoding: BrotliEncoding,
 			wantErr:         false,
 		},
@@ -365,11 +366,11 @@ func TestExecuteRequest(t *testing.T) {
 				endpoint:            "/test-req-resp-encoding",
 				method:              http.MethodPost,
 				contentType:         contentTypeJSON,
-				withRequest:         &mockData{Name: "foo", Age: 30},
-				withResponse:        &mockData{},
+				withRequest:         &client2.mockData{Name: "foo", Age: 30},
+				withResponse:        &client2.mockData{},
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
-			expectedResp:    &mockData{Name: "foo", Age: 30},
+			expectedResp:    &client2.mockData{Name: "foo", Age: 30},
 			contentEncoding: GzipEncoding,
 			wantErr:         false,
 		},
@@ -440,7 +441,7 @@ func TestExecuteRequest(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := newClient(&http.Client{}, ts.URL, "testApiKey", clientConfig{
+			c := newClient(&http.Client{}, ts.URL, "testApiKey", &clientConfig{
 				contentEncoding:          tt.contentEncoding,
 				encodingCompressionLevel: DefaultCompression,
 				maxRetries:               3,
@@ -479,7 +480,7 @@ func TestExecuteRequest(t *testing.T) {
 }
 
 func TestNewClientNilRetryOnStatus(t *testing.T) {
-	c := newClient(&http.Client{}, "", "", clientConfig{
+	c := newClient(&http.Client{}, "", "", &clientConfig{
 		maxRetries:    3,
 		retryOnStatus: nil,
 	})
