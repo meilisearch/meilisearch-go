@@ -2252,7 +2252,8 @@ func Test_ListIndex(t *testing.T) {
 
 			for _, idx := range tt.Indexes {
 				info, err := c.CreateIndex(&IndexConfig{
-					Uid: idx,
+					Uid:        idx,
+					PrimaryKey: "id", // Adding a default primary key
 				})
 				if tt.WantErr {
 					require.Error(t, err)

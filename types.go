@@ -62,6 +62,8 @@ type Settings struct {
 	Pagination           *Pagination            `json:"pagination,omitempty"`
 	Faceting             *Faceting              `json:"faceting,omitempty"`
 	Embedders            map[string]Embedder    `json:"embedders,omitempty"`
+	PrefixSearch         *string                `json:"prefixSearch,omitempty"`
+	FacetSearch          bool                   `json:"facetSearch,omitempty"`
 }
 
 type LocalizedAttributes struct {
@@ -125,16 +127,21 @@ type Version struct {
 
 // StatsIndex is the type that represent the stats of an index in meilisearch
 type StatsIndex struct {
-	NumberOfDocuments int64            `json:"numberOfDocuments"`
-	IsIndexing        bool             `json:"isIndexing"`
-	FieldDistribution map[string]int64 `json:"fieldDistribution"`
+	NumberOfDocuments         int64            `json:"numberOfDocuments"`
+	IsIndexing                bool             `json:"isIndexing"`
+	FieldDistribution         map[string]int64 `json:"fieldDistribution"`
+	RawDocumentDbSize         int64            `json:"rawDocumentDbSize"`
+	AvgDocumentSize           int64            `json:"avgDocumentSize"`
+	NumberOfEmbeddedDocuments int64            `json:"numberOfEmbeddedDocuments"`
+	NumberOfEmbeddings        int64            `json:"numberOfEmbeddings"`
 }
 
 // Stats is the type that represent all stats
 type Stats struct {
-	DatabaseSize int64                 `json:"databaseSize"`
-	LastUpdate   time.Time             `json:"lastUpdate"`
-	Indexes      map[string]StatsIndex `json:"indexes"`
+	DatabaseSize     int64                 `json:"databaseSize"`
+	UsedDatabaseSize int64                 `json:"usedDatabaseSize"`
+	LastUpdate       time.Time             `json:"lastUpdate"`
+	Indexes          map[string]StatsIndex `json:"indexes"`
 }
 
 // Task indicates information about a task resource
@@ -414,15 +421,17 @@ type FacetSearchResponse struct {
 
 // DocumentQuery is the request body get one documents method
 type DocumentQuery struct {
-	Fields []string `json:"fields,omitempty"`
+	Fields          []string `json:"fields,omitempty"`
+	RetrieveVectors bool     `json:"retrieveVectors,omitempty"`
 }
 
 // DocumentsQuery is the request body for list documents method
 type DocumentsQuery struct {
-	Offset int64       `json:"offset,omitempty"`
-	Limit  int64       `json:"limit,omitempty"`
-	Fields []string    `json:"fields,omitempty"`
-	Filter interface{} `json:"filter,omitempty"`
+	Offset          int64       `json:"offset,omitempty"`
+	Limit           int64       `json:"limit,omitempty"`
+	Fields          []string    `json:"fields,omitempty"`
+	Filter          interface{} `json:"filter,omitempty"`
+	RetrieveVectors bool        `json:"retrieveVectors,omitempty"`
 }
 
 // SimilarDocumentQuery is query parameters of similar documents
@@ -468,7 +477,6 @@ type UpdateDocumentByFunctionRequest struct {
 
 // ExperimentalFeaturesResult represents the experimental features result from the API.
 type ExperimentalFeaturesBase struct {
-	VectorStore             *bool `json:"vectorStore,omitempty"`
 	LogsRoute               *bool `json:"logsRoute,omitempty"`
 	Metrics                 *bool `json:"metrics,omitempty"`
 	EditDocumentsByFunction *bool `json:"editDocumentsByFunction,omitempty"`
@@ -476,7 +484,6 @@ type ExperimentalFeaturesBase struct {
 }
 
 type ExperimentalFeaturesResult struct {
-	VectorStore             bool `json:"vectorStore"`
 	LogsRoute               bool `json:"logsRoute"`
 	Metrics                 bool `json:"metrics"`
 	EditDocumentsByFunction bool `json:"editDocumentsByFunction"`
