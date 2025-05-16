@@ -3,7 +3,6 @@ package meilisearch
 import (
 	"crypto/tls"
 	"encoding/json"
-	"github.com/meilisearch/meilisearch-go/utils"
 	"net"
 	"net/http"
 	"time"
@@ -16,8 +15,8 @@ type meiliOpt struct {
 	retryOnStatus   map[int]bool
 	disableRetry    bool
 	maxRetries      uint8
-	jsonMarshaler   utils.JSONMarshal
-	jsonUnmarshaler utils.JSONUnmarshal
+	jsonMarshaler   JSONMarshal
+	jsonUnmarshaler JSONUnmarshal
 }
 
 type encodingOpt struct {
@@ -117,7 +116,7 @@ func DisableRetries() Option {
 // supported package: goccy/go-json, bytedance/sonic, segmentio/encoding, minio/simdjson-go, wI2L/jettison, mailru/easyjson.
 //
 // default is encoding/json
-func WithCustomJsonMarshaler(marshal utils.JSONMarshal) Option {
+func WithCustomJsonMarshaler(marshal JSONMarshal) Option {
 	return func(opt *meiliOpt) {
 		opt.jsonMarshaler = marshal
 	}
@@ -131,7 +130,7 @@ func WithCustomJsonMarshaler(marshal utils.JSONMarshal) Option {
 // supported package: goccy/go-json, bytedance/sonic, segmentio/encoding, minio/simdjson-go, wI2L/jettison, mailru/easyjson.
 //
 // default is encoding/json
-func WithCustomJsonUnmarshaler(unmarshal utils.JSONUnmarshal) Option {
+func WithCustomJsonUnmarshaler(unmarshal JSONUnmarshal) Option {
 	return func(opt *meiliOpt) {
 		opt.jsonUnmarshaler = unmarshal
 	}

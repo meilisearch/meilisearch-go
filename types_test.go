@@ -1,4 +1,4 @@
-package utils
+package meilisearch
 
 import (
 	"encoding/json"

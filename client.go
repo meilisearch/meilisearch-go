@@ -5,7 +5,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/meilisearch/meilisearch-go/utils"
 	"io"
 	"net/http"
 	"net/url"
@@ -25,8 +24,8 @@ type client struct {
 	maxRetries      uint8
 	retryBackoff    func(attempt uint8) time.Duration
 
-	jsonMarshal   utils.JSONMarshal
-	jsonUnmarshal utils.JSONUnmarshal
+	jsonMarshal   JSONMarshal
+	jsonUnmarshal JSONUnmarshal
 }
 
 type clientConfig struct {
@@ -35,8 +34,8 @@ type clientConfig struct {
 	retryOnStatus            map[int]bool
 	disableRetry             bool
 	maxRetries               uint8
-	jsonMarshal              utils.JSONMarshal
-	jsonUnmarshal            utils.JSONUnmarshal
+	jsonMarshal              JSONMarshal
+	jsonUnmarshal            JSONUnmarshal
 }
 
 type internalRequest struct {
