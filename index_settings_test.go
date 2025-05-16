@@ -260,6 +260,8 @@ func TestIndex_GetSettings(t *testing.T) {
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				LocalizedAttributes:  nil,
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -286,6 +288,8 @@ func TestIndex_GetSettings(t *testing.T) {
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				LocalizedAttributes:  nil,
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 	}
@@ -896,6 +900,8 @@ func TestIndex_ResetSettings(t *testing.T) {
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				LocalizedAttributes:  nil,
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -924,6 +930,8 @@ func TestIndex_ResetSettings(t *testing.T) {
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				LocalizedAttributes:  nil,
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 	}
@@ -1708,6 +1716,8 @@ func TestIndex_UpdateSettings(t *testing.T) {
 							AttributePatterns: []string{"*_ja"},
 						},
 					},
+					PrefixSearch: stringPtr("indexingTime"),
+					FacetSearch:  true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1736,6 +1746,8 @@ func TestIndex_UpdateSettings(t *testing.T) {
 						AttributePatterns: []string{"*_ja"},
 					},
 				},
+				PrefixSearch: stringPtr("indexingTime"),
+				FacetSearch:  true,
 			},
 		},
 		{
@@ -1789,6 +1801,8 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1811,6 +1825,8 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch: stringPtr("indexingTime"),
+				FacetSearch:  true,
 			},
 		},
 	}
@@ -1886,6 +1902,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1912,6 +1930,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1933,6 +1953,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -1968,6 +1990,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1994,6 +2018,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2015,6 +2041,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -2050,6 +2078,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 				secondRequest: Settings{
 					SearchableAttributes: []string{
@@ -2076,6 +2106,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2097,6 +2129,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -2132,6 +2166,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 				secondRequest: Settings{
 					DisplayedAttributes: []string{
@@ -2158,6 +2194,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2179,6 +2217,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -2214,6 +2254,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 				secondRequest: Settings{
 					StopWords: []string{
@@ -2240,6 +2282,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2261,6 +2305,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -2296,6 +2342,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 				secondRequest: Settings{
 					FilterableAttributes: []string{
@@ -2322,6 +2370,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2343,6 +2393,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -2378,6 +2430,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 				secondRequest: Settings{
 					SortableAttributes: []string{
@@ -2404,6 +2458,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2425,6 +2481,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -2472,6 +2530,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
 				},
 				secondRequest: Settings{
 					TypoTolerance: &TypoTolerance{
@@ -2518,6 +2578,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2539,6 +2601,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -2574,6 +2638,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 				secondRequest: Settings{
 					Pagination: &Pagination{
@@ -2600,6 +2666,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2621,6 +2689,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -2659,6 +2729,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 				secondRequest: Settings{
 					Faceting: &Faceting{
@@ -2688,6 +2760,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2709,6 +2783,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 		{
@@ -2745,6 +2821,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 				secondRequest: Settings{
 					RankingRules: []string{
@@ -2775,6 +2853,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2796,6 +2876,8 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
 			},
 		},
 	}
@@ -3796,4 +3878,335 @@ func Test_LocalizedAttributes(t *testing.T) {
 		_, err := i.UpdateLocalizedAttributes([]*LocalizedAttributes{invalidLocalized})
 		require.Error(t, err)
 	})
+}
+
+func TestIndex_GetPrefixSearch(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
+	type args struct {
+		UID    string
+		client ServiceManager
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantResp *string
+	}{
+		{
+			name: "TestIndexBasicGetPrefixSearch",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+			},
+			wantResp: stringPtr("indexingTime"),
+		},
+		{
+			name: "TestIndexGetPrefixSearchWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customMeili,
+			},
+			wantResp: stringPtr("indexingTime"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpIndexForFaceting(tt.args.client)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := i.GetPrefixSearch()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+		})
+	}
+}
+
+func TestIndex_UpdatePrefixSearch(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
+	type args struct {
+		UID     string
+		client  ServiceManager
+		request string
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantTask *TaskInfo
+		wantResp *string
+	}{
+		{
+			name: "TestIndexBasicUpdatePrefixSearch",
+			args: args{
+				UID:     "indexUID",
+				client:  meili,
+				request: "disabled",
+			},
+			wantTask: &TaskInfo{TaskUID: 1},
+			wantResp: stringPtr("disabled"),
+		},
+		{
+			name: "TestIndexUpdatePrefixSearchWithCustomClient",
+			args: args{
+				UID:     "indexUID",
+				client:  customMeili,
+				request: "disabled",
+			},
+			wantTask: &TaskInfo{TaskUID: 1},
+			wantResp: stringPtr("disabled"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpIndexForFaceting(tt.args.client)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotTask, err := i.UpdatePrefixSearch(tt.args.request)
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
+			testWaitForTask(t, i, gotTask)
+
+			gotResp, err := i.GetPrefixSearch()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+		})
+	}
+}
+
+func TestIndex_ResetPrefixSearch(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
+	type args struct {
+		UID    string
+		client ServiceManager
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantTask *TaskInfo
+		wantResp *string
+	}{
+		{
+			name: "TestIndexBasicResetPrefixSearch",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+			},
+			wantTask: &TaskInfo{TaskUID: 1},
+			wantResp: stringPtr("indexingTime"),
+		},
+		{
+			name: "TestIndexResetPrefixSearchWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customMeili,
+			},
+			wantTask: &TaskInfo{TaskUID: 1},
+			wantResp: stringPtr("indexingTime"),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpIndexForFaceting(tt.args.client)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			// First update to a non-default value
+			_, err := i.UpdatePrefixSearch("disabled")
+			require.NoError(t, err)
+
+			gotTask, err := i.ResetPrefixSearch()
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
+			testWaitForTask(t, i, gotTask)
+
+			gotResp, err := i.GetPrefixSearch()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+		})
+	}
+}
+
+func TestIndex_GetFacetSearch(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
+	type args struct {
+		UID    string
+		client ServiceManager
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantResp bool
+	}{
+		{
+			name: "TestIndexBasicGetFacetSearch",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+			},
+			wantResp: boolPtr(true),
+		},
+		{
+			name: "TestIndexGetFacetSearchWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customMeili,
+			},
+			wantResp: boolPtr(true),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpIndexForFaceting(tt.args.client)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := i.GetFacetSearch()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+		})
+	}
+}
+
+func TestIndex_UpdateFacetSearch(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
+	type args struct {
+		UID     string
+		client  ServiceManager
+		request bool
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantTask *TaskInfo
+		wantResp bool
+	}{
+		{
+			name: "TestIndexBasicUpdateFacetSearch",
+			args: args{
+				UID:     "indexUID",
+				client:  meili,
+				request: false,
+			},
+			wantTask: &TaskInfo{TaskUID: 1},
+			wantResp: boolPtr(false),
+		},
+		{
+			name: "TestIndexUpdateFacetSearchWithCustomClient",
+			args: args{
+				UID:     "indexUID",
+				client:  customMeili,
+				request: false,
+			},
+			wantTask: &TaskInfo{TaskUID: 1},
+			wantResp: boolPtr(false),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpIndexForFaceting(tt.args.client)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotTask, err := i.UpdateFacetSearch(tt.args.request)
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
+			testWaitForTask(t, i, gotTask)
+
+			gotResp, err := i.GetFacetSearch()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+		})
+	}
+}
+
+func TestIndex_ResetFacetSearch(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
+	type args struct {
+		UID    string
+		client ServiceManager
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantTask *TaskInfo
+		wantResp bool
+	}{
+		{
+			name: "TestIndexBasicResetFacetSearch",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+			},
+			wantTask: &TaskInfo{TaskUID: 1},
+			wantResp: boolPtr(true),
+		},
+		{
+			name: "TestIndexResetFacetSearchWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customMeili,
+			},
+			wantTask: &TaskInfo{TaskUID: 1},
+			wantResp: boolPtr(true),
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpIndexForFaceting(tt.args.client)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			// First update to a non-default value
+			_, err := i.UpdateFacetSearch(false)
+			require.NoError(t, err)
+
+			gotTask, err := i.ResetFacetSearch()
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
+			testWaitForTask(t, i, gotTask)
+
+			gotResp, err := i.GetFacetSearch()
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+		})
+	}
+}
+
+// Helper functions
+func stringPtr(s string) *string {
+	return &s
+}
+
+func boolPtr(b bool) bool {
+	return b
 }

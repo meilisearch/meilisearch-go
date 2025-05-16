@@ -1582,6 +1582,14 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo12(in *jlexer.Lexer,
 				}
 				in.Delim('}')
 			}
+		case "rawDocumentDbSize":
+			out.RawDocumentDbSize = int64(in.Int64())
+		case "avgDocumentSize":
+			out.AvgDocumentSize = int64(in.Int64())
+		case "numberOfEmbeddedDocuments":
+			out.NumberOfEmbeddedDocuments = int64(in.Int64())
+		case "numberOfEmbeddings":
+			out.NumberOfEmbeddings = int64(in.Int64())
 		default:
 			in.SkipRecursive()
 		}
@@ -1626,6 +1634,26 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo12(out *jwriter.Writ
 			}
 			out.RawByte('}')
 		}
+	}
+	{
+		const prefix string = ",\"rawDocumentDbSize\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.RawDocumentDbSize))
+	}
+	{
+		const prefix string = ",\"avgDocumentSize\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.AvgDocumentSize))
+	}
+	{
+		const prefix string = ",\"numberOfEmbeddedDocuments\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.NumberOfEmbeddedDocuments))
+	}
+	{
+		const prefix string = ",\"numberOfEmbeddings\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.NumberOfEmbeddings))
 	}
 	out.RawByte('}')
 }
@@ -1674,6 +1702,8 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo13(in *jlexer.Lexer,
 		switch key {
 		case "databaseSize":
 			out.DatabaseSize = int64(in.Int64())
+		case "usedDatabaseSize":
+			out.UsedDatabaseSize = int64(in.Int64())
 		case "lastUpdate":
 			if data := in.Raw(); in.Ok() {
 				in.AddError((out.LastUpdate).UnmarshalJSON(data))
@@ -1712,6 +1742,11 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo13(out *jwriter.Writ
 		const prefix string = ",\"databaseSize\":"
 		out.RawString(prefix[1:])
 		out.Int64(int64(in.DatabaseSize))
+	}
+	{
+		const prefix string = ",\"usedDatabaseSize\":"
+		out.RawString(prefix)
+		out.Int64(int64(in.UsedDatabaseSize))
 	}
 	{
 		const prefix string = ",\"lastUpdate\":"
@@ -2473,6 +2508,18 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo16(in *jlexer.Lexer,
 				}
 				in.Delim('}')
 			}
+		case "prefixSearch":
+			if in.IsNull() {
+				in.Skip()
+				out.PrefixSearch = nil
+			} else {
+				if out.PrefixSearch == nil {
+					out.PrefixSearch = new(string)
+				}
+				*out.PrefixSearch = string(in.String())
+			}
+		case "facetSearch":
+			out.FacetSearch = bool(in.Bool())
 		default:
 			in.SkipRecursive()
 		}
@@ -2795,6 +2842,26 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo16(out *jwriter.Writ
 			}
 			out.RawByte('}')
 		}
+	}
+	if in.PrefixSearch != nil {
+		const prefix string = ",\"prefixSearch\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.String(string(*in.PrefixSearch))
+	}
+	if in.FacetSearch {
+		const prefix string = ",\"facetSearch\":"
+		if first {
+			first = false
+			out.RawString(prefix[1:])
+		} else {
+			out.RawString(prefix)
+		}
+		out.Bool(bool(in.FacetSearch))
 	}
 	out.RawByte('}')
 }
