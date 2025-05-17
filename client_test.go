@@ -29,7 +29,7 @@ type mockJsonMarshaller struct {
 // failingEncoder is used to simulate encoder failure
 type failingEncoder struct{}
 
-func (fe failingEncoder) Encode(r io.Reader) (*bytes.Buffer, error) {
+func (fe failingEncoder) Encode(r io.Reader) (io.ReadCloser, error) {
 	return nil, errors.New("dummy encoding failure")
 }
 
@@ -57,8 +57,14 @@ func TestExecuteRequest(t *testing.T) {
 
 				res, err := enc.Encode(bytes.NewReader(b))
 				require.NoError(t, err)
-				_, _ = w.Write(res.Bytes())
+
+				defer res.Close()
+
+				compressedData, err := io.ReadAll(res)
+				require.NoError(t, err)
+
 				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write(compressedData)
 				return
 			}
 			_, _ = w.Write([]byte("invalid message"))
@@ -84,8 +90,14 @@ func TestExecuteRequest(t *testing.T) {
 				require.NoError(t, err)
 				res, err := respEnc.Encode(bytes.NewReader(d))
 				require.NoError(t, err)
-				_, _ = w.Write(res.Bytes())
+				defer res.Close()
+
+				compressedData, err := io.ReadAll(res)
+				require.NoError(t, err)
+
 				w.WriteHeader(http.StatusOK)
+				_, _ = w.Write(compressedData)
+
 			}
 		} else if r.Method == http.MethodPost && r.URL.Path == "/test-post" {
 			w.WriteHeader(http.StatusCreated)
@@ -103,9 +115,14 @@ func TestExecuteRequest(t *testing.T) {
 			enc := r.Header.Get("Accept-Encoding")
 			if len(enc) != 0 {
 				e := newEncoding(ContentEncoding(enc), DefaultCompression)
-				b, err := e.Encode(bytes.NewReader(msg))
+				res, err := e.Encode(bytes.NewReader(msg))
 				require.NoError(t, err)
-				_, _ = w.Write(b.Bytes())
+				defer res.Close()
+
+				compressedData, err := io.ReadAll(res)
+				require.NoError(t, err)
+
+				_, _ = w.Write(compressedData)
 				return
 			}
 			_, _ = w.Write(msg)

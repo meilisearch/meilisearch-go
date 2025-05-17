@@ -183,13 +183,14 @@ func (c *client) sendRequest(
 
 	resp, err := c.do(request, internalError)
 	if err != nil {
+		if rc, ok := body.(io.Closer); ok {
+			_ = rc.Close()
+		}
 		return nil, err
 	}
 
-	if body != nil {
-		if buf, ok := body.(*bytes.Buffer); ok {
-			c.bufferPool.Put(buf)
-		}
+	if rc, ok := body.(io.Closer); ok {
+		_ = rc.Close()
 	}
 
 	return resp, nil
@@ -290,7 +291,7 @@ func (c *client) handleResponse(req *internalRequest, body []byte, internalError
 	return nil
 }
 
-func (c *client) buildBody(req *internalRequest, internalError *Error) (io.Reader, error) {
+func (c *client) buildBody(req *internalRequest, internalError *Error) (io.ReadCloser, error) {
 	var body io.Reader
 	var buf *bytes.Buffer
 	var bufFromPool bool
@@ -304,10 +305,12 @@ func (c *client) buildBody(req *internalRequest, internalError *Error) (io.Reade
 		}
 
 		switch v := req.withRequest.(type) {
-		case io.Reader:
+		case io.ReadCloser:
 			body = v
+		case io.Reader:
+			body = io.NopCloser(v)
 		case []byte:
-			body = bytes.NewReader(v)
+			body = io.NopCloser(bytes.NewReader(v))
 		default:
 			buf = c.bufferPool.Get().(*bytes.Buffer)
 			buf.Reset()
@@ -332,9 +335,17 @@ func (c *client) buildBody(req *internalRequest, internalError *Error) (io.Reade
 				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
 					fmt.Errorf("failed to encode request body: %w", err))
 			}
-			body = compressedBody
+			return compressedBody, nil
 		}
 	}
 
-	return body, nil
+	// If not compressed, make sure body is io.ReadCloser
+	switch b := body.(type) {
+	case nil:
+		return nil, nil
+	case io.ReadCloser:
+		return b, nil
+	default:
+		return io.NopCloser(b), nil
+	}
 }

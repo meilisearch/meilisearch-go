@@ -72,7 +72,14 @@ func Benchmark_ExecuteRequestWithEncoding(b *testing.B) {
 				if err != nil {
 					b.Fatal(err)
 				}
-				_, _ = w.Write(res.Bytes())
+				defer res.Close()
+
+				compressedData, err := io.ReadAll(res)
+				if err != nil {
+					b.Fatal(err)
+				}
+
+				_, _ = w.Write(compressedData)
 				w.WriteHeader(http.StatusOK)
 			}
 		} else {
