@@ -146,6 +146,7 @@ func (d *flateEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 	w.writer.Reset(buf)
 
 	if _, err := copyZeroAlloc(w.writer, rc); err != nil {
+		d.bufferPool.Put(buf)
 		return nil, err
 	}
 
@@ -186,6 +187,7 @@ func (b *brotliEncoder) Encode(rc io.Reader) (*bytes.Buffer, error) {
 	w.Reset(buf)
 
 	if _, err := copyZeroAlloc(w, rc); err != nil {
+		b.bufferPool.Put(buf)
 		return nil, err
 	}
 
