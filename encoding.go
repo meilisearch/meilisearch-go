@@ -136,8 +136,8 @@ type brotliEncoder struct {
 
 func (b *brotliEncoder) Encode(rc io.Reader) (io.ReadCloser, error) {
 	w := b.brWriterPool.Get().(*brotli.Writer)
-	defer b.brWriterPool.Put(w)
 	defer w.Close()
+	defer b.brWriterPool.Put(w)
 
 	buf := b.bufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
