@@ -26,32 +26,54 @@ func (h Hit) Decode(vPtr interface{}) error {
 	return json.Unmarshal(raw, vPtr)
 }
 
+// DecodeWith decodes a Hit into the provided struct using the provided marshal and unmarshal functions.
+func (h Hit) DecodeWith(vPtr interface{}, marshal JSONMarshal, unmarshal JSONUnmarshal) error {
+	if vPtr == nil || reflect.ValueOf(vPtr).Kind() != reflect.Ptr {
+		return errors.New("vPtr must be a non-nil pointer")
+	}
+
+	raw, err := marshal(h)
+	if err != nil {
+		return fmt.Errorf("failed to marshal hit: %w", err)
+	}
+
+	return unmarshal(raw, vPtr)
+}
+
 func (h Hits) Len() int {
 	return len(h)
 }
 
 // Decode decodes the Hits into the provided target slice.
-func (h Hits) Decode(vPtr interface{}) error {
-	v := reflect.ValueOf(vPtr)
+func (h Hits) Decode(vSlicePtr interface{}) error {
+	v := reflect.ValueOf(vSlicePtr)
+
+	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Slice {
+		return fmt.Errorf("v must be a pointer to a slice, got %T", vSlicePtr)
+	}
+
+	raw := []Hit(h)
+	buf, err := json.Marshal(raw)
+	if err != nil {
+		return fmt.Errorf("failed to marshal hits: %w", err)
+	}
+
+	return json.Unmarshal(buf, vSlicePtr)
+}
+
+// DecodeWith decodes a Hits into the provided struct using the provided marshal and unmarshal functions.
+func (h Hits) DecodeWith(vSlicePtr interface{}, marshal JSONMarshal, unmarshal JSONUnmarshal) error {
+	v := reflect.ValueOf(vSlicePtr)
 
 	if v.Kind() != reflect.Ptr || v.Elem().Kind() != reflect.Slice {
 		return errors.New("v must be a pointer to a slice")
 	}
 
-	sliceVal := v.Elem()
-	elemType := sliceVal.Type().Elem()
-
-	// Pre-allocate slice capacity
-	sliceVal.Set(reflect.MakeSlice(sliceVal.Type(), 0, len(h)))
-
-	for i, hit := range h {
-		elemPtr := reflect.New(elemType).Interface()
-
-		if err := hit.Decode(elemPtr); err != nil {
-			return fmt.Errorf("failed to decode hit at index %d: %w", i, err)
-		}
-
-		sliceVal.Set(reflect.Append(sliceVal, reflect.ValueOf(elemPtr).Elem()))
+	raw := []Hit(h)
+	buf, err := marshal(raw)
+	if err != nil {
+		return fmt.Errorf("failed to marshal hit: %w", err)
 	}
-	return nil
+
+	return unmarshal(buf, vSlicePtr)
 }

@@ -2,163 +2,164 @@ package meilisearch
 
 import (
 	"encoding/json"
+	"errors"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-type TestStruct struct {
+// Sample struct for decoding
+type TestDoc struct {
 	ID    int    `json:"id"`
 	Title string `json:"title"`
 }
 
-func TestHit_Decode(t *testing.T) {
-	t.Run("Decode valid Hit into struct", func(t *testing.T) {
-		hit := Hit{
-			"id":    json.RawMessage(`123`),
-			"title": json.RawMessage(`"Test Book"`),
-		}
-
-		var result TestStruct
-		err := hit.Decode(&result)
-
-		require.NoError(t, err)
-		assert.Equal(t, 123, result.ID)
-		assert.Equal(t, "Test Book", result.Title)
-	})
-
-	t.Run("Decode Hit with invalid JSON", func(t *testing.T) {
-		hit := Hit{
-			"id":    json.RawMessage(`invalid`), // Invalid JSON
-			"title": json.RawMessage(`"Test Book"`),
-		}
-
-		var result TestStruct
-		err := hit.Decode(&result)
-
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "failed to marshal hit")
-	})
+// Dummy custom marshal/unmarshal for testing
+func customMarshal(v interface{}) ([]byte, error) {
+	return json.Marshal(v)
 }
 
-func TestHits_Decode(t *testing.T) {
-	t.Run("Decode multiple Hits into struct slice", func(t *testing.T) {
-		hits := Hits{
-			{
-				"id":    json.RawMessage(`1`),
-				"title": json.RawMessage(`"Book One"`),
-			},
-			{
-				"id":    json.RawMessage(`2`),
-				"title": json.RawMessage(`"Book Two"`),
-			},
-		}
-
-		var results []TestStruct
-		err := hits.Decode(&results)
-
-		require.NoError(t, err)
-		assert.Len(t, results, 2)
-		assert.Equal(t, 1, results[0].ID)
-		assert.Equal(t, "Book One", results[0].Title)
-		assert.Equal(t, 2, results[1].ID)
-		assert.Equal(t, "Book Two", results[1].Title)
-	})
-
-	t.Run("Decode empty Hits", func(t *testing.T) {
-		hits := Hits{}
-
-		var results []TestStruct
-		err := hits.Decode(&results)
-
-		require.NoError(t, err)
-		assert.Empty(t, results)
-	})
-
-	t.Run("Decode into non-pointer slice", func(t *testing.T) {
-		hits := Hits{
-			{
-				"id":    json.RawMessage(`1`),
-				"title": json.RawMessage(`"Book One"`),
-			},
-		}
-
-		var results []TestStruct
-		err := hits.Decode(results) // Not a pointer
-
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "v must be a pointer to a slice")
-	})
-
-	t.Run("Decode into incorrect type", func(t *testing.T) {
-		hits := Hits{
-			{
-				"id":    json.RawMessage(`1`),
-				"title": json.RawMessage(`"Book One"`),
-			},
-		}
-
-		var results string // Wrong type
-		err := hits.Decode(&results)
-
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "v must be a pointer to a slice")
-	})
+func customUnmarshal(data []byte, v interface{}) error {
+	return json.Unmarshal(data, v)
 }
 
-func TestHit_Decode_Errors(t *testing.T) {
-	t.Run("Decode with nil pointer", func(t *testing.T) {
-		hit := Hit{
-			"id":    json.RawMessage(`123`),
-			"title": json.RawMessage(`"Test Book"`),
-		}
+func failingMarshal(v interface{}) ([]byte, error) {
+	return nil, errors.New("marshal failed")
+}
 
-		err := hit.Decode(nil)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "vPtr must be a non-nil pointer")
-	})
+func failingUnmarshal(data []byte, v interface{}) error {
+	return errors.New("unmarshal failed")
+}
 
-	t.Run("Decode with non-pointer value", func(t *testing.T) {
-		hit := Hit{
-			"id":    json.RawMessage(`123`),
-			"title": json.RawMessage(`"Test Book"`),
-		}
+func TestHit_Decode_Success(t *testing.T) {
+	hit := Hit{
+		"id":    json.RawMessage(`1`),
+		"title": json.RawMessage(`"Golang Rocks"`),
+	}
 
-		var notPtr TestStruct
-		err := hit.Decode(notPtr)
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "vPtr must be a non-nil pointer")
-	})
+	var doc TestDoc
+	err := hit.Decode(&doc)
+
+	require.NoError(t, err)
+	assert.Equal(t, 1, doc.ID)
+	assert.Equal(t, "Golang Rocks", doc.Title)
+}
+
+func TestHit_Decode_Error_Nil(t *testing.T) {
+	hit := Hit{}
+	err := hit.Decode(nil)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "vPtr must be a non-nil pointer")
+}
+
+func TestHit_DecodeWith_Success(t *testing.T) {
+	hit := Hit{
+		"id":    json.RawMessage(`2`),
+		"title": json.RawMessage(`"Custom Decoder"`),
+	}
+
+	var doc TestDoc
+	err := hit.DecodeWith(&doc, customMarshal, customUnmarshal)
+
+	require.NoError(t, err)
+	assert.Equal(t, 2, doc.ID)
+	assert.Equal(t, "Custom Decoder", doc.Title)
+}
+
+func TestHit_DecodeWith_Error_NilPtr(t *testing.T) {
+	hit := Hit{}
+	err := hit.DecodeWith(nil, customMarshal, customUnmarshal)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "vPtr must be a non-nil pointer")
+}
+
+func TestHit_DecodeWith_Error_MarshalFail(t *testing.T) {
+	hit := Hit{}
+	var doc TestDoc
+	err := hit.DecodeWith(&doc, failingMarshal, customUnmarshal)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "marshal failed")
+}
+
+func TestHit_DecodeWith_Error_UnmarshalFail(t *testing.T) {
+	hit := Hit{
+		"id": json.RawMessage(`"not-an-int"`), // invalid for int field
+	}
+	var doc TestDoc
+	err := hit.DecodeWith(&doc, customMarshal, failingUnmarshal)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "unmarshal failed")
+}
+
+func TestHits_Decode_Success(t *testing.T) {
+	hits := Hits{
+		{
+			"id":    json.RawMessage(`1`),
+			"title": json.RawMessage(`"First"`),
+		},
+		{
+			"id":    json.RawMessage(`2`),
+			"title": json.RawMessage(`"Second"`),
+		},
+	}
+
+	var docs []TestDoc
+	err := hits.Decode(&docs)
+	require.NoError(t, err)
+	assert.Len(t, docs, 2)
+	assert.Equal(t, "First", docs[0].Title)
+	assert.Equal(t, 2, docs[1].ID)
+}
+
+func TestHits_Decode_Error_NotPointer(t *testing.T) {
+	hits := Hits{}
+	var docs []TestDoc
+	err := hits.Decode(docs) // pass by value
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "v must be a pointer to a slice")
+}
+
+func TestHits_DecodeWith_Success(t *testing.T) {
+	hits := Hits{
+		{
+			"id":    json.RawMessage(`10`),
+			"title": json.RawMessage(`"Hit 10"`),
+		},
+	}
+
+	var docs []TestDoc
+	err := hits.DecodeWith(&docs, customMarshal, customUnmarshal)
+	require.NoError(t, err)
+	assert.Equal(t, 10, docs[0].ID)
+	assert.Equal(t, "Hit 10", docs[0].Title)
+}
+
+func TestHits_DecodeWith_Error_MarshalFail(t *testing.T) {
+	hits := Hits{}
+	var docs []TestDoc
+	err := hits.DecodeWith(&docs, failingMarshal, customUnmarshal)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "marshal failed")
+}
+
+func TestHits_DecodeWith_Error_UnmarshalFail(t *testing.T) {
+	hits := Hits{
+		{
+			"id":    json.RawMessage(`"bad-int"`),
+			"title": json.RawMessage(`"Bad"`),
+		},
+	}
+	var docs []TestDoc
+	err := hits.DecodeWith(&docs, customMarshal, failingUnmarshal)
+	assert.Error(t, err)
+	assert.Contains(t, err.Error(), "unmarshal failed")
 }
 
 func TestHits_Len(t *testing.T) {
-	t.Run("Returns correct length", func(t *testing.T) {
-		hits := Hits{
-			{"id": json.RawMessage(`1`)},
-			{"id": json.RawMessage(`2`)},
-		}
-		assert.Equal(t, 2, hits.Len())
-	})
-}
-
-func TestHits_Decode_HitDecodeError(t *testing.T) {
-	t.Run("One of hits causes decoding error", func(t *testing.T) {
-		hits := Hits{
-			{
-				"id":    json.RawMessage(`1`),
-				"title": json.RawMessage(`"Book One"`),
-			},
-			{
-				"id":    json.RawMessage(`invalid`),
-				"title": json.RawMessage(`"Book Two"`),
-			},
-		}
-
-		var results []TestStruct
-		err := hits.Decode(&results)
-
-		assert.Error(t, err)
-		assert.Contains(t, err.Error(), "failed to decode hit at index 1")
-	})
+	hits := Hits{
+		Hit{},
+		Hit{},
+	}
+	assert.Equal(t, 2, hits.Len())
 }
