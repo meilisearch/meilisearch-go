@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"
@@ -77,4 +78,15 @@ func TestOptions_DisableRetries(t *testing.T) {
 	m, ok := meili.(*meilisearch)
 	require.True(t, ok)
 	require.Equal(t, m.client.disableRetry, true)
+}
+
+func TestOptions_WithCustomJsonMarshalAndUnmarshaler(t *testing.T) {
+	meili := setup(t, "", WithCustomJsonMarshaler(json.Marshal), WithCustomJsonUnmarshaler(json.Unmarshal))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+
+	require.NotNil(t, m.client.jsonMarshal)
+	require.NotNil(t, m.client.jsonUnmarshal)
 }

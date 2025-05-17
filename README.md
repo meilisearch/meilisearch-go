@@ -39,6 +39,7 @@
   - [Custom search](#custom-search)
   - [Custom search with filter](#custom-search-with-filters)
   - [Customize client](#customize-client)
+  - [Make SDK Faster](#make-sdk-faster)
 - [🤖 Compatibility with Meilisearch](#-compatibility-with-meilisearch)
 - [⚡️ Benchmark performance](#-benchmark-performance)
 - [💡 Learn more](#-learn-more)
@@ -250,6 +251,37 @@ func main() {
         meilisearch.WithCustomClient(http.DefaultClient),
         meilisearch.WithContentEncoding(meilisearch.GzipEncoding, meilisearch.BestCompression),
         meilisearch.WithCustomRetries([]int{502}, 20),
+    )
+}
+```
+
+#### Make SDK Faster
+
+We use encoding/json as default json library due to stability and producibility.
+However, the standard library is a bit slow compared to 3rd party libraries. If you're not happy with the
+performance of encoding/json, we recommend you to use these libraries:
+
+- [goccy/go-json](https://github.com/goccy/go-json)
+- [bytedance/sonic](https://github.com/bytedance/sonic)
+- [segmentio/encoding](https://github.com/segmentio/encoding)
+- [mailru/easyjson](https://github.com/mailru/easyjson)
+- [minio/simdjson-go](https://github.com/minio/simdjson-go)
+- [wI2L/jettison](https://github.com/wI2L/jettison)
+
+```go
+package main
+
+import (
+    "net/http"
+    "github.com/meilisearch/meilisearch-go"
+    "github.com/bytedance/sonic"
+)
+
+func main() {
+	client := meilisearch.New("http://localhost:7700",
+        meilisearch.WithAPIKey("foobar"),
+        meilisearch.WithCustomJsonMarshaler(sonic.Marshal),
+        meilisearch.WithCustomJsonUnmarshaler(sonic.Unmarshal),
     )
 }
 ```

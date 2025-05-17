@@ -22,7 +22,7 @@ func Benchmark_ExecuteRequest(b *testing.B) {
 	}))
 	defer ts.Close()
 
-	c := newClient(&http.Client{}, ts.URL, "testApiKey", clientConfig{
+	c := newClient(&http.Client{}, ts.URL, "testApiKey", &clientConfig{
 		disableRetry: true,
 	})
 
@@ -72,7 +72,14 @@ func Benchmark_ExecuteRequestWithEncoding(b *testing.B) {
 				if err != nil {
 					b.Fatal(err)
 				}
-				_, _ = w.Write(res.Bytes())
+				defer res.Close()
+
+				compressedData, err := io.ReadAll(res)
+				if err != nil {
+					b.Fatal(err)
+				}
+
+				_, _ = w.Write(compressedData)
 				w.WriteHeader(http.StatusOK)
 			}
 		} else {
@@ -81,7 +88,7 @@ func Benchmark_ExecuteRequestWithEncoding(b *testing.B) {
 	}))
 	defer ts.Close()
 
-	c := newClient(&http.Client{}, ts.URL, "testApiKey", clientConfig{
+	c := newClient(&http.Client{}, ts.URL, "testApiKey", &clientConfig{
 		disableRetry:             true,
 		contentEncoding:          GzipEncoding,
 		encodingCompressionLevel: DefaultCompression,
@@ -120,7 +127,7 @@ func Benchmark_ExecuteRequestWithoutRetries(b *testing.B) {
 	}))
 	defer ts.Close()
 
-	c := newClient(&http.Client{}, ts.URL, "testApiKey", clientConfig{
+	c := newClient(&http.Client{}, ts.URL, "testApiKey", &clientConfig{
 		disableRetry: false,
 		maxRetries:   3,
 		retryOnStatus: map[int]bool{

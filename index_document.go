@@ -61,13 +61,7 @@ func (i *index) AddDocumentsCsvFromReader(documents io.Reader, options *CsvDocum
 }
 
 func (i *index) AddDocumentsCsvFromReaderWithContext(ctx context.Context, documents io.Reader, options *CsvDocumentsQuery) (resp *TaskInfo, err error) {
-	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
-	// read content to memory anyway because of problems with streamed bodies
-	data, err := io.ReadAll(documents)
-	if err != nil {
-		return nil, fmt.Errorf("could not read documents: %w", err)
-	}
-	return i.addDocuments(ctx, data, contentTypeCSV, transformCsvDocumentsQueryToMap(options))
+	return i.addDocumentsFromReader(ctx, documents, contentTypeCSV, transformCsvDocumentsQueryToMap(options))
 }
 
 func (i *index) AddDocumentsNdjson(documents []byte, primaryKey ...string) (*TaskInfo, error) {
@@ -76,7 +70,7 @@ func (i *index) AddDocumentsNdjson(documents []byte, primaryKey ...string) (*Tas
 
 func (i *index) AddDocumentsNdjsonWithContext(ctx context.Context, documents []byte, primaryKey ...string) (*TaskInfo, error) {
 	// []byte avoids JSON conversion in Client.sendRequest()
-	return i.addDocuments(ctx, documents, contentTypeNDJSON, transformStringVariadicToMap(primaryKey...))
+	return i.addDocumentsFromReader(ctx, bytes.NewReader(documents), contentTypeNDJSON, transformStringVariadicToMap(primaryKey...))
 }
 
 func (i *index) AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) ([]TaskInfo, error) {
@@ -125,6 +119,9 @@ func (i *index) AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx context.Con
 	)
 
 	scanner := bufio.NewScanner(documents)
+	buf := make([]byte, 0, 1024*1024)
+	scanner.Buffer(buf, 10*1024*1024)
+
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 
@@ -396,29 +393,53 @@ func (i *index) DeleteAllDocumentsWithContext(ctx context.Context) (*TaskInfo, e
 	return resp, nil
 }
 
-func (i *index) addDocuments(ctx context.Context, documentsPtr interface{}, contentType string, options map[string]string) (resp *TaskInfo, err error) {
-	resp = new(TaskInfo)
-	endpoint := ""
-	if options == nil {
-		endpoint = "/indexes/" + i.uid + "/documents"
-	} else {
+func (i *index) addDocuments(ctx context.Context, documents interface{}, contentType string, options map[string]string) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	endpoint := "/indexes/" + i.uid + "/documents"
+	if len(options) > 0 {
 		for key, val := range options {
 			if key == "primaryKey" {
 				i.primaryKey = val
 			}
 		}
-		endpoint = "/indexes/" + i.uid + "/documents?" + generateQueryForOptions(options)
+		endpoint += "?" + generateQueryForOptions(options)
 	}
 	req := &internalRequest{
 		endpoint:            endpoint,
 		method:              http.MethodPost,
 		contentType:         contentType,
-		withRequest:         documentsPtr,
+		withRequest:         documents,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "AddDocuments",
 	}
-	if err = i.client.executeRequest(ctx, req); err != nil {
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) addDocumentsFromReader(ctx context.Context, r io.Reader, contentType string, options map[string]string) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	endpoint := "/indexes/" + i.uid + "/documents"
+	if len(options) > 0 {
+		for key, val := range options {
+			if key == "primaryKey" {
+				i.primaryKey = val
+			}
+		}
+		endpoint += "?" + generateQueryForOptions(options)
+	}
+	req := &internalRequest{
+		endpoint:            endpoint,
+		method:              http.MethodPost,
+		contentType:         contentType,
+		withRequest:         r,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "AddDocuments",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -585,6 +606,9 @@ func (i *index) updateDocumentsNdjsonFromReaderInBatches(ctx context.Context, do
 	)
 
 	scanner := bufio.NewScanner(documents)
+	buf := make([]byte, 0, 1024*1024)
+	scanner.Buffer(buf, 10*1024*1024)
+
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 
