@@ -52,7 +52,8 @@ func TestPooledBuffer_Close(t *testing.T) {
 	require.NoError(t, err)
 
 	got := pool.Get().(*bytes.Buffer)
-	assert.Equal(t, bufAddr, got, "buffer address should be the same")
+
+	assert.Same(t, bufAddr, got, "should return the same buffer to the pool")
 	assert.Zero(t, got.Len(), "buffer should be reset to length 0")
 	assert.Equal(t, "", got.String(), "buffer string should be empty")
 }
