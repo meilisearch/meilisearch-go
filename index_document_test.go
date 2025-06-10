@@ -579,432 +579,432 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 	}
 }
 
-//func TestIndex_AddOrUpdateDocumentsCsvInBatches(t *testing.T) {
-//	sv := setup(t, "")
-//
-//	type args struct {
-//		UID       string
-//		client    ServiceManager
-//		batchSize int
-//		documents []byte
-//	}
-//	type testData struct {
-//		name     string
-//		args     args
-//		wantResp []TaskInfo
-//	}
-//
-//	tests := []testData{
-//		{
-//			name: "TestIndexBasic",
-//			args: args{
-//				UID:       "csvbatch",
-//				client:    sv,
-//				batchSize: 2,
-//				documents: testCsvDocuments,
-//			},
-//			wantResp: []TaskInfo{
-//				{
-//					TaskUID: 0,
-//					Status:  "enqueued",
-//					Type:    TaskTypeDocumentAdditionOrUpdate,
-//				},
-//				{
-//					TaskUID: 1,
-//					Status:  "enqueued",
-//					Type:    TaskTypeDocumentAdditionOrUpdate,
-//				},
-//				{
-//					TaskUID: 2,
-//					Status:  "enqueued",
-//					Type:    TaskTypeDocumentAdditionOrUpdate,
-//				},
-//			},
-//		},
-//	}
-//
-//	testAddDocumentsCsvInBatches := func(t *testing.T, tt testData, testReader bool) {
-//		name := tt.name + "AddDocumentsCsv"
-//		if testReader {
-//			name += "FromReader"
-//		}
-//		name += "InBatches"
-//
-//		uid := tt.args.UID
-//		if testReader {
-//			uid += "-reader"
-//		} else {
-//			uid += "-string"
-//		}
-//
-//		t.Run(name, func(t *testing.T) {
-//			c := tt.args.client
-//			i := c.Index(uid)
-//			t.Cleanup(cleanup(c))
-//
-//			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
-//
-//			var (
-//				gotResp []TaskInfo
-//				err     error
-//			)
-//
-//			if testReader {
-//				gotResp, err = i.AddDocumentsCsvFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize, nil)
-//			} else {
-//				gotResp, err = i.AddDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize, nil)
-//			}
-//
-//			require.NoError(t, err)
-//			for i := 0; i < 2; i++ {
-//				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
-//				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
-//				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
-//				require.NotZero(t, gotResp[i].EnqueuedAt)
-//			}
-//
-//			testWaitForBatchTask(t, i, gotResp)
-//
-//			var documents DocumentsResult
-//			err = i.GetDocuments(&DocumentsQuery{}, &documents)
-//			require.NoError(t, err)
-//			require.Equal(t, wantDocs, documents.Results)
-//
-//			if !testReader {
-//				gotResp, err = i.UpdateDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize, nil)
-//				require.NoError(t, err)
-//				for i := 0; i < 2; i++ {
-//					require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
-//					require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
-//					require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
-//					require.NotZero(t, gotResp[i].EnqueuedAt)
-//				}
-//			}
-//
-//		})
-//	}
-//
-//	for _, tt := range tests {
-//		// Test both the string and io.Reader receiving versions
-//		testAddDocumentsCsvInBatches(t, tt, false)
-//		testAddDocumentsCsvInBatches(t, tt, true)
-//	}
-//}
-//
-//func TestIndex_AddDocumentsCsv(t *testing.T) {
-//	sv := setup(t, "")
-//
-//	type args struct {
-//		UID       string
-//		client    ServiceManager
-//		documents []byte
-//	}
-//	type testData struct {
-//		name     string
-//		args     args
-//		wantResp *TaskInfo
-//	}
-//
-//	tests := []testData{
-//		{
-//			name: "TestIndexBasic",
-//			args: args{
-//				UID:       "csv",
-//				client:    sv,
-//				documents: testCsvDocuments,
-//			},
-//			wantResp: &TaskInfo{
-//				TaskUID: 0,
-//				Status:  "enqueued",
-//				Type:    TaskTypeDocumentAdditionOrUpdate,
-//			},
-//		},
-//	}
-//
-//	testAddDocumentsCsv := func(t *testing.T, tt testData, testReader bool) {
-//		name := tt.name + "AddDocumentsCsv"
-//		if testReader {
-//			name += "FromReader"
-//		}
-//
-//		uid := tt.args.UID
-//		if testReader {
-//			uid += "-reader"
-//		} else {
-//			uid += "-string"
-//		}
-//
-//		t.Run(name, func(t *testing.T) {
-//			c := tt.args.client
-//			i := c.Index(uid)
-//			t.Cleanup(cleanup(c))
-//
-//			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
-//
-//			var (
-//				gotResp *TaskInfo
-//				err     error
-//			)
-//
-//			if testReader {
-//				gotResp, err = i.AddDocumentsCsvFromReader(bytes.NewReader(tt.args.documents), nil)
-//			} else {
-//				gotResp, err = i.AddDocumentsCsv(tt.args.documents, nil)
-//			}
-//
-//			require.NoError(t, err)
-//			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
-//			require.Equal(t, tt.wantResp.Status, gotResp.Status)
-//			require.Equal(t, tt.wantResp.Type, gotResp.Type)
-//			require.NotZero(t, gotResp.EnqueuedAt)
-//
-//			testWaitForTask(t, i, gotResp)
-//
-//			var documents DocumentsResult
-//			err = i.GetDocuments(&DocumentsQuery{}, &documents)
-//			require.NoError(t, err)
-//			require.Equal(t, wantDocs, documents.Results)
-//		})
-//	}
-//
-//	for _, tt := range tests {
-//		// Test both the string and io.Reader receiving versions
-//		testAddDocumentsCsv(t, tt, false)
-//		testAddDocumentsCsv(t, tt, true)
-//	}
-//}
-//
-//func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
-//	sv := setup(t, "")
-//
-//	type args struct {
-//		UID       string
-//		client    ServiceManager
-//		documents []byte
-//		options   *CsvDocumentsQuery
-//	}
-//	type testData struct {
-//		name     string
-//		args     args
-//		wantResp *TaskInfo
-//	}
-//
-//	tests := []testData{
-//		{
-//			name: "TestIndexBasicAddDocumentsCsvWithOptions",
-//			args: args{
-//				UID:       "csv",
-//				client:    sv,
-//				documents: testCsvDocuments,
-//				options: &CsvDocumentsQuery{
-//					PrimaryKey:   "id",
-//					CsvDelimiter: ",",
-//				},
-//			},
-//			wantResp: &TaskInfo{
-//				TaskUID: 0,
-//				Status:  "enqueued",
-//				Type:    TaskTypeDocumentAdditionOrUpdate,
-//			},
-//		},
-//		{
-//			name: "TestIndexBasicAddDocumentsCsvWithPrimaryKey",
-//			args: args{
-//				UID:       "csv",
-//				client:    sv,
-//				documents: testCsvDocuments,
-//				options: &CsvDocumentsQuery{
-//					PrimaryKey: "id",
-//				},
-//			},
-//			wantResp: &TaskInfo{
-//				TaskUID: 0,
-//				Status:  "enqueued",
-//				Type:    TaskTypeDocumentAdditionOrUpdate,
-//			},
-//		},
-//		{
-//			name: "TestIndexBasicAddDocumentsCsvWithCsvDelimiter",
-//			args: args{
-//				UID:       "csv",
-//				client:    sv,
-//				documents: testCsvDocuments,
-//				options: &CsvDocumentsQuery{
-//					CsvDelimiter: ",",
-//				},
-//			},
-//			wantResp: &TaskInfo{
-//				TaskUID: 0,
-//				Status:  "enqueued",
-//				Type:    TaskTypeDocumentAdditionOrUpdate,
-//			},
-//		},
-//	}
-//
-//	testAddDocumentsCsv := func(t *testing.T, tt testData, testReader bool) {
-//		name := tt.name + "AddDocumentsCsv"
-//		if testReader {
-//			name += "FromReader"
-//		}
-//
-//		uid := tt.args.UID
-//		if testReader {
-//			uid += "-reader"
-//		} else {
-//			uid += "-string"
-//		}
-//
-//		t.Run(name, func(t *testing.T) {
-//			c := tt.args.client
-//			i := c.Index(uid)
-//			t.Cleanup(cleanup(c))
-//
-//			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
-//
-//			var (
-//				gotResp *TaskInfo
-//				err     error
-//			)
-//
-//			if testReader {
-//				gotResp, err = i.AddDocumentsCsvFromReader(bytes.NewReader(tt.args.documents), tt.args.options)
-//			} else {
-//				gotResp, err = i.AddDocumentsCsv(tt.args.documents, tt.args.options)
-//			}
-//
-//			require.NoError(t, err)
-//			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
-//			require.Equal(t, tt.wantResp.Status, gotResp.Status)
-//			require.Equal(t, tt.wantResp.Type, gotResp.Type)
-//			require.NotZero(t, gotResp.EnqueuedAt)
-//
-//			testWaitForTask(t, i, gotResp)
-//
-//			var documents DocumentsResult
-//			err = i.GetDocuments(&DocumentsQuery{}, &documents)
-//			require.NoError(t, err)
-//			require.Equal(t, wantDocs, documents.Results)
-//		})
-//	}
-//
-//	for _, tt := range tests {
-//		// Test both the string and io.Reader receiving versions
-//		testAddDocumentsCsv(t, tt, false)
-//		testAddDocumentsCsv(t, tt, true)
-//	}
-//}
-//
-//func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
-//	sv := setup(t, "")
-//
-//	type args struct {
-//		UID       string
-//		client    ServiceManager
-//		batchSize int
-//		documents []byte
-//	}
-//	type testData struct {
-//		name     string
-//		args     args
-//		wantResp []TaskInfo
-//	}
-//
-//	tests := []testData{
-//		{
-//			name: "TestIndexBasic",
-//			args: args{
-//				UID:       "ndjsonbatch",
-//				client:    sv,
-//				batchSize: 2,
-//				documents: testNdjsonDocuments,
-//			},
-//			wantResp: []TaskInfo{
-//				{
-//					TaskUID: 0,
-//					Status:  "enqueued",
-//					Type:    TaskTypeDocumentAdditionOrUpdate,
-//				},
-//				{
-//					TaskUID: 1,
-//					Status:  "enqueued",
-//					Type:    TaskTypeDocumentAdditionOrUpdate,
-//				},
-//				{
-//					TaskUID: 2,
-//					Status:  "enqueued",
-//					Type:    TaskTypeDocumentAdditionOrUpdate,
-//				},
-//			},
-//		},
-//	}
-//
-//	testAddDocumentsNdjsonInBatches := func(t *testing.T, tt testData, testReader bool) {
-//		name := tt.name + "AddDocumentsNdjson"
-//		if testReader {
-//			name += "FromReader"
-//		}
-//		name += "InBatches"
-//
-//		uid := tt.args.UID
-//		if testReader {
-//			uid += "-reader"
-//		} else {
-//			uid += "-string"
-//		}
-//
-//		t.Run(name, func(t *testing.T) {
-//			c := tt.args.client
-//			i := c.Index(uid)
-//			t.Cleanup(cleanup(c))
-//
-//			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
-//
-//			var (
-//				gotResp []TaskInfo
-//				err     error
-//			)
-//
-//			if testReader {
-//				gotResp, err = i.AddDocumentsNdjsonFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize)
-//			} else {
-//				gotResp, err = i.AddDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize)
-//			}
-//
-//			require.NoError(t, err)
-//			for i := 0; i < 2; i++ {
-//				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
-//				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
-//				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
-//				require.NotZero(t, gotResp[i].EnqueuedAt)
-//			}
-//
-//			testWaitForBatchTask(t, i, gotResp)
-//
-//			var documents DocumentsResult
-//			err = i.GetDocuments(&DocumentsQuery{}, &documents)
-//			require.NoError(t, err)
-//			require.Equal(t, wantDocs, documents.Results)
-//
-//			if !testReader {
-//				gotResp, err = i.UpdateDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize)
-//				require.NoError(t, err)
-//				for i := 0; i < 2; i++ {
-//					require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
-//					require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
-//					require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
-//					require.NotZero(t, gotResp[i].EnqueuedAt)
-//				}
-//				testWaitForBatchTask(t, i, gotResp)
-//			}
-//		})
-//	}
-//
-//	for _, tt := range tests {
-//		// Test both the string and io.Reader receiving versions
-//		testAddDocumentsNdjsonInBatches(t, tt, false)
-//		testAddDocumentsNdjsonInBatches(t, tt, true)
-//	}
-//}
+func TestIndex_AddOrUpdateDocumentsCsvInBatches(t *testing.T) {
+	sv := setup(t, "")
+
+	type args struct {
+		UID       string
+		client    ServiceManager
+		batchSize int
+		documents []byte
+	}
+	type testData struct {
+		name     string
+		args     args
+		wantResp []TaskInfo
+	}
+
+	tests := []testData{
+		{
+			name: "TestIndexBasic",
+			args: args{
+				UID:       "csvbatch",
+				client:    sv,
+				batchSize: 2,
+				documents: testCsvDocuments,
+			},
+			wantResp: []TaskInfo{
+				{
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
+				{
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
+				{
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
+			},
+		},
+	}
+
+	testAddDocumentsCsvInBatches := func(t *testing.T, tt testData, testReader bool) {
+		name := tt.name + "AddDocumentsCsv"
+		if testReader {
+			name += "FromReader"
+		}
+		name += "InBatches"
+
+		uid := tt.args.UID
+		if testReader {
+			uid += "-reader"
+		} else {
+			uid += "-string"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(uid)
+			t.Cleanup(cleanup(c))
+
+			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
+
+			var (
+				gotResp []TaskInfo
+				err     error
+			)
+
+			if testReader {
+				gotResp, err = i.AddDocumentsCsvFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize, nil)
+			} else {
+				gotResp, err = i.AddDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize, nil)
+			}
+
+			require.NoError(t, err)
+			for i := 0; i < 2; i++ {
+				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
+				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+				require.NotZero(t, gotResp[i].EnqueuedAt)
+			}
+
+			testWaitForBatchTask(t, i, gotResp)
+
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
+
+			if !testReader {
+				gotResp, err = i.UpdateDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize, nil)
+				require.NoError(t, err)
+				for i := 0; i < 2; i++ {
+					require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
+					require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+					require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+					require.NotZero(t, gotResp[i].EnqueuedAt)
+				}
+			}
+
+		})
+	}
+
+	for _, tt := range tests {
+		// Test both the string and io.Reader receiving versions
+		testAddDocumentsCsvInBatches(t, tt, false)
+		testAddDocumentsCsvInBatches(t, tt, true)
+	}
+}
+
+func TestIndex_AddDocumentsCsv(t *testing.T) {
+	sv := setup(t, "")
+
+	type args struct {
+		UID       string
+		client    ServiceManager
+		documents []byte
+	}
+	type testData struct {
+		name     string
+		args     args
+		wantResp *TaskInfo
+	}
+
+	tests := []testData{
+		{
+			name: "TestIndexBasic",
+			args: args{
+				UID:       "csv",
+				client:    sv,
+				documents: testCsvDocuments,
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    TaskTypeDocumentAdditionOrUpdate,
+			},
+		},
+	}
+
+	testAddDocumentsCsv := func(t *testing.T, tt testData, testReader bool) {
+		name := tt.name + "AddDocumentsCsv"
+		if testReader {
+			name += "FromReader"
+		}
+
+		uid := tt.args.UID
+		if testReader {
+			uid += "-reader"
+		} else {
+			uid += "-string"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(uid)
+			t.Cleanup(cleanup(c))
+
+			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
+
+			var (
+				gotResp *TaskInfo
+				err     error
+			)
+
+			if testReader {
+				gotResp, err = i.AddDocumentsCsvFromReader(bytes.NewReader(tt.args.documents), nil)
+			} else {
+				gotResp, err = i.AddDocumentsCsv(tt.args.documents, nil)
+			}
+
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
+			require.Equal(t, tt.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.wantResp.Type, gotResp.Type)
+			require.NotZero(t, gotResp.EnqueuedAt)
+
+			testWaitForTask(t, i, gotResp)
+
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
+		})
+	}
+
+	for _, tt := range tests {
+		// Test both the string and io.Reader receiving versions
+		testAddDocumentsCsv(t, tt, false)
+		testAddDocumentsCsv(t, tt, true)
+	}
+}
+
+func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
+	sv := setup(t, "")
+
+	type args struct {
+		UID       string
+		client    ServiceManager
+		documents []byte
+		options   *CsvDocumentsQuery
+	}
+	type testData struct {
+		name     string
+		args     args
+		wantResp *TaskInfo
+	}
+
+	tests := []testData{
+		{
+			name: "TestIndexBasicAddDocumentsCsvWithOptions",
+			args: args{
+				UID:       "csv",
+				client:    sv,
+				documents: testCsvDocuments,
+				options: &CsvDocumentsQuery{
+					PrimaryKey:   "id",
+					CsvDelimiter: ",",
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    TaskTypeDocumentAdditionOrUpdate,
+			},
+		},
+		{
+			name: "TestIndexBasicAddDocumentsCsvWithPrimaryKey",
+			args: args{
+				UID:       "csv",
+				client:    sv,
+				documents: testCsvDocuments,
+				options: &CsvDocumentsQuery{
+					PrimaryKey: "id",
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    TaskTypeDocumentAdditionOrUpdate,
+			},
+		},
+		{
+			name: "TestIndexBasicAddDocumentsCsvWithCsvDelimiter",
+			args: args{
+				UID:       "csv",
+				client:    sv,
+				documents: testCsvDocuments,
+				options: &CsvDocumentsQuery{
+					CsvDelimiter: ",",
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    TaskTypeDocumentAdditionOrUpdate,
+			},
+		},
+	}
+
+	testAddDocumentsCsv := func(t *testing.T, tt testData, testReader bool) {
+		name := tt.name + "AddDocumentsCsv"
+		if testReader {
+			name += "FromReader"
+		}
+
+		uid := tt.args.UID
+		if testReader {
+			uid += "-reader"
+		} else {
+			uid += "-string"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(uid)
+			t.Cleanup(cleanup(c))
+
+			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
+
+			var (
+				gotResp *TaskInfo
+				err     error
+			)
+
+			if testReader {
+				gotResp, err = i.AddDocumentsCsvFromReader(bytes.NewReader(tt.args.documents), tt.args.options)
+			} else {
+				gotResp, err = i.AddDocumentsCsv(tt.args.documents, tt.args.options)
+			}
+
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
+			require.Equal(t, tt.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.wantResp.Type, gotResp.Type)
+			require.NotZero(t, gotResp.EnqueuedAt)
+
+			testWaitForTask(t, i, gotResp)
+
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
+		})
+	}
+
+	for _, tt := range tests {
+		// Test both the string and io.Reader receiving versions
+		testAddDocumentsCsv(t, tt, false)
+		testAddDocumentsCsv(t, tt, true)
+	}
+}
+
+func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
+	sv := setup(t, "")
+
+	type args struct {
+		UID       string
+		client    ServiceManager
+		batchSize int
+		documents []byte
+	}
+	type testData struct {
+		name     string
+		args     args
+		wantResp []TaskInfo
+	}
+
+	tests := []testData{
+		{
+			name: "TestIndexBasic",
+			args: args{
+				UID:       "ndjsonbatch",
+				client:    sv,
+				batchSize: 2,
+				documents: testNdjsonDocuments,
+			},
+			wantResp: []TaskInfo{
+				{
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
+				{
+					TaskUID: 1,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
+				{
+					TaskUID: 2,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
+			},
+		},
+	}
+
+	testAddDocumentsNdjsonInBatches := func(t *testing.T, tt testData, testReader bool) {
+		name := tt.name + "AddDocumentsNdjson"
+		if testReader {
+			name += "FromReader"
+		}
+		name += "InBatches"
+
+		uid := tt.args.UID
+		if testReader {
+			uid += "-reader"
+		} else {
+			uid += "-string"
+		}
+
+		t.Run(name, func(t *testing.T) {
+			c := tt.args.client
+			i := c.Index(uid)
+			t.Cleanup(cleanup(c))
+
+			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
+
+			var (
+				gotResp []TaskInfo
+				err     error
+			)
+
+			if testReader {
+				gotResp, err = i.AddDocumentsNdjsonFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize)
+			} else {
+				gotResp, err = i.AddDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize)
+			}
+
+			require.NoError(t, err)
+			for i := 0; i < 2; i++ {
+				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
+				require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+				require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+				require.NotZero(t, gotResp[i].EnqueuedAt)
+			}
+
+			testWaitForBatchTask(t, i, gotResp)
+
+			var documents DocumentsResult
+			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			require.NoError(t, err)
+			require.Equal(t, wantDocs, documents.Results)
+
+			if !testReader {
+				gotResp, err = i.UpdateDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize)
+				require.NoError(t, err)
+				for i := 0; i < 2; i++ {
+					require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
+					require.Equal(t, gotResp[i].Status, tt.wantResp[i].Status)
+					require.Equal(t, gotResp[i].Type, tt.wantResp[i].Type)
+					require.NotZero(t, gotResp[i].EnqueuedAt)
+				}
+				testWaitForBatchTask(t, i, gotResp)
+			}
+		})
+	}
+
+	for _, tt := range tests {
+		// Test both the string and io.Reader receiving versions
+		testAddDocumentsNdjsonInBatches(t, tt, false)
+		testAddDocumentsNdjsonInBatches(t, tt, true)
+	}
+}
 
 func TestIndex_DeleteAllDocuments(t *testing.T) {
 	sv := setup(t, "")
