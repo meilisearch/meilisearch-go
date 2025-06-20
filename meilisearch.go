@@ -12,6 +12,7 @@ import (
 
 type meilisearch struct {
 	client *client
+	conErr error
 }
 
 // New create new service manager for operating on meilisearch
@@ -43,7 +44,8 @@ func Connect(host string, options ...Option) (ServiceManager, error) {
 	meili := New(host, options...)
 
 	if !meili.IsHealthy() {
-		return nil, ErrConnectingFailed
+		err := meili.getErr()
+		return nil, err
 	}
 
 	return meili, nil
@@ -632,7 +634,13 @@ func (m *meilisearch) CreateSnapshotWithContext(ctx context.Context) (*TaskInfo,
 
 func (m *meilisearch) IsHealthy() bool {
 	res, err := m.HealthWithContext(context.Background())
+	// Store the error in conErr field so that it can be retrieved later during Connect
+	m.conErr = err
 	return err == nil && res.Status == "available"
+}
+
+func (m *meilisearch) getErr() error {
+	return m.conErr
 }
 
 func (m *meilisearch) Close() {

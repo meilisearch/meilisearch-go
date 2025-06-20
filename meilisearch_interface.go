@@ -54,6 +54,9 @@ type ServiceManager interface {
 	// ExperimentalFeatures returns the experimental features manager.
 	ExperimentalFeatures() *ExperimentalFeatures
 
+	// Get the error result of HealthWithContext()
+	getErr() error
+
 	// Close closes the connection to the Meilisearch server.
 	Close()
 }
