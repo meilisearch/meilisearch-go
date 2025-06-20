@@ -42,8 +42,14 @@ func New(host string, options ...Option) ServiceManager {
 func Connect(host string, options ...Option) (ServiceManager, error) {
 	meili := New(host, options...)
 
-	if !meili.IsHealthy() {
-		return nil, ErrConnectingFailed
+	resp, err := meili.HealthWithContext(context.Background())
+
+	if err != nil {
+		return nil, err
+	}
+
+	if resp.Status != "available" {
+		return nil, ErrMeilisearchNotAvailable
 	}
 
 	return meili, nil
