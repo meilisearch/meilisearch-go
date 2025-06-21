@@ -186,4 +186,5 @@ var (
 	ErrNoSearchRequest               = errors.New("no search request provided")
 	ErrNoFacetSearchRequest          = errors.New("no search facet request provided")
 	ErrConnectingFailed              = errors.New("meilisearch is not connected")
+	ErrMeilisearchNotAvailable       = errors.New("meilisearch service is not available")
 )
