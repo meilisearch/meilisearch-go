@@ -744,7 +744,7 @@ func TestIndex_Search(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name: "TestIndexSearchWithLocate",
+			name: "TestIndexSearchWithLocale",
 			args: args{
 				UID:    "indexUID",
 				client: sv,
