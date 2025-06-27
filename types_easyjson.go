@@ -3431,22 +3431,22 @@ func easyjson6601e8cdDecodeGithubComMeilisearchMeilisearchGo19(in *jlexer.Lexer,
 		case "locales":
 			if in.IsNull() {
 				in.Skip()
-				out.Locates = nil
+				out.Locales = nil
 			} else {
 				in.Delim('[')
-				if out.Locates == nil {
+				if out.Locales == nil {
 					if !in.IsDelim(']') {
-						out.Locates = make([]string, 0, 4)
+						out.Locales = make([]string, 0, 4)
 					} else {
-						out.Locates = []string{}
+						out.Locales = []string{}
 					}
 				} else {
-					out.Locates = (out.Locates)[:0]
+					out.Locales = (out.Locales)[:0]
 				}
 				for !in.IsDelim(']') {
 					var v87 string
 					v87 = string(in.String())
-					out.Locates = append(out.Locates, v87)
+					out.Locales = append(out.Locales, v87)
 					in.WantComma()
 				}
 				in.Delim(']')
@@ -3779,12 +3779,12 @@ func easyjson6601e8cdEncodeGithubComMeilisearchMeilisearchGo19(out *jwriter.Writ
 		out.RawString(prefix)
 		(*in.FederationOptions).MarshalEasyJSON(out)
 	}
-	if len(in.Locates) != 0 {
+	if len(in.Locales) != 0 {
 		const prefix string = ",\"locales\":"
 		out.RawString(prefix)
 		{
 			out.RawByte('[')
-			for v102, v103 := range in.Locates {
+			for v102, v103 := range in.Locales {
 				if v102 > 0 {
 					out.RawByte(',')
 				}
