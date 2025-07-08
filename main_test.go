@@ -406,19 +406,41 @@ func testParseCsvDocuments(t *testing.T, documents io.Reader) []map[string]inter
 	return docs
 }
 
-func testParseNdjsonDocuments(t *testing.T, documents io.Reader) []map[string]interface{} {
-	var docs []map[string]interface{}
+func hitsToStringMaps(hits Hits) []map[string]interface{} {
+	var result []map[string]interface{}
+	for _, hit := range hits {
+		m := make(map[string]interface{})
+		for k, v := range hit {
+			var s string
+			_ = json.Unmarshal(v, &s)
+			m[k] = s
+		}
+		result = append(result, m)
+	}
+	return result
+}
+
+func testParseNdjsonDocuments(t *testing.T, documents io.Reader) Hits {
+	var docs Hits
 	scanner := bufio.NewScanner(documents)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if line == "" {
 			continue
 		}
-		doc := make(map[string]interface{})
+		doc := make(Hit)
 		err := json.Unmarshal([]byte(line), &doc)
 		require.NoError(t, err)
 		docs = append(docs, doc)
 	}
 	require.NoError(t, scanner.Err())
 	return docs
+}
+
+func toRawMessage(vPtr interface{}) json.RawMessage {
+	data, err := json.Marshal(vPtr)
+	if err != nil {
+		return nil
+	}
+	return data
 }
