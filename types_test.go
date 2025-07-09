@@ -1,42 +1,59 @@
 package meilisearch
 
 import (
-	"github.com/stretchr/testify/assert"
+	"encoding/json"
+	"github.com/stretchr/testify/require"
 	"testing"
 )
 
-func TestRawType_UnmarshalJSON(t *testing.T) {
-	var r RawType
-
-	data := []byte(`"example"`)
-	err := r.UnmarshalJSON(data)
-	assert.NoError(t, err)
-	assert.Equal(t, RawType(`"example"`), r)
-
-	data = []byte(`""`)
-	err = r.UnmarshalJSON(data)
-	assert.NoError(t, err)
-	assert.Equal(t, RawType(`""`), r)
-
-	data = []byte(`{invalid}`)
-	err = r.UnmarshalJSON(data)
-	assert.NoError(t, err)
-	assert.Equal(t, RawType(`{invalid}`), r)
+type sampleStructure struct {
+	ImportantString string `json:"important_string"`
 }
 
-func TestRawType_MarshalJSON(t *testing.T) {
-	r := RawType(`"example"`)
-	data, err := r.MarshalJSON()
-	assert.NoError(t, err)
-	assert.Equal(t, []byte(`"example"`), data)
+func Test_GolangJSONEncoder(t *testing.T) {
+	t.Parallel()
 
-	r = RawType(`""`)
-	data, err = r.MarshalJSON()
-	assert.NoError(t, err)
-	assert.Equal(t, []byte(`""`), data)
+	var (
+		ss = &sampleStructure{
+			ImportantString: "Hello World",
+		}
+		importantString             = `{"important_string":"Hello World"}`
+		jsonEncoder     JSONMarshal = json.Marshal
+	)
 
-	r = RawType(`{random}`)
-	data, err = r.MarshalJSON()
-	assert.NoError(t, err)
-	assert.Equal(t, []byte(`{random}`), data)
+	raw, err := jsonEncoder(ss)
+	require.NoError(t, err)
+
+	require.Equal(t, string(raw), importantString)
+}
+
+func Test_DefaultJSONEncoder(t *testing.T) {
+	t.Parallel()
+
+	var (
+		ss = &sampleStructure{
+			ImportantString: "Hello World",
+		}
+		importantString             = `{"important_string":"Hello World"}`
+		jsonEncoder     JSONMarshal = json.Marshal
+	)
+
+	raw, err := jsonEncoder(ss)
+	require.NoError(t, err)
+
+	require.Equal(t, string(raw), importantString)
+}
+
+func Test_DefaultJSONDecoder(t *testing.T) {
+	t.Parallel()
+
+	var (
+		ss              sampleStructure
+		importantString               = []byte(`{"important_string":"Hello World"}`)
+		jsonDecoder     JSONUnmarshal = json.Unmarshal
+	)
+
+	err := jsonDecoder(importantString, &ss)
+	require.NoError(t, err)
+	require.Equal(t, "Hello World", ss.ImportantString)
 }

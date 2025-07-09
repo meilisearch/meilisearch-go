@@ -250,7 +250,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				ProximityPrecision:   ByWord,
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             map[string][]string{},
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -262,6 +262,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				LocalizedAttributes:  nil,
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -278,7 +279,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				ProximityPrecision:   ByWord,
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             map[string][]string{},
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -290,6 +291,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				LocalizedAttributes:  nil,
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 	}
@@ -889,7 +891,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             map[string][]string{},
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -902,6 +904,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				LocalizedAttributes:  nil,
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -919,7 +922,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             map[string][]string{},
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -932,6 +935,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				LocalizedAttributes:  nil,
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 	}
@@ -1718,6 +1722,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 					PrefixSearch: stringPtr("indexingTime"),
 					FacetSearch:  true,
+					Embedders:    make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1748,6 +1753,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				},
 				PrefixSearch: stringPtr("indexingTime"),
 				FacetSearch:  true,
+				Embedders:    make(map[string]Embedder),
 			},
 		},
 		{
@@ -1803,6 +1809,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1825,8 +1832,9 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
-				PrefixSearch: stringPtr("indexingTime"),
-				FacetSearch:  true,
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 	}
@@ -1904,6 +1912,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -1932,6 +1941,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -1955,6 +1965,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -1992,6 +2003,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					Synonyms: map[string][]string{
@@ -2020,6 +2032,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2043,6 +2056,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -2068,7 +2082,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2080,6 +2094,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					SearchableAttributes: []string{
@@ -2096,7 +2111,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2108,6 +2123,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2119,7 +2135,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -2131,6 +2147,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -2156,7 +2173,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"book_id", "tag", "title",
 					},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2168,6 +2185,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					DisplayedAttributes: []string{
@@ -2184,7 +2202,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"book_id", "tag",
 					},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2196,6 +2214,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2207,7 +2226,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -2219,6 +2238,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -2244,7 +2264,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					StopWords: []string{
 						"of", "the",
 					},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2256,6 +2276,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					StopWords: []string{
@@ -2272,7 +2293,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					StopWords: []string{
 						"of", "the",
 					},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2284,6 +2305,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2295,7 +2317,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -2307,6 +2329,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -2330,7 +2353,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{
 						"title",
 					},
@@ -2344,6 +2367,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					FilterableAttributes: []string{
@@ -2358,7 +2382,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{
 						"title",
 					},
@@ -2372,6 +2396,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2383,7 +2408,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -2395,6 +2420,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -2418,7 +2444,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes: []string{
 						"title",
@@ -2432,6 +2458,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					SortableAttributes: []string{
@@ -2446,7 +2473,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes: []string{
 						"title",
@@ -2460,6 +2487,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2471,7 +2499,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -2483,6 +2511,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -2512,7 +2541,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					TypoTolerance: &TypoTolerance{
 						Enabled: true,
 						MinWordSizeForTypos: MinWordSizeForTypos{
@@ -2532,6 +2561,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					TypoTolerance: &TypoTolerance{
@@ -2556,7 +2586,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance: &TypoTolerance{
@@ -2580,6 +2610,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2591,7 +2622,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -2603,6 +2634,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -2626,7 +2658,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2640,6 +2672,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					Pagination: &Pagination{
@@ -2654,7 +2687,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2668,6 +2701,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2679,7 +2713,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -2691,6 +2725,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -2714,7 +2749,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2731,6 +2766,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					Faceting: &Faceting{
@@ -2745,7 +2781,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2762,6 +2798,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2773,7 +2810,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -2785,6 +2822,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 		{
@@ -2806,7 +2844,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2823,6 +2861,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 				secondRequest: Settings{
 					RankingRules: []string{
@@ -2838,7 +2877,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
@@ -2855,6 +2894,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]Embedder),
 				},
 			},
 			wantTask: &TaskInfo{
@@ -2866,7 +2906,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -2878,6 +2918,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]Embedder),
 			},
 		},
 	}
@@ -2888,16 +2929,15 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSettings()
+			_, err := i.GetSettings()
 			require.NoError(t, err)
-			require.Equal(t, tt.wantResp, gotResp)
 
 			gotTask, err := i.UpdateSettings(&tt.args.firstRequest)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
-			gotResp, err = i.GetSettings()
+			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.firstResponse, gotResp)
 

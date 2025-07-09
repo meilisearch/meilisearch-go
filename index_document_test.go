@@ -11,7 +11,7 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 	tests := []struct {
 		Name            string
 		ContentEncoding ContentEncoding
-		Request         interface{}
+		Request         []map[string]interface{}
 		Response        struct {
 			WantResp *TaskInfo
 			DocResp  DocumentsResult
@@ -26,14 +26,15 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 			Response: struct {
 				WantResp *TaskInfo
 				DocResp  DocumentsResult
-			}{WantResp: &TaskInfo{
-				TaskUID: 0,
-				Status:  "enqueued",
-				Type:    TaskTypeDocumentAdditionOrUpdate,
-			},
+			}{
+				WantResp: &TaskInfo{
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
 				DocResp: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"ID": "123", "Name": "Pride and Prejudice"},
+					Results: Hits{
+						{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
 					Offset: 0,
@@ -50,14 +51,15 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 			Response: struct {
 				WantResp *TaskInfo
 				DocResp  DocumentsResult
-			}{WantResp: &TaskInfo{
-				TaskUID: 0,
-				Status:  "enqueued",
-				Type:    TaskTypeDocumentAdditionOrUpdate,
-			},
+			}{
+				WantResp: &TaskInfo{
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
 				DocResp: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"ID": "123", "Name": "Pride and Prejudice"},
+					Results: Hits{
+						{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
 					Offset: 0,
@@ -74,14 +76,15 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 			Response: struct {
 				WantResp *TaskInfo
 				DocResp  DocumentsResult
-			}{WantResp: &TaskInfo{
-				TaskUID: 0,
-				Status:  "enqueued",
-				Type:    TaskTypeDocumentAdditionOrUpdate,
-			},
+			}{
+				WantResp: &TaskInfo{
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    TaskTypeDocumentAdditionOrUpdate,
+				},
 				DocResp: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"ID": "123", "Name": "Pride and Prejudice"},
+					Results: Hits{
+						{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
 					Offset: 0,
@@ -97,24 +100,26 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 			t.Cleanup(cleanup(sv))
 
 			i := sv.Index("indexUID")
-			gotResp, err := i.AddDocuments(&tt.Request)
+
+			// Add Documents
+			gotResp, err := i.AddDocuments(tt.Request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.Response.WantResp.TaskUID)
 			require.Equal(t, gotResp.Status, tt.Response.WantResp.Status)
 			require.Equal(t, gotResp.Type, tt.Response.WantResp.Type)
 			require.Equal(t, gotResp.IndexUID, "indexUID")
 			require.NotZero(t, gotResp.EnqueuedAt)
-			require.NoError(t, err)
 
 			testWaitForTask(t, i, gotResp)
+
+			// Get Documents
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{
-				Limit: 3,
-			}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: 3}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.Response.DocResp, documents)
 
-			gotResp, err = i.UpdateDocuments(&tt.Request)
+			// Update Documents
+			gotResp, err = i.UpdateDocuments(tt.Request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.Response.WantResp.TaskUID)
 			require.Equal(t, gotResp.Status, tt.Response.WantResp.Status)
@@ -126,9 +131,6 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 
 func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
-		InsecureSkipVerify: true,
-	}))
 
 	type args struct {
 		UID          string
@@ -140,10 +142,9 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 		documentsRes DocumentsResult
 	}
 	tests := []struct {
-		name          string
-		args          args
-		resp          resp
-		expectedError Error
+		name string
+		args args
+		resp resp
 	}{
 		{
 			name: "TestIndexBasicAddDocuments",
@@ -161,8 +162,8 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 					Type:    TaskTypeDocumentAdditionOrUpdate,
 				},
 				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"ID": "123", "Name": "Pride and Prejudice"},
+					Results: Hits{
+						{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
 					Offset: 0,
@@ -171,66 +172,12 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 			},
 		},
 		{
-			name: "TestIndexAddDocumentsWithCustomClient",
-			args: args{
-				UID:    "TestIndexAddDocumentsWithCustomClient",
-				client: customSv,
-				documentsPtr: []map[string]interface{}{
-					{"ID": "123", "Name": "Pride and Prejudice"},
-				},
-			},
-			resp: resp{
-				wantResp: &TaskInfo{
-					TaskUID: 0,
-					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
-				},
-				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"ID": "123", "Name": "Pride and Prejudice"},
-					},
-					Limit:  3,
-					Offset: 0,
-					Total:  1,
-				},
-			},
-		},
-		{
-			name: "TestIndexMultipleAddDocuments",
-			args: args{
-				UID:    "TestIndexMultipleAddDocuments",
-				client: sv,
-				documentsPtr: []map[string]interface{}{
-					{"ID": "1", "Name": "Alice In Wonderland"},
-					{"ID": "123", "Name": "Pride and Prejudice"},
-					{"ID": "456", "Name": "Le Petit Prince"},
-				},
-			},
-			resp: resp{
-				wantResp: &TaskInfo{
-					TaskUID: 0,
-					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
-				},
-				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"ID": "1", "Name": "Alice In Wonderland"},
-						{"ID": "123", "Name": "Pride and Prejudice"},
-						{"ID": "456", "Name": "Le Petit Prince"},
-					},
-					Limit:  3,
-					Offset: 0,
-					Total:  3,
-				},
-			},
-		},
-		{
-			name: "TestIndexBasicAddDocumentsWithIntID",
+			name: "TestIndexAddDocumentsWithIntID",
 			args: args{
 				UID:    "TestIndexBasicAddDocumentsWithIntID",
 				client: sv,
 				documentsPtr: []map[string]interface{}{
-					{"BookID": float64(123), "Title": "Pride and Prejudice"},
+					{"BookID": 123, "Title": "Pride and Prejudice"},
 				},
 			},
 			resp: resp{
@@ -240,70 +187,17 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 					Type:    TaskTypeDocumentAdditionOrUpdate,
 				},
 				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"BookID": float64(123), "Title": "Pride and Prejudice"},
+					Results: Hits{
+						{"BookID": toRawMessage(123), "Title": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
 					Offset: 0,
 					Total:  1,
-				},
-			},
-		},
-		{
-			name: "TestIndexAddDocumentsWithIntIDWithCustomClient",
-			args: args{
-				UID:    "TestIndexAddDocumentsWithIntIDWithCustomClient",
-				client: customSv,
-				documentsPtr: []map[string]interface{}{
-					{"BookID": float64(123), "Title": "Pride and Prejudice"},
-				},
-			},
-			resp: resp{
-				wantResp: &TaskInfo{
-					TaskUID: 0,
-					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
-				},
-				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"BookID": float64(123), "Title": "Pride and Prejudice"},
-					},
-					Limit:  3,
-					Offset: 0,
-					Total:  1,
-				},
-			},
-		},
-		{
-			name: "TestIndexMultipleAddDocumentsWithIntID",
-			args: args{
-				UID:    "TestIndexMultipleAddDocumentsWithIntID",
-				client: sv,
-				documentsPtr: []map[string]interface{}{
-					{"BookID": float64(1), "Title": "Alice In Wonderland"},
-					{"BookID": float64(123), "Title": "Pride and Prejudice"},
-					{"BookID": float64(456), "Title": "Le Petit Prince", "Tag": "Conte"},
-				},
-			},
-			resp: resp{
-				wantResp: &TaskInfo{
-					TaskUID: 0,
-					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
-				},
-				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"BookID": float64(1), "Title": "Alice In Wonderland"},
-						{"BookID": float64(123), "Title": "Pride and Prejudice"},
-						{"BookID": float64(456), "Title": "Le Petit Prince", "Tag": "Conte"},
-					},
-					Limit:  3,
-					Offset: 0,
-					Total:  3,
 				},
 			},
 		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
@@ -313,37 +207,31 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 			gotResp, err := i.AddDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
-			require.Equal(t, gotResp.Status, tt.resp.wantResp.Status)
-			require.Equal(t, gotResp.Type, tt.resp.wantResp.Type)
-			require.Equal(t, gotResp.IndexUID, tt.args.UID)
+			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.resp.wantResp.Type, gotResp.Type)
+			require.Equal(t, tt.args.UID, gotResp.IndexUID)
 			require.NotZero(t, gotResp.EnqueuedAt)
-			require.NoError(t, err)
 
 			testWaitForTask(t, i, gotResp)
+
 			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{
-				Limit: 3,
-			}, &documents)
+			err = i.GetDocuments(&DocumentsQuery{Limit: 3}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.resp.documentsRes, documents)
 
 			gotResp, err = i.UpdateDocuments(tt.args.documentsPtr)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
-			require.Equal(t, gotResp.Status, tt.resp.wantResp.Status)
-			require.Equal(t, gotResp.Type, tt.resp.wantResp.Type)
-			require.Equal(t, gotResp.IndexUID, tt.args.UID)
+			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
+			require.Equal(t, tt.resp.wantResp.Type, gotResp.Type)
+			require.Equal(t, tt.args.UID, gotResp.IndexUID)
 			require.NotZero(t, gotResp.EnqueuedAt)
-			require.NoError(t, err)
 		})
 	}
 }
 
 func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
-		InsecureSkipVerify: true,
-	}))
 
 	type args struct {
 		UID          string
@@ -356,10 +244,9 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 		documentsRes DocumentsResult
 	}
 	tests := []struct {
-		name          string
-		args          args
-		resp          resp
-		expectedError Error
+		name string
+		args args
+		resp resp
 	}{
 		{
 			name: "TestIndexBasicAddDocumentsWithPrimaryKey",
@@ -378,68 +265,12 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 					Type:    TaskTypeDocumentAdditionOrUpdate,
 				},
 				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"key": "123", "Name": "Pride and Prejudice"},
+					Results: Hits{
+						{"key": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
 					Offset: 0,
 					Total:  1,
-				},
-			},
-		},
-		{
-			name: "TestIndexAddDocumentsWithPrimaryKeyWithCustomClient",
-			args: args{
-				UID:    "TestIndexAddDocumentsWithPrimaryKeyWithCustomClient",
-				client: customSv,
-				documentsPtr: []map[string]interface{}{
-					{"key": "123", "Name": "Pride and Prejudice"},
-				},
-				primaryKey: "key",
-			},
-			resp: resp{
-				wantResp: &TaskInfo{
-					TaskUID: 0,
-					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
-				},
-				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"key": "123", "Name": "Pride and Prejudice"},
-					},
-					Limit:  3,
-					Offset: 0,
-					Total:  1,
-				},
-			},
-		},
-		{
-			name: "TestIndexMultipleAddDocumentsWithPrimaryKey",
-			args: args{
-				UID:    "TestIndexMultipleAddDocumentsWithPrimaryKey",
-				client: sv,
-				documentsPtr: []map[string]interface{}{
-					{"key": "1", "Name": "Alice In Wonderland"},
-					{"key": "123", "Name": "Pride and Prejudice"},
-					{"key": "456", "Name": "Le Petit Prince"},
-				},
-				primaryKey: "key",
-			},
-			resp: resp{
-				wantResp: &TaskInfo{
-					TaskUID: 0,
-					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
-				},
-				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"key": "1", "Name": "Alice In Wonderland"},
-						{"key": "123", "Name": "Pride and Prejudice"},
-						{"key": "456", "Name": "Le Petit Prince"},
-					},
-					Limit:  3,
-					Offset: 0,
-					Total:  3,
 				},
 			},
 		},
@@ -449,7 +280,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				UID:    "TestIndexAddDocumentsWithPrimaryKeyWithIntID",
 				client: sv,
 				documentsPtr: []map[string]interface{}{
-					{"key": float64(123), "Name": "Pride and Prejudice"},
+					{"key": 123, "Name": "Pride and Prejudice"},
 				},
 				primaryKey: "key",
 			},
@@ -460,8 +291,8 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 					Type:    TaskTypeDocumentAdditionOrUpdate,
 				},
 				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"key": float64(123), "Name": "Pride and Prejudice"},
+					Results: Hits{
+						{"key": toRawMessage(123), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
 					Offset: 0,
@@ -469,37 +300,8 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				},
 			},
 		},
-		{
-			name: "TestIndexMultipleAddDocumentsWithPrimaryKeyWithIntID",
-			args: args{
-				UID:    "TestIndexMultipleAddDocumentsWithPrimaryKeyWithIntID",
-				client: sv,
-				documentsPtr: []map[string]interface{}{
-					{"key": float64(1), "Name": "Alice In Wonderland"},
-					{"key": float64(123), "Name": "Pride and Prejudice"},
-					{"key": float64(456), "Name": "Le Petit Prince"},
-				},
-				primaryKey: "key",
-			},
-			resp: resp{
-				wantResp: &TaskInfo{
-					TaskUID: 0,
-					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
-				},
-				documentsRes: DocumentsResult{
-					Results: []map[string]interface{}{
-						{"key": float64(1), "Name": "Alice In Wonderland"},
-						{"key": float64(123), "Name": "Pride and Prejudice"},
-						{"key": float64(456), "Name": "Le Petit Prince"},
-					},
-					Limit:  3,
-					Offset: 0,
-					Total:  3,
-				},
-			},
-		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
@@ -513,7 +315,6 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			require.Equal(t, tt.resp.wantResp.Type, gotResp.Type)
 			require.Equal(t, tt.args.UID, gotResp.IndexUID)
 			require.NotZero(t, gotResp.EnqueuedAt)
-			require.NoError(t, err)
 
 			testWaitForTask(t, i, gotResp)
 
@@ -554,11 +355,11 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 			args: argsNoKey{
 				UID:    "TestIndexBasicAddDocumentsInBatches",
 				client: sv,
-				documentsPtr: []map[string]interface{}{
-					{"ID": "122", "Name": "Pride and Prejudice"},
-					{"ID": "123", "Name": "Pride and Prejudica"},
-					{"ID": "124", "Name": "Pride and Prejudicb"},
-					{"ID": "125", "Name": "Pride and Prejudicc"},
+				documentsPtr: Hits{
+					{"ID": toRawMessage("122"), "Name": toRawMessage("Pride and Prejudice")},
+					{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudica")},
+					{"ID": toRawMessage("124"), "Name": toRawMessage("Pride and Prejudicb")},
+					{"ID": toRawMessage("125"), "Name": toRawMessage("Pride and Prejudicc")},
 				},
 				batchSize: 2,
 			},
@@ -588,11 +389,11 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 			args: argsWithKey{
 				UID:    "TestIndexBasicAddDocumentsInBatchesWithKey",
 				client: sv,
-				documentsPtr: []map[string]interface{}{
-					{"ID": "122", "Name": "Pride and Prejudice"},
-					{"ID": "123", "Name": "Pride and Prejudica"},
-					{"ID": "124", "Name": "Pride and Prejudicb"},
-					{"ID": "125", "Name": "Pride and Prejudicc"},
+				documentsPtr: Hits{
+					{"ID": toRawMessage("122"), "Name": toRawMessage("Pride and Prejudice")},
+					{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudica")},
+					{"ID": toRawMessage("124"), "Name": toRawMessage("Pride and Prejudicb")},
+					{"ID": toRawMessage("125"), "Name": toRawMessage("Pride and Prejudicc")},
 				},
 				batchSize:  2,
 				primaryKey: "ID",
@@ -699,7 +500,7 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 
 	tests := []testData{
 		{
-			name: "TestIndexBasic",
+			name: "TestBasic",
 			args: args{
 				UID:       "ndjson",
 				client:    sv,
@@ -732,6 +533,7 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
+			require.NotEmpty(t, wantDocs, "Parsed NDJSON documents should not be empty")
 
 			var (
 				gotResp *TaskInfo
@@ -739,7 +541,8 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 			)
 
 			if testReader {
-				gotResp, err = i.AddDocumentsNdjsonFromReader(bytes.NewReader(tt.args.documents))
+				reader := bytes.NewReader(tt.args.documents)
+				gotResp, err = i.AddDocumentsNdjsonFromReader(reader)
 			} else {
 				gotResp, err = i.AddDocumentsNdjson(tt.args.documents)
 			}
@@ -770,7 +573,7 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		// Test both the string and io.Reader receiving versions
+		// ✅ Test both `[]byte` and `io.Reader` methods
 		testAddDocumentsNdjson(t, tt, false)
 		testAddDocumentsNdjson(t, tt, true)
 	}
@@ -865,7 +668,7 @@ func TestIndex_AddOrUpdateDocumentsCsvInBatches(t *testing.T) {
 			var documents DocumentsResult
 			err = i.GetDocuments(&DocumentsQuery{}, &documents)
 			require.NoError(t, err)
-			require.Equal(t, wantDocs, documents.Results)
+			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
 
 			if !testReader {
 				gotResp, err = i.UpdateDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize, nil)
@@ -960,7 +763,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			var documents DocumentsResult
 			err = i.GetDocuments(&DocumentsQuery{}, &documents)
 			require.NoError(t, err)
-			require.Equal(t, wantDocs, documents.Results)
+			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
 		})
 	}
 
@@ -1080,7 +883,7 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 			var documents DocumentsResult
 			err = i.GetDocuments(&DocumentsQuery{}, &documents)
 			require.NoError(t, err)
-			require.Equal(t, wantDocs, documents.Results)
+			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
 		})
 	}
 
