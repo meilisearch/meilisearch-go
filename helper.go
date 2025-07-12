@@ -150,9 +150,6 @@ func joinString(vals []string) string {
 	if len(vals) == 0 {
 		return ""
 	}
-	res := vals[0]
-	for i := 1; i < len(vals); i++ {
-		res += "," + vals[i]
-	}
-	return res
+
+	return strings.Join(vals, ",")
 }
