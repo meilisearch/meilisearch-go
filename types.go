@@ -373,8 +373,14 @@ type MultiSearchRequest struct {
 }
 
 type MultiSearchFederation struct {
-	Offset int64 `json:"offset,omitempty"`
-	Limit  int64 `json:"limit,omitempty"`
+	Offset        int64                             `json:"offset,omitempty"`
+	Limit         int64                             `json:"limit,omitempty"`
+	FacetsByIndex map[string][]string               `json:"facetsByIndex,omitempty"`
+	MergeFacets   *MultiSearchFederationMergeFacets `json:"mergeFacets,omitempty"`
+}
+
+type MultiSearchFederationMergeFacets struct {
+	MaxValuesPerFacet int `json:"maxValuesPerFacet,omitempty"`
 }
 
 // SearchResponse is the response body for search method
