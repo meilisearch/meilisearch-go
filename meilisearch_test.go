@@ -2175,7 +2175,7 @@ func TestClient_MultiSearch(t *testing.T) {
 			setup: "movies",
 		},
 		{
-			name: "TestClientMultiSearchWithFederationFacetsByIndex",
+			name: "TestClientMultiSearchWithFederationFacetsByIndexWithMergeFacets",
 			args: args{
 				client: sv,
 				queries: &MultiSearchRequest{
