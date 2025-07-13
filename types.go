@@ -401,13 +401,15 @@ type SearchResponse struct {
 }
 
 type MultiSearchResponse struct {
-	Results            []SearchResponse `json:"results,omitempty"`
-	Hits               Hits             `json:"hits,omitempty"`
-	ProcessingTimeMs   int64            `json:"processingTimeMs,omitempty"`
-	Offset             int64            `json:"offset,omitempty"`
-	Limit              int64            `json:"limit,omitempty"`
-	EstimatedTotalHits int64            `json:"estimatedTotalHits,omitempty"`
-	SemanticHitCount   int64            `json:"semanticHitCount,omitempty"`
+	Results            []SearchResponse           `json:"results,omitempty"`
+	Hits               Hits                       `json:"hits,omitempty"`
+	ProcessingTimeMs   int64                      `json:"processingTimeMs,omitempty"`
+	Offset             int64                      `json:"offset,omitempty"`
+	Limit              int64                      `json:"limit,omitempty"`
+	EstimatedTotalHits int64                      `json:"estimatedTotalHits,omitempty"`
+	SemanticHitCount   int64                      `json:"semanticHitCount,omitempty"`
+	FacetDistribution  map[string]json.RawMessage `json:"facetDistribution,omitempty"`
+	FacetStats         map[string]json.RawMessage `json:"facetStats,omitempty"`
 }
 
 type FacetSearchRequest struct {

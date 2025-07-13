@@ -210,10 +210,10 @@ func setUpBasicIndex(sv ServiceManager, indexUID string) {
 	}
 }
 
-func setupMovieIndex(t *testing.T, client ServiceManager) IndexManager {
+func setupMovieIndex(t *testing.T, client ServiceManager, uid string) IndexManager {
 	t.Helper()
 
-	idx := client.Index("indexUID")
+	idx := client.Index(uid)
 
 	testdata, err := os.Open("./testdata/movies.json")
 	require.NoError(t, err)
@@ -227,7 +227,31 @@ func setupMovieIndex(t *testing.T, client ServiceManager) IndexManager {
 	require.NoError(t, err)
 	testWaitForTask(t, idx, task)
 
-	task, err = idx.UpdateFilterableAttributes(&[]string{"id"})
+	task, err = idx.UpdateFilterableAttributes(&[]string{"id", "title", "overview"})
+	require.NoError(t, err)
+	testWaitForTask(t, idx, task)
+
+	return idx
+}
+
+func setupComicIndex(t *testing.T, client ServiceManager, uid string) IndexManager {
+	t.Helper()
+
+	idx := client.Index(uid)
+
+	testdata, err := os.Open("./testdata/comics.json")
+	require.NoError(t, err)
+	defer testdata.Close()
+
+	tests := make([]map[string]interface{}, 0)
+
+	require.NoError(t, json.NewDecoder(testdata).Decode(&tests))
+
+	task, err := idx.AddDocuments(tests)
+	require.NoError(t, err)
+	testWaitForTask(t, idx, task)
+
+	task, err = idx.UpdateFilterableAttributes(&[]string{"id", "title", "overview"})
 	require.NoError(t, err)
 	testWaitForTask(t, idx, task)
 

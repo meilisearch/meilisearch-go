@@ -1967,6 +1967,11 @@ func Test_GenerateTenantToken(t *testing.T) {
 func TestClient_MultiSearch(t *testing.T) {
 	sv := setup(t, "")
 
+	feat, err := sv.ExperimentalFeatures().SetNetwork(true).Update()
+	require.NoError(t, err)
+	require.NotNil(t, feat)
+	require.True(t, feat.Network)
+
 	type args struct {
 		client  ServiceManager
 		queries *MultiSearchRequest
@@ -1976,6 +1981,7 @@ func TestClient_MultiSearch(t *testing.T) {
 		name    string
 		args    args
 		want    *MultiSearchResponse
+		setup   string
 		wantErr bool
 	}{
 		{
@@ -2006,6 +2012,7 @@ func TestClient_MultiSearch(t *testing.T) {
 					},
 				},
 			},
+			setup: "books",
 		},
 		{
 			name: "TestClientMultiSearchOnTwoIndexes",
@@ -2050,6 +2057,7 @@ func TestClient_MultiSearch(t *testing.T) {
 					},
 				},
 			},
+			setup: "books",
 		},
 		{
 			name: "TestClientMultiSearchWithFederation",
@@ -2098,6 +2106,142 @@ func TestClient_MultiSearch(t *testing.T) {
 				EstimatedTotalHits: 3,
 				SemanticHitCount:   0,
 			},
+			setup: "books",
+		},
+		{
+			name: "TestClientMultiSearchWithFederationFacetsByIndex",
+			args: args{
+				client: sv,
+				queries: &MultiSearchRequest{
+					Federation: &MultiSearchFederation{
+						FacetsByIndex: map[string][]string{
+							"movies": {
+								"title",
+								"id",
+							},
+							"comics": {
+								"title",
+							},
+						},
+					},
+					Queries: []*SearchRequest{
+						{
+							IndexUID: "movies",
+							Query:    "Batman",
+						}, {
+							IndexUID: "comics",
+							Query:    "Batman",
+						},
+					},
+				},
+				UIDS: []string{"movies", "comics"},
+			},
+			want: &MultiSearchResponse{
+				Results: nil,
+				Hits: Hits{
+
+					{
+						"id":           toRawMessage(31),
+						"title":        toRawMessage("Batman"),
+						"genres":       toRawMessage([]string{"Action", "Thriller"}),
+						"overview":     toRawMessage("Follow the adventures of the Dark Knight as he battles crime in Gotham City."),
+						"cover":        toRawMessage("https://example.com/comics/batman.jpg"),
+						"release_date": toRawMessage(1625097600),
+						"_federation": toRawMessage(map[string]interface{}{
+							"indexUid":             "comics",
+							"queriesPosition":      1,
+							"weightedRankingScore": toRawMessage(1.0),
+						}),
+					},
+					{
+						"id":           toRawMessage(87),
+						"title":        toRawMessage("The Batman"),
+						"genres":       toRawMessage([]string{"Action", "Thriller"}),
+						"overview":     toRawMessage("When a sadistic serial killer begins murdering key political figures in Gotham, the Batman is forced to investigate the city's hidden corruption and question his family's involvement."),
+						"poster":       toRawMessage("https://example.com/comics/batman.jpg"),
+						"release_date": toRawMessage(1625097600),
+						"_federation": toRawMessage(map[string]interface{}{
+							"indexUid":             "movies",
+							"queriesPosition":      0,
+							"weightedRankingScore": 0.9242424242424242,
+						}),
+					},
+				},
+				Offset:             0,
+				Limit:              20,
+				EstimatedTotalHits: 2,
+				SemanticHitCount:   0,
+			},
+			setup: "movies",
+		},
+		{
+			name: "TestClientMultiSearchWithFederationFacetsByIndex",
+			args: args{
+				client: sv,
+				queries: &MultiSearchRequest{
+					Federation: &MultiSearchFederation{
+						FacetsByIndex: map[string][]string{
+							"movies": {
+								"title",
+								"id",
+							},
+							"comics": {
+								"title",
+							},
+						},
+						MergeFacets: &MultiSearchFederationMergeFacets{
+							MaxValuesPerFacet: 10,
+						},
+					},
+					Queries: []*SearchRequest{
+						{
+							IndexUID: "movies",
+							Query:    "Batman",
+						}, {
+							IndexUID: "comics",
+							Query:    "Batman",
+						},
+					},
+				},
+				UIDS: []string{"movies", "comics"},
+			},
+			want: &MultiSearchResponse{
+				Results: nil,
+				Hits: Hits{
+
+					{
+						"id":           toRawMessage(31),
+						"title":        toRawMessage("Batman"),
+						"genres":       toRawMessage([]string{"Action", "Thriller"}),
+						"overview":     toRawMessage("Follow the adventures of the Dark Knight as he battles crime in Gotham City."),
+						"cover":        toRawMessage("https://example.com/comics/batman.jpg"),
+						"release_date": toRawMessage(1625097600),
+						"_federation": toRawMessage(map[string]interface{}{
+							"indexUid":             "comics",
+							"queriesPosition":      1,
+							"weightedRankingScore": toRawMessage(1.0),
+						}),
+					},
+					{
+						"id":           toRawMessage(87),
+						"title":        toRawMessage("The Batman"),
+						"genres":       toRawMessage([]string{"Action", "Thriller"}),
+						"overview":     toRawMessage("When a sadistic serial killer begins murdering key political figures in Gotham, the Batman is forced to investigate the city's hidden corruption and question his family's involvement."),
+						"poster":       toRawMessage("https://example.com/comics/batman.jpg"),
+						"release_date": toRawMessage(1625097600),
+						"_federation": toRawMessage(map[string]interface{}{
+							"indexUid":             "movies",
+							"queriesPosition":      0,
+							"weightedRankingScore": 0.9242424242424242,
+						}),
+					},
+				},
+				Offset:             0,
+				Limit:              20,
+				EstimatedTotalHits: 2,
+				SemanticHitCount:   0,
+			},
+			setup: "movies",
 		},
 		{
 			name: "TestClientMultiSearchNoIndex",
@@ -2112,13 +2256,24 @@ func TestClient_MultiSearch(t *testing.T) {
 				},
 				UIDS: []string{"TestClientMultiSearchNoIndex"},
 			},
+			setup:   "books",
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			for _, UID := range tt.args.UIDS {
-				setUpBasicIndex(sv, UID)
+				if tt.setup == "books" {
+					setUpBasicIndex(sv, UID)
+				} else {
+					if UID == "movies" {
+						setupMovieIndex(t, sv, UID)
+					}
+
+					if UID == "comics" {
+						setupComicIndex(t, sv, UID)
+					}
+				}
 			}
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
@@ -2134,11 +2289,35 @@ func TestClient_MultiSearch(t *testing.T) {
 
 				// Compare results while ignoring ProcessingTimeMs
 				require.Equal(t, tt.want.Results, got.Results)
-				require.Equal(t, tt.want.Hits, got.Hits)
 				require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 				require.Equal(t, tt.want.SemanticHitCount, got.SemanticHitCount)
 				require.Equal(t, tt.want.Offset, got.Offset)
 				require.Equal(t, tt.want.Limit, got.Limit)
+
+				for i := range tt.want.Hits {
+					require.Equal(t, len(tt.want.Hits), len(got.Hits))
+
+					var (
+						wants map[string]interface{}
+						gots  map[string]interface{}
+					)
+
+					err := tt.want.Hits[i].Decode(&wants)
+					require.NoError(t, err)
+
+					err = got.Hits[i].Decode(&gots)
+					require.NoError(t, err)
+
+					for k, v := range wants {
+						gotVal := gots[k]
+						switch wantFloat := v.(type) {
+						case float64:
+							require.InEpsilon(t, wantFloat, gotVal.(float64), 1e-9)
+						default:
+							require.Equal(t, v, gotVal)
+						}
+					}
+				}
 			}
 		})
 	}

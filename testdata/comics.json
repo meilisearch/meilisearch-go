@@ -1,0 +1,250 @@
+[
+  {
+    "id": 1,
+    "title": "The Adventures of Space Explorer",
+    "overview": "A daring astronaut ventures into the unknown, facing alien civilizations and uncovering the mysteries of the universe.",
+    "genres": ["Adventure", "Science Fiction"],
+    "cover": "https://example.com/comics/space_explorer.jpg",
+    "release_date": 1625097600
+  },
+  {
+    "id": 2,
+    "title": "Crime Chronicles",
+    "overview": "Follow the gripping tales of detectives solving the most challenging cases in a gritty urban setting.",
+    "genres": ["Crime", "Thriller"],
+    "cover": "https://example.com/comics/crime_chronicles.jpg",
+    "release_date": 1619827200
+  },
+  {
+    "id": 3,
+    "title": "Fantasy Realms",
+    "overview": "Step into a magical world filled with dragons, wizards, and epic battles between good and evil.",
+    "genres": ["Fantasy", "Adventure"],
+    "cover": "https://example.com/comics/fantasy_realms.jpg",
+    "release_date": 1609459200
+  },
+  {
+    "id": 4,
+    "title": "Romantic Escapades",
+    "overview": "Heartwarming stories of love and relationships that transcend time and space.",
+    "genres": ["Romance", "Drama"],
+    "cover": "https://example.com/comics/romantic_escapades.jpg",
+    "release_date": 1598918400
+  },
+  {
+    "id": 5,
+    "title": "Animated Adventures",
+    "overview": "Join a group of quirky characters on their hilarious and heartwarming journeys.",
+    "genres": ["Animation", "Comedy"],
+    "cover": "https://example.com/comics/animated_adventures.jpg",
+    "release_date": 1588291200
+  },
+  {
+    "id": 6,
+    "title": "Mystery Tales",
+    "overview": "Unravel the secrets hidden in the shadows with these captivating mystery stories.",
+    "genres": ["Mystery", "Thriller"],
+    "cover": "https://example.com/comics/mystery_tales.jpg",
+    "release_date": 1577836800
+  },
+  {
+    "id": 7,
+    "title": "Historical Legends",
+    "overview": "Dive into the past and explore the lives of legendary figures and events that shaped history.",
+    "genres": ["History", "Drama"],
+    "cover": "https://example.com/comics/historical_legends.jpg",
+    "release_date": 1567296000
+  },
+  {
+    "id": 8,
+    "title": "Superhero Saga",
+    "overview": "Follow the thrilling adventures of heroes with extraordinary powers as they fight for justice.",
+    "genres": ["Action", "Fantasy"],
+    "cover": "https://example.com/comics/superhero_saga.jpg",
+    "release_date": 1556668800
+  },
+  {
+    "id": 9,
+    "title": "Horror Nights",
+    "overview": "Experience spine-chilling tales that will keep you on the edge of your seat.",
+    "genres": ["Horror", "Thriller"],
+    "cover": "https://example.com/comics/horror_nights.jpg",
+    "release_date": 1546214400
+  },
+  {
+    "id": 10,
+    "title": "Family Fun",
+    "overview": "Enjoy heartwarming and entertaining stories perfect for readers of all ages.",
+    "genres": ["Family", "Comedy"],
+    "cover": "https://example.com/comics/family_fun.jpg",
+    "release_date": 1535673600
+  },
+  {
+    "id": 11,
+    "title": "Sci-Fi Chronicles",
+    "overview": "Explore futuristic worlds and cutting-edge technology in these captivating sci-fi tales.",
+    "genres": ["Science Fiction", "Adventure"],
+    "cover": "https://example.com/comics/sci_fi_chronicles.jpg",
+    "release_date": 1525132800
+  },
+  {
+    "id": 12,
+    "title": "War Stories",
+    "overview": "Witness the bravery and struggles of soldiers in gripping wartime narratives.",
+    "genres": ["War", "Drama"],
+    "cover": "https://example.com/comics/war_stories.jpg",
+    "release_date": 1514678400
+  },
+  {
+    "id": 13,
+    "title": "Musical Moments",
+    "overview": "Celebrate the power of music with these inspiring and melodious tales.",
+    "genres": ["Music", "Drama"],
+    "cover": "https://example.com/comics/musical_moments.jpg",
+    "release_date": 1504137600
+  },
+  {
+    "id": 14,
+    "title": "Western Wonders",
+    "overview": "Ride into the Wild West and experience thrilling adventures of cowboys and outlaws.",
+    "genres": ["Western", "Action"],
+    "cover": "https://example.com/comics/western_wonders.jpg",
+    "release_date": 1493596800
+  },
+  {
+    "id": 15,
+    "title": "Animated Heroes",
+    "overview": "Follow the exciting journeys of animated characters as they overcome challenges and save the day.",
+    "genres": ["Animation", "Adventure"],
+    "cover": "https://example.com/comics/animated_heroes.jpg",
+    "release_date": 1483056000
+  },
+  {
+    "id": 16,
+    "title": "Fantasy Quest",
+    "overview": "Embark on epic quests in magical realms filled with wonder and danger.",
+    "genres": ["Fantasy", "Adventure"],
+    "cover": "https://example.com/comics/fantasy_quest.jpg",
+    "release_date": 1472601600
+  },
+  {
+    "id": 17,
+    "title": "Romantic Tales",
+    "overview": "Discover heartwarming stories of love and relationships that will touch your soul.",
+    "genres": ["Romance", "Drama"],
+    "cover": "https://example.com/comics/romantic_tales.jpg",
+    "release_date": 1462060800
+  },
+  {
+    "id": 18,
+    "title": "Thrilling Mysteries",
+    "overview": "Solve intriguing puzzles and uncover hidden secrets in these thrilling mystery stories.",
+    "genres": ["Mystery", "Thriller"],
+    "cover": "https://example.com/comics/thrilling_mysteries.jpg",
+    "release_date": 1451520000
+  },
+  {
+    "id": 19,
+    "title": "Historical Epics",
+    "overview": "Relive the grandeur of historical events and legendary figures in these epic tales.",
+    "genres": ["History", "Drama"],
+    "cover": "https://example.com/comics/historical_epics.jpg",
+    "release_date": 1440979200
+  },
+  {
+    "id": 20,
+    "title": "Superhero Adventures",
+    "overview": "Join the action-packed adventures of superheroes as they battle villains and save the world.",
+    "genres": ["Action", "Fantasy"],
+    "cover": "https://example.com/comics/superhero_adventures.jpg",
+    "release_date": 1430438400
+  },
+  {
+    "id": 21,
+    "title": "Horror Stories",
+    "overview": "Experience spine-tingling horror tales that will keep you awake at night.",
+    "genres": ["Horror", "Thriller"],
+    "cover": "https://example.com/comics/horror_stories.jpg",
+    "release_date": 1419897600
+  },
+  {
+    "id": 22,
+    "title": "Family Adventures",
+    "overview": "Enjoy heartwarming and entertaining stories perfect for readers of all ages.",
+    "genres": ["Family", "Comedy"],
+    "cover": "https://example.com/comics/family_adventures.jpg",
+    "release_date": 1409356800
+  },
+  {
+    "id": 23,
+    "title": "Sci-Fi Legends",
+    "overview": "Explore futuristic worlds and cutting-edge technology in these captivating sci-fi tales.",
+    "genres": ["Science Fiction", "Adventure"],
+    "cover": "https://example.com/comics/sci_fi_legends.jpg",
+    "release_date": 1398816000
+  },
+  {
+    "id": 24,
+    "title": "War Chronicles",
+    "overview": "Witness the bravery and struggles of soldiers in gripping wartime narratives.",
+    "genres": ["War", "Drama"],
+    "cover": "https://example.com/comics/war_chronicles.jpg",
+    "release_date": 1388275200
+  },
+  {
+    "id": 25,
+    "title": "Musical Journeys",
+    "overview": "Celebrate the power of music with these inspiring and melodious tales.",
+    "genres": ["Music", "Drama"],
+    "cover": "https://example.com/comics/musical_journeys.jpg",
+    "release_date": 1377734400
+  },
+  {
+    "id": 26,
+    "title": "Western Legends",
+    "overview": "Ride into the Wild West and experience thrilling adventures of cowboys and outlaws.",
+    "genres": ["Western", "Action"],
+    "cover": "https://example.com/comics/western_legends.jpg",
+    "release_date": 1367193600
+  },
+  {
+    "id": 27,
+    "title": "Animated Wonders",
+    "overview": "Follow the exciting journeys of animated characters as they overcome challenges and save the day.",
+    "genres": ["Animation", "Adventure"],
+    "cover": "https://example.com/comics/animated_wonders.jpg",
+    "release_date": 1356652800
+  },
+  {
+    "id": 28,
+    "title": "Fantasy Adventures",
+    "overview": "Embark on epic quests in magical realms filled with wonder and danger.",
+    "genres": ["Fantasy", "Adventure"],
+    "cover": "https://example.com/comics/fantasy_adventures.jpg",
+    "release_date": 1346112000
+  },
+  {
+    "id": 29,
+    "title": "Romantic Journeys",
+    "overview": "Discover heartwarming stories of love and relationships that will touch your soul.",
+    "genres": ["Romance", "Drama"],
+    "cover": "https://example.com/comics/romantic_journeys.jpg",
+    "release_date": 1335571200
+  },
+  {
+    "id": 30,
+    "title": "Thrilling Adventures",
+    "overview": "Solve intriguing puzzles and uncover hidden secrets in these thrilling mystery stories.",
+    "genres": ["Mystery", "Thriller"],
+    "cover": "https://example.com/comics/thrilling_adventures.jpg",
+    "release_date": 1325030400
+  },
+  {
+    "id": 31,
+    "title": "Batman",
+    "overview": "Follow the adventures of the Dark Knight as he battles crime in Gotham City.",
+    "genres": ["Action", "Thriller"],
+    "cover": "https://example.com/comics/batman.jpg",
+    "release_date": 1625097600
+  }
+]
