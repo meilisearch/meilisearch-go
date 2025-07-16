@@ -112,6 +112,18 @@ type ServiceReader interface {
 
 	// IsHealthy checks if the Meilisearch server is healthy.
 	IsHealthy() bool
+
+	// GetBatches allows you to monitor how Meilisearch is grouping and processing asynchronous operations.
+	GetBatches(param *BatchesQuery) (*BatchesResults, error)
+
+	// GetBatchesWithContext allows you to monitor how Meilisearch is grouping and processing asynchronous operations with a context for cancellation.
+	GetBatchesWithContext(ctx context.Context, param *BatchesQuery) (*BatchesResults, error)
+
+	// GetBatch retrieves a specific batch by its UID.
+	GetBatch(batchUID int) (*Batch, error)
+
+	// GetBatchWithContext retrieves a specific batch by its UID with a context for cancellation.
+	GetBatchWithContext(ctx context.Context, batchUID int) (*Batch, error)
 }
 
 type KeyManager interface {

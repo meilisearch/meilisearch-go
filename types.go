@@ -527,3 +527,78 @@ type JSONMarshal func(v interface{}) ([]byte, error)
 // in the value pointed to by v. If v is nil or not a pointer,
 // Unmarshal returns an InvalidUnmarshalError.
 type JSONUnmarshal func(data []byte, v interface{}) error
+
+// Batch gives information about the progress of batch of asynchronous operations.
+type Batch struct {
+	UID           int                    `json:"uid"`
+	Progress      *BatchProgress         `json:"progress,omitempty"`
+	Details       map[string]interface{} `json:"details,omitempty"`
+	Stats         *BatchStats            `json:"stats,omitempty"`
+	Duration      string                 `json:"duration,omitempty"`
+	StartedAt     time.Time              `json:"startedAt,omitempty"`
+	FinishedAt    time.Time              `json:"finishedAt,omitempty"`
+	BatchStrategy string                 `json:"batchStrategy,omitempty"`
+}
+
+type BatchProgress struct {
+	Steps      []*BatchProgressStep `json:"steps"`
+	Percentage float64              `json:"percentage"`
+}
+
+type BatchProgressStep struct {
+	CurrentStep string `json:"currentStep"`
+	Finished    int    `json:"finished"`
+	Total       int    `json:"total"`
+}
+
+type BatchStats struct {
+	TotalNbTasks           int                               `json:"totalNbTasks"`
+	Status                 map[string]int                    `json:"status"`
+	Types                  map[string]int                    `json:"types"`
+	IndexedUIDs            map[string]int                    `json:"indexUids"`
+	ProgressTrace          map[string]string                 `json:"progressTrace"`
+	WriteChannelCongestion *BatchStatsWriteChannelCongestion `json:"writeChannelCongestion"`
+	InternalDatabaseSizes  *BatchStatsInternalDatabaseSize   `json:"internalDatabaseSizes"`
+}
+
+type BatchStatsWriteChannelCongestion struct {
+	Attempts         int     `json:"attempts"`
+	BlockingAttempts int     `json:"blocking_attempts"`
+	BlockingRatio    float64 `json:"blocking_ratio"`
+}
+
+type BatchStatsInternalDatabaseSize struct {
+	ExternalDocumentsIDs    string `json:"externalDocumentsIds"`
+	WordDocIDs              string `json:"wordDocids"`
+	WordPairProximityDocIDs string `json:"wordPairProximityDocids"`
+	WordPositionDocIDs      string `json:"wordPositionDocids"`
+	WordFidDocIDs           string `json:"wordFidDocids"`
+	FieldIdWordCountDocIDs  string `json:"fieldIdWordCountDocids"`
+	Documents               string `json:"documents"`
+}
+
+type BatchesResults struct {
+	Results []*Batch `json:"results"`
+	Total   int64    `json:"total"`
+	Limit   int64    `json:"limit"`
+	From    int64    `json:"from"`
+	Next    int64    `json:"next"`
+}
+
+// BatchesQuery represents the query parameters for listing batches.
+type BatchesQuery struct {
+	UIDs             []int64
+	BatchUIDs        []int64
+	IndexUIDs        []string
+	Statuses         []string
+	Types            []string
+	Limit            int64
+	From             int64
+	Reverse          bool
+	BeforeEnqueuedAt time.Time
+	BeforeStartedAt  time.Time
+	BeforeFinishedAt time.Time
+	AfterEnqueuedAt  time.Time
+	AfterStartedAt   time.Time
+	AfterFinishedAt  time.Time
+}

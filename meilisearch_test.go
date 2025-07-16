@@ -1089,7 +1089,6 @@ func Test_GetTasksUsingClient(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
-
 			t.Cleanup(cleanup(c))
 
 			task, err := i.AddDocuments(tt.args.document)
@@ -2531,4 +2530,109 @@ func TestGetServiceManagerAndReaders(t *testing.T) {
 	require.NotNil(t, c.TaskReader())
 	require.NotNil(t, c.KeyManager())
 	require.NotNil(t, c.KeyReader())
+}
+
+func TestGetBatch(t *testing.T) {
+	c := setup(t, "")
+	indexUID := "indexUID"
+
+	info, err := c.CreateIndex(&IndexConfig{
+		Uid: indexUID,
+	})
+
+	require.NoError(t, err)
+	task, err := c.WaitForTask(info.TaskUID, 0)
+	require.NoError(t, err)
+	require.Equal(t, task.Status, TaskStatusSucceeded)
+
+	info, err = c.DeleteIndex(indexUID)
+	require.NoError(t, err)
+	task, err = c.WaitForTask(info.TaskUID, 0)
+	require.NoError(t, err)
+	require.Equal(t, task.Status, TaskStatusSucceeded)
+
+	batches, err := c.GetBatches(nil)
+	require.NoError(t, err)
+	require.NotEmpty(t, batches.Results)
+
+	for _, bt := range batches.Results {
+		batch, err := c.GetBatch(bt.UID)
+		require.NoError(t, err)
+
+		require.NotZero(t, batch.StartedAt)
+		if batch.Progress != nil {
+			require.GreaterOrEqual(t, batch.Progress.Percentage, 0.0)
+		}
+		if batch.Stats != nil {
+			require.GreaterOrEqual(t, batch.Stats.TotalNbTasks, 0)
+		}
+	}
+}
+
+func TestGetBatches(t *testing.T) {
+	c := setup(t, "")
+	indexUID := "indexUID"
+
+	info, err := c.CreateIndex(&IndexConfig{
+		Uid: indexUID,
+	})
+
+	require.NoError(t, err)
+	task, err := c.WaitForTask(info.TaskUID, 0)
+	require.NoError(t, err)
+	require.Equal(t, task.Status, TaskStatusSucceeded)
+
+	info, err = c.DeleteIndex(indexUID)
+	require.NoError(t, err)
+	task, err = c.WaitForTask(info.TaskUID, 0)
+	require.NoError(t, err)
+	require.Equal(t, task.Status, TaskStatusSucceeded)
+
+	tests := []struct {
+		name   string
+		params *BatchesQuery
+		limit  int
+	}{
+		{
+			name:   "TestGetBatchesWithNoFilter",
+			params: nil,
+			limit:  -1, // No limit
+		},
+		{
+			name:   "TestGetBatchesWithLimit",
+			params: &BatchesQuery{Limit: 1},
+			limit:  1,
+		},
+		{
+			name: "TestGetBatchesWithSpecificTypes",
+			params: &BatchesQuery{Types: []string{
+				string(TaskTypeIndexCreation),
+				string(TaskTypeIndexDeletion),
+			}},
+			limit: -1,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			batches, err := c.GetBatches(tt.params)
+			require.NoError(t, err)
+			require.NotEmpty(t, batches.Results)
+
+			if tt.limit == -1 {
+				require.Greater(t, len(batches.Results), 1)
+			} else {
+				require.LessOrEqual(t, len(batches.Results), tt.limit)
+			}
+
+			batch := batches.Results[0]
+			require.NotZero(t, batch.StartedAt)
+			require.NotEmpty(t, batch.BatchStrategy)
+			require.NotNil(t, batch.Stats)
+			if tt.params != nil && tt.params.Limit > 0 {
+				require.LessOrEqual(t, int64(len(batches.Results)), tt.params.Limit)
+			}
+		})
+	}
+
 }

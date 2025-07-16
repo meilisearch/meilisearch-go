@@ -955,3 +955,7 @@ update_prefix_search_settings_1: |-
   client.Index("books").UpdatePrefixSearch("disabled")
 reset_prefix_search_settings_1: |-
   client.Index("books").ResetPrefixSearch()
+get_all_batches_1: |-
+  client.GetBatches();
+get_batch_1: |-
+  client.GetBatch(BATCH_UID);

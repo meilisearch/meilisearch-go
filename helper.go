@@ -134,3 +134,22 @@ func sendCsvRecords(ctx context.Context, documentsCsvFunc func(ctx context.Conte
 	}
 	return resp, nil
 }
+
+func joinInt64(vals []int64) string {
+	if len(vals) == 0 {
+		return ""
+	}
+	result := make([]string, len(vals))
+	for i, v := range vals {
+		result[i] = strconv.FormatInt(v, 10)
+	}
+	return joinString(result)
+}
+
+func joinString(vals []string) string {
+	if len(vals) == 0 {
+		return ""
+	}
+
+	return strings.Join(vals, ",")
+}
