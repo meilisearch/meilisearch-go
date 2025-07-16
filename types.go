@@ -385,7 +385,8 @@ type SearchRequest struct {
 }
 
 type SearchFederationOptions struct {
-	Weight float64 `json:"weight"`
+	Weight float64 `json:"weight,omitempty"`
+	Remote string  `json:"remote,omitempty"`
 }
 
 type SearchRequestHybrid struct {
