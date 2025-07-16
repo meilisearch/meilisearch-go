@@ -2,6 +2,7 @@ package meilisearch
 
 import (
 	"crypto/tls"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
@@ -3523,7 +3524,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 				request: Settings{
 					Embedders: map[string]Embedder{
 						"default": {
-							Source:           "openAi",
+							Source:           OpenaiEmbedderSource,
 							DocumentTemplate: "{{doc.foobar}}",
 						},
 					},
@@ -3542,7 +3543,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 				request: Settings{
 					Embedders: map[string]Embedder{
 						"default": {
-							Source:           "openAi",
+							Source:           OpenaiEmbedderSource,
 							APIKey:           "xxx",
 							Model:            "text-embedding-3-small",
 							DocumentTemplate: "A movie titled '{{doc.title}}'",
@@ -3556,6 +3557,33 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 			wantErr: "Incorrect API key",
 		},
 		{
+			name: "TestIndexUpdateSettingsEmbeddersHuggingFace",
+			args: args{
+				newIndex: true,
+				UID:      "newIndexUID",
+				client:   meili,
+				request: Settings{
+					Embedders: map[string]Embedder{
+						"default": {
+							Source:           HuggingFaceEmbedderSource,
+							Model:            "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+							DocumentTemplate: "A movie titled '{{doc.title}}' whose description starts with {{doc.overview|truncatewords: 20}}",
+							Distribution: &Distribution{
+								Mean:  0.7,
+								Sigma: 0.3,
+							},
+							Pooling:                  UseModelEmbedderPooling,
+							DocumentTemplateMaxBytes: 500,
+							BinaryQuantized:          false,
+						},
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
 			name: "TestIndexUpdateSettingsEmbeddersUserProvided",
 			args: args{
 				newIndex: true,
@@ -3564,7 +3592,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 				request: Settings{
 					Embedders: map[string]Embedder{
 						"default": {
-							Source:     "userProvided",
+							Source:     UserProvidedEmbedderSource,
 							Dimensions: 3,
 						},
 					},
@@ -3583,7 +3611,7 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 				request: Settings{
 					Embedders: map[string]Embedder{
 						"default": {
-							Source:           "rest",
+							Source:           RestEmbedderSource,
 							URL:              "https://api.openai.com/v1/embeddings",
 							APIKey:           "<your-openai-api-key>",
 							Dimensions:       1536,
@@ -3615,6 +3643,65 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 				TaskUID: 1,
 			},
 		},
+		{
+			name: "TestIndexUpdateSettingsEmbeddersOllama",
+			args: args{
+				newIndex: true,
+				UID:      "newIndexUID",
+				client:   meili,
+				request: Settings{
+					Embedders: map[string]Embedder{
+						"default": {
+							Source:           OllamaEmbedderSource,
+							URL:              "http://localhost:11434/api/embeddings",
+							APIKey:           "<your-ollama-api-key>",
+							Model:            "nomic-embed-text",
+							DocumentTemplate: "blabla",
+							Distribution: &Distribution{
+								Mean:  0.7,
+								Sigma: 0.3,
+							},
+							Dimensions:               512,
+							DocumentTemplateMaxBytes: 500,
+							BinaryQuantized:          false,
+						},
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
+			name: "TestIndexUpdateSettingsEmbeddersComposite",
+			args: args{
+				newIndex: true,
+				UID:      "newIndexUID",
+				client:   meili,
+				request: Settings{
+					Embedders: map[string]Embedder{
+						"default": {
+							Source: CompositeEmbedderSource,
+							SearchEmbedder: &Embedder{
+								Source:  HuggingFaceEmbedderSource,
+								Model:   "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+								Pooling: UseModelEmbedderPooling,
+							},
+							IndexingEmbedder: &Embedder{
+								Source:                   HuggingFaceEmbedderSource,
+								Model:                    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+								DocumentTemplate:         "{{doc.title}}",
+								Pooling:                  UseModelEmbedderPooling,
+								DocumentTemplateMaxBytes: 500,
+							},
+						},
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -3623,14 +3710,20 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 			require.NoError(t, err)
 			t.Cleanup(cleanup(c))
 
+			feat := c.ExperimentalFeatures().SetCompositeEmbedders(true)
+			resp, err := feat.Update()
+			require.NoError(t, err)
+			require.True(t, resp.CompositeEmbedders)
+
 			gotTask, err := i.UpdateSettings(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
-			gotResp, err := i.GetSettings()
+			gotResp, err := i.GetEmbedders()
 			require.NoError(t, err)
 			require.NotNil(t, gotResp)
+			assert.Equal(t, gotResp["default"].Source, tt.args.request.Embedders["default"].Source)
 		})
 	}
 }

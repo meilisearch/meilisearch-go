@@ -337,7 +337,7 @@ func setUpIndexWithVector(client *meilisearch, indexUID string) (resp *IndexResu
 	taskInfo, err := idx.UpdateSettings(&Settings{
 		Embedders: map[string]Embedder{
 			"default": {
-				Source:     "userProvided",
+				Source:     UserProvidedEmbedderSource,
 				Dimensions: 3,
 			},
 		},
