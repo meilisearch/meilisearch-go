@@ -647,6 +647,92 @@ func (m *meilisearch) Close() {
 	m.client.client.CloseIdleConnections()
 }
 
+func (m *meilisearch) GetBatches(param *BatchesQuery) (*BatchesResults, error) {
+	return m.GetBatchesWithContext(context.Background(), param)
+}
+
+func (m *meilisearch) GetBatchesWithContext(ctx context.Context, param *BatchesQuery) (*BatchesResults, error) {
+	resp := new(BatchesResults)
+	req := &internalRequest{
+		endpoint:            "/batches",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetBatches",
+	}
+	if param != nil {
+		if len(param.UIDs) > 0 {
+			req.withQueryParams["uids"] = joinInt64(param.UIDs)
+		}
+		if len(param.BatchUIDs) > 0 {
+			req.withQueryParams["batchUids"] = joinInt64(param.BatchUIDs)
+		}
+		if len(param.IndexUIDs) > 0 {
+			req.withQueryParams["indexUids"] = joinString(param.IndexUIDs)
+		}
+		if len(param.Statuses) > 0 {
+			req.withQueryParams["statuses"] = joinString(param.Statuses)
+		}
+		if len(param.Types) > 0 {
+			req.withQueryParams["types"] = joinString(param.Types)
+		}
+		if param.Limit > 0 {
+			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+		}
+		if param.From > 0 {
+			req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
+		}
+		if param.Reverse {
+			req.withQueryParams["reverse"] = "true"
+		}
+		if !param.BeforeEnqueuedAt.IsZero() {
+			req.withQueryParams["beforeEnqueuedAt"] = param.BeforeEnqueuedAt.String()
+		}
+		if !param.BeforeStartedAt.IsZero() {
+			req.withQueryParams["beforeStartedAt"] = param.BeforeStartedAt.String()
+		}
+		if !param.BeforeFinishedAt.IsZero() {
+			req.withQueryParams["beforeFinishedAt"] = param.BeforeFinishedAt.String()
+		}
+		if !param.AfterEnqueuedAt.IsZero() {
+			req.withQueryParams["afterEnqueuedAt"] = param.AfterEnqueuedAt.String()
+		}
+		if !param.AfterStartedAt.IsZero() {
+			req.withQueryParams["afterStartedAt"] = param.AfterStartedAt.String()
+		}
+		if !param.AfterFinishedAt.IsZero() {
+			req.withQueryParams["afterFinishedAt"] = param.AfterFinishedAt.String()
+		}
+	}
+	if err := m.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (m *meilisearch) GetBatch(batchUID int) (*Batch, error) {
+	return m.GetBatchWithContext(context.Background(), batchUID)
+}
+
+func (m *meilisearch) GetBatchWithContext(ctx context.Context, batchUID int) (*Batch, error) {
+	resp := new(Batch)
+	req := &internalRequest{
+		endpoint:            fmt.Sprintf("/batches/%d", batchUID),
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetBatch",
+	}
+	if err := m.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func getTask(ctx context.Context, cli *client, taskUID int64) (*Task, error) {
 	resp := new(Task)
 	req := &internalRequest{
