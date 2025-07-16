@@ -65,6 +65,7 @@ func TestUpdate_ExperimentalFeatures(t *testing.T) {
 			ef.SetEditDocumentsByFunction(true)
 			ef.SetContainsFilter(true)
 			ef.SetNetwork(true)
+			ef.SetCompositeEmbedders(true)
 			gotResp, err := ef.Update()
 			require.NoError(t, err)
 			require.Equal(t, true, gotResp.LogsRoute, "ExperimentalFeatures.Update() should return logsRoute as true")
@@ -72,6 +73,7 @@ func TestUpdate_ExperimentalFeatures(t *testing.T) {
 			require.Equal(t, true, gotResp.EditDocumentsByFunction, "ExperimentalFeatures.Update() should return editDocumentsByFunction as true")
 			require.Equal(t, true, gotResp.ContainsFilter, "ExperimentalFeatures.Update() should return containsFilter as true")
 			require.Equal(t, true, gotResp.Network, "ExperimentalFeatures.Update() should return network as true")
+			require.Equal(t, true, gotResp.CompositeEmbedders, "ExperimentalFeatures.Update() should return composite embedders as true")
 		})
 	}
 }

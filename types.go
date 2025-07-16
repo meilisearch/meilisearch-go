@@ -98,18 +98,44 @@ type Faceting struct {
 }
 
 // Embedder represents a unified configuration for various embedder types.
+//
+// Specs: https://www.meilisearch.com/docs/reference/api/settings#body-21
 type Embedder struct {
-	Source           string                 `json:"source"`                     // The type of embedder: "openAi", "huggingFace", "userProvided", "rest", "ollama"
-	Model            string                 `json:"model,omitempty"`            // Optional for "openAi", "huggingFace", "ollama"
-	APIKey           string                 `json:"apiKey,omitempty"`           // Optional for "openAi", "rest", "ollama"
-	DocumentTemplate string                 `json:"documentTemplate,omitempty"` // Optional for most embedders
-	Dimensions       int                    `json:"dimensions,omitempty"`       // Optional for "openAi", "rest", "userProvided", "ollama"
-	Distribution     *Distribution          `json:"distribution,omitempty"`     // Optional for all embedders
-	URL              string                 `json:"url,omitempty"`              // Optional for "openAi", "rest", "ollama"
-	Revision         string                 `json:"revision,omitempty"`         // Optional for "huggingFace"
-	Request          map[string]interface{} `json:"request,omitempty"`          // Optional for "rest"
-	Response         map[string]interface{} `json:"response,omitempty"`         // Optional for "rest"
-	Headers          map[string]string      `json:"headers,omitempty"`          // Optional for "rest"
+	Source EmbedderSource `json:"source"` // The type of embedder: "openAi", "huggingFace", "userProvided", "rest", "ollama"
+	// URL Meilisearch queries url to generate vector embeddings for queries and documents.
+	// url must point to a REST-compatible embedder. You may also use url to work with proxies, such as when targeting openAi from behind a proxy.
+	URL    string `json:"url,omitempty"`    // Optional for "openAi", "rest", "ollama"
+	APIKey string `json:"apiKey,omitempty"` // Optional for "openAi", "rest", "ollama"
+	// Model The model your embedder uses when generating vectors.
+	// These are the officially supported models Meilisearch supports:
+	//
+	// - openAi: text-embedding-3-small, text-embedding-3-large, openai-text-embedding-ada-002
+	//
+	// - huggingFace: BAAI/bge-base-en-v1.5
+	//
+	// Other models, such as HuggingFace’s BERT models or those provided by Ollama and REST embedders
+	// may also be compatible with Meilisearch.
+	//
+	// HuggingFace’s BERT models: https://huggingface.co/models?other=bert
+	Model string `json:"model,omitempty"` // Optional for "openAi", "huggingFace", "ollama"
+	// DocumentTemplate is a string containing a Liquid template. Meillisearch interpolates the template for each
+	// document and sends the resulting text to the embedder. The embedder then generates document vectors based on this text.
+	DocumentTemplate string `json:"documentTemplate,omitempty"` // Optional for most embedders
+	// DocumentTemplateMaxBytes The maximum size of a rendered document template.
+	//Longer texts are truncated to fit the configured limit.
+	//
+	// documentTemplateMaxBytes must be an integer. It defaults to 400.
+	DocumentTemplateMaxBytes int                    `json:"documentTemplateMaxBytes,omitempty"`
+	Dimensions               int                    `json:"dimensions,omitempty"`   // Optional for "openAi", "rest", "userProvided", "ollama"
+	Revision                 string                 `json:"revision,omitempty"`     // Optional for "huggingFace"
+	Distribution             *Distribution          `json:"distribution,omitempty"` // Optional for all embedders
+	Request                  map[string]interface{} `json:"request,omitempty"`      // Optional for "rest"
+	Response                 map[string]interface{} `json:"response,omitempty"`     // Optional for "rest"
+	Headers                  map[string]string      `json:"headers,omitempty"`      // Optional for "rest"
+	BinaryQuantized          bool                   `json:"binaryQuantized,omitempty"`
+	Pooling                  EmbedderPooling        `json:"pooling,omitempty"`
+	IndexingEmbedder         *Embedder              `json:"indexingEmbedder,omitempty"` // For Composite
+	SearchEmbedder           *Embedder              `json:"searchEmbedder,omitempty"`   // For Composite
 }
 
 // Distribution represents a statistical distribution with mean and standard deviation (sigma).
@@ -490,6 +516,7 @@ type ExperimentalFeaturesBase struct {
 	EditDocumentsByFunction *bool `json:"editDocumentsByFunction,omitempty"`
 	ContainsFilter          *bool `json:"containsFilter,omitempty"`
 	Network                 *bool `json:"network,omitempty"`
+	CompositeEmbedders      *bool `json:"compositeEmbedders,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -498,6 +525,7 @@ type ExperimentalFeaturesResult struct {
 	EditDocumentsByFunction bool `json:"editDocumentsByFunction"`
 	ContainsFilter          bool `json:"containsFilter"`
 	Network                 bool `json:"network"`
+	CompositeEmbedders      bool `json:"compositeEmbedders"`
 }
 
 type SwapIndexesParams struct {

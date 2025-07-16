@@ -101,3 +101,35 @@ func (c ContentEncoding) String() string { return string(c) }
 func (c ContentEncoding) IsZero() bool { return c == "" }
 
 func (c EncodingCompressionLevel) Int() int { return int(c) }
+
+// EmbedderSource The source corresponds to a service that generates embeddings from your documents.
+type EmbedderSource string
+
+const (
+	OpenaiEmbedderSource      EmbedderSource = "openAi"
+	HuggingFaceEmbedderSource EmbedderSource = "huggingFace"
+	// RestEmbedderSource rest is a generic source compatible with any embeddings provider offering a REST API.
+	RestEmbedderSource   EmbedderSource = "rest"
+	OllamaEmbedderSource EmbedderSource = "ollama"
+	// UserProvidedEmbedderSource Use userProvided when you want to generate embeddings manually. In this case,
+	// you must include vector data in your documents’ _vectors field. You must also generate
+	//vectors for search queries.
+	UserProvidedEmbedderSource EmbedderSource = "userProvided"
+	// CompositeEmbedderSource Choose composite to use one embedder during indexing time, and another embedder at search time.
+	//Must be used together with indexingEmbedder and searchEmbedder.
+	CompositeEmbedderSource EmbedderSource = "composite"
+)
+
+// EmbedderPooling Configure how Meilisearch should merge individual tokens into a single embedding.
+//
+// pooling is optional for embedders with the huggingFace source.
+type EmbedderPooling string
+
+const (
+	// UseModelEmbedderPooling Meilisearch will fetch the pooling method from the model configuration. Default value for new embedders
+	UseModelEmbedderPooling EmbedderPooling = "useModel"
+	// ForceMeanEmbedderPooling always use mean pooling. Default value for embedders created in Meilisearch <=v1.13
+	ForceMeanEmbedderPooling EmbedderPooling = "forceMean"
+	// ForceClsEmbedderPooling always use CLS pooling
+	ForceClsEmbedderPooling EmbedderPooling = "forceCls"
+)
