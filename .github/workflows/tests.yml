@@ -41,7 +41,7 @@ jobs:
         include:
           - go: 1.16
             tag: current
-          - go: 1.17
+          - go: 1.24
             tag: latest
 
     name: integration-tests (go ${{ matrix.tag }} version)
