@@ -628,19 +628,19 @@ func Test_CreateDump(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
 
-			taskInfo, err := c.CreateDump()
+			task, err := c.CreateDump()
 			require.NoError(t, err)
-			if assert.NotNil(t, taskInfo, "CreateDump() should not return nil value") {
-				require.Equal(t, tt.wantResp.Status, taskInfo.Status, "CreateDump() got response status %v, want: %v", taskInfo.Status, tt.wantResp.Status)
+			if assert.NotNil(t, task, "CreateDump() should not return nil value") {
+				require.Equal(t, tt.wantResp.Status, task.Status, "CreateDump() got response status %v, want: %v", task.Status, tt.wantResp.Status)
 			}
 
-			task, err := c.WaitForTask(taskInfo.TaskUID, 0)
+			taskInfo, err := c.WaitForTask(task.TaskUID, 0)
 
 			require.NoError(t, err)
 			require.NotNil(t, taskInfo)
-			require.NotNil(t, task.Details)
+			require.NotNil(t, taskInfo.Details)
 			require.Equal(t, meilisearch.TaskStatusSucceeded, taskInfo.Status)
-			require.NotEmpty(t, task.Details.DumpUid)
+			require.NotEmpty(t, taskInfo.Details.DumpUid)
 		})
 	}
 }
@@ -2157,7 +2157,7 @@ func TestClient_MultiSearch(t *testing.T) {
 						"id":           toRawMessage(87),
 						"title":        toRawMessage("The Batman"),
 						"genres":       toRawMessage([]string{"Action", "Thriller"}),
-						"overview":     toRawMessage("When a sadistic serial killer begins murdering meilisearch.Key political figures in Gotham, the Batman is forced to investigate the city's hidden corruption and question his family's involvement."),
+						"overview":     toRawMessage("When a sadistic serial killer begins murdering key political figures in Gotham, the Batman is forced to investigate the city's hidden corruption and question his family's involvement."),
 						"poster":       toRawMessage("https://example.com/comics/batman.jpg"),
 						"release_date": toRawMessage(1625097600),
 						"_federation": toRawMessage(map[string]interface{}{
@@ -2226,7 +2226,7 @@ func TestClient_MultiSearch(t *testing.T) {
 						"id":           toRawMessage(87),
 						"title":        toRawMessage("The Batman"),
 						"genres":       toRawMessage([]string{"Action", "Thriller"}),
-						"overview":     toRawMessage("When a sadistic serial killer begins murdering meilisearch.Key political figures in Gotham, the Batman is forced to investigate the city's hidden corruption and question his family's involvement."),
+						"overview":     toRawMessage("When a sadistic serial killer begins murdering key political figures in Gotham, the Batman is forced to investigate the city's hidden corruption and question his family's involvement."),
 						"poster":       toRawMessage("https://example.com/comics/batman.jpg"),
 						"release_date": toRawMessage(1625097600),
 						"_federation": toRawMessage(map[string]interface{}{
