@@ -8,11 +8,11 @@ import (
 	"testing"
 )
 
-func Test_GetDocumentsByIDS(t *testing.T) {
+func Test_GetDocumentsByIDs(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanup(sv))
 
-	_, err := sv.CreateIndex(&IndexConfig{
+	_, err := sv.CreateIndex(&meilisearch.IndexConfig{
 		Uid: "TestGetDocumentsByIDs",
 	})
 
@@ -29,11 +29,11 @@ func Test_GetDocumentsByIDS(t *testing.T) {
 
 	testWaitForTask(t, i, ts)
 
-	var documents DocumentsResult
-	err = sv.Index("TestGetDocumentsByIDs").GetDocuments(&DocumentsQuery{Ids: []string{"1", "2", "3"}}, &documents)
+	var documents meilisearch.DocumentsResult
+	err = sv.Index("TestGetDocumentsByIDs").GetDocuments(&meilisearch.DocumentsQuery{Ids: []string{"1", "2", "3"}}, &documents)
 	require.NoError(t, err)
 
-	results := Hits{
+	results := meilisearch.Hits{
 		{"ID": toRawMessage("1"), "Name": toRawMessage("Pride and Prejudice 1")},
 		{"ID": toRawMessage("2"), "Name": toRawMessage("Pride and Prejudice 2")},
 		{"ID": toRawMessage("3"), "Name": toRawMessage("Pride and Prejudice 3")},
