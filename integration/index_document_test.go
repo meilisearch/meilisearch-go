@@ -8,6 +8,39 @@ import (
 	"testing"
 )
 
+func Test_GetDocumentsByIDS(t *testing.T) {
+	sv := setup(t, "")
+	t.Cleanup(cleanup(sv))
+
+	_, err := sv.CreateIndex(&IndexConfig{
+		Uid: "TestGetDocumentsByIDs",
+	})
+
+	require.NoError(t, err)
+	request := []map[string]interface{}{
+		{"ID": "1", "Name": "Pride and Prejudice 1"},
+		{"ID": "2", "Name": "Pride and Prejudice 2"},
+		{"ID": "3", "Name": "Pride and Prejudice 3"},
+	}
+	i := sv.Index("TestGetDocumentsByIDs")
+
+	ts, err := i.AddDocuments(request)
+	require.NoError(t, err)
+
+	testWaitForTask(t, i, ts)
+
+	var documents DocumentsResult
+	err = sv.Index("TestGetDocumentsByIDs").GetDocuments(&DocumentsQuery{Ids: []string{"1", "2", "3"}}, &documents)
+	require.NoError(t, err)
+
+	results := Hits{
+		{"ID": toRawMessage("1"), "Name": toRawMessage("Pride and Prejudice 1")},
+		{"ID": toRawMessage("2"), "Name": toRawMessage("Pride and Prejudice 2")},
+		{"ID": toRawMessage("3"), "Name": toRawMessage("Pride and Prejudice 3")},
+	}
+	require.Equal(t, results, documents.Results)
+}
+
 func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 	tests := []struct {
 		Name            string
