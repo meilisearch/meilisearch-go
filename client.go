@@ -97,7 +97,7 @@ func (c *client) executeRequest(ctx context.Context, req *internalRequest) error
 		Function:         req.functionName,
 		RequestToString:  "empty request",
 		ResponseToString: "empty response",
-		MeilisearchApiError: meilisearchApiError{
+		MeilisearchApiError: APIError{
 			Message: "empty meilisearch message",
 		},
 		StatusCodeExpected: req.acceptedStatusCodes,

@@ -174,18 +174,18 @@ type Stats struct {
 //
 // Documentation: https://www.meilisearch.com/docs/learn/advanced/asynchronous_operations
 type Task struct {
-	Status     TaskStatus          `json:"status"`
-	UID        int64               `json:"uid,omitempty"`
-	TaskUID    int64               `json:"taskUid,omitempty"`
-	IndexUID   string              `json:"indexUid"`
-	Type       TaskType            `json:"type"`
-	Error      meilisearchApiError `json:"error,omitempty"`
-	Duration   string              `json:"duration,omitempty"`
-	EnqueuedAt time.Time           `json:"enqueuedAt"`
-	StartedAt  time.Time           `json:"startedAt,omitempty"`
-	FinishedAt time.Time           `json:"finishedAt,omitempty"`
-	Details    Details             `json:"details,omitempty"`
-	CanceledBy int64               `json:"canceledBy,omitempty"`
+	Status     TaskStatus `json:"status"`
+	UID        int64      `json:"uid,omitempty"`
+	TaskUID    int64      `json:"taskUid,omitempty"`
+	IndexUID   string     `json:"indexUid"`
+	Type       TaskType   `json:"type"`
+	Error      APIError   `json:"error,omitempty"`
+	Duration   string     `json:"duration,omitempty"`
+	EnqueuedAt time.Time  `json:"enqueuedAt"`
+	StartedAt  time.Time  `json:"startedAt,omitempty"`
+	FinishedAt time.Time  `json:"finishedAt,omitempty"`
+	Details    Details    `json:"details,omitempty"`
+	CanceledBy int64      `json:"canceledBy,omitempty"`
 }
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
@@ -518,6 +518,7 @@ type ExperimentalFeaturesBase struct {
 	ContainsFilter          *bool `json:"containsFilter,omitempty"`
 	Network                 *bool `json:"network,omitempty"`
 	CompositeEmbedders      *bool `json:"compositeEmbedders,omitempty"`
+	VectorStore             *bool `json:"vectorStore,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -527,6 +528,7 @@ type ExperimentalFeaturesResult struct {
 	ContainsFilter          bool `json:"containsFilter"`
 	Network                 bool `json:"network"`
 	CompositeEmbedders      bool `json:"compositeEmbedders"`
+	VectorStore             bool `json:"vectorStore"`
 }
 
 type SwapIndexesParams struct {

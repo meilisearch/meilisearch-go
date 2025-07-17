@@ -29,7 +29,7 @@ func TestError_VersionErrorHintMessage(t *testing.T) {
 					Function:         "GetDocuments",
 					RequestToString:  "empty request",
 					ResponseToString: "empty response",
-					MeilisearchApiError: meilisearchApiError{
+					MeilisearchApiError: APIError{
 						Message: "empty Meilisearch message",
 					},
 					StatusCode: 1,
