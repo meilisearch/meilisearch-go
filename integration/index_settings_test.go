@@ -3196,9 +3196,9 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &TypoTolerance{
+			wantResp: &meilisearch.TypoTolerance{
 				Enabled: true,
-				MinWordSizeForTypos: MinWordSizeForTypos{
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 					OneTypo:  7,
 					TwoTypos: 10,
 				},
@@ -3226,9 +3226,9 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &TypoTolerance{
+			wantResp: &meilisearch.TypoTolerance{
 				Enabled: true,
-				MinWordSizeForTypos: MinWordSizeForTypos{
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 					OneTypo:  7,
 					TwoTypos: 10,
 				},
@@ -3258,9 +3258,9 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &TypoTolerance{
+			wantResp: &meilisearch.TypoTolerance{
 				Enabled: true,
-				MinWordSizeForTypos: MinWordSizeForTypos{
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 					OneTypo:  7,
 					TwoTypos: 10,
 				},
@@ -3290,9 +3290,9 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &TypoTolerance{
+			wantResp: &meilisearch.TypoTolerance{
 				Enabled: true,
-				MinWordSizeForTypos: MinWordSizeForTypos{
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 					OneTypo:  7,
 					TwoTypos: 10,
 				},
@@ -3322,7 +3322,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			},
 			wantResp: &meilisearch.TypoTolerance{
 				Enabled: false,
-				MinWordSizeForTypos: MinWordSizeForTypos{
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 					OneTypo:  5,
 					TwoTypos: 9,
 				},
