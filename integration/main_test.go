@@ -26,6 +26,7 @@ var (
 		},
 		DisableOnWords:      []string{},
 		DisableOnAttributes: []string{},
+		DisableOnNumbers:    false,
 	}
 	defaultPagination = meilisearch.Pagination{
 		MaxTotalHits: 1000,

@@ -77,6 +77,7 @@ type TypoTolerance struct {
 	MinWordSizeForTypos MinWordSizeForTypos `json:"minWordSizeForTypos,omitempty"`
 	DisableOnWords      []string            `json:"disableOnWords,omitempty"`
 	DisableOnAttributes []string            `json:"disableOnAttributes,omitempty"`
+	DisableOnNumbers    bool                `json:"disableOnNumbers,omitempty"`
 }
 
 // MinWordSizeForTypos is the type that represents the minWordSizeForTypos setting in the typo tolerance setting in meilisearch
@@ -446,6 +447,7 @@ type FacetSearchRequest struct {
 	Filter               string   `json:"filter,omitempty"`
 	MatchingStrategy     string   `json:"matchingStrategy,omitempty"`
 	AttributesToSearchOn []string `json:"attributesToSearchOn,omitempty"`
+	ExhaustiveFacetCount bool     `json:"exhaustiveFacetCount,omitempty"`
 }
 
 type FacetSearchResponse struct {

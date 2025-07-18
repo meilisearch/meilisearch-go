@@ -114,6 +114,7 @@ facet_search_3: |-
   client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
     FacetQuery: "c",
     FacetName: "genres",
+    ExhaustiveFacetCount: true
   })
 delete_tasks_1: |-
   client.DeleteTaks(&meilisearch.DeleteTasksQuery{
@@ -522,6 +523,10 @@ typo_tolerance_guide_4: |-
       OneTypo: 4,
       TwoTypos: 10,
     },
+  })
+typo_tolerance_guide_5: |-
+  client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
+    DisableOnNumbers: true
   })
 add_movies_json_1: |-
   import (
