@@ -1700,6 +1700,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 						},
 						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
+						DisableOnNumbers:    true,
 					},
 					Pagination: &Pagination{
 						MaxTotalHits: 1200,
@@ -1793,6 +1794,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 						},
 						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
+						DisableOnNumbers:    true,
 					},
 					Pagination: &Pagination{
 						MaxTotalHits: 1200,
@@ -2532,6 +2534,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						},
 						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
+						DisableOnNumbers:    false,
 					},
 				},
 				firstResponse: Settings{
@@ -2551,6 +2554,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						},
 						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
+						DisableOnNumbers:    false,
 					},
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
@@ -2577,6 +2581,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						DisableOnAttributes: []string{
 							"year",
 						},
+						DisableOnNumbers: true,
 					},
 				},
 				secondResponse: Settings{
@@ -2602,6 +2607,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						DisableOnAttributes: []string{
 							"year",
 						},
+						DisableOnNumbers: true,
 					},
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
@@ -3183,12 +3189,22 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					},
 					DisableOnWords:      []string{},
 					DisableOnAttributes: []string{},
+					DisableOnNumbers:    true,
 				},
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &defaultTypoTolerance,
+			wantResp: &TypoTolerance{
+				Enabled: true,
+				MinWordSizeForTypos: MinWordSizeForTypos{
+					OneTypo:  7,
+					TwoTypos: 10,
+				},
+				DisableOnWords:      []string{},
+				DisableOnAttributes: []string{},
+				DisableOnNumbers:    true,
+			},
 		},
 		{
 			name: "TestIndexUpdateTypoToleranceWithCustomClient",
@@ -3203,12 +3219,22 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					},
 					DisableOnWords:      []string{},
 					DisableOnAttributes: []string{},
+					DisableOnNumbers:    false,
 				},
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &defaultTypoTolerance,
+			wantResp: &TypoTolerance{
+				Enabled: true,
+				MinWordSizeForTypos: MinWordSizeForTypos{
+					OneTypo:  7,
+					TwoTypos: 10,
+				},
+				DisableOnWords:      []string{},
+				DisableOnAttributes: []string{},
+				DisableOnNumbers:    false,
+			},
 		},
 		{
 			name: "TestIndexUpdateTypoToleranceWithDisableOnWords",
@@ -3225,12 +3251,22 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 						"and",
 					},
 					DisableOnAttributes: []string{},
+					DisableOnNumbers:    true,
 				},
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &defaultTypoTolerance,
+			wantResp: &TypoTolerance{
+				Enabled: true,
+				MinWordSizeForTypos: MinWordSizeForTypos{
+					OneTypo:  7,
+					TwoTypos: 10,
+				},
+				DisableOnWords:      []string{"and"},
+				DisableOnAttributes: []string{},
+				DisableOnNumbers:    true,
+			},
 		},
 		{
 			name: "TestIndexUpdateTypoToleranceWithDisableOnAttributes",
@@ -3247,12 +3283,22 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					DisableOnAttributes: []string{
 						"year",
 					},
+					DisableOnNumbers: true,
 				},
 			},
 			wantTask: &TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &defaultTypoTolerance,
+			wantResp: &TypoTolerance{
+				Enabled: true,
+				MinWordSizeForTypos: MinWordSizeForTypos{
+					OneTypo:  7,
+					TwoTypos: 10,
+				},
+				DisableOnWords:      []string{},
+				DisableOnAttributes: []string{"year"},
+				DisableOnNumbers:    true,
+			},
 		},
 		{
 			name: "TestIndexDisableTypoTolerance",
@@ -3267,6 +3313,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					},
 					DisableOnWords:      []string{},
 					DisableOnAttributes: []string{},
+					DisableOnNumbers:    false,
 				},
 			},
 			wantTask: &TaskInfo{
@@ -3274,6 +3321,13 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			},
 			wantResp: &TypoTolerance{
 				Enabled: false,
+				MinWordSizeForTypos: MinWordSizeForTypos{
+					OneTypo:  5,
+					TwoTypos: 9,
+				},
+				DisableOnWords:      []string{},
+				DisableOnAttributes: []string{},
+				DisableOnNumbers:    false,
 			},
 		},
 	}
@@ -3291,7 +3345,7 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 
 			gotResp, err := i.GetTypoTolerance()
 			require.NoError(t, err)
-			require.Equal(t, &tt.args.request, gotResp)
+			require.Equal(t, tt.wantResp, gotResp)
 		})
 	}
 }

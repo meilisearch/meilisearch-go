@@ -27,6 +27,7 @@ var (
 		},
 		DisableOnWords:      []string{},
 		DisableOnAttributes: []string{},
+		DisableOnNumbers:    false,
 	}
 	defaultPagination = Pagination{
 		MaxTotalHits: 1000,
