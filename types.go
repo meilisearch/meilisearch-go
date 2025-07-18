@@ -447,6 +447,7 @@ type FacetSearchRequest struct {
 	Filter               string   `json:"filter,omitempty"`
 	MatchingStrategy     string   `json:"matchingStrategy,omitempty"`
 	AttributesToSearchOn []string `json:"attributesToSearchOn,omitempty"`
+	ExhaustiveFacetCount bool     `json:"exhaustiveFacetCount,omitempty"`
 }
 
 type FacetSearchResponse struct {

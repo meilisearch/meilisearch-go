@@ -114,6 +114,7 @@ facet_search_3: |-
   client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
     FacetQuery: "c",
     FacetName: "genres",
+    ExhaustiveFacetCount: true
   })
 delete_tasks_1: |-
   client.DeleteTaks(&meilisearch.DeleteTasksQuery{
