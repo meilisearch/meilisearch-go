@@ -523,6 +523,10 @@ typo_tolerance_guide_4: |-
       TwoTypos: 10,
     },
   })
+typo_tolerance_guide_5: |-
+  client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
+    DisableOnNumbers: true
+  })
 add_movies_json_1: |-
   import (
     "encoding/json"
