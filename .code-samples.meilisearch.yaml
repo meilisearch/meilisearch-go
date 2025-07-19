@@ -938,7 +938,7 @@ reset_proximity_precision_settings_1: |-
   client.Index("books").ResetProximityPrecision()
 search_parameter_reference_locales_1: |-
   client.index("INDEX_NAME").Search("QUERY TEXT IN JAPANESE", &meilisearch.SearchRequest{
-      Locales: []string{"jpn"}
+      Locates: []string{"jpn"}
   })
 get_localized_attribute_settings_1: |-
   client.index("INDEX_NAME").GetLocalizedAttributes()

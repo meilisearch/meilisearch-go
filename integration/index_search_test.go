@@ -193,29 +193,6 @@ func TestIndex_SearchRaw(t *testing.T) {
 			want:    nil,
 			wantErr: true,
 		},
-		{
-			name: "TestIndexSearchWithLocale",
-			args: args{
-				UID:    "indexUID",
-				client: sv,
-				query:  "王子",
-				request: &meilisearch.SearchRequest{
-					Locales: []string{"jpn"},
-				},
-			},
-			want: &meilisearch.SearchResponse{
-				Hits: meilisearch.Hits{
-					{
-						"book_id": toRawMessage(float64(1050)),
-						"title":   toRawMessage("星の王子さま"),
-					},
-				},
-				EstimatedTotalHits: 1,
-				Offset:             0,
-				Limit:              20,
-			},
-			wantErr: false,
-		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

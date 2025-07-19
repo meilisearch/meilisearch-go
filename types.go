@@ -382,7 +382,7 @@ type SearchRequest struct {
 	RetrieveVectors         bool                     `json:"retrieveVectors,omitempty"`
 	RankingScoreThreshold   float64                  `json:"rankingScoreThreshold,omitempty"`
 	FederationOptions       *SearchFederationOptions `json:"federationOptions,omitempty"`
-	Locales                 []string                 `json:"locales,omitempty"`
+	Locates                 []string                 `json:"locates,omitempty"`
 }
 
 type SearchFederationOptions struct {
