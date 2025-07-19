@@ -704,7 +704,7 @@ func Test_GetTask(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			task, err := i.AddDocuments(tt.args.document)
+			task, err := i.AddDocuments(tt.args.document, nil)
 			require.NoError(t, err)
 
 			_, err = c.WaitForTask(task.TaskUID, 0)
@@ -869,7 +869,7 @@ func Test_GetTasks(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			task, err := i.AddDocuments(tt.args.document)
+			task, err := i.AddDocuments(tt.args.document, nil)
 			require.NoError(t, err)
 
 			_, err = c.WaitForTask(task.TaskUID, 0)
@@ -1091,7 +1091,7 @@ func Test_GetTasksUsingClient(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			task, err := i.AddDocuments(tt.args.document)
+			task, err := i.AddDocuments(tt.args.document, nil)
 			require.NoError(t, err)
 
 			_, err = c.WaitForTask(task.TaskUID, 0)
@@ -1161,7 +1161,7 @@ func Test_GetTasksUsingClientAllFailures(t *testing.T) {
 			_, err = c.WaitForTask(math.MaxInt32, 0)
 			require.Error(t, err)
 
-			_, err = i.AddDocuments(tt.args.document)
+			_, err = i.AddDocuments(tt.args.document, nil)
 			require.Error(t, err)
 
 			_, err = c.GetTasks(tt.args.query)
@@ -1587,7 +1587,7 @@ func Test_DefaultWaitForTask(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			task, err := c.Index(tt.args.UID).AddDocuments(tt.args.document)
+			task, err := c.Index(tt.args.UID).AddDocuments(tt.args.document, nil)
 			require.NoError(t, err)
 
 			gotTask, err := c.WaitForTask(task.TaskUID, 0)
@@ -1694,7 +1694,7 @@ func Test_WaitForTaskWithContext(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			task, err := c.Index(tt.args.UID).AddDocuments(tt.args.document)
+			task, err := c.Index(tt.args.UID).AddDocuments(tt.args.document, nil)
 			require.NoError(t, err)
 
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
