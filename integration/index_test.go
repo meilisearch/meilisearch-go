@@ -1,14 +1,15 @@
-package meilisearch
+package integration
 
 import (
 	"crypto/tls"
+	"github.com/meilisearch/meilisearch-go"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func TestIndex_Delete(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
@@ -18,7 +19,7 @@ func TestIndex_Delete(t *testing.T) {
 	}
 	tests := []struct {
 		name   string
-		client ServiceManager
+		client meilisearch.ServiceManager
 		args   args
 	}{
 		{
@@ -84,7 +85,7 @@ func TestIndex_Delete(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			for _, uid := range tt.args.createUid {
-				_, err := setUpEmptyIndex(sv, &IndexConfig{Uid: uid})
+				_, err := setUpEmptyIndex(sv, &meilisearch.IndexConfig{Uid: uid})
 				require.NoError(t, err, "CreateIndex() in DeleteTest error should be nil")
 			}
 			for k := range tt.args.deleteUid {
@@ -99,18 +100,18 @@ func TestIndex_Delete(t *testing.T) {
 
 func TestIndex_GetStats(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *StatsIndex
+		wantResp *meilisearch.StatsIndex
 	}{
 		{
 			name: "TestIndexBasicGetStats",
@@ -118,7 +119,7 @@ func TestIndex_GetStats(t *testing.T) {
 				UID:    "TestIndexBasicGetStats",
 				client: sv,
 			},
-			wantResp: &StatsIndex{
+			wantResp: &meilisearch.StatsIndex{
 				NumberOfDocuments: 6,
 				IsIndexing:        false,
 				FieldDistribution: map[string]int64{"book_id": 6, "title": 6},
@@ -132,7 +133,7 @@ func TestIndex_GetStats(t *testing.T) {
 				UID:    "TestIndexGetStatsWithCustomClient",
 				client: customSv,
 			},
-			wantResp: &StatsIndex{
+			wantResp: &meilisearch.StatsIndex{
 				NumberOfDocuments: 6,
 				IsIndexing:        false,
 				FieldDistribution: map[string]int64{"book_id": 6, "title": 6},
@@ -157,18 +158,18 @@ func TestIndex_GetStats(t *testing.T) {
 
 func Test_newIndex(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
-		client ServiceManager
+		client meilisearch.ServiceManager
 		uid    string
 	}
 	tests := []struct {
 		name string
 		args args
-		want IndexManager
+		want meilisearch.IndexManager
 	}{
 		{
 			name: "TestBasicNewIndex",
@@ -194,7 +195,7 @@ func Test_newIndex(t *testing.T) {
 
 			gotIdx := c.Index(tt.args.uid)
 
-			task, err := c.CreateIndex(&IndexConfig{Uid: tt.args.uid})
+			task, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: tt.args.uid})
 			require.NoError(t, err)
 
 			testWaitForTask(t, gotIdx, task)
@@ -215,19 +216,19 @@ func Test_newIndex(t *testing.T) {
 
 func TestIndex_FetchInfo(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
-	broken := setup(t, "", WithAPIKey("wrong"))
+	broken := setup(t, "", meilisearch.WithAPIKey("wrong"))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *IndexResult
+		wantResp *meilisearch.IndexResult
 	}{
 		{
 			name: "TestIndexBasicFetchInfo",
@@ -235,7 +236,7 @@ func TestIndex_FetchInfo(t *testing.T) {
 				UID:    "TestIndexBasicFetchInfo",
 				client: sv,
 			},
-			wantResp: &IndexResult{
+			wantResp: &meilisearch.IndexResult{
 				UID:        "TestIndexBasicFetchInfo",
 				PrimaryKey: "book_id",
 			},
@@ -246,7 +247,7 @@ func TestIndex_FetchInfo(t *testing.T) {
 				UID:    "TestIndexFetchInfoWithCustomClient",
 				client: customSv,
 			},
-			wantResp: &IndexResult{
+			wantResp: &meilisearch.IndexResult{
 				UID:        "TestIndexFetchInfoWithCustomClient",
 				PrimaryKey: "book_id",
 			},
@@ -288,13 +289,13 @@ func TestIndex_FetchInfo(t *testing.T) {
 
 func TestIndex_FetchPrimaryKey(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name           string
@@ -334,30 +335,30 @@ func TestIndex_FetchPrimaryKey(t *testing.T) {
 
 func TestIndex_UpdateIndex(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		primaryKey string
-		config     IndexConfig
-		client     ServiceManager
+		config     meilisearch.IndexConfig
+		client     meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *IndexResult
+		wantResp *meilisearch.IndexResult
 	}{
 		{
 			name: "TestIndexBasicUpdateIndex",
 			args: args{
 				client: sv,
-				config: IndexConfig{
+				config: meilisearch.IndexConfig{
 					Uid: "indexUID",
 				},
 				primaryKey: "book_id",
 			},
-			wantResp: &IndexResult{
+			wantResp: &meilisearch.IndexResult{
 				UID:        "indexUID",
 				PrimaryKey: "book_id",
 			},
@@ -366,12 +367,12 @@ func TestIndex_UpdateIndex(t *testing.T) {
 			name: "TestIndexUpdateIndexWithCustomClient",
 			args: args{
 				client: customSv,
-				config: IndexConfig{
+				config: meilisearch.IndexConfig{
 					Uid: "indexUID",
 				},
 				primaryKey: "book_id",
 			},
-			wantResp: &IndexResult{
+			wantResp: &meilisearch.IndexResult{
 				UID:        "indexUID",
 				PrimaryKey: "book_id",
 			},

@@ -61,7 +61,7 @@ func (e ErrCode) rawMessage() string {
 	}
 }
 
-type meilisearchApiError struct {
+type APIError struct {
 	Message string `json:"message"`
 	Code    string `json:"code"`
 	Type    string `json:"type"`
@@ -88,7 +88,7 @@ type Error struct {
 
 	// Error info from meilisearch api
 	// Message is the raw request into string ('empty meilisearch message' if not present)
-	MeilisearchApiError meilisearchApiError
+	MeilisearchApiError APIError
 
 	// StatusCode of the request
 	StatusCode int
@@ -143,7 +143,7 @@ func (e *Error) WithErrCode(err ErrCode, errs ...error) *Error {
 
 // ErrorBody add a body to an error
 func (e *Error) ErrorBody(body []byte) {
-	msg := meilisearchApiError{}
+	msg := APIError{}
 
 	if e.encoder != nil {
 		err := e.encoder.Decode(body, &msg)
