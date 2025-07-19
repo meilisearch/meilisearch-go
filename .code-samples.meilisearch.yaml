@@ -56,7 +56,7 @@ add_or_replace_documents_1: |-
       "release_date": "2019-03-23",
     },
   }
-  client.Index("movies").AddDocuments(documents)
+  client.Index("movies").AddDocuments(documents, nil)
 add_or_update_documents_1: |-
   documents := []map[string]interface{}{
     {
@@ -65,7 +65,7 @@ add_or_update_documents_1: |-
       "genres": "comedy",
     },
   }
-  client.Index("movies").UpdateDocuments(documents)
+  client.Index("movies").UpdateDocuments(documents, nil)
 delete_all_documents_1: |-
   client.Index("movies").DeleteAllDocuments()
 delete_one_document_1: |-
@@ -539,7 +539,7 @@ add_movies_json_1: |-
   var movies interface{}
   json.Unmarshal([]byte(file), &movies)
 
-  client.Index("movies").AddDocuments(&movies)
+  client.Index("movies").AddDocuments(&movies, nil)
 landing_getting_started_1: |-
   client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
 
@@ -551,7 +551,7 @@ landing_getting_started_1: |-
     { "id": 5, "title": "Moana" },
     { "id": 6, "title": "Philadelphia" },
   }
-  client.Index("movies").AddDocuments(documents)
+  client.Index("movies").AddDocuments(documents, nil)
 getting_started_check_task_status: |-
   client.GetTask(0)
 getting_started_add_documents: |-
@@ -579,7 +579,7 @@ getting_started_add_documents: |-
     var movies []map[string]interface{}
     json.Unmarshal(byteValue, &movies)
 
-    _, err := client.Index("movies").AddDocuments(movies)
+    _, err := client.Index("movies").AddDocuments(movies, nil)
     if err != nil {
         panic(err)
     }
@@ -596,7 +596,7 @@ getting_started_add_meteorites: |-
   var meteorites []map[string]interface{}
   json.Unmarshal(byteValue, &meteorites)
 
-  client.Index("meteorites").AddDocuments(meteorites)
+  client.Index("meteorites").AddDocuments(meteorites, nil)
 getting_started_update_ranking_rules: |-
   rankingRules := []string{
     "exactness",
@@ -796,7 +796,8 @@ primary_field_guide_add_document_primary_key: |-
       "price":            5.00,
     },
   }
-  client.Index("books").AddDocuments(documents, "reference_number")
+  refrenceNumber := "reference_number"
+  client.Index("books").AddDocuments(documents, &refrenceNumber)
 primary_field_guide_update_document_primary_key: |-
   client.Index("books").UpdateIndex("title")
 security_guide_search_key_1: |-
@@ -855,7 +856,7 @@ date_guide_index_1: |-
   var games []map[string]interface{}
   json.Unmarshal(byteValue, &games)
 
-  client.Index("games").AddDocuments(games)
+  client.Index("games").AddDocuments(games, nil)
 date_guide_filterable_attributes_1: |-
   filterableAttributes := []string{"release_timestamp"}
   client.Index("games").UpdateFilterableAttributes(&filterableAttributes)
