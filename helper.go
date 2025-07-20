@@ -94,10 +94,10 @@ func formatDate(date time.Time, _ bool) *string {
 	return &timeParsedToString
 }
 
-func transformStringVariadicToMap(primaryKey ...string) (options map[string]string) {
+func transformStringToMap(primaryKey *string) (options map[string]string) {
 	if primaryKey != nil {
 		return map[string]string{
-			"primaryKey": primaryKey[0],
+			"primaryKey": *primaryKey,
 		}
 	}
 	return nil

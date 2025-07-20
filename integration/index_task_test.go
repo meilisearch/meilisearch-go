@@ -69,7 +69,7 @@ func TestIndex_GetTask(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			task, err := i.AddDocuments(tt.args.document)
+			task, err := i.AddDocuments(tt.args.document, nil)
 			require.NoError(t, err)
 
 			_, err = c.WaitForTask(task.TaskUID, 0)
@@ -165,7 +165,7 @@ func TestIndex_GetTasks(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			task, err := i.AddDocuments(tt.args.document)
+			task, err := i.AddDocuments(tt.args.document, nil)
 			require.NoError(t, err)
 
 			_, err = c.WaitForTask(task.TaskUID, 0)
@@ -264,7 +264,7 @@ func TestIndex_WaitForTask(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			task, err := i.AddDocuments(tt.args.document)
+			task, err := i.AddDocuments(tt.args.document, nil)
 			require.NoError(t, err)
 
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)

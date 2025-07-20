@@ -200,7 +200,7 @@ func setUpBasicIndex(sv meilisearch.ServiceManager, indexUID string) {
 		{"book_id": 42, "title": "The Hitchhiker's Guide to the Galaxy"},
 	}
 
-	task, err := index.AddDocuments(documents)
+	task, err := index.AddDocuments(documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -224,7 +224,7 @@ func setupMovieIndex(t *testing.T, client meilisearch.ServiceManager, uid string
 
 	require.NoError(t, json.NewDecoder(testdata).Decode(&tests))
 
-	task, err := idx.AddDocuments(tests)
+	task, err := idx.AddDocuments(tests, nil)
 	require.NoError(t, err)
 	testWaitForTask(t, idx, task)
 
@@ -248,7 +248,7 @@ func setupComicIndex(t *testing.T, client meilisearch.ServiceManager, uid string
 
 	require.NoError(t, json.NewDecoder(testdata).Decode(&tests))
 
-	task, err := idx.AddDocuments(tests)
+	task, err := idx.AddDocuments(tests, nil)
 	require.NoError(t, err)
 	testWaitForTask(t, idx, task)
 
@@ -286,7 +286,7 @@ func setUpIndexForFaceting(client meilisearch.ServiceManager) {
 		{BookID: 1039, Title: "The Girl in the white shirt", Tag: "white shirt", Year: 1999},
 		{BookID: 1050, Title: "星の王子さま", Tag: "物語", Year: 1943},
 	}
-	task, err := idx.AddDocuments(booksTest)
+	task, err := idx.AddDocuments(booksTest, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -309,7 +309,7 @@ func setUpIndexWithNestedFields(client meilisearch.ServiceManager, indexUID stri
 		{"id": 6, "title": "Harry Potter and the Half-Blood Prince", "info": map[string]interface{}{"comment": "The best book", "reviewNb": 1000}},
 		{"id": 7, "title": "The Hitchhiker's Guide to the Galaxy"},
 	}
-	task, err := index.AddDocuments(documents)
+	task, err := index.AddDocuments(documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -346,7 +346,7 @@ func setUpIndexWithVector(client meilisearch.ServiceManager, indexUID string) (r
 		{"book_id": 456, "title": "Le Petit Prince", "_vectors": map[string]interface{}{"default": []float64{2.4, 8.5, 1.6}}},
 	}
 
-	taskInfo, err = idx.AddDocuments(documents)
+	taskInfo, err = idx.AddDocuments(documents, nil)
 	if err != nil {
 		return nil, err
 	}
@@ -382,7 +382,7 @@ func setUpDistinctIndex(client meilisearch.ServiceManager, indexUID string) {
 		{"product_id": 4, "title": "yellow shirt", "sku": "sku9064", "url": "https://example.com/products/p4"},
 		{"product_id": 42, "title": "gray shirt", "sku": "sku964", "url": "https://example.com/products/p42"},
 	}
-	task, err = idx.AddDocuments(documents)
+	task, err = idx.AddDocuments(documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)

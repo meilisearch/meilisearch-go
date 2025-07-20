@@ -86,16 +86,17 @@ func TestEncodeTasksQuery(t *testing.T) {
 }
 
 func TestTransformStringVariadicToMap(t *testing.T) {
+	toStringPointer := func(input string) *string { return &input }
 	tests := []struct {
-		input  []string
+		input  *string
 		expect map[string]string
 	}{
-		{[]string{"primaryKey1"}, map[string]string{"primaryKey": "primaryKey1"}},
+		{toStringPointer("primaryKey1"), map[string]string{"primaryKey": "primaryKey1"}},
 		{nil, nil},
 	}
 
 	for _, test := range tests {
-		result := transformStringVariadicToMap(test.input...)
+		result := transformStringToMap(test.input)
 		if !reflect.DeepEqual(result, test.expect) {
 			t.Errorf("transformStringVariadicToMap(%v) = %v; want %v", test.input, result, test.expect)
 		}

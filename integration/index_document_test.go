@@ -24,7 +24,7 @@ func Test_GetDocumentsByIDs(t *testing.T) {
 	}
 	i := sv.Index("TestGetDocumentsByIDs")
 
-	ts, err := i.AddDocuments(request)
+	ts, err := i.AddDocuments(request, nil)
 	require.NoError(t, err)
 
 	testWaitForTask(t, i, ts)
@@ -136,7 +136,7 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 			i := sv.Index("indexUID")
 
 			// Add Documents
-			gotResp, err := i.AddDocuments(tt.Request)
+			gotResp, err := i.AddDocuments(tt.Request, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.Response.WantResp.TaskUID)
 			require.Equal(t, gotResp.Status, tt.Response.WantResp.Status)
@@ -153,7 +153,7 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 			require.Equal(t, tt.Response.DocResp, documents)
 
 			// Update Documents
-			gotResp, err = i.UpdateDocuments(tt.Request)
+			gotResp, err = i.UpdateDocuments(tt.Request, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.Response.WantResp.TaskUID)
 			require.Equal(t, gotResp.Status, tt.Response.WantResp.Status)
@@ -238,7 +238,7 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocuments(tt.args.documentsPtr)
+			gotResp, err := i.AddDocuments(tt.args.documentsPtr, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
 			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
@@ -253,7 +253,7 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.resp.documentsRes, documents)
 
-			gotResp, err = i.UpdateDocuments(tt.args.documentsPtr)
+			gotResp, err = i.UpdateDocuments(tt.args.documentsPtr, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
 			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
@@ -342,7 +342,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocuments(tt.args.documentsPtr, tt.args.primaryKey)
+			gotResp, err := i.AddDocuments(tt.args.documentsPtr, &tt.args.primaryKey)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
 			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
@@ -453,7 +453,7 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize)
+			gotResp, err := i.AddDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, nil)
 
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
@@ -474,7 +474,7 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.args.documentsPtr, documents.Results)
 
-			gotResp, err = i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize)
+			gotResp, err = i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, nil)
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
 				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
@@ -494,7 +494,7 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, tt.args.primaryKey)
+			gotResp, err := i.AddDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, &tt.args.primaryKey)
 
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
@@ -576,9 +576,9 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 
 			if testReader {
 				reader := bytes.NewReader(tt.args.documents)
-				gotResp, err = i.AddDocumentsNdjsonFromReader(reader)
+				gotResp, err = i.AddDocumentsNdjsonFromReader(reader, nil)
 			} else {
-				gotResp, err = i.AddDocumentsNdjson(tt.args.documents)
+				gotResp, err = i.AddDocumentsNdjson(tt.args.documents, nil)
 			}
 
 			require.NoError(t, err)
@@ -595,7 +595,7 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 			require.Equal(t, wantDocs, documents.Results)
 
 			if !testReader {
-				gotResp, err = i.UpdateDocumentsNdjson(tt.args.documents)
+				gotResp, err = i.UpdateDocumentsNdjson(tt.args.documents, nil)
 				require.NoError(t, err)
 				require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 				require.Equal(t, tt.wantResp.Status, gotResp.Status)
@@ -999,9 +999,9 @@ func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
 			)
 
 			if testReader {
-				gotResp, err = i.AddDocumentsNdjsonFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize)
+				gotResp, err = i.AddDocumentsNdjsonFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize, nil)
 			} else {
-				gotResp, err = i.AddDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize)
+				gotResp, err = i.AddDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize, nil)
 			}
 
 			require.NoError(t, err)
@@ -1020,7 +1020,7 @@ func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
 			require.Equal(t, wantDocs, documents.Results)
 
 			if !testReader {
-				gotResp, err = i.UpdateDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize)
+				gotResp, err = i.UpdateDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize, nil)
 				require.NoError(t, err)
 				for i := 0; i < 2; i++ {
 					require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
@@ -1229,7 +1229,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
+			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr, nil)
 			require.GreaterOrEqual(t, gotAddResp.TaskUID, tt.wantResp.TaskUID)
 			require.NoError(t, err)
 
@@ -1344,7 +1344,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
+			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr, nil)
 			require.NoError(t, err)
 
 			testWaitForTask(t, i, gotAddResp)
@@ -1468,7 +1468,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr)
+			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr, nil)
 			require.NoError(t, err)
 
 			testWaitForTask(t, i, gotAddResp)

@@ -21,7 +21,7 @@ func ExampleNew() {
 		{"id": 5, "title": "Moana", "genres": []string{"Fantasy", "Action"}},
 		{"id": 6, "title": "Philadelphia", "genres": []string{"Drama"}},
 	}
-	task, err := idx.AddDocuments(documents)
+	task, err := idx.AddDocuments(documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
