@@ -31,7 +31,6 @@ jobs:
 
   integration_tests:
     runs-on: ubuntu-latest
-    needs: [linter]
     # Will not run if the event is a PR to bump-meilisearch-v* (so a pre-release PR)
     # Will still run for each push to bump-meilisearch-v*
     if: github.event_name != 'pull_request' || !startsWith(github.base_ref, 'bump-meilisearch-v')
