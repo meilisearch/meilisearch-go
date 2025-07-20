@@ -30,7 +30,7 @@ func TestError_VersionErrorHintMessage(t *testing.T) {
 					Function:         "GetDocuments",
 					RequestToString:  "empty request",
 					ResponseToString: "empty response",
-					MeilisearchApiError: APIError{
+					MeilisearchApiError: meilisearchApiError{
 						Message: "empty Meilisearch message",
 					},
 					StatusCode: 1,
@@ -56,7 +56,7 @@ func (m *mockEncoder) Encode(r io.Reader) (io.ReadCloser, error) {
 }
 
 func (m *mockEncoder) Decode(data []byte, v interface{}) error {
-	msg, ok := v.(*APIError)
+	msg, ok := v.(*meilisearchApiError)
 	if !ok {
 		return fmt.Errorf("wrong type")
 	}

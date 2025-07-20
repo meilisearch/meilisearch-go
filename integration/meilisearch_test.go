@@ -51,14 +51,12 @@ func TestClient_TimeoutError(t *testing.T) {
 	tests := []struct {
 		name          string
 		sv            meilisearch.ServiceManager
-		expectedError meilisearch.Error
+		expectedError bool
 	}{
 		{
-			name: "TestTimeoutError",
-			sv:   sv,
-			expectedError: meilisearch.Error{
-				MeilisearchApiError: meilisearch.APIError{},
-			},
+			name:          "TestTimeoutError",
+			sv:            sv,
+			expectedError: true,
 		},
 	}
 	for _, tt := range tests {
