@@ -1743,7 +1743,7 @@ func Test_GenerateTenantToken(t *testing.T) {
 		APIKeyUID   string
 		searchRules map[string]interface{}
 		options     *TenantTokenOptions
-		filter      []string
+		filter      []interface{}
 	}
 	tests := []struct {
 		name       string
@@ -1830,7 +1830,7 @@ func Test_GenerateTenantToken(t *testing.T) {
 					},
 				},
 				options: nil,
-				filter: []string{
+				filter: []interface{}{
 					"book_id",
 				},
 			},
@@ -1849,7 +1849,7 @@ func Test_GenerateTenantToken(t *testing.T) {
 					},
 				},
 				options: nil,
-				filter: []string{
+				filter: []interface{}{
 					"year",
 				},
 			},

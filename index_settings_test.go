@@ -1307,7 +1307,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 	type args struct {
 		UID     string
 		client  ServiceManager
-		request []string
+		request []interface{}
 	}
 	tests := []struct {
 		name     string
@@ -1319,7 +1319,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: []string{
+				request: []interface{}{
 					"title",
 				},
 			},
@@ -1332,7 +1332,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: customMeili,
-				request: []string{
+				request: []interface{}{
 					"title",
 				},
 			},

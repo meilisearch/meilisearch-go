@@ -3,8 +3,9 @@ package meilisearch
 import (
 	"bytes"
 	"crypto/tls"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func Test_GetDocumentsByIDS(t *testing.T) {
@@ -1377,7 +1378,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 		UID            string
 		client         ServiceManager
 		filterToDelete interface{}
-		filterToApply  []string
+		filterToApply  []interface{}
 		documentsPtr   []docTestBooks
 	}
 	tests := []struct {
@@ -1390,7 +1391,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			args: args{
 				UID:            "1",
 				client:         sv,
-				filterToApply:  []string{"book_id"},
+				filterToApply:  []interface{}{"book_id"},
 				filterToDelete: "book_id = 123",
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "Pride and Prejudice", Tag: "Romance", Year: 1813},
@@ -1407,7 +1408,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			args: args{
 				UID:            "1",
 				client:         customSv,
-				filterToApply:  []string{"tag"},
+				filterToApply:  []interface{}{"tag"},
 				filterToDelete: []string{"tag = 'Epic fantasy'"},
 				documentsPtr: []docTestBooks{
 					{BookID: 1344, Title: "The Hobbit", Tag: "Epic fantasy", Year: 1937},
@@ -1426,7 +1427,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			args: args{
 				UID:            "1",
 				client:         customSv,
-				filterToApply:  []string{"tag", "year"},
+				filterToApply:  []interface{}{"tag", "year"},
 				filterToDelete: []string{"tag = 'Epic fantasy'", "year > 1936"},
 				documentsPtr: []docTestBooks{
 					{BookID: 1344, Title: "The Hobbit", Tag: "Epic fantasy", Year: 1937},
@@ -1445,7 +1446,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			args: args{
 				UID:            "1",
 				client:         customSv,
-				filterToApply:  []string{"book_id", "tag"},
+				filterToApply:  []interface{}{"book_id", "tag"},
 				filterToDelete: []interface{}{[]string{"tag = 'Epic fantasy'", "book_id = 123"}},
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "Pride and Prejudice", Tag: "Romance", Year: 1813},

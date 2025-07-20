@@ -42,6 +42,21 @@ type IndexesQuery struct {
 	Offset int64
 }
 
+type AttributeRule struct {
+	AttributePatterns []string          `json:"attributePatterns"`
+	Features          AttributeFeatures `json:"features"`
+}
+
+type AttributeFeatures struct {
+	FacetSearch bool           `json:"facetSearch"`
+	Filter      FilterFeatures `json:"filter"`
+}
+
+type FilterFeatures struct {
+	Equality   bool `json:"equality"`
+	Comparison bool `json:"comparison"`
+}
+
 // Settings is the type that represents the settings in meilisearch
 type Settings struct {
 	RankingRules         []string               `json:"rankingRules,omitempty"`

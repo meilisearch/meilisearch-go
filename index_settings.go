@@ -452,11 +452,11 @@ func (i *index) GetFilterableAttributesWithContext(ctx context.Context) (*[]stri
 	return resp, nil
 }
 
-func (i *index) UpdateFilterableAttributes(request *[]string) (*TaskInfo, error) {
+func (i *index) UpdateFilterableAttributes(request *[]interface{}) (*TaskInfo, error) {
 	return i.UpdateFilterableAttributesWithContext(context.Background(), request)
 }
 
-func (i *index) UpdateFilterableAttributesWithContext(ctx context.Context, request *[]string) (*TaskInfo, error) {
+func (i *index) UpdateFilterableAttributesWithContext(ctx context.Context, request *[]interface{}) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/filterable-attributes",

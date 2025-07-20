@@ -128,7 +128,7 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			require.NoError(t, err, "error unmarshalling raw got SearchResponse")
 			require.Equal(t, len(tt.Response.Hits), len(resp.Hits))
 
-			filterableAttrs := []string{"tag"}
+			filterableAttrs := []interface{}{"tag"}
 			task, err := i.UpdateFilterableAttributes(&filterableAttrs)
 			require.NoError(t, err)
 			testWaitForTask(t, i, task)
@@ -339,7 +339,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 		client               ServiceManager
 		query                string
 		request              *SearchRequest
-		filterableAttributes []string
+		filterableAttributes []interface{}
 	}
 	tests := []struct {
 		name    string
@@ -367,7 +367,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 				request: &SearchRequest{
 					Facets: []string{"*"},
 				},
-				filterableAttributes: []string{"tag"},
+				filterableAttributes: []interface{}{"tag"},
 			},
 			want: &SearchResponse{
 				Hits: Hits{
@@ -395,7 +395,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 				request: &SearchRequest{
 					Facets: []string{"*"},
 				},
-				filterableAttributes: []string{"tag"},
+				filterableAttributes: []interface{}{"tag"},
 			},
 			want: &SearchResponse{
 				Hits: Hits{
@@ -423,7 +423,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 				request: &SearchRequest{
 					Facets: []string{"book_id"},
 				},
-				filterableAttributes: []string{"book_id"},
+				filterableAttributes: []interface{}{"book_id"},
 			},
 			want: &SearchResponse{
 				Hits: Hits{
@@ -499,7 +499,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 		PrimaryKey           string
 		client               ServiceManager
 		query                string
-		filterableAttributes []string
+		filterableAttributes []interface{}
 		request              *SearchRequest
 	}
 	tests := []struct {
@@ -514,7 +514,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				UID:                  "indexUID",
 				client:               sv,
 				query:                "and",
-				filterableAttributes: []string{"tag"},
+				filterableAttributes: []interface{}{"tag"},
 				request: &SearchRequest{
 					Filter: "tag = romance",
 				},
@@ -535,7 +535,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				UID:                  "indexUID",
 				client:               sv,
 				query:                "and",
-				filterableAttributes: []string{"year"},
+				filterableAttributes: []interface{}{"year"},
 				request: &SearchRequest{
 					Filter: "year = 2005",
 				},
@@ -1101,7 +1101,7 @@ func TestIndex_FacetSearch(t *testing.T) {
 		PrimaryKey           string
 		client               ServiceManager
 		request              *FacetSearchRequest
-		filterableAttributes []string
+		filterableAttributes []interface{}
 	}
 
 	tests := []struct {
@@ -1119,7 +1119,7 @@ func TestIndex_FacetSearch(t *testing.T) {
 					FacetName:  "tag",
 					FacetQuery: "Novel",
 				},
-				filterableAttributes: []string{"tag"},
+				filterableAttributes: []interface{}{"tag"},
 			},
 			want: &FacetSearchResponse{
 				FacetHits: Hits{
@@ -1160,7 +1160,7 @@ func TestIndex_FacetSearch(t *testing.T) {
 					Q:         "query",
 					FacetName: "tag",
 				},
-				filterableAttributes: []string{"tag"},
+				filterableAttributes: []interface{}{"tag"},
 			},
 			want: &FacetSearchResponse{
 				FacetHits:  Hits{},
