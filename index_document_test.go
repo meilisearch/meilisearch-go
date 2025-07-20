@@ -1461,6 +1461,74 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 				Type:    "documentDeletion",
 			},
 		},
+		{
+			name: "TestIndexDeleteWithAttributeRuleForTagAndYear",
+			args: args{
+				UID:    "1",
+				client: customSv,
+				filterToApply: []interface{}{
+					AttributeRule{
+						AttributePatterns: []string{"tag"},
+						Features: AttributeFeatures{
+							FacetSearch: false,
+							Filter: FilterFeatures{
+								Equality:   true,
+								Comparison: false,
+							},
+						},
+					},
+					AttributeRule{
+						AttributePatterns: []string{"year"},
+						Features: AttributeFeatures{
+							FacetSearch: false,
+							Filter: FilterFeatures{
+								Equality:   true,
+								Comparison: true,
+							},
+						},
+					},
+				},
+				filterToDelete: []string{"tag = 'Fantasy'", "year > 1900"},
+				documentsPtr: []docTestBooks{
+					{BookID: 1, Title: "Fantasy Realms", Tag: "Fantasy", Year: 1950},
+					{BookID: 1344, Title: "The Hobbit", Tag: "Fantasy", Year: 1937},
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
+		{
+			name: "TestIndexDeleteWithMixedFilterableAttributes",
+			args: args{
+				UID:    "1",
+				client: customSv,
+				filterToApply: []interface{}{
+					"title",
+					AttributeRule{
+						AttributePatterns: []string{"year"},
+						Features: AttributeFeatures{
+							FacetSearch: false,
+							Filter: FilterFeatures{
+								Equality:   true,
+								Comparison: true,
+							},
+						},
+					},
+				},
+				filterToDelete: []string{"title = 'The Hobbit'", "year > 1930"},
+				documentsPtr: []docTestBooks{
+					{BookID: 1344, Title: "The Hobbit", Tag: "Fantasy", Year: 1937},
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

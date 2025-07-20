@@ -272,7 +272,7 @@ type Details struct {
 	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
 	StopWords            []string            `json:"stopWords,omitempty"`
 	Synonyms             map[string][]string `json:"synonyms,omitempty"`
-	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
+	FilterableAttributes []interface{}       `json:"filterableAttributes,omitempty"`
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
 	TypoTolerance        *TypoTolerance      `json:"typoTolerance,omitempty"`
 	Pagination           *Pagination         `json:"pagination,omitempty"`
