@@ -1340,6 +1340,51 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 				TaskUID: 1,
 			},
 		},
+		{
+			name: "TestIndexUpdateFilterableAttributesMixedRawAndObject",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: []interface{}{
+					"tag",
+					map[string]interface{}{
+						"attributePatterns": []interface{}{"year"},
+						"features": map[string]interface{}{
+							"facetSearch": false,
+							"filter": map[string]interface{}{
+								"equality":   true,
+								"comparison": true,
+							},
+						},
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
+			name: "TestIndexUpdateFilterableAttributesOnlyObject",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: []interface{}{
+					map[string]interface{}{
+						"attributePatterns": []interface{}{"year"},
+						"features": map[string]interface{}{
+							"facetSearch": false,
+							"filter": map[string]interface{}{
+								"equality":   true,
+								"comparison": true,
+							},
+						},
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

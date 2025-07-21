@@ -432,12 +432,12 @@ func (i *index) ResetSynonymsWithContext(ctx context.Context) (*TaskInfo, error)
 	return resp, nil
 }
 
-func (i *index) GetFilterableAttributes() (*[]string, error) {
+func (i *index) GetFilterableAttributes() (*[]interface{}, error) {
 	return i.GetFilterableAttributesWithContext(context.Background())
 }
 
-func (i *index) GetFilterableAttributesWithContext(ctx context.Context) (*[]string, error) {
-	resp := &[]string{}
+func (i *index) GetFilterableAttributesWithContext(ctx context.Context) (*[]interface{}, error) {
+	resp := &[]interface{}{}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/filterable-attributes",
 		method:              http.MethodGet,
