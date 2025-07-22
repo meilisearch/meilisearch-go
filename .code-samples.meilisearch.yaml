@@ -302,9 +302,29 @@ reset_distinct_attribute_1: |-
 get_filterable_attributes_1: |-
   client.Index("movies").GetFilterableAttributes()
 update_filterable_attributes_1: |-
-  filterableAttributes := []string{
+  filterableAttributes := []interface{}{
     "genres",
     "director",
+    AttributeRule{
+      AttributePatterns: []string{"tag"}
+      Features: AttributeFeatures{
+        FacetSearch: false,
+        Filter: FilterFeatures{
+          Equality:   true,
+          Comparison: false,
+        }
+      }
+    },
+    map[string]interface{}{
+      "attributePatterns": []interface{}{"year"}
+      "features": map[string]interface{}{
+        "facetSearch": false,
+        "filter": map[string]interface{}{
+          "equality":   true,
+          "comparison": true,
+        }
+      }
+    }
   }
   client.Index("movies").UpdateFilterableAttributes(&filterableAttributes)
 reset_filterable_attributes_1: |-
@@ -676,7 +696,7 @@ getting_started_pagination: |-
       MaxTotalHits: 500,
   })
 filtering_update_settings_1: |-
-  resp, err := client.Index("movies").UpdateFilterableAttributes(&[]string{
+  resp, err := client.Index("movies").UpdateFilterableAttributes(&[]interface{}{
     "director",
     "genres",
   })
@@ -688,7 +708,7 @@ faceted_search_walkthrough_filter_1: |-
     },
   })
 faceted_search_update_settings_1: |-
-  filterableAttributes := []string{
+  filterableAttributes := []interface{}{
     "genres",
     "rating",
     "language",
@@ -747,7 +767,7 @@ search_parameter_guide_sort_1: |-
     },
   })
 geosearch_guide_filter_settings_1: |-
-  filterableAttributes := []string{
+  filterableAttributes := []interface{}{
     "_geo",
   }
   client.Index("restaurants").UpdateFilterableAttributes(&filterableAttributes)
@@ -858,7 +878,7 @@ date_guide_index_1: |-
 
   client.Index("games").AddDocuments(games, nil)
 date_guide_filterable_attributes_1: |-
-  filterableAttributes := []string{"release_timestamp"}
+  filterableAttributes := []interface{}{"release_timestamp"}
   client.Index("games").UpdateFilterableAttributes(&filterableAttributes)
 date_guide_filter_1: |-
   client.Index("games").Search("", &meilisearch.SearchRequest{
@@ -882,7 +902,7 @@ distinct_attribute_guide_distinct_parameter_1: |-
     Distinct: "sku",
   })
 distinct_attribute_guide_filterable_1: |-
-  filterableAttributes := []string{
+  filterableAttributes := []interface{}{
     "product_id",
     "sku",
     "url",
