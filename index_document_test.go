@@ -3,8 +3,9 @@ package meilisearch
 import (
 	"bytes"
 	"crypto/tls"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 func Test_GetDocumentsByIDS(t *testing.T) {
@@ -1377,7 +1378,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 		UID            string
 		client         ServiceManager
 		filterToDelete interface{}
-		filterToApply  []string
+		filterToApply  []interface{}
 		documentsPtr   []docTestBooks
 	}
 	tests := []struct {
@@ -1390,7 +1391,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			args: args{
 				UID:            "1",
 				client:         sv,
-				filterToApply:  []string{"book_id"},
+				filterToApply:  []interface{}{"book_id"},
 				filterToDelete: "book_id = 123",
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "Pride and Prejudice", Tag: "Romance", Year: 1813},
@@ -1407,7 +1408,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			args: args{
 				UID:            "1",
 				client:         customSv,
-				filterToApply:  []string{"tag"},
+				filterToApply:  []interface{}{"tag"},
 				filterToDelete: []string{"tag = 'Epic fantasy'"},
 				documentsPtr: []docTestBooks{
 					{BookID: 1344, Title: "The Hobbit", Tag: "Epic fantasy", Year: 1937},
@@ -1426,7 +1427,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			args: args{
 				UID:            "1",
 				client:         customSv,
-				filterToApply:  []string{"tag", "year"},
+				filterToApply:  []interface{}{"tag", "year"},
 				filterToDelete: []string{"tag = 'Epic fantasy'", "year > 1936"},
 				documentsPtr: []docTestBooks{
 					{BookID: 1344, Title: "The Hobbit", Tag: "Epic fantasy", Year: 1937},
@@ -1445,13 +1446,81 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			args: args{
 				UID:            "1",
 				client:         customSv,
-				filterToApply:  []string{"book_id", "tag"},
+				filterToApply:  []interface{}{"book_id", "tag"},
 				filterToDelete: []interface{}{[]string{"tag = 'Epic fantasy'", "book_id = 123"}},
 				documentsPtr: []docTestBooks{
 					{BookID: 123, Title: "Pride and Prejudice", Tag: "Romance", Year: 1813},
 					{BookID: 1344, Title: "The Hobbit", Tag: "Epic fantasy", Year: 1937},
 					{BookID: 4, Title: "Harry Potter and the Half-Blood Prince", Tag: "Epic fantasy", Year: 2005},
 					{BookID: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Epic fantasy", Year: 1978},
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
+		{
+			name: "TestIndexDeleteWithAttributeRuleForTagAndYear",
+			args: args{
+				UID:    "1",
+				client: customSv,
+				filterToApply: []interface{}{
+					AttributeRule{
+						AttributePatterns: []string{"tag"},
+						Features: AttributeFeatures{
+							FacetSearch: false,
+							Filter: FilterFeatures{
+								Equality:   true,
+								Comparison: false,
+							},
+						},
+					},
+					AttributeRule{
+						AttributePatterns: []string{"year"},
+						Features: AttributeFeatures{
+							FacetSearch: false,
+							Filter: FilterFeatures{
+								Equality:   true,
+								Comparison: true,
+							},
+						},
+					},
+				},
+				filterToDelete: []string{"tag = 'Fantasy'", "year > 1900"},
+				documentsPtr: []docTestBooks{
+					{BookID: 1, Title: "Fantasy Realms", Tag: "Fantasy", Year: 1950},
+					{BookID: 1344, Title: "The Hobbit", Tag: "Fantasy", Year: 1937},
+				},
+			},
+			wantResp: &TaskInfo{
+				TaskUID: 1,
+				Status:  "enqueued",
+				Type:    "documentDeletion",
+			},
+		},
+		{
+			name: "TestIndexDeleteWithMixedFilterableAttributes",
+			args: args{
+				UID:    "1",
+				client: customSv,
+				filterToApply: []interface{}{
+					"title",
+					AttributeRule{
+						AttributePatterns: []string{"year"},
+						Features: AttributeFeatures{
+							FacetSearch: false,
+							Filter: FilterFeatures{
+								Equality:   true,
+								Comparison: true,
+							},
+						},
+					},
+				},
+				filterToDelete: []string{"title = 'The Hobbit'", "year > 1930"},
+				documentsPtr: []docTestBooks{
+					{BookID: 1344, Title: "The Hobbit", Tag: "Fantasy", Year: 1937},
 				},
 			},
 			wantResp: &TaskInfo{

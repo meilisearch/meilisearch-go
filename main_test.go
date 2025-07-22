@@ -228,7 +228,7 @@ func setupMovieIndex(t *testing.T, client ServiceManager, uid string) IndexManag
 	require.NoError(t, err)
 	testWaitForTask(t, idx, task)
 
-	task, err = idx.UpdateFilterableAttributes(&[]string{"id", "title", "overview"})
+	task, err = idx.UpdateFilterableAttributes(&[]interface{}{"id", "title", "overview"})
 	require.NoError(t, err)
 	testWaitForTask(t, idx, task)
 
@@ -252,7 +252,7 @@ func setupComicIndex(t *testing.T, client ServiceManager, uid string) IndexManag
 	require.NoError(t, err)
 	testWaitForTask(t, idx, task)
 
-	task, err = idx.UpdateFilterableAttributes(&[]string{"id", "title", "overview"})
+	task, err = idx.UpdateFilterableAttributes(&[]interface{}{"id", "title", "overview"})
 	require.NoError(t, err)
 	testWaitForTask(t, idx, task)
 
@@ -375,7 +375,7 @@ func setUpIndexWithVector(client *meilisearch, indexUID string) (resp *IndexResu
 func setUpDistinctIndex(client ServiceManager, indexUID string) {
 	idx := client.Index(indexUID)
 
-	atters := []string{"product_id", "title", "sku", "url"}
+	atters := []interface{}{"product_id", "title", "sku", "url"}
 	task, err := idx.UpdateFilterableAttributes(&atters)
 	if err != nil {
 		fmt.Println(err)

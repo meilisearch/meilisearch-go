@@ -432,12 +432,12 @@ func (i *index) ResetSynonymsWithContext(ctx context.Context) (*TaskInfo, error)
 	return resp, nil
 }
 
-func (i *index) GetFilterableAttributes() (*[]string, error) {
+func (i *index) GetFilterableAttributes() (*[]interface{}, error) {
 	return i.GetFilterableAttributesWithContext(context.Background())
 }
 
-func (i *index) GetFilterableAttributesWithContext(ctx context.Context) (*[]string, error) {
-	resp := &[]string{}
+func (i *index) GetFilterableAttributesWithContext(ctx context.Context) (*[]interface{}, error) {
+	resp := &[]interface{}{}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/filterable-attributes",
 		method:              http.MethodGet,
@@ -452,11 +452,11 @@ func (i *index) GetFilterableAttributesWithContext(ctx context.Context) (*[]stri
 	return resp, nil
 }
 
-func (i *index) UpdateFilterableAttributes(request *[]string) (*TaskInfo, error) {
+func (i *index) UpdateFilterableAttributes(request *[]interface{}) (*TaskInfo, error) {
 	return i.UpdateFilterableAttributesWithContext(context.Background(), request)
 }
 
-func (i *index) UpdateFilterableAttributesWithContext(ctx context.Context, request *[]string) (*TaskInfo, error) {
+func (i *index) UpdateFilterableAttributesWithContext(ctx context.Context, request *[]interface{}) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/filterable-attributes",

@@ -1307,7 +1307,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 	type args struct {
 		UID     string
 		client  ServiceManager
-		request []string
+		request []interface{}
 	}
 	tests := []struct {
 		name     string
@@ -1319,7 +1319,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: []string{
+				request: []interface{}{
 					"title",
 				},
 			},
@@ -1332,8 +1332,53 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: customMeili,
-				request: []string{
+				request: []interface{}{
 					"title",
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
+			name: "TestIndexUpdateFilterableAttributesMixedRawAndObject",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: []interface{}{
+					"tag",
+					map[string]interface{}{
+						"attributePatterns": []interface{}{"year"},
+						"features": map[string]interface{}{
+							"facetSearch": false,
+							"filter": map[string]interface{}{
+								"equality":   true,
+								"comparison": true,
+							},
+						},
+					},
+				},
+			},
+			wantTask: &TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
+			name: "TestIndexUpdateFilterableAttributesOnlyObject",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: []interface{}{
+					map[string]interface{}{
+						"attributePatterns": []interface{}{"year"},
+						"features": map[string]interface{}{
+							"facetSearch": false,
+							"filter": map[string]interface{}{
+								"equality":   true,
+								"comparison": true,
+							},
+						},
+					},
 				},
 			},
 			wantTask: &TaskInfo{
