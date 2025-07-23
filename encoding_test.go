@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"io"
@@ -27,6 +28,24 @@ type errorReader struct{}
 
 func (e *errorReader) Read(p []byte) (int, error) {
 	return 0, errors.New("read error")
+}
+
+type mockEncoder struct{}
+
+func (m *mockEncoder) Encode(r io.Reader) (io.ReadCloser, error) {
+	return nil, nil
+}
+
+func (m *mockEncoder) Decode(data []byte, v interface{}) error {
+	msg, ok := v.(*meilisearchApiError)
+	if !ok {
+		return fmt.Errorf("wrong type")
+	}
+	msg.Message = "mocked message"
+	msg.Code = "mocked code"
+	msg.Type = "mocked type"
+	msg.Link = "mocked link"
+	return nil
 }
 
 func Test_Encode_ErrorOnNewWriter(t *testing.T) {

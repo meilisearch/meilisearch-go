@@ -397,7 +397,7 @@ type SearchRequest struct {
 	RetrieveVectors         bool                     `json:"retrieveVectors,omitempty"`
 	RankingScoreThreshold   float64                  `json:"rankingScoreThreshold,omitempty"`
 	FederationOptions       *SearchFederationOptions `json:"federationOptions,omitempty"`
-	Locates                 []string                 `json:"locales,omitempty"`
+	Locates                 []string                 `json:"locates,omitempty"`
 }
 
 type SearchFederationOptions struct {
@@ -536,6 +536,7 @@ type ExperimentalFeaturesBase struct {
 	ContainsFilter          *bool `json:"containsFilter,omitempty"`
 	Network                 *bool `json:"network,omitempty"`
 	CompositeEmbedders      *bool `json:"compositeEmbedders,omitempty"`
+	VectorStore             *bool `json:"vectorStore,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -545,6 +546,7 @@ type ExperimentalFeaturesResult struct {
 	ContainsFilter          bool `json:"containsFilter"`
 	Network                 bool `json:"network"`
 	CompositeEmbedders      bool `json:"compositeEmbedders"`
+	VectorStore             bool `json:"vectorStore"`
 }
 
 type SwapIndexesParams struct {
