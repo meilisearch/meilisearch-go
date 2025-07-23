@@ -1455,7 +1455,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 					{BookID: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Epic fantasy", Year: 1978},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1467,21 +1467,21 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 				UID:    "1",
 				client: customSv,
 				filterToApply: []interface{}{
-					AttributeRule{
+					meilisearch.AttributeRule{
 						AttributePatterns: []string{"tag"},
-						Features: AttributeFeatures{
+						Features: meilisearch.AttributeFeatures{
 							FacetSearch: false,
-							Filter: FilterFeatures{
+							Filter: meilisearch.FilterFeatures{
 								Equality:   true,
 								Comparison: false,
 							},
 						},
 					},
-					AttributeRule{
+					meilisearch.AttributeRule{
 						AttributePatterns: []string{"year"},
-						Features: AttributeFeatures{
+						Features: meilisearch.AttributeFeatures{
 							FacetSearch: false,
-							Filter: FilterFeatures{
+							Filter: meilisearch.FilterFeatures{
 								Equality:   true,
 								Comparison: true,
 							},
@@ -1494,7 +1494,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 					{BookID: 1344, Title: "The Hobbit", Tag: "Fantasy", Year: 1937},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1507,11 +1507,11 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 				client: customSv,
 				filterToApply: []interface{}{
 					"title",
-					AttributeRule{
+					meilisearch.AttributeRule{
 						AttributePatterns: []string{"year"},
-						Features: AttributeFeatures{
+						Features: meilisearch.AttributeFeatures{
 							FacetSearch: false,
-							Filter: FilterFeatures{
+							Filter: meilisearch.FilterFeatures{
 								Equality:   true,
 								Comparison: true,
 							},
@@ -1523,7 +1523,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 					{BookID: 1344, Title: "The Hobbit", Tag: "Fantasy", Year: 1937},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",

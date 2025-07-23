@@ -339,7 +339,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 		PrimaryKey           string
 		client               meilisearch.ServiceManager
 		query                string
-		request              *SearchRequest
+		request              *meilisearch.SearchRequest
 		filterableAttributes []interface{}
 	}
 	tests := []struct {
@@ -501,7 +501,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 		client               meilisearch.ServiceManager
 		query                string
 		filterableAttributes []interface{}
-		request              *SearchRequest
+		request              *meilisearch.SearchRequest
 	}
 	tests := []struct {
 		name    string
@@ -516,7 +516,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				client:               sv,
 				query:                "and",
 				filterableAttributes: []interface{}{"tag"},
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					Filter: "tag = romance",
 				},
 			},
@@ -537,7 +537,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				client:               sv,
 				query:                "and",
 				filterableAttributes: []interface{}{"year"},
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					Filter: "year = 2005",
 				},
 			},
@@ -1100,8 +1100,8 @@ func TestIndex_FacetSearch(t *testing.T) {
 	type args struct {
 		UID                  string
 		PrimaryKey           string
-		client               ServiceManager
-		request              *FacetSearchRequest
+		client               meilisearch.ServiceManager
+		request              *meilisearch.FacetSearchRequest
 		filterableAttributes []interface{}
 	}
 

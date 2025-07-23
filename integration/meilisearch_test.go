@@ -1741,7 +1741,7 @@ func Test_GenerateTenantToken(t *testing.T) {
 		client      meilisearch.ServiceManager
 		APIKeyUID   string
 		searchRules map[string]interface{}
-		options     *TenantTokenOptions
+		options     *meilisearch.TenantTokenOptions
 		filter      []interface{}
 	}
 	tests := []struct {

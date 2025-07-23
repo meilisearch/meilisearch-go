@@ -49,24 +49,6 @@ func TestError_VersionErrorHintMessage(t *testing.T) {
 	}
 }
 
-type mockEncoder struct{}
-
-func (m *mockEncoder) Encode(r io.Reader) (io.ReadCloser, error) {
-	return nil, nil
-}
-
-func (m *mockEncoder) Decode(data []byte, v interface{}) error {
-	msg, ok := v.(*meilisearchApiError)
-	if !ok {
-		return fmt.Errorf("wrong type")
-	}
-	msg.Message = "mocked message"
-	msg.Code = "mocked code"
-	msg.Type = "mocked type"
-	msg.Link = "mocked link"
-	return nil
-}
-
 type failEncoder struct{}
 
 func (f *failEncoder) Encode(r io.Reader) (io.ReadCloser, error) {

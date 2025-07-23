@@ -1307,7 +1307,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 
 	type args struct {
 		UID     string
-		client  ServiceManager
+		client  meilisearch.ServiceManager
 		request []interface{}
 	}
 	tests := []struct {
@@ -1337,7 +1337,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1360,7 +1360,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1382,7 +1382,7 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
