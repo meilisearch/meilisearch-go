@@ -312,10 +312,10 @@ type SettingsManager interface {
 	ResetSynonymsWithContext(ctx context.Context) (*TaskInfo, error)
 
 	// UpdateFilterableAttributes updates the filterable attributes of the index.
-	UpdateFilterableAttributes(request *[]string) (*TaskInfo, error)
+	UpdateFilterableAttributes(request *[]interface{}) (*TaskInfo, error)
 
 	// UpdateFilterableAttributesWithContext updates the filterable attributes of the index using the provided context for cancellation.
-	UpdateFilterableAttributesWithContext(ctx context.Context, request *[]string) (*TaskInfo, error)
+	UpdateFilterableAttributesWithContext(ctx context.Context, request *[]interface{}) (*TaskInfo, error)
 
 	// ResetFilterableAttributes resets the filterable attributes of the index to default values.
 	ResetFilterableAttributes() (*TaskInfo, error)
@@ -542,10 +542,10 @@ type SettingsReader interface {
 	GetSynonymsWithContext(ctx context.Context) (*map[string][]string, error)
 
 	// GetFilterableAttributes retrieves the filterable attributes of the index.
-	GetFilterableAttributes() (*[]string, error)
+	GetFilterableAttributes() (*[]interface{}, error)
 
 	// GetFilterableAttributesWithContext retrieves the filterable attributes of the index using the provided context for cancellation.
-	GetFilterableAttributesWithContext(ctx context.Context) (*[]string, error)
+	GetFilterableAttributesWithContext(ctx context.Context) (*[]interface{}, error)
 
 	// GetSortableAttributes retrieves the sortable attributes of the index.
 	GetSortableAttributes() (*[]string, error)

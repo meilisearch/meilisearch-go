@@ -1741,8 +1741,8 @@ func Test_GenerateTenantToken(t *testing.T) {
 		client      meilisearch.ServiceManager
 		APIKeyUID   string
 		searchRules map[string]interface{}
-		options     *meilisearch.TenantTokenOptions
-		filter      []string
+		options     *TenantTokenOptions
+		filter      []interface{}
 	}
 	tests := []struct {
 		name       string
@@ -1818,6 +1818,35 @@ func Test_GenerateTenantToken(t *testing.T) {
 			wantFilter: false,
 		},
 		{
+			name: "TestGenerateTenantTokenWithMultipleFilters",
+			args: args{
+				IndexUIDS: "indexUID",
+				client:    privateSv,
+				APIKeyUID: getPrivateUIDKey(sv),
+				searchRules: map[string]interface{}{
+					"*": map[string]string{
+						"filter": "book_id > 1000",
+					},
+				},
+				options: nil,
+				filter: []interface{}{
+					"year",
+					map[string]interface{}{
+						"attributePatterns": []interface{}{"book_id"},
+						"features": map[string]interface{}{
+							"facetSearch": false,
+							"filter": map[string]interface{}{
+								"equality":   false,
+								"comparison": true,
+							},
+						},
+					},
+				},
+			},
+			wantErr:    false,
+			wantFilter: true,
+		},
+		{
 			name: "TestGenerateTenantTokenWithFilters",
 			args: args{
 				IndexUIDS: "indexUID",
@@ -1829,7 +1858,7 @@ func Test_GenerateTenantToken(t *testing.T) {
 					},
 				},
 				options: nil,
-				filter: []string{
+				filter: []interface{}{
 					"book_id",
 				},
 			},
@@ -1848,7 +1877,7 @@ func Test_GenerateTenantToken(t *testing.T) {
 					},
 				},
 				options: nil,
-				filter: []string{
+				filter: []interface{}{
 					"year",
 				},
 			},

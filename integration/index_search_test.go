@@ -129,7 +129,7 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			require.NoError(t, err, "error unmarshalling raw got meilisearch.SearchResponse")
 			require.Equal(t, len(tt.Response.Hits), len(resp.Hits))
 
-			filterableAttrs := []string{"tag"}
+			filterableAttrs := []interface{}{"tag"}
 			task, err := i.UpdateFilterableAttributes(&filterableAttrs)
 			require.NoError(t, err)
 			testWaitForTask(t, i, task)
@@ -339,8 +339,8 @@ func TestIndex_SearchFacets(t *testing.T) {
 		PrimaryKey           string
 		client               meilisearch.ServiceManager
 		query                string
-		request              *meilisearch.SearchRequest
-		filterableAttributes []string
+		request              *SearchRequest
+		filterableAttributes []interface{}
 	}
 	tests := []struct {
 		name    string
@@ -368,7 +368,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 				request: &meilisearch.SearchRequest{
 					Facets: []string{"*"},
 				},
-				filterableAttributes: []string{"tag"},
+				filterableAttributes: []interface{}{"tag"},
 			},
 			want: &meilisearch.SearchResponse{
 				Hits: meilisearch.Hits{
@@ -396,7 +396,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 				request: &meilisearch.SearchRequest{
 					Facets: []string{"*"},
 				},
-				filterableAttributes: []string{"tag"},
+				filterableAttributes: []interface{}{"tag"},
 			},
 			want: &meilisearch.SearchResponse{
 				Hits: meilisearch.Hits{
@@ -424,7 +424,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 				request: &meilisearch.SearchRequest{
 					Facets: []string{"book_id"},
 				},
-				filterableAttributes: []string{"book_id"},
+				filterableAttributes: []interface{}{"book_id"},
 			},
 			want: &meilisearch.SearchResponse{
 				Hits: meilisearch.Hits{
@@ -500,8 +500,8 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 		PrimaryKey           string
 		client               meilisearch.ServiceManager
 		query                string
-		filterableAttributes []string
-		request              *meilisearch.SearchRequest
+		filterableAttributes []interface{}
+		request              *SearchRequest
 	}
 	tests := []struct {
 		name    string
@@ -515,8 +515,8 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				UID:                  "indexUID",
 				client:               sv,
 				query:                "and",
-				filterableAttributes: []string{"tag"},
-				request: &meilisearch.SearchRequest{
+				filterableAttributes: []interface{}{"tag"},
+				request: &SearchRequest{
 					Filter: "tag = romance",
 				},
 			},
@@ -536,8 +536,8 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				UID:                  "indexUID",
 				client:               sv,
 				query:                "and",
-				filterableAttributes: []string{"year"},
-				request: &meilisearch.SearchRequest{
+				filterableAttributes: []interface{}{"year"},
+				request: &SearchRequest{
 					Filter: "year = 2005",
 				},
 			},
@@ -1100,9 +1100,9 @@ func TestIndex_FacetSearch(t *testing.T) {
 	type args struct {
 		UID                  string
 		PrimaryKey           string
-		client               meilisearch.ServiceManager
-		request              *meilisearch.FacetSearchRequest
-		filterableAttributes []string
+		client               ServiceManager
+		request              *FacetSearchRequest
+		filterableAttributes []interface{}
 	}
 
 	tests := []struct {
@@ -1120,7 +1120,7 @@ func TestIndex_FacetSearch(t *testing.T) {
 					FacetName:  "tag",
 					FacetQuery: "Novel",
 				},
-				filterableAttributes: []string{"tag"},
+				filterableAttributes: []interface{}{"tag"},
 			},
 			want: &meilisearch.FacetSearchResponse{
 				FacetHits: meilisearch.Hits{
@@ -1161,7 +1161,7 @@ func TestIndex_FacetSearch(t *testing.T) {
 					Q:         "query",
 					FacetName: "tag",
 				},
-				filterableAttributes: []string{"tag"},
+				filterableAttributes: []interface{}{"tag"},
 			},
 			want: &meilisearch.FacetSearchResponse{
 				FacetHits:  meilisearch.Hits{},
