@@ -53,13 +53,7 @@ jobs:
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
       - name: Get dependencies
-        run: |
-          if [ -f go.mod ]; then
-            go mod download -x
-          elif [ -f Gopkg.toml ]; then
-            curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
-            dep ensure
-          fi
+        run: go mod download -x
       - name: Meilisearch setup (latest version) with Docker
         run: docker run -d -p 7700:7700 getmeili/meilisearch:latest meilisearch --master-key=masterKey --no-analytics
       - name: Run unit tests
