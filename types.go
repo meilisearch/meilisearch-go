@@ -545,7 +545,6 @@ type ExperimentalFeaturesResult struct {
 	ContainsFilter          bool `json:"containsFilter"`
 	Network                 bool `json:"network"`
 	CompositeEmbedders      bool `json:"compositeEmbedders"`
-	VectorStore             bool `json:"vectorStore"`
 }
 
 type SwapIndexesParams struct {
