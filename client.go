@@ -218,7 +218,7 @@ func (c *client) do(req *http.Request, internalError *Error) (resp *http.Respons
 			retriesCount++
 
 			// Close response body to prevent memory leaks
-			resp.Body.Close()
+			_ = resp.Body.Close()
 
 			// Handle backoff with context cancellation support
 			backoff := c.retryBackoff(retriesCount)

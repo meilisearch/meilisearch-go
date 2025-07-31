@@ -15,7 +15,7 @@ func (pb *pooledBuffer) Read(p []byte) (int, error) {
 }
 
 func (pb *pooledBuffer) Close() error {
-	pb.Buffer.Reset()
+	pb.Reset()
 	pb.pool.Put(pb.Buffer)
 	return nil
 }

@@ -70,7 +70,9 @@ func BenchmarkGzipDecoder(b *testing.B) {
 	jsonData, _ := json.Marshal(sampleMapData())
 
 	encoded, _ := encoder.Encode(bytes.NewReader(jsonData))
-	defer encoded.Close()
+	defer func() {
+		_ = encoded.Close()
+	}()
 	payload, _ := io.ReadAll(encoded)
 
 	b.ResetTimer()
@@ -89,7 +91,9 @@ func BenchmarkFlateDecoder(b *testing.B) {
 	jsonData, _ := json.Marshal(sampleMapData())
 
 	encoded, _ := encoder.Encode(bytes.NewReader(jsonData))
-	defer encoded.Close()
+	defer func() {
+		_ = encoded.Close()
+	}()
 	payload, _ := io.ReadAll(encoded)
 
 	b.ResetTimer()
@@ -108,7 +112,9 @@ func BenchmarkBrotliDecoder(b *testing.B) {
 	jsonData, _ := json.Marshal(sampleMapData())
 
 	encoded, _ := encoder.Encode(bytes.NewReader(jsonData))
-	defer encoded.Close()
+	defer func() {
+		_ = encoded.Close()
+	}()
 	payload, _ := io.ReadAll(encoded)
 
 	b.ResetTimer()

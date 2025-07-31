@@ -58,7 +58,9 @@ func TestExecuteRequest(t *testing.T) {
 				res, err := enc.Encode(bytes.NewReader(b))
 				require.NoError(t, err)
 
-				defer res.Close()
+				defer func() {
+					_ = res.Close()
+				}()
 
 				compressedData, err := io.ReadAll(res)
 				require.NoError(t, err)
@@ -90,7 +92,9 @@ func TestExecuteRequest(t *testing.T) {
 				require.NoError(t, err)
 				res, err := respEnc.Encode(bytes.NewReader(d))
 				require.NoError(t, err)
-				defer res.Close()
+				defer func() {
+					_ = res.Close()
+				}()
 
 				compressedData, err := io.ReadAll(res)
 				require.NoError(t, err)
@@ -117,7 +121,9 @@ func TestExecuteRequest(t *testing.T) {
 				e := newEncoding(ContentEncoding(enc), DefaultCompression)
 				res, err := e.Encode(bytes.NewReader(msg))
 				require.NoError(t, err)
-				defer res.Close()
+				defer func() {
+					_ = res.Close()
+				}()
 
 				compressedData, err := io.ReadAll(res)
 				require.NoError(t, err)

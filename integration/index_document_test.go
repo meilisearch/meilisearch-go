@@ -1541,7 +1541,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 
 			testWaitForTask(t, i, gotAddResp)
 
-			if tt.args.filterToApply != nil && len(tt.args.filterToApply) != 0 {
+			if len(tt.args.filterToApply) != 0 {
 				gotTask, err := i.UpdateFilterableAttributes(&tt.args.filterToApply)
 				require.NoError(t, err)
 				testWaitForTask(t, i, gotTask)

@@ -111,7 +111,9 @@ func testEncoder(t *testing.T, enc encoder, original *mockData) {
 	readCloser := io.NopCloser(bytes.NewReader(originalJSON))
 	encodedReader, err := enc.Encode(readCloser)
 	assert.NoError(t, err)
-	defer encodedReader.Close()
+	defer func() {
+		_ = encodedReader.Close()
+	}()
 
 	encodedData, err := io.ReadAll(encodedReader)
 	assert.NoError(t, err)

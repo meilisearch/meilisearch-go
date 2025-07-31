@@ -72,7 +72,9 @@ func Benchmark_ExecuteRequestWithEncoding(b *testing.B) {
 				if err != nil {
 					b.Fatal(err)
 				}
-				defer res.Close()
+				defer func() {
+					_ = res.Close()
+				}()
 
 				compressedData, err := io.ReadAll(res)
 				if err != nil {
