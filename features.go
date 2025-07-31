@@ -5,7 +5,6 @@ import (
 	"net/http"
 )
 
-// Type for experimental features with additional client field
 type ExperimentalFeatures struct {
 	client *client
 	ExperimentalFeaturesBase
@@ -32,6 +31,16 @@ func (ef *ExperimentalFeatures) SetEditDocumentsByFunction(editDocumentsByFuncti
 
 func (ef *ExperimentalFeatures) SetContainsFilter(containsFilter bool) *ExperimentalFeatures {
 	ef.ContainsFilter = &containsFilter
+	return ef
+}
+
+func (ef *ExperimentalFeatures) SetNetwork(enable bool) *ExperimentalFeatures {
+	ef.Network = &enable
+	return ef
+}
+
+func (ef *ExperimentalFeatures) SetCompositeEmbedders(enable bool) *ExperimentalFeatures {
+	ef.CompositeEmbedders = &enable
 	return ef
 }
 
@@ -68,6 +77,8 @@ func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*Experim
 		Metrics:                 ef.Metrics,
 		EditDocumentsByFunction: ef.EditDocumentsByFunction,
 		ContainsFilter:          ef.ContainsFilter,
+		Network:                 ef.Network,
+		CompositeEmbedders:      ef.CompositeEmbedders,
 	}
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{

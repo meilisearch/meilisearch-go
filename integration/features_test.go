@@ -1,21 +1,22 @@
-package meilisearch
+package integration
 
 import (
 	"crypto/tls"
 	"testing"
 
+	"github.com/meilisearch/meilisearch-go"
 	"github.com/stretchr/testify/require"
 )
 
 func TestGet_ExperimentalFeatures(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	tests := []struct {
 		name   string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}{
 		{
 			name:   "TestGetStats",
@@ -39,13 +40,13 @@ func TestGet_ExperimentalFeatures(t *testing.T) {
 
 func TestUpdate_ExperimentalFeatures(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	tests := []struct {
 		name   string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}{
 		{
 			name:   "TestUpdateStats",
@@ -64,12 +65,17 @@ func TestUpdate_ExperimentalFeatures(t *testing.T) {
 			ef.SetMetrics(true)
 			ef.SetEditDocumentsByFunction(true)
 			ef.SetContainsFilter(true)
+			ef.SetNetwork(true)
+			ef.SetCompositeEmbedders(true)
 			gotResp, err := ef.Update()
 			require.NoError(t, err)
+
 			require.Equal(t, true, gotResp.LogsRoute, "ExperimentalFeatures.Update() should return logsRoute as true")
 			require.Equal(t, true, gotResp.Metrics, "ExperimentalFeatures.Update() should return metrics as true")
 			require.Equal(t, true, gotResp.EditDocumentsByFunction, "ExperimentalFeatures.Update() should return editDocumentsByFunction as true")
 			require.Equal(t, true, gotResp.ContainsFilter, "ExperimentalFeatures.Update() should return containsFilter as true")
+			require.Equal(t, true, gotResp.Network, "ExperimentalFeatures.Update() should return network as true")
+			require.Equal(t, true, gotResp.CompositeEmbedders, "ExperimentalFeatures.Update() should return composite embedders as true")
 		})
 	}
 }

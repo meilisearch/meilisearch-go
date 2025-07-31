@@ -1,14 +1,13 @@
-package meilisearch
+package integration
 
 import (
 	"bufio"
-	"context"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
+	"github.com/meilisearch/meilisearch-go"
 	"github.com/stretchr/testify/require"
 	"io"
-	"net/http"
 	"os"
 	"strings"
 	"testing"
@@ -19,22 +18,23 @@ var (
 	defaultRankingRules = []string{
 		"words", "typo", "proximity", "attribute", "sort", "exactness",
 	}
-	defaultTypoTolerance = TypoTolerance{
+	defaultTypoTolerance = meilisearch.TypoTolerance{
 		Enabled: true,
-		MinWordSizeForTypos: MinWordSizeForTypos{
+		MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 			OneTypo:  5,
 			TwoTypos: 9,
 		},
 		DisableOnWords:      []string{},
 		DisableOnAttributes: []string{},
+		DisableOnNumbers:    false,
 	}
-	defaultPagination = Pagination{
+	defaultPagination = meilisearch.Pagination{
 		MaxTotalHits: 1000,
 	}
-	defaultFaceting = Faceting{
+	defaultFaceting = meilisearch.Faceting{
 		MaxValuesPerFacet: 100,
-		SortFacetValuesBy: map[string]SortFacetType{
-			"*": SortFacetTypeAlpha,
+		SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+			"*": meilisearch.SortFacetTypeAlpha,
 		},
 	}
 )
@@ -66,22 +66,22 @@ type docTestBooks struct {
 	Year   int    `json:"year"`
 }
 
-func setup(t *testing.T, host string, options ...Option) ServiceManager {
+func setup(t *testing.T, host string, options ...meilisearch.Option) meilisearch.ServiceManager {
 	t.Helper()
 
-	opts := make([]Option, 0)
-	opts = append(opts, WithAPIKey(masterKey))
+	opts := make([]meilisearch.Option, 0)
+	opts = append(opts, meilisearch.WithAPIKey(masterKey))
 	opts = append(opts, options...)
 
 	if host == "" {
 		host = getenv("MEILISEARCH_URL", "http://localhost:7700")
 	}
 
-	sv := New(host, opts...)
+	sv := meilisearch.New(host, opts...)
 	return sv
 }
 
-func cleanup(services ...ServiceManager) func() {
+func cleanup(services ...meilisearch.ServiceManager) func() {
 	return func() {
 		for _, s := range services {
 			_, _ = deleteAllIndexes(s)
@@ -90,7 +90,7 @@ func cleanup(services ...ServiceManager) func() {
 	}
 }
 
-func getPrivateKey(sv ServiceManager) (key string) {
+func getPrivateKey(sv meilisearch.ServiceManager) (key string) {
 	list, err := sv.GetKeys(nil)
 	if err != nil {
 		return ""
@@ -103,7 +103,7 @@ func getPrivateKey(sv ServiceManager) (key string) {
 	return ""
 }
 
-func getPrivateUIDKey(sv ServiceManager) (key string) {
+func getPrivateUIDKey(sv meilisearch.ServiceManager) (key string) {
 	list, err := sv.GetKeys(nil)
 	if err != nil {
 		return ""
@@ -116,7 +116,7 @@ func getPrivateUIDKey(sv ServiceManager) (key string) {
 	return ""
 }
 
-func deleteAllIndexes(sv ServiceManager) (ok bool, err error) {
+func deleteAllIndexes(sv meilisearch.ServiceManager) (ok bool, err error) {
 	list, err := sv.ListIndexes(nil)
 	if err != nil {
 		return false, err
@@ -133,7 +133,7 @@ func deleteAllIndexes(sv ServiceManager) (ok bool, err error) {
 	return true, nil
 }
 
-func deleteAllKeys(sv ServiceManager) (ok bool, err error) {
+func deleteAllKeys(sv meilisearch.ServiceManager) (ok bool, err error) {
 	list, err := sv.GetKeys(nil)
 	if err != nil {
 		return false, err
@@ -159,21 +159,22 @@ func getenv(key, fallback string) string {
 	return value
 }
 
-func testWaitForTask(t *testing.T, i IndexManager, u *TaskInfo) {
+func testWaitForTask(t *testing.T, i meilisearch.IndexManager, u *meilisearch.TaskInfo) {
 	t.Helper()
 	r, err := i.WaitForTask(u.TaskUID, 0)
 	require.NoError(t, err)
-	require.Equal(t, TaskStatusSucceeded, r.Status, fmt.Sprintf("Task failed: %#+v", r))
+	require.Equal(t, meilisearch.TaskStatusSucceeded, r.Status, fmt.Sprintf("Task failed: %#+v", r))
 }
 
-func testWaitForBatchTask(t *testing.T, i IndexManager, u []TaskInfo) {
+func testWaitForBatchTask(t *testing.T, i meilisearch.IndexManager, u []meilisearch.TaskInfo) {
 	for _, id := range u {
 		_, err := i.WaitForTask(id.TaskUID, 0)
 		require.NoError(t, err)
 	}
 }
 
-func setUpEmptyIndex(sv ServiceManager, index *IndexConfig) (resp *IndexResult, err error) {
+func setUpEmptyIndex(sv meilisearch.ServiceManager,
+	index *meilisearch.IndexConfig) (resp *meilisearch.IndexResult, err error) {
 	task, err := sv.CreateIndex(index)
 	if err != nil {
 		fmt.Println(err)
@@ -187,7 +188,7 @@ func setUpEmptyIndex(sv ServiceManager, index *IndexConfig) (resp *IndexResult, 
 	return sv.GetIndex(index.Uid)
 }
 
-func setUpBasicIndex(sv ServiceManager, indexUID string) {
+func setUpBasicIndex(sv meilisearch.ServiceManager, indexUID string) {
 	index := sv.Index(indexUID)
 
 	documents := []map[string]interface{}{
@@ -199,7 +200,7 @@ func setUpBasicIndex(sv ServiceManager, indexUID string) {
 		{"book_id": 42, "title": "The Hitchhiker's Guide to the Galaxy"},
 	}
 
-	task, err := index.AddDocuments(documents)
+	task, err := index.AddDocuments(documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -210,10 +211,10 @@ func setUpBasicIndex(sv ServiceManager, indexUID string) {
 	}
 }
 
-func setupMovieIndex(t *testing.T, client ServiceManager) IndexManager {
+func setupMovieIndex(t *testing.T, client meilisearch.ServiceManager, uid string) meilisearch.IndexManager {
 	t.Helper()
 
-	idx := client.Index("indexUID")
+	idx := client.Index(uid)
 
 	testdata, err := os.Open("./testdata/movies.json")
 	require.NoError(t, err)
@@ -223,18 +224,42 @@ func setupMovieIndex(t *testing.T, client ServiceManager) IndexManager {
 
 	require.NoError(t, json.NewDecoder(testdata).Decode(&tests))
 
-	task, err := idx.AddDocuments(tests)
+	task, err := idx.AddDocuments(tests, nil)
 	require.NoError(t, err)
 	testWaitForTask(t, idx, task)
 
-	task, err = idx.UpdateFilterableAttributes(&[]string{"id"})
+	task, err = idx.UpdateFilterableAttributes(&[]interface{}{"id", "title", "overview"})
 	require.NoError(t, err)
 	testWaitForTask(t, idx, task)
 
 	return idx
 }
 
-func setUpIndexForFaceting(client ServiceManager) {
+func setupComicIndex(t *testing.T, client meilisearch.ServiceManager, uid string) meilisearch.IndexManager {
+	t.Helper()
+
+	idx := client.Index(uid)
+
+	testdata, err := os.Open("./testdata/comics.json")
+	require.NoError(t, err)
+	defer testdata.Close()
+
+	tests := make([]map[string]interface{}, 0)
+
+	require.NoError(t, json.NewDecoder(testdata).Decode(&tests))
+
+	task, err := idx.AddDocuments(tests, nil)
+	require.NoError(t, err)
+	testWaitForTask(t, idx, task)
+
+	task, err = idx.UpdateFilterableAttributes(&[]interface{}{"id", "title", "overview"})
+	require.NoError(t, err)
+	testWaitForTask(t, idx, task)
+
+	return idx
+}
+
+func setUpIndexForFaceting(client meilisearch.ServiceManager) {
 	idx := client.Index("indexUID")
 
 	booksTest := []docTestBooks{
@@ -261,7 +286,7 @@ func setUpIndexForFaceting(client ServiceManager) {
 		{BookID: 1039, Title: "The Girl in the white shirt", Tag: "white shirt", Year: 1999},
 		{BookID: 1050, Title: "星の王子さま", Tag: "物語", Year: 1943},
 	}
-	task, err := idx.AddDocuments(booksTest)
+	task, err := idx.AddDocuments(booksTest, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -272,7 +297,7 @@ func setUpIndexForFaceting(client ServiceManager) {
 	}
 }
 
-func setUpIndexWithNestedFields(client ServiceManager, indexUID string) {
+func setUpIndexWithNestedFields(client meilisearch.ServiceManager, indexUID string) {
 	index := client.Index(indexUID)
 
 	documents := []map[string]interface{}{
@@ -284,7 +309,7 @@ func setUpIndexWithNestedFields(client ServiceManager, indexUID string) {
 		{"id": 6, "title": "Harry Potter and the Half-Blood Prince", "info": map[string]interface{}{"comment": "The best book", "reviewNb": 1000}},
 		{"id": 7, "title": "The Hitchhiker's Guide to the Galaxy"},
 	}
-	task, err := index.AddDocuments(documents)
+	task, err := index.AddDocuments(documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -295,25 +320,12 @@ func setUpIndexWithNestedFields(client ServiceManager, indexUID string) {
 	}
 }
 
-func setUpIndexWithVector(client *meilisearch, indexUID string) (resp *IndexResult, err error) {
-	req := &internalRequest{
-		endpoint:    "/experimental-features",
-		method:      http.MethodPatch,
-		contentType: "application/json",
-		withRequest: map[string]interface{}{
-			"vectorStore": true,
-		},
-	}
-
-	if err := client.client.executeRequest(context.Background(), req); err != nil {
-		return nil, err
-	}
-
+func setUpIndexWithVector(client meilisearch.ServiceManager, indexUID string) (resp *meilisearch.IndexResult, err error) {
 	idx := client.Index(indexUID)
-	taskInfo, err := idx.UpdateSettings(&Settings{
-		Embedders: map[string]Embedder{
+	taskInfo, err := idx.UpdateSettings(&meilisearch.Settings{
+		Embedders: map[string]meilisearch.Embedder{
 			"default": {
-				Source:     "userProvided",
+				Source:     meilisearch.UserProvidedEmbedderSource,
 				Dimensions: 3,
 			},
 		},
@@ -325,8 +337,8 @@ func setUpIndexWithVector(client *meilisearch, indexUID string) (resp *IndexResu
 	if err != nil {
 		return nil, err
 	}
-	if settingsTask.Status != TaskStatusSucceeded {
-		return nil, fmt.Errorf("Update settings task failed: %#+v", settingsTask)
+	if settingsTask.Status != meilisearch.TaskStatusSucceeded {
+		return nil, fmt.Errorf("update settings task failed: %#+v", settingsTask)
 	}
 
 	documents := []map[string]interface{}{
@@ -334,23 +346,23 @@ func setUpIndexWithVector(client *meilisearch, indexUID string) (resp *IndexResu
 		{"book_id": 456, "title": "Le Petit Prince", "_vectors": map[string]interface{}{"default": []float64{2.4, 8.5, 1.6}}},
 	}
 
-	taskInfo, err = idx.AddDocuments(documents)
+	taskInfo, err = idx.AddDocuments(documents, nil)
 	if err != nil {
 		return nil, err
 	}
 
 	finalTask, _ := idx.WaitForTask(taskInfo.TaskUID, 0)
-	if finalTask.Status != TaskStatusSucceeded {
-		return nil, fmt.Errorf("Add documents task failed: %#+v", finalTask)
+	if finalTask.Status != meilisearch.TaskStatusSucceeded {
+		return nil, fmt.Errorf("add documents task failed: %#+v", finalTask)
 	}
 
 	return client.GetIndex(indexUID)
 }
 
-func setUpDistinctIndex(client ServiceManager, indexUID string) {
+func setUpDistinctIndex(client meilisearch.ServiceManager, indexUID string) {
 	idx := client.Index(indexUID)
 
-	atters := []string{"product_id", "title", "sku", "url"}
+	atters := []interface{}{"product_id", "title", "sku", "url"}
 	task, err := idx.UpdateFilterableAttributes(&atters)
 	if err != nil {
 		fmt.Println(err)
@@ -370,7 +382,7 @@ func setUpDistinctIndex(client ServiceManager, indexUID string) {
 		{"product_id": 4, "title": "yellow shirt", "sku": "sku9064", "url": "https://example.com/products/p4"},
 		{"product_id": 42, "title": "gray shirt", "sku": "sku964", "url": "https://example.com/products/p42"},
 	}
-	task, err = idx.AddDocuments(documents)
+	task, err = idx.AddDocuments(documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -406,19 +418,41 @@ func testParseCsvDocuments(t *testing.T, documents io.Reader) []map[string]inter
 	return docs
 }
 
-func testParseNdjsonDocuments(t *testing.T, documents io.Reader) []map[string]interface{} {
-	var docs []map[string]interface{}
+func hitsToStringMaps(hits meilisearch.Hits) []map[string]interface{} {
+	var result []map[string]interface{}
+	for _, hit := range hits {
+		m := make(map[string]interface{})
+		for k, v := range hit {
+			var s string
+			_ = json.Unmarshal(v, &s)
+			m[k] = s
+		}
+		result = append(result, m)
+	}
+	return result
+}
+
+func testParseNdjsonDocuments(t *testing.T, documents io.Reader) meilisearch.Hits {
+	var docs meilisearch.Hits
 	scanner := bufio.NewScanner(documents)
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 		if line == "" {
 			continue
 		}
-		doc := make(map[string]interface{})
+		doc := make(meilisearch.Hit)
 		err := json.Unmarshal([]byte(line), &doc)
 		require.NoError(t, err)
 		docs = append(docs, doc)
 	}
 	require.NoError(t, scanner.Err())
 	return docs
+}
+
+func toRawMessage(vPtr interface{}) json.RawMessage {
+	data, err := json.Marshal(vPtr)
+	if err != nil {
+		return nil
+	}
+	return data
 }

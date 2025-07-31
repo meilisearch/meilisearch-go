@@ -2,13 +2,32 @@ package meilisearch
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"net"
 	"net/http"
 	"time"
 )
 
-var (
-	defaultMeiliOpt = &meiliOpt{
+type meiliOpt struct {
+	client          *http.Client
+	apiKey          string
+	contentEncoding *encodingOpt
+	retryOnStatus   map[int]bool
+	disableRetry    bool
+	maxRetries      uint8
+	jsonMarshaler   JSONMarshal
+	jsonUnmarshaler JSONUnmarshal
+}
+
+type encodingOpt struct {
+	encodingType ContentEncoding
+	level        EncodingCompressionLevel
+}
+
+type Option func(*meiliOpt)
+
+func _defaultOpts() *meiliOpt {
+	return &meiliOpt{
 		client: &http.Client{
 			Transport: baseTransport(),
 		},
@@ -20,26 +39,12 @@ var (
 			503: true,
 			504: true,
 		},
-		disableRetry: false,
-		maxRetries:   3,
+		disableRetry:    false,
+		maxRetries:      3,
+		jsonMarshaler:   json.Marshal,
+		jsonUnmarshaler: json.Unmarshal,
 	}
-)
-
-type meiliOpt struct {
-	client          *http.Client
-	apiKey          string
-	contentEncoding *encodingOpt
-	retryOnStatus   map[int]bool
-	disableRetry    bool
-	maxRetries      uint8
 }
-
-type encodingOpt struct {
-	encodingType ContentEncoding
-	level        EncodingCompressionLevel
-}
-
-type Option func(*meiliOpt)
 
 // WithCustomClient set custom http.Client
 func WithCustomClient(client *http.Client) Option {
@@ -100,6 +105,34 @@ func WithCustomRetries(retryOnStatus []int, maxRetries uint8) Option {
 func DisableRetries() Option {
 	return func(opt *meiliOpt) {
 		opt.disableRetry = true
+	}
+}
+
+// WithCustomJsonMarshaler set custom marshal from external packages instead encoding/json.
+// we use encoding/json as default json library due to stability and producibility. However,
+// the standard library is a bit slow compared to 3rd party libraries. If you're not happy with
+// the performance of encoding/json.
+//
+// supported package: goccy/go-json, bytedance/sonic, segmentio/encoding, minio/simdjson-go, wI2L/jettison, mailru/easyjson.
+//
+// default is encoding/json
+func WithCustomJsonMarshaler(marshal JSONMarshal) Option {
+	return func(opt *meiliOpt) {
+		opt.jsonMarshaler = marshal
+	}
+}
+
+// WithCustomJsonUnmarshaler set custom unmarshal from external packages instead encoding/json.
+// we use encoding/json as default json library due to stability and producibility. However,
+// the standard library is a bit slow compared to 3rd party libraries. If you're not happy with
+// the performance of encoding/json.
+//
+// supported package: goccy/go-json, bytedance/sonic, segmentio/encoding, minio/simdjson-go, wI2L/jettison, mailru/easyjson.
+//
+// default is encoding/json
+func WithCustomJsonUnmarshaler(unmarshal JSONUnmarshal) Option {
+	return func(opt *meiliOpt) {
+		opt.jsonUnmarshaler = unmarshal
 	}
 }
 

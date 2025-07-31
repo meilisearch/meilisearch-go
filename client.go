@@ -3,7 +3,6 @@ package meilisearch
 import (
 	"bytes"
 	"context"
-	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
@@ -24,6 +23,9 @@ type client struct {
 	disableRetry    bool
 	maxRetries      uint8
 	retryBackoff    func(attempt uint8) time.Duration
+
+	jsonMarshal   JSONMarshal
+	jsonUnmarshal JSONUnmarshal
 }
 
 type clientConfig struct {
@@ -32,6 +34,8 @@ type clientConfig struct {
 	retryOnStatus            map[int]bool
 	disableRetry             bool
 	maxRetries               uint8
+	jsonMarshal              JSONMarshal
+	jsonUnmarshal            JSONUnmarshal
 }
 
 type internalRequest struct {
@@ -47,7 +51,7 @@ type internalRequest struct {
 	functionName string
 }
 
-func newClient(cli *http.Client, host, apiKey string, cfg clientConfig) *client {
+func newClient(cli *http.Client, host, apiKey string, cfg *clientConfig) *client {
 	c := &client{
 		client: cli,
 		host:   host,
@@ -60,6 +64,8 @@ func newClient(cli *http.Client, host, apiKey string, cfg clientConfig) *client 
 		disableRetry:  cfg.disableRetry,
 		maxRetries:    cfg.maxRetries,
 		retryOnStatus: cfg.retryOnStatus,
+		jsonMarshal:   cfg.jsonMarshal,
+		jsonUnmarshal: cfg.jsonUnmarshal,
 	}
 
 	if c.retryOnStatus == nil {
@@ -146,74 +152,9 @@ func (c *client) sendRequest(
 		apiURL.RawQuery = query.Encode()
 	}
 
-	// Create request body
-	var body io.Reader = nil
-	if req.withRequest != nil {
-		if req.method == http.MethodGet || req.method == http.MethodHead {
-			return nil, ErrInvalidRequestMethod
-		}
-		if req.contentType == "" {
-			return nil, ErrRequestBodyWithoutContentType
-		}
-
-		rawRequest := req.withRequest
-
-		buf := c.bufferPool.Get().(*bytes.Buffer)
-		buf.Reset()
-
-		if b, ok := rawRequest.([]byte); ok {
-			buf.Write(b)
-			body = buf
-		} else if reader, ok := rawRequest.(io.Reader); ok {
-			// If the request body is an io.Reader then stream it directly
-			body = reader
-		} else {
-			// Otherwise convert it to JSON
-			var (
-				data []byte
-				err  error
-			)
-			if marshaler, ok := rawRequest.(json.Marshaler); ok {
-				data, err = marshaler.MarshalJSON()
-				if err != nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-						fmt.Errorf("failed to marshal with MarshalJSON: %w", err))
-				}
-				if data == nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-						errors.New("MarshalJSON returned nil data"))
-				}
-			} else {
-				data, err = json.Marshal(rawRequest)
-				if err != nil {
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-						fmt.Errorf("failed to marshal with json.Marshal: %w", err))
-				}
-			}
-			buf.Write(data)
-			body = buf
-		}
-
-		if !c.contentEncoding.IsZero() {
-			// Get the data from the buffer before encoding
-			var bufData []byte
-			if buf, ok := body.(*bytes.Buffer); ok {
-				bufData = buf.Bytes()
-				encodedBuf, err := c.encoder.Encode(bytes.NewReader(bufData))
-				if err != nil {
-					if buf, ok := body.(*bytes.Buffer); ok {
-						c.bufferPool.Put(buf)
-					}
-					return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
-						fmt.Errorf("failed to encode request body: %w", err))
-				}
-				// Return the original buffer to the pool since we have a new one
-				if buf, ok := body.(*bytes.Buffer); ok {
-					c.bufferPool.Put(buf)
-				}
-				body = encodedBuf
-			}
-		}
+	body, err := c.buildBody(req, internalError)
+	if err != nil {
+		return nil, err
 	}
 
 	// Create the HTTP request
@@ -242,14 +183,16 @@ func (c *client) sendRequest(
 
 	resp, err := c.do(request, internalError)
 	if err != nil {
+		if rc, ok := body.(io.Closer); ok {
+			_ = rc.Close()
+		}
 		return nil, err
 	}
 
-	if body != nil {
-		if buf, ok := body.(*bytes.Buffer); ok {
-			c.bufferPool.Put(buf)
-		}
+	if rc, ok := body.(io.Closer); ok {
+		_ = rc.Close()
 	}
+
 	return resp, nil
 }
 
@@ -335,23 +278,74 @@ func (c *client) handleResponse(req *internalRequest, body []byte, internalError
 			}
 		} else {
 			internalError.ResponseToString = string(body)
-
 			if internalError.ResponseToString == nullBody {
 				req.withResponse = nil
 				return nil
 			}
 
-			var err error
-			if resp, ok := req.withResponse.(json.Unmarshaler); ok {
-				err = resp.UnmarshalJSON(body)
-				req.withResponse = resp
-			} else {
-				err = json.Unmarshal(body, req.withResponse)
-			}
-			if err != nil {
+			if err := c.jsonUnmarshal(body, req.withResponse); err != nil {
 				return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
 			}
 		}
 	}
 	return nil
+}
+
+func (c *client) buildBody(req *internalRequest, internalError *Error) (io.ReadCloser, error) {
+	var body io.Reader
+	var buf *bytes.Buffer
+	var bufFromPool bool
+
+	if req.withRequest != nil {
+		if req.method == http.MethodGet || req.method == http.MethodHead {
+			return nil, ErrInvalidRequestMethod
+		}
+		if req.contentType == "" {
+			return nil, ErrRequestBodyWithoutContentType
+		}
+
+		switch v := req.withRequest.(type) {
+		case io.ReadCloser:
+			body = v
+		case io.Reader:
+			body = io.NopCloser(v)
+		case []byte:
+			body = io.NopCloser(bytes.NewReader(v))
+		default:
+			buf = c.bufferPool.Get().(*bytes.Buffer)
+			buf.Reset()
+			bufFromPool = true
+
+			data, err := c.jsonMarshal(req.withRequest)
+			if err != nil {
+				c.bufferPool.Put(buf)
+				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
+					fmt.Errorf("failed to marshal request with json.Marshal: %w", err))
+			}
+			buf.Write(data)
+			body = buf
+		}
+
+		if !c.contentEncoding.IsZero() {
+			compressedBody, err := c.encoder.Encode(body)
+			if bufFromPool {
+				c.bufferPool.Put(buf)
+			}
+			if err != nil {
+				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
+					fmt.Errorf("failed to encode request body: %w", err))
+			}
+			return compressedBody, nil
+		}
+	}
+
+	// If not compressed, make sure body is io.ReadCloser
+	switch b := body.(type) {
+	case nil:
+		return nil, nil
+	case io.ReadCloser:
+		return b, nil
+	default:
+		return io.NopCloser(b), nil
+	}
 }

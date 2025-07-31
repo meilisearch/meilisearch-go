@@ -2,13 +2,14 @@ package meilisearch
 
 import (
 	"crypto/tls"
+	"encoding/json"
 	"github.com/stretchr/testify/require"
 	"net/http"
 	"testing"
 )
 
 func TestOptions_WithCustomClient(t *testing.T) {
-	meili := setup(t, "", WithCustomClient(http.DefaultClient))
+	meili := New("localhost:7700", WithCustomClient(http.DefaultClient))
 	require.NotNil(t, meili)
 
 	m, ok := meili.(*meilisearch)
@@ -19,7 +20,7 @@ func TestOptions_WithCustomClient(t *testing.T) {
 
 func TestOptions_WithCustomClientWithTLS(t *testing.T) {
 	tl := new(tls.Config)
-	meili := setup(t, "", WithCustomClientWithTLS(tl))
+	meili := New("localhost:7700", WithCustomClientWithTLS(tl))
 	require.NotNil(t, meili)
 
 	m, ok := meili.(*meilisearch)
@@ -32,7 +33,7 @@ func TestOptions_WithCustomClientWithTLS(t *testing.T) {
 }
 
 func TestOptions_WithAPIKey(t *testing.T) {
-	meili := setup(t, "", WithAPIKey("foobar"))
+	meili := New("localhost:7700", WithAPIKey("foobar"))
 	require.NotNil(t, meili)
 
 	m, ok := meili.(*meilisearch)
@@ -42,7 +43,7 @@ func TestOptions_WithAPIKey(t *testing.T) {
 }
 
 func TestOptions_WithContentEncoding(t *testing.T) {
-	meili := setup(t, "", WithContentEncoding(GzipEncoding, DefaultCompression))
+	meili := New("localhost:7700", WithContentEncoding(GzipEncoding, DefaultCompression))
 	require.NotNil(t, meili)
 
 	m, ok := meili.(*meilisearch)
@@ -53,7 +54,7 @@ func TestOptions_WithContentEncoding(t *testing.T) {
 }
 
 func TestOptions_WithCustomRetries(t *testing.T) {
-	meili := setup(t, "", WithCustomRetries([]int{http.StatusInternalServerError}, 10))
+	meili := New("localhost:7700", WithCustomRetries([]int{http.StatusInternalServerError}, 10))
 	require.NotNil(t, meili)
 
 	m, ok := meili.(*meilisearch)
@@ -61,7 +62,7 @@ func TestOptions_WithCustomRetries(t *testing.T) {
 	require.True(t, m.client.retryOnStatus[http.StatusInternalServerError])
 	require.Equal(t, m.client.maxRetries, uint8(10))
 
-	meili = setup(t, "", WithCustomRetries([]int{http.StatusInternalServerError}, 0))
+	meili = New("localhost:7700", WithCustomRetries([]int{http.StatusInternalServerError}, 0))
 	require.NotNil(t, meili)
 
 	m, ok = meili.(*meilisearch)
@@ -71,10 +72,22 @@ func TestOptions_WithCustomRetries(t *testing.T) {
 }
 
 func TestOptions_DisableRetries(t *testing.T) {
-	meili := setup(t, "", DisableRetries())
+	meili := New("localhost:7700", DisableRetries())
 	require.NotNil(t, meili)
 
 	m, ok := meili.(*meilisearch)
 	require.True(t, ok)
 	require.Equal(t, m.client.disableRetry, true)
+}
+
+func TestOptions_WithCustomJsonMarshalAndUnmarshaler(t *testing.T) {
+	meili := New("localhost:7700", WithCustomJsonMarshaler(json.Marshal),
+		WithCustomJsonUnmarshaler(json.Unmarshal))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+
+	require.NotNil(t, m.client.jsonMarshal)
+	require.NotNil(t, m.client.jsonUnmarshal)
 }

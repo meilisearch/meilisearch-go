@@ -1,43 +1,18 @@
 package meilisearch
 
 import (
+	"encoding/json"
 	"time"
 
 	"github.com/golang-jwt/jwt/v4"
 )
 
-type (
-	ContentEncoding          string
-	EncodingCompressionLevel int
-)
-
 const (
-	DefaultLimit int64 = 20
-
 	contentTypeJSON   string = "application/json"
 	contentTypeNDJSON string = "application/x-ndjson"
 	contentTypeCSV    string = "text/csv"
-
-	GzipEncoding    ContentEncoding = "gzip"
-	DeflateEncoding ContentEncoding = "deflate"
-	BrotliEncoding  ContentEncoding = "br"
-
-	NoCompression          EncodingCompressionLevel = 0
-	BestSpeed              EncodingCompressionLevel = 1
-	BestCompression        EncodingCompressionLevel = 9
-	DefaultCompression     EncodingCompressionLevel = -1
-	HuffmanOnlyCompression EncodingCompressionLevel = -2
-	ConstantCompression    EncodingCompressionLevel = -2
-	StatelessCompression   EncodingCompressionLevel = -3
-
-	nullBody = "null"
+	nullBody                 = "null"
 )
-
-func (c ContentEncoding) String() string { return string(c) }
-
-func (c ContentEncoding) IsZero() bool { return c == "" }
-
-func (c EncodingCompressionLevel) Int() int { return int(c) }
 
 type IndexConfig struct {
 	// Uid is the unique identifier of a given index.
@@ -65,6 +40,21 @@ type IndexesResults struct {
 type IndexesQuery struct {
 	Limit  int64
 	Offset int64
+}
+
+type AttributeRule struct {
+	AttributePatterns []string          `json:"attributePatterns"`
+	Features          AttributeFeatures `json:"features"`
+}
+
+type AttributeFeatures struct {
+	FacetSearch bool           `json:"facetSearch"`
+	Filter      FilterFeatures `json:"filter"`
+}
+
+type FilterFeatures struct {
+	Equality   bool `json:"equality"`
+	Comparison bool `json:"comparison"`
 }
 
 // Settings is the type that represents the settings in meilisearch
@@ -102,6 +92,7 @@ type TypoTolerance struct {
 	MinWordSizeForTypos MinWordSizeForTypos `json:"minWordSizeForTypos,omitempty"`
 	DisableOnWords      []string            `json:"disableOnWords,omitempty"`
 	DisableOnAttributes []string            `json:"disableOnAttributes,omitempty"`
+	DisableOnNumbers    bool                `json:"disableOnNumbers,omitempty"`
 }
 
 // MinWordSizeForTypos is the type that represents the minWordSizeForTypos setting in the typo tolerance setting in meilisearch
@@ -123,18 +114,44 @@ type Faceting struct {
 }
 
 // Embedder represents a unified configuration for various embedder types.
+//
+// Specs: https://www.meilisearch.com/docs/reference/api/settings#body-21
 type Embedder struct {
-	Source           string                 `json:"source"`                     // The type of embedder: "openAi", "huggingFace", "userProvided", "rest", "ollama"
-	Model            string                 `json:"model,omitempty"`            // Optional for "openAi", "huggingFace", "ollama"
-	APIKey           string                 `json:"apiKey,omitempty"`           // Optional for "openAi", "rest", "ollama"
-	DocumentTemplate string                 `json:"documentTemplate,omitempty"` // Optional for most embedders
-	Dimensions       int                    `json:"dimensions,omitempty"`       // Optional for "openAi", "rest", "userProvided", "ollama"
-	Distribution     *Distribution          `json:"distribution,omitempty"`     // Optional for all embedders
-	URL              string                 `json:"url,omitempty"`              // Optional for "openAi", "rest", "ollama"
-	Revision         string                 `json:"revision,omitempty"`         // Optional for "huggingFace"
-	Request          map[string]interface{} `json:"request,omitempty"`          // Optional for "rest"
-	Response         map[string]interface{} `json:"response,omitempty"`         // Optional for "rest"
-	Headers          map[string]string      `json:"headers,omitempty"`          // Optional for "rest"
+	Source EmbedderSource `json:"source"` // The type of embedder: "openAi", "huggingFace", "userProvided", "rest", "ollama"
+	// URL Meilisearch queries url to generate vector embeddings for queries and documents.
+	// url must point to a REST-compatible embedder. You may also use url to work with proxies, such as when targeting openAi from behind a proxy.
+	URL    string `json:"url,omitempty"`    // Optional for "openAi", "rest", "ollama"
+	APIKey string `json:"apiKey,omitempty"` // Optional for "openAi", "rest", "ollama"
+	// Model The model your embedder uses when generating vectors.
+	// These are the officially supported models Meilisearch supports:
+	//
+	// - openAi: text-embedding-3-small, text-embedding-3-large, openai-text-embedding-ada-002
+	//
+	// - huggingFace: BAAI/bge-base-en-v1.5
+	//
+	// Other models, such as HuggingFace’s BERT models or those provided by Ollama and REST embedders
+	// may also be compatible with Meilisearch.
+	//
+	// HuggingFace’s BERT models: https://huggingface.co/models?other=bert
+	Model string `json:"model,omitempty"` // Optional for "openAi", "huggingFace", "ollama"
+	// DocumentTemplate is a string containing a Liquid template. Meillisearch interpolates the template for each
+	// document and sends the resulting text to the embedder. The embedder then generates document vectors based on this text.
+	DocumentTemplate string `json:"documentTemplate,omitempty"` // Optional for most embedders
+	// DocumentTemplateMaxBytes The maximum size of a rendered document template.
+	//Longer texts are truncated to fit the configured limit.
+	//
+	// documentTemplateMaxBytes must be an integer. It defaults to 400.
+	DocumentTemplateMaxBytes int                    `json:"documentTemplateMaxBytes,omitempty"`
+	Dimensions               int                    `json:"dimensions,omitempty"`   // Optional for "openAi", "rest", "userProvided", "ollama"
+	Revision                 string                 `json:"revision,omitempty"`     // Optional for "huggingFace"
+	Distribution             *Distribution          `json:"distribution,omitempty"` // Optional for all embedders
+	Request                  map[string]interface{} `json:"request,omitempty"`      // Optional for "rest"
+	Response                 map[string]interface{} `json:"response,omitempty"`     // Optional for "rest"
+	Headers                  map[string]string      `json:"headers,omitempty"`      // Optional for "rest"
+	BinaryQuantized          bool                   `json:"binaryQuantized,omitempty"`
+	Pooling                  EmbedderPooling        `json:"pooling,omitempty"`
+	IndexingEmbedder         *Embedder              `json:"indexingEmbedder,omitempty"` // For Composite
+	SearchEmbedder           *Embedder              `json:"searchEmbedder,omitempty"`   // For Composite
 }
 
 // Distribution represents a statistical distribution with mean and standard deviation (sigma).
@@ -168,83 +185,6 @@ type Stats struct {
 	LastUpdate       time.Time             `json:"lastUpdate"`
 	Indexes          map[string]StatsIndex `json:"indexes"`
 }
-
-type (
-	TaskType               string // TaskType is the type of a task
-	SortFacetType          string // SortFacetType is type of facet sorting, alpha or count
-	TaskStatus             string // TaskStatus is the status of a task.
-	ProximityPrecisionType string // ProximityPrecisionType accepts one of the ByWord or ByAttribute
-	MatchingStrategy       string // MatchingStrategy one of the Last, All, Frequency
-)
-
-const (
-	// Last returns documents containing all the query terms first. If there are not enough results containing all
-	// query terms to meet the requested limit, Meilisearch will remove one query term at a time,
-	// starting from the end of the query.
-	Last MatchingStrategy = "last"
-	// All only returns documents that contain all query terms. Meilisearch will not match any more documents even
-	// if there aren't enough to meet the requested limit.
-	All MatchingStrategy = "all"
-	// Frequency returns documents containing all the query terms first. If there are not enough results containing
-	//all query terms to meet the requested limit, Meilisearch will remove one query term at a time, starting
-	//with the word that is the most frequent in the dataset. frequency effectively gives more weight to terms
-	//that appear less frequently in a set of results.
-	Frequency MatchingStrategy = "frequency"
-)
-
-const (
-	// ByWord calculate the precise distance between query terms. Higher precision, but may lead to longer
-	// indexing time. This is the default setting
-	ByWord ProximityPrecisionType = "byWord"
-	// ByAttribute determine if multiple query terms are present in the same attribute.
-	// Lower precision, but shorter indexing time
-	ByAttribute ProximityPrecisionType = "byAttribute"
-)
-
-const (
-	// TaskStatusUnknown is the default TaskStatus, should not exist
-	TaskStatusUnknown TaskStatus = "unknown"
-	// TaskStatusEnqueued the task request has been received and will be processed soon
-	TaskStatusEnqueued TaskStatus = "enqueued"
-	// TaskStatusProcessing the task is being processed
-	TaskStatusProcessing TaskStatus = "processing"
-	// TaskStatusSucceeded the task has been successfully processed
-	TaskStatusSucceeded TaskStatus = "succeeded"
-	// TaskStatusFailed a failure occurred when processing the task, no changes were made to the database
-	TaskStatusFailed TaskStatus = "failed"
-	// TaskStatusCanceled the task was canceled
-	TaskStatusCanceled TaskStatus = "canceled"
-)
-
-const (
-	SortFacetTypeAlpha SortFacetType = "alpha"
-	SortFacetTypeCount SortFacetType = "count"
-)
-
-const (
-	// TaskTypeIndexCreation represents an index creation
-	TaskTypeIndexCreation TaskType = "indexCreation"
-	// TaskTypeIndexUpdate represents an index update
-	TaskTypeIndexUpdate TaskType = "indexUpdate"
-	// TaskTypeIndexDeletion represents an index deletion
-	TaskTypeIndexDeletion TaskType = "indexDeletion"
-	// TaskTypeIndexSwap represents an index swap
-	TaskTypeIndexSwap TaskType = "indexSwap"
-	// TaskTypeDocumentAdditionOrUpdate represents a document addition or update in an index
-	TaskTypeDocumentAdditionOrUpdate TaskType = "documentAdditionOrUpdate"
-	// TaskTypeDocumentDeletion represents a document deletion from an index
-	TaskTypeDocumentDeletion TaskType = "documentDeletion"
-	// TaskTypeSettingsUpdate represents a settings update
-	TaskTypeSettingsUpdate TaskType = "settingsUpdate"
-	// TaskTypeDumpCreation represents a dump creation
-	TaskTypeDumpCreation TaskType = "dumpCreation"
-	// TaskTypeTaskCancelation represents a task cancelation
-	TaskTypeTaskCancelation TaskType = "taskCancelation"
-	// TaskTypeTaskDeletion represents a task deletion
-	TaskTypeTaskDeletion TaskType = "taskDeletion"
-	// TaskTypeSnapshotCreation represents a snapshot creation
-	TaskTypeSnapshotCreation TaskType = "snapshotCreation"
-)
 
 // Task indicates information about a task resource
 //
@@ -332,7 +272,7 @@ type Details struct {
 	DisplayedAttributes  []string            `json:"displayedAttributes,omitempty"`
 	StopWords            []string            `json:"stopWords,omitempty"`
 	Synonyms             map[string][]string `json:"synonyms,omitempty"`
-	FilterableAttributes []string            `json:"filterableAttributes,omitempty"`
+	FilterableAttributes []interface{}       `json:"filterableAttributes,omitempty"`
 	SortableAttributes   []string            `json:"sortableAttributes,omitempty"`
 	TypoTolerance        *TypoTolerance      `json:"typoTolerance,omitempty"`
 	Pagination           *Pagination         `json:"pagination,omitempty"`
@@ -461,7 +401,8 @@ type SearchRequest struct {
 }
 
 type SearchFederationOptions struct {
-	Weight float64 `json:"weight"`
+	Weight float64 `json:"weight,omitempty"`
+	Remote string  `json:"remote,omitempty"`
 }
 
 type SearchRequestHybrid struct {
@@ -475,35 +416,43 @@ type MultiSearchRequest struct {
 }
 
 type MultiSearchFederation struct {
-	Offset int64 `json:"offset,omitempty"`
-	Limit  int64 `json:"limit,omitempty"`
+	Offset        int64                             `json:"offset,omitempty"`
+	Limit         int64                             `json:"limit,omitempty"`
+	FacetsByIndex map[string][]string               `json:"facetsByIndex,omitempty"`
+	MergeFacets   *MultiSearchFederationMergeFacets `json:"mergeFacets,omitempty"`
+}
+
+type MultiSearchFederationMergeFacets struct {
+	MaxValuesPerFacet int `json:"maxValuesPerFacet,omitempty"`
 }
 
 // SearchResponse is the response body for search method
 type SearchResponse struct {
-	Hits               []interface{} `json:"hits"`
-	EstimatedTotalHits int64         `json:"estimatedTotalHits,omitempty"`
-	Offset             int64         `json:"offset,omitempty"`
-	Limit              int64         `json:"limit,omitempty"`
-	ProcessingTimeMs   int64         `json:"processingTimeMs"`
-	Query              string        `json:"query"`
-	FacetDistribution  interface{}   `json:"facetDistribution,omitempty"`
-	TotalHits          int64         `json:"totalHits,omitempty"`
-	HitsPerPage        int64         `json:"hitsPerPage,omitempty"`
-	Page               int64         `json:"page,omitempty"`
-	TotalPages         int64         `json:"totalPages,omitempty"`
-	FacetStats         interface{}   `json:"facetStats,omitempty"`
-	IndexUID           string        `json:"indexUid,omitempty"`
+	Hits               Hits            `json:"hits"`
+	EstimatedTotalHits int64           `json:"estimatedTotalHits,omitempty"`
+	Offset             int64           `json:"offset,omitempty"`
+	Limit              int64           `json:"limit,omitempty"`
+	ProcessingTimeMs   int64           `json:"processingTimeMs"`
+	Query              string          `json:"query"`
+	FacetDistribution  json.RawMessage `json:"facetDistribution,omitempty"`
+	TotalHits          int64           `json:"totalHits,omitempty"`
+	HitsPerPage        int64           `json:"hitsPerPage,omitempty"`
+	Page               int64           `json:"page,omitempty"`
+	TotalPages         int64           `json:"totalPages,omitempty"`
+	FacetStats         json.RawMessage `json:"facetStats,omitempty"`
+	IndexUID           string          `json:"indexUid,omitempty"`
 }
 
 type MultiSearchResponse struct {
-	Results            []SearchResponse `json:"results,omitempty"`
-	Hits               []interface{}    `json:"hits,omitempty"`
-	ProcessingTimeMs   int64            `json:"processingTimeMs,omitempty"`
-	Offset             int64            `json:"offset,omitempty"`
-	Limit              int64            `json:"limit,omitempty"`
-	EstimatedTotalHits int64            `json:"estimatedTotalHits,omitempty"`
-	SemanticHitCount   int64            `json:"semanticHitCount,omitempty"`
+	Results            []SearchResponse           `json:"results,omitempty"`
+	Hits               Hits                       `json:"hits,omitempty"`
+	ProcessingTimeMs   int64                      `json:"processingTimeMs,omitempty"`
+	Offset             int64                      `json:"offset,omitempty"`
+	Limit              int64                      `json:"limit,omitempty"`
+	EstimatedTotalHits int64                      `json:"estimatedTotalHits,omitempty"`
+	SemanticHitCount   int64                      `json:"semanticHitCount,omitempty"`
+	FacetDistribution  map[string]json.RawMessage `json:"facetDistribution,omitempty"`
+	FacetStats         map[string]json.RawMessage `json:"facetStats,omitempty"`
 }
 
 type FacetSearchRequest struct {
@@ -513,12 +462,13 @@ type FacetSearchRequest struct {
 	Filter               string   `json:"filter,omitempty"`
 	MatchingStrategy     string   `json:"matchingStrategy,omitempty"`
 	AttributesToSearchOn []string `json:"attributesToSearchOn,omitempty"`
+	ExhaustiveFacetCount bool     `json:"exhaustiveFacetCount,omitempty"`
 }
 
 type FacetSearchResponse struct {
-	FacetHits        []interface{} `json:"facetHits"`
-	FacetQuery       string        `json:"facetQuery"`
-	ProcessingTimeMs int64         `json:"processingTimeMs"`
+	FacetHits        Hits   `json:"facetHits"`
+	FacetQuery       string `json:"facetQuery"`
+	ProcessingTimeMs int64  `json:"processingTimeMs"`
 }
 
 // DocumentQuery is the request body get one documents method
@@ -534,6 +484,7 @@ type DocumentsQuery struct {
 	Fields          []string    `json:"fields,omitempty"`
 	Filter          interface{} `json:"filter,omitempty"`
 	RetrieveVectors bool        `json:"retrieveVectors,omitempty"`
+	Ids             []string    `json:"ids,omitempty"`
 }
 
 // SimilarDocumentQuery is query parameters of similar documents
@@ -551,12 +502,12 @@ type SimilarDocumentQuery struct {
 }
 
 type SimilarDocumentResult struct {
-	Hits               []interface{} `json:"hits,omitempty"`
-	ID                 string        `json:"id,omitempty"`
-	ProcessingTimeMS   int64         `json:"processingTimeMs,omitempty"`
-	Limit              int64         `json:"limit,omitempty"`
-	Offset             int64         `json:"offset,omitempty"`
-	EstimatedTotalHits int64         `json:"estimatedTotalHits,omitempty"`
+	Hits               Hits   `json:"hits,omitempty"`
+	ID                 string `json:"id,omitempty"`
+	ProcessingTimeMS   int64  `json:"processingTimeMs,omitempty"`
+	Limit              int64  `json:"limit,omitempty"`
+	Offset             int64  `json:"offset,omitempty"`
+	EstimatedTotalHits int64  `json:"estimatedTotalHits,omitempty"`
 }
 
 type CsvDocumentsQuery struct {
@@ -565,10 +516,10 @@ type CsvDocumentsQuery struct {
 }
 
 type DocumentsResult struct {
-	Results []map[string]interface{} `json:"results"`
-	Limit   int64                    `json:"limit"`
-	Offset  int64                    `json:"offset"`
-	Total   int64                    `json:"total"`
+	Results Hits  `json:"results"`
+	Limit   int64 `json:"limit"`
+	Offset  int64 `json:"offset"`
+	Total   int64 `json:"total"`
 }
 
 type UpdateDocumentByFunctionRequest struct {
@@ -583,6 +534,8 @@ type ExperimentalFeaturesBase struct {
 	Metrics                 *bool `json:"metrics,omitempty"`
 	EditDocumentsByFunction *bool `json:"editDocumentsByFunction,omitempty"`
 	ContainsFilter          *bool `json:"containsFilter,omitempty"`
+	Network                 *bool `json:"network,omitempty"`
+	CompositeEmbedders      *bool `json:"compositeEmbedders,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -590,14 +543,13 @@ type ExperimentalFeaturesResult struct {
 	Metrics                 bool `json:"metrics"`
 	EditDocumentsByFunction bool `json:"editDocumentsByFunction"`
 	ContainsFilter          bool `json:"containsFilter"`
+	Network                 bool `json:"network"`
+	CompositeEmbedders      bool `json:"compositeEmbedders"`
 }
 
 type SwapIndexesParams struct {
 	Indexes []string `json:"indexes"`
 }
-
-// RawType is an alias for raw byte[]
-type RawType []byte
 
 // Health is the request body for set meilisearch health
 type Health struct {
@@ -609,22 +561,91 @@ type UpdateIndexRequest struct {
 	PrimaryKey string `json:"primaryKey"`
 }
 
-// Unknown is unknown json type
-type Unknown map[string]interface{}
-
-// UnmarshalJSON supports json.Unmarshaler interface
-func (b *RawType) UnmarshalJSON(data []byte) error {
-	*b = data
-	return nil
-}
-
-// MarshalJSON supports json.Marshaler interface
-func (b RawType) MarshalJSON() ([]byte, error) {
-	return b, nil
-}
-
 func (s *SearchRequest) validate() {
 	if s.Hybrid != nil && s.Hybrid.Embedder == "" {
 		s.Hybrid.Embedder = "default"
 	}
+}
+
+// JSONMarshal returns the JSON encoding of v.
+type JSONMarshal func(v interface{}) ([]byte, error)
+
+// JSONUnmarshal parses the JSON-encoded data and stores the result
+// in the value pointed to by v. If v is nil or not a pointer,
+// Unmarshal returns an InvalidUnmarshalError.
+type JSONUnmarshal func(data []byte, v interface{}) error
+
+// Batch gives information about the progress of batch of asynchronous operations.
+type Batch struct {
+	UID           int                    `json:"uid"`
+	Progress      *BatchProgress         `json:"progress,omitempty"`
+	Details       map[string]interface{} `json:"details,omitempty"`
+	Stats         *BatchStats            `json:"stats,omitempty"`
+	Duration      string                 `json:"duration,omitempty"`
+	StartedAt     time.Time              `json:"startedAt,omitempty"`
+	FinishedAt    time.Time              `json:"finishedAt,omitempty"`
+	BatchStrategy string                 `json:"batchStrategy,omitempty"`
+}
+
+type BatchProgress struct {
+	Steps      []*BatchProgressStep `json:"steps"`
+	Percentage float64              `json:"percentage"`
+}
+
+type BatchProgressStep struct {
+	CurrentStep string `json:"currentStep"`
+	Finished    int    `json:"finished"`
+	Total       int    `json:"total"`
+}
+
+type BatchStats struct {
+	TotalNbTasks           int                               `json:"totalNbTasks"`
+	Status                 map[string]int                    `json:"status"`
+	Types                  map[string]int                    `json:"types"`
+	IndexedUIDs            map[string]int                    `json:"indexUids"`
+	ProgressTrace          map[string]string                 `json:"progressTrace"`
+	WriteChannelCongestion *BatchStatsWriteChannelCongestion `json:"writeChannelCongestion"`
+	InternalDatabaseSizes  *BatchStatsInternalDatabaseSize   `json:"internalDatabaseSizes"`
+}
+
+type BatchStatsWriteChannelCongestion struct {
+	Attempts         int     `json:"attempts"`
+	BlockingAttempts int     `json:"blocking_attempts"`
+	BlockingRatio    float64 `json:"blocking_ratio"`
+}
+
+type BatchStatsInternalDatabaseSize struct {
+	ExternalDocumentsIDs    string `json:"externalDocumentsIds"`
+	WordDocIDs              string `json:"wordDocids"`
+	WordPairProximityDocIDs string `json:"wordPairProximityDocids"`
+	WordPositionDocIDs      string `json:"wordPositionDocids"`
+	WordFidDocIDs           string `json:"wordFidDocids"`
+	FieldIdWordCountDocIDs  string `json:"fieldIdWordCountDocids"`
+	Documents               string `json:"documents"`
+}
+
+type BatchesResults struct {
+	Results []*Batch `json:"results"`
+	Total   int64    `json:"total"`
+	Limit   int64    `json:"limit"`
+	From    int64    `json:"from"`
+	Next    int64    `json:"next"`
+}
+
+// BatchesQuery represents the query parameters for listing batches.
+type BatchesQuery struct {
+	UIDs             []int64
+	BatchUIDs        []int64
+	IndexUIDs        []string
+	Statuses         []string
+	Types            []string
+	Limit            int64
+	From             int64
+	Reverse          bool
+	BeforeEnqueuedAt time.Time
+	BeforeStartedAt  time.Time
+	BeforeFinishedAt time.Time
+	AfterEnqueuedAt  time.Time
+	AfterStartedAt   time.Time
+	AfterFinishedAt  time.Time
 }

@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"github.com/stretchr/testify/assert"
 	"net/url"
 	"reflect"
 	"strconv"
@@ -85,16 +86,17 @@ func TestEncodeTasksQuery(t *testing.T) {
 }
 
 func TestTransformStringVariadicToMap(t *testing.T) {
+	toStringPointer := func(input string) *string { return &input }
 	tests := []struct {
-		input  []string
+		input  *string
 		expect map[string]string
 	}{
-		{[]string{"primaryKey1"}, map[string]string{"primaryKey": "primaryKey1"}},
+		{toStringPointer("primaryKey1"), map[string]string{"primaryKey": "primaryKey1"}},
 		{nil, nil},
 	}
 
 	for _, test := range tests {
-		result := transformStringVariadicToMap(test.input...)
+		result := transformStringToMap(test.input)
 		if !reflect.DeepEqual(result, test.expect) {
 			t.Errorf("transformStringVariadicToMap(%v) = %v; want %v", test.input, result, test.expect)
 		}
@@ -114,5 +116,41 @@ func TestGenerateQueryForOptions(t *testing.T) {
 	result := generateQueryForOptions(options)
 	if result != expected.Encode() {
 		t.Errorf("generateQueryForOptions(%v) = %v; want %v", options, result, expected.Encode())
+	}
+}
+
+func TestJoinInt64(t *testing.T) {
+	tests := []struct {
+		name  string
+		input []int64
+		want  string
+	}{
+		{"empty slice", []int64{}, ""},
+		{"single value", []int64{42}, "42"},
+		{"multiple values", []int64{1, 2, 3}, "1,2,3"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := joinInt64(tt.input)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestJoinString(t *testing.T) {
+	tests := []struct {
+		name  string
+		input []string
+		want  string
+	}{
+		{"empty slice", []string{}, ""},
+		{"single value", []string{"foo"}, "foo"},
+		{"multiple values", []string{"a", "b", "c"}, "a,b,c"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := joinString(tt.input)
+			assert.Equal(t, tt.want, got)
+		})
 	}
 }

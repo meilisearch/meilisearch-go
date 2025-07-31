@@ -56,7 +56,7 @@ add_or_replace_documents_1: |-
       "release_date": "2019-03-23",
     },
   }
-  client.Index("movies").AddDocuments(documents)
+  client.Index("movies").AddDocuments(documents, nil)
 add_or_update_documents_1: |-
   documents := []map[string]interface{}{
     {
@@ -65,7 +65,7 @@ add_or_update_documents_1: |-
       "genres": "comedy",
     },
   }
-  client.Index("movies").UpdateDocuments(documents)
+  client.Index("movies").UpdateDocuments(documents, nil)
 delete_all_documents_1: |-
   client.Index("movies").DeleteAllDocuments()
 delete_one_document_1: |-
@@ -114,6 +114,7 @@ facet_search_3: |-
   client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
     FacetQuery: "c",
     FacetName: "genres",
+    ExhaustiveFacetCount: true
   })
 delete_tasks_1: |-
   client.DeleteTaks(&meilisearch.DeleteTasksQuery{
@@ -301,9 +302,29 @@ reset_distinct_attribute_1: |-
 get_filterable_attributes_1: |-
   client.Index("movies").GetFilterableAttributes()
 update_filterable_attributes_1: |-
-  filterableAttributes := []string{
+  filterableAttributes := []interface{}{
     "genres",
     "director",
+    AttributeRule{
+      AttributePatterns: []string{"tag"}
+      Features: AttributeFeatures{
+        FacetSearch: false,
+        Filter: FilterFeatures{
+          Equality:   true,
+          Comparison: false,
+        }
+      }
+    },
+    map[string]interface{}{
+      "attributePatterns": []interface{}{"year"}
+      "features": map[string]interface{}{
+        "facetSearch": false,
+        "filter": map[string]interface{}{
+          "equality":   true,
+          "comparison": true,
+        }
+      }
+    }
   }
   client.Index("movies").UpdateFilterableAttributes(&filterableAttributes)
 reset_filterable_attributes_1: |-
@@ -523,6 +544,10 @@ typo_tolerance_guide_4: |-
       TwoTypos: 10,
     },
   })
+typo_tolerance_guide_5: |-
+  client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
+    DisableOnNumbers: true
+  })
 add_movies_json_1: |-
   import (
     "encoding/json"
@@ -534,7 +559,7 @@ add_movies_json_1: |-
   var movies interface{}
   json.Unmarshal([]byte(file), &movies)
 
-  client.Index("movies").AddDocuments(&movies)
+  client.Index("movies").AddDocuments(&movies, nil)
 landing_getting_started_1: |-
   client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
 
@@ -546,7 +571,7 @@ landing_getting_started_1: |-
     { "id": 5, "title": "Moana" },
     { "id": 6, "title": "Philadelphia" },
   }
-  client.Index("movies").AddDocuments(documents)
+  client.Index("movies").AddDocuments(documents, nil)
 getting_started_check_task_status: |-
   client.GetTask(0)
 getting_started_add_documents: |-
@@ -574,7 +599,7 @@ getting_started_add_documents: |-
     var movies []map[string]interface{}
     json.Unmarshal(byteValue, &movies)
 
-    _, err := client.Index("movies").AddDocuments(movies)
+    _, err := client.Index("movies").AddDocuments(movies, nil)
     if err != nil {
         panic(err)
     }
@@ -591,7 +616,7 @@ getting_started_add_meteorites: |-
   var meteorites []map[string]interface{}
   json.Unmarshal(byteValue, &meteorites)
 
-  client.Index("meteorites").AddDocuments(meteorites)
+  client.Index("meteorites").AddDocuments(meteorites, nil)
 getting_started_update_ranking_rules: |-
   rankingRules := []string{
     "exactness",
@@ -671,7 +696,7 @@ getting_started_pagination: |-
       MaxTotalHits: 500,
   })
 filtering_update_settings_1: |-
-  resp, err := client.Index("movies").UpdateFilterableAttributes(&[]string{
+  resp, err := client.Index("movies").UpdateFilterableAttributes(&[]interface{}{
     "director",
     "genres",
   })
@@ -683,7 +708,7 @@ faceted_search_walkthrough_filter_1: |-
     },
   })
 faceted_search_update_settings_1: |-
-  filterableAttributes := []string{
+  filterableAttributes := []interface{}{
     "genres",
     "rating",
     "language",
@@ -742,7 +767,7 @@ search_parameter_guide_sort_1: |-
     },
   })
 geosearch_guide_filter_settings_1: |-
-  filterableAttributes := []string{
+  filterableAttributes := []interface{}{
     "_geo",
   }
   client.Index("restaurants").UpdateFilterableAttributes(&filterableAttributes)
@@ -791,7 +816,8 @@ primary_field_guide_add_document_primary_key: |-
       "price":            5.00,
     },
   }
-  client.Index("books").AddDocuments(documents, "reference_number")
+  refrenceNumber := "reference_number"
+  client.Index("books").AddDocuments(documents, &refrenceNumber)
 primary_field_guide_update_document_primary_key: |-
   client.Index("books").UpdateIndex("title")
 security_guide_search_key_1: |-
@@ -850,9 +876,9 @@ date_guide_index_1: |-
   var games []map[string]interface{}
   json.Unmarshal(byteValue, &games)
 
-  client.Index("games").AddDocuments(games)
+  client.Index("games").AddDocuments(games, nil)
 date_guide_filterable_attributes_1: |-
-  filterableAttributes := []string{"release_timestamp"}
+  filterableAttributes := []interface{}{"release_timestamp"}
   client.Index("games").UpdateFilterableAttributes(&filterableAttributes)
 date_guide_filter_1: |-
   client.Index("games").Search("", &meilisearch.SearchRequest{
@@ -876,7 +902,7 @@ distinct_attribute_guide_distinct_parameter_1: |-
     Distinct: "sku",
   })
 distinct_attribute_guide_filterable_1: |-
-  filterableAttributes := []string{
+  filterableAttributes := []interface{}{
     "product_id",
     "sku",
     "url",
@@ -955,3 +981,7 @@ update_prefix_search_settings_1: |-
   client.Index("books").UpdatePrefixSearch("disabled")
 reset_prefix_search_settings_1: |-
   client.Index("books").ResetPrefixSearch()
+get_all_batches_1: |-
+  client.GetBatches();
+get_batch_1: |-
+  client.GetBatch(BATCH_UID);

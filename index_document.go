@@ -14,20 +14,20 @@ import (
 	"strings"
 )
 
-func (i *index) AddDocuments(documentsPtr interface{}, primaryKey ...string) (*TaskInfo, error) {
-	return i.AddDocumentsWithContext(context.Background(), documentsPtr, primaryKey...)
+func (i *index) AddDocuments(documentsPtr interface{}, primaryKey *string) (*TaskInfo, error) {
+	return i.AddDocumentsWithContext(context.Background(), documentsPtr, primaryKey)
 }
 
-func (i *index) AddDocumentsWithContext(ctx context.Context, documentsPtr interface{}, primaryKey ...string) (*TaskInfo, error) {
-	return i.addDocuments(ctx, documentsPtr, contentTypeJSON, transformStringVariadicToMap(primaryKey...))
+func (i *index) AddDocumentsWithContext(ctx context.Context, documentsPtr interface{}, primaryKey *string) (*TaskInfo, error) {
+	return i.addDocuments(ctx, documentsPtr, contentTypeJSON, transformStringToMap(primaryKey))
 }
 
-func (i *index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) ([]TaskInfo, error) {
-	return i.AddDocumentsInBatchesWithContext(context.Background(), documentsPtr, batchSize, primaryKey...)
+func (i *index) AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey *string) ([]TaskInfo, error) {
+	return i.AddDocumentsInBatchesWithContext(context.Background(), documentsPtr, batchSize, primaryKey)
 }
 
-func (i *index) AddDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, primaryKey ...string) ([]TaskInfo, error) {
-	return i.saveDocumentsInBatches(ctx, documentsPtr, batchSize, i.AddDocumentsWithContext, primaryKey...)
+func (i *index) AddDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, primaryKey *string) ([]TaskInfo, error) {
+	return i.saveDocumentsInBatches(ctx, documentsPtr, batchSize, i.AddDocumentsWithContext, primaryKey)
 }
 
 func (i *index) AddDocumentsCsv(documents []byte, options *CsvDocumentsQuery) (*TaskInfo, error) {
@@ -61,38 +61,32 @@ func (i *index) AddDocumentsCsvFromReader(documents io.Reader, options *CsvDocum
 }
 
 func (i *index) AddDocumentsCsvFromReaderWithContext(ctx context.Context, documents io.Reader, options *CsvDocumentsQuery) (resp *TaskInfo, err error) {
-	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
-	// read content to memory anyway because of problems with streamed bodies
-	data, err := io.ReadAll(documents)
-	if err != nil {
-		return nil, fmt.Errorf("could not read documents: %w", err)
-	}
-	return i.addDocuments(ctx, data, contentTypeCSV, transformCsvDocumentsQueryToMap(options))
+	return i.addDocumentsFromReader(ctx, documents, contentTypeCSV, transformCsvDocumentsQueryToMap(options))
 }
 
-func (i *index) AddDocumentsNdjson(documents []byte, primaryKey ...string) (*TaskInfo, error) {
-	return i.AddDocumentsNdjsonWithContext(context.Background(), documents, primaryKey...)
+func (i *index) AddDocumentsNdjson(documents []byte, primaryKey *string) (*TaskInfo, error) {
+	return i.AddDocumentsNdjsonWithContext(context.Background(), documents, primaryKey)
 }
 
-func (i *index) AddDocumentsNdjsonWithContext(ctx context.Context, documents []byte, primaryKey ...string) (*TaskInfo, error) {
+func (i *index) AddDocumentsNdjsonWithContext(ctx context.Context, documents []byte, primaryKey *string) (*TaskInfo, error) {
 	// []byte avoids JSON conversion in Client.sendRequest()
-	return i.addDocuments(ctx, documents, contentTypeNDJSON, transformStringVariadicToMap(primaryKey...))
+	return i.addDocumentsFromReader(ctx, bytes.NewReader(documents), contentTypeNDJSON, transformStringToMap(primaryKey))
 }
 
-func (i *index) AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) ([]TaskInfo, error) {
-	return i.AddDocumentsNdjsonInBatchesWithContext(context.Background(), documents, batchSize, primaryKey...)
+func (i *index) AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey *string) ([]TaskInfo, error) {
+	return i.AddDocumentsNdjsonInBatchesWithContext(context.Background(), documents, batchSize, primaryKey)
 }
 
-func (i *index) AddDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchSize int, primaryKey ...string) ([]TaskInfo, error) {
+func (i *index) AddDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchSize int, primaryKey *string) ([]TaskInfo, error) {
 	// Reuse io.Reader implementation
-	return i.AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx, bytes.NewReader(documents), batchSize, primaryKey...)
+	return i.AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx, bytes.NewReader(documents), batchSize, primaryKey)
 }
 
-func (i *index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
-	return i.AddDocumentsNdjsonFromReaderInBatchesWithContext(context.Background(), documents, batchSize, primaryKey...)
+func (i *index) AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchSize int, primaryKey *string) (resp []TaskInfo, err error) {
+	return i.AddDocumentsNdjsonFromReaderInBatchesWithContext(context.Background(), documents, batchSize, primaryKey)
 }
 
-func (i *index) AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx context.Context, documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
+func (i *index) AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx context.Context, documents io.Reader, batchSize int, primaryKey *string) (resp []TaskInfo, err error) {
 	// NDJSON files supposed to contain a valid JSON document in each line, so
 	// it's safe to split by lines.
 	// Lines are read and sent continuously to avoid reading all content into
@@ -112,7 +106,7 @@ func (i *index) AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx context.Con
 			}
 		}
 
-		resp, err := i.AddDocumentsNdjsonWithContext(ctx, b.Bytes(), primaryKey...)
+		resp, err := i.AddDocumentsNdjsonWithContext(ctx, b.Bytes(), primaryKey)
 		if err != nil {
 			return nil, err
 		}
@@ -125,6 +119,9 @@ func (i *index) AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx context.Con
 	)
 
 	scanner := bufio.NewScanner(documents)
+	buf := make([]byte, 0, 1024*1024)
+	scanner.Buffer(buf, 10*1024*1024)
+
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 
@@ -160,34 +157,34 @@ func (i *index) AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx context.Con
 	return responses, nil
 }
 
-func (i *index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
-	return i.AddDocumentsNdjsonFromReaderWithContext(context.Background(), documents, primaryKey...)
+func (i *index) AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey *string) (resp *TaskInfo, err error) {
+	return i.AddDocumentsNdjsonFromReaderWithContext(context.Background(), documents, primaryKey)
 }
 
-func (i *index) AddDocumentsNdjsonFromReaderWithContext(ctx context.Context, documents io.Reader, primaryKey ...string) (resp *TaskInfo, err error) {
+func (i *index) AddDocumentsNdjsonFromReaderWithContext(ctx context.Context, documents io.Reader, primaryKey *string) (resp *TaskInfo, err error) {
 	// Using io.Reader would avoid JSON conversion in Client.sendRequest(), but
 	// read content to memory anyway because of problems with streamed bodies
 	data, err := io.ReadAll(documents)
 	if err != nil {
 		return nil, fmt.Errorf("could not read documents: %w", err)
 	}
-	return i.addDocuments(ctx, data, contentTypeNDJSON, transformStringVariadicToMap(primaryKey...))
+	return i.addDocuments(ctx, data, contentTypeNDJSON, transformStringToMap(primaryKey))
 }
 
-func (i *index) UpdateDocuments(documentsPtr interface{}, primaryKey ...string) (*TaskInfo, error) {
-	return i.UpdateDocumentsWithContext(context.Background(), documentsPtr, primaryKey...)
+func (i *index) UpdateDocuments(documentsPtr interface{}, primaryKey *string) (*TaskInfo, error) {
+	return i.UpdateDocumentsWithContext(context.Background(), documentsPtr, primaryKey)
 }
 
-func (i *index) UpdateDocumentsWithContext(ctx context.Context, documentsPtr interface{}, primaryKey ...string) (*TaskInfo, error) {
-	return i.updateDocuments(ctx, documentsPtr, contentTypeJSON, transformStringVariadicToMap(primaryKey...))
+func (i *index) UpdateDocumentsWithContext(ctx context.Context, documentsPtr interface{}, primaryKey *string) (*TaskInfo, error) {
+	return i.updateDocuments(ctx, documentsPtr, contentTypeJSON, transformStringToMap(primaryKey))
 }
 
-func (i *index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey ...string) ([]TaskInfo, error) {
-	return i.UpdateDocumentsInBatchesWithContext(context.Background(), documentsPtr, batchSize, primaryKey...)
+func (i *index) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey *string) ([]TaskInfo, error) {
+	return i.UpdateDocumentsInBatchesWithContext(context.Background(), documentsPtr, batchSize, primaryKey)
 }
 
-func (i *index) UpdateDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, primaryKey ...string) ([]TaskInfo, error) {
-	return i.saveDocumentsInBatches(ctx, documentsPtr, batchSize, i.UpdateDocumentsWithContext, primaryKey...)
+func (i *index) UpdateDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, primaryKey *string) ([]TaskInfo, error) {
+	return i.saveDocumentsInBatches(ctx, documentsPtr, batchSize, i.UpdateDocumentsWithContext, primaryKey)
 }
 
 func (i *index) UpdateDocumentsCsv(documents []byte, options *CsvDocumentsQuery) (*TaskInfo, error) {
@@ -207,20 +204,20 @@ func (i *index) UpdateDocumentsCsvInBatchesWithContext(ctx context.Context, docu
 	return i.updateDocumentsCsvFromReaderInBatches(ctx, bytes.NewReader(documents), batchSize, options)
 }
 
-func (i *index) UpdateDocumentsNdjson(documents []byte, primaryKey ...string) (*TaskInfo, error) {
-	return i.UpdateDocumentsNdjsonWithContext(context.Background(), documents, primaryKey...)
+func (i *index) UpdateDocumentsNdjson(documents []byte, primaryKey *string) (*TaskInfo, error) {
+	return i.UpdateDocumentsNdjsonWithContext(context.Background(), documents, primaryKey)
 }
 
-func (i *index) UpdateDocumentsNdjsonWithContext(ctx context.Context, documents []byte, primaryKey ...string) (*TaskInfo, error) {
-	return i.updateDocuments(ctx, documents, contentTypeNDJSON, transformStringVariadicToMap(primaryKey...))
+func (i *index) UpdateDocumentsNdjsonWithContext(ctx context.Context, documents []byte, primaryKey *string) (*TaskInfo, error) {
+	return i.updateDocuments(ctx, documents, contentTypeNDJSON, transformStringToMap(primaryKey))
 }
 
-func (i *index) UpdateDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey ...string) ([]TaskInfo, error) {
-	return i.UpdateDocumentsNdjsonInBatchesWithContext(context.Background(), documents, batchSize, primaryKey...)
+func (i *index) UpdateDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey *string) ([]TaskInfo, error) {
+	return i.UpdateDocumentsNdjsonInBatchesWithContext(context.Background(), documents, batchSize, primaryKey)
 }
 
-func (i *index) UpdateDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchSize int, primaryKey ...string) ([]TaskInfo, error) {
-	return i.updateDocumentsNdjsonFromReaderInBatches(ctx, bytes.NewReader(documents), batchSize, primaryKey...)
+func (i *index) UpdateDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchSize int, primaryKey *string) ([]TaskInfo, error) {
+	return i.updateDocumentsNdjsonFromReaderInBatches(ctx, bytes.NewReader(documents), batchSize, primaryKey)
 }
 
 func (i *index) UpdateDocumentsByFunction(req *UpdateDocumentByFunctionRequest) (*TaskInfo, error) {
@@ -396,29 +393,53 @@ func (i *index) DeleteAllDocumentsWithContext(ctx context.Context) (*TaskInfo, e
 	return resp, nil
 }
 
-func (i *index) addDocuments(ctx context.Context, documentsPtr interface{}, contentType string, options map[string]string) (resp *TaskInfo, err error) {
-	resp = new(TaskInfo)
-	endpoint := ""
-	if options == nil {
-		endpoint = "/indexes/" + i.uid + "/documents"
-	} else {
+func (i *index) addDocuments(ctx context.Context, documents interface{}, contentType string, options map[string]string) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	endpoint := "/indexes/" + i.uid + "/documents"
+	if len(options) > 0 {
 		for key, val := range options {
 			if key == "primaryKey" {
 				i.primaryKey = val
 			}
 		}
-		endpoint = "/indexes/" + i.uid + "/documents?" + generateQueryForOptions(options)
+		endpoint += "?" + generateQueryForOptions(options)
 	}
 	req := &internalRequest{
 		endpoint:            endpoint,
 		method:              http.MethodPost,
 		contentType:         contentType,
-		withRequest:         documentsPtr,
+		withRequest:         documents,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "AddDocuments",
 	}
-	if err = i.client.executeRequest(ctx, req); err != nil {
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) addDocumentsFromReader(ctx context.Context, r io.Reader, contentType string, options map[string]string) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	endpoint := "/indexes/" + i.uid + "/documents"
+	if len(options) > 0 {
+		for key, val := range options {
+			if key == "primaryKey" {
+				i.primaryKey = val
+			}
+		}
+		endpoint += "?" + generateQueryForOptions(options)
+	}
+	req := &internalRequest{
+		endpoint:            endpoint,
+		method:              http.MethodPost,
+		contentType:         contentType,
+		withRequest:         r,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "AddDocuments",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
 		return nil, err
 	}
 	return resp, nil
@@ -486,7 +507,7 @@ func (i *index) saveDocumentsFromReaderInBatches(ctx context.Context, documents 
 	return responses, nil
 }
 
-func (i *index) saveDocumentsInBatches(ctx context.Context, documentsPtr interface{}, batchSize int, documentFunc func(ctx context.Context, documentsPtr interface{}, primaryKey ...string) (resp *TaskInfo, err error), primaryKey ...string) (resp []TaskInfo, err error) {
+func (i *index) saveDocumentsInBatches(ctx context.Context, documentsPtr interface{}, batchSize int, documentFunc func(ctx context.Context, documentsPtr interface{}, primaryKey *string) (resp *TaskInfo, err error), primaryKey *string) (resp []TaskInfo, err error) {
 	arr := reflect.ValueOf(documentsPtr)
 	lenDocs := arr.Len()
 	numBatches := int(math.Ceil(float64(lenDocs) / float64(batchSize)))
@@ -500,21 +521,13 @@ func (i *index) saveDocumentsInBatches(ctx context.Context, documentsPtr interfa
 
 		batch := arr.Slice(j*batchSize, end).Interface()
 
-		if len(primaryKey) != 0 {
-			respID, err := documentFunc(ctx, batch, primaryKey[0])
-			if err != nil {
-				return nil, err
-			}
-
-			resp[j] = *respID
-		} else {
-			respID, err := documentFunc(ctx, batch)
-			if err != nil {
-				return nil, err
-			}
-
-			resp[j] = *respID
+		respID, err := documentFunc(ctx, batch, primaryKey)
+		if err != nil {
+			return nil, err
 		}
+
+		resp[j] = *respID
+
 	}
 
 	return resp, nil
@@ -552,7 +565,7 @@ func (i *index) updateDocumentsCsvFromReaderInBatches(ctx context.Context, docum
 	return i.saveDocumentsFromReaderInBatches(ctx, documents, batchSize, i.UpdateDocumentsCsvWithContext, options)
 }
 
-func (i *index) updateDocumentsNdjsonFromReaderInBatches(ctx context.Context, documents io.Reader, batchSize int, primaryKey ...string) (resp []TaskInfo, err error) {
+func (i *index) updateDocumentsNdjsonFromReaderInBatches(ctx context.Context, documents io.Reader, batchSize int, primaryKey *string) (resp []TaskInfo, err error) {
 	// NDJSON files supposed to contain a valid JSON document in each line, so
 	// it's safe to split by lines.
 	// Lines are read and sent continuously to avoid reading all content into
@@ -572,7 +585,7 @@ func (i *index) updateDocumentsNdjsonFromReaderInBatches(ctx context.Context, do
 			}
 		}
 
-		resp, err := i.UpdateDocumentsNdjsonWithContext(ctx, b.Bytes(), primaryKey...)
+		resp, err := i.UpdateDocumentsNdjsonWithContext(ctx, b.Bytes(), primaryKey)
 		if err != nil {
 			return nil, err
 		}
@@ -585,6 +598,9 @@ func (i *index) updateDocumentsNdjsonFromReaderInBatches(ctx context.Context, do
 	)
 
 	scanner := bufio.NewScanner(documents)
+	buf := make([]byte, 0, 1024*1024)
+	scanner.Buffer(buf, 10*1024*1024)
+
 	for scanner.Scan() {
 		line := strings.TrimSpace(scanner.Text())
 

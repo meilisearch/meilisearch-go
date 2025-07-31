@@ -1,20 +1,22 @@
-package meilisearch
+package integration
 
 import (
 	"crypto/tls"
+	"github.com/meilisearch/meilisearch-go"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"testing"
 )
 
 func TestIndex_GetFilterableAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name string
@@ -51,13 +53,13 @@ func TestIndex_GetFilterableAttributes(t *testing.T) {
 
 func TestIndex_GetDisplayedAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -100,7 +102,7 @@ func TestIndex_GetDistinctAttribute(t *testing.T) {
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name string
@@ -140,7 +142,7 @@ func TestIndex_GetRankingRules(t *testing.T) {
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -183,7 +185,7 @@ func TestIndex_GetSearchableAttributes(t *testing.T) {
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -223,18 +225,18 @@ func TestIndex_GetSearchableAttributes(t *testing.T) {
 
 func TestIndex_GetSettings(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *Settings
+		wantResp *meilisearch.Settings
 	}{
 		{
 			name: "TestIndexBasicGetSettings",
@@ -242,15 +244,15 @@ func TestIndex_GetSettings(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				SearchCutoffMs:       0,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             map[string][]string{},
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -262,6 +264,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				LocalizedAttributes:  nil,
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -270,15 +273,15 @@ func TestIndex_GetSettings(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				SearchCutoffMs:       0,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             map[string][]string{},
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
@@ -290,6 +293,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				LocalizedAttributes:  nil,
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 	}
@@ -309,13 +313,13 @@ func TestIndex_GetSettings(t *testing.T) {
 
 func TestIndex_GetStopWords(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name string
@@ -352,13 +356,13 @@ func TestIndex_GetStopWords(t *testing.T) {
 
 func TestIndex_GetSynonyms(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name string
@@ -395,13 +399,13 @@ func TestIndex_GetSynonyms(t *testing.T) {
 
 func TestIndex_GetSortableAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name string
@@ -438,18 +442,18 @@ func TestIndex_GetSortableAttributes(t *testing.T) {
 
 func TestIndex_GetTypoTolerance(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *TypoTolerance
+		wantResp *meilisearch.TypoTolerance
 	}{
 		{
 			name: "TestIndexBasicGetTypoTolerance",
@@ -484,18 +488,18 @@ func TestIndex_GetTypoTolerance(t *testing.T) {
 
 func TestIndex_GetPagination(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *Pagination
+		wantResp *meilisearch.Pagination
 	}{
 		{
 			name: "TestIndexBasicGetPagination",
@@ -530,18 +534,18 @@ func TestIndex_GetPagination(t *testing.T) {
 
 func TestIndex_GetFaceting(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *Faceting
+		wantResp *meilisearch.Faceting
 	}{
 		{
 			name: "TestIndexBasicGetFaceting",
@@ -576,18 +580,18 @@ func TestIndex_GetFaceting(t *testing.T) {
 
 func TestIndex_ResetFilterableAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetFilterableAttributes",
@@ -595,7 +599,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -605,7 +609,7 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -631,18 +635,18 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 
 func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -651,7 +655,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -662,7 +666,7 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -689,18 +693,18 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 
 func TestIndex_ResetDistinctAttribute(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetDistinctAttribute",
@@ -708,7 +712,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -718,7 +722,7 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -744,18 +748,18 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 
 func TestIndex_ResetRankingRules(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -764,7 +768,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
@@ -775,7 +779,7 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
@@ -802,18 +806,18 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 
 func TestIndex_ResetSearchableAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -822,7 +826,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -833,7 +837,7 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -860,19 +864,19 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 
 func TestIndex_ResetSettings(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
-		wantResp *Settings
+		wantTask *meilisearch.TaskInfo
+		wantResp *meilisearch.Settings
 	}{
 		{
 			name: "TestIndexBasicResetSettings",
@@ -880,28 +884,29 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             map[string][]string{},
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				LocalizedAttributes:  nil,
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -910,28 +915,29 @@ func TestIndex_ResetSettings(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             map[string][]string{},
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				LocalizedAttributes:  nil,
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 	}
@@ -956,18 +962,18 @@ func TestIndex_ResetSettings(t *testing.T) {
 
 func TestIndex_ResetStopWords(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetStopWords",
@@ -975,7 +981,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -985,7 +991,7 @@ func TestIndex_ResetStopWords(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1011,18 +1017,18 @@ func TestIndex_ResetStopWords(t *testing.T) {
 
 func TestIndex_ResetSynonyms(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetSynonyms",
@@ -1030,7 +1036,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1040,7 +1046,7 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1066,18 +1072,18 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 
 func TestIndex_ResetSortableAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicResetSortableAttributes",
@@ -1085,7 +1091,7 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1095,7 +1101,7 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1121,19 +1127,19 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 
 func TestIndex_ResetTypoTolerance(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
-		wantResp *TypoTolerance
+		wantTask *meilisearch.TaskInfo
+		wantResp *meilisearch.TypoTolerance
 	}{
 		{
 			name: "TestIndexBasicResetTypoTolerance",
@@ -1141,7 +1147,7 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
@@ -1152,7 +1158,7 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultTypoTolerance,
@@ -1179,19 +1185,19 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 
 func TestIndex_ResetPagination(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
-		wantResp *Pagination
+		wantTask *meilisearch.TaskInfo
+		wantResp *meilisearch.Pagination
 	}{
 		{
 			name: "TestIndexBasicResetPagination",
@@ -1199,7 +1205,7 @@ func TestIndex_ResetPagination(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultPagination,
@@ -1210,7 +1216,7 @@ func TestIndex_ResetPagination(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultPagination,
@@ -1237,19 +1243,19 @@ func TestIndex_ResetPagination(t *testing.T) {
 
 func TestIndex_ResetFaceting(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
-		wantResp *Faceting
+		wantTask *meilisearch.TaskInfo
+		wantResp *meilisearch.Faceting
 	}{
 		{
 			name: "TestIndexBasicResetFaceting",
@@ -1257,7 +1263,7 @@ func TestIndex_ResetFaceting(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultFaceting,
@@ -1268,7 +1274,7 @@ func TestIndex_ResetFaceting(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultFaceting,
@@ -1295,30 +1301,30 @@ func TestIndex_ResetFaceting(t *testing.T) {
 
 func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
-		request []string
+		client  meilisearch.ServiceManager
+		request []interface{}
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateFilterableAttributes",
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: []string{
+				request: []interface{}{
 					"title",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1327,11 +1333,56 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: customMeili,
-				request: []string{
+				request: []interface{}{
 					"title",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
+			name: "TestIndexUpdateFilterableAttributesMixedRawAndObject",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: []interface{}{
+					"tag",
+					map[string]interface{}{
+						"attributePatterns": []interface{}{"year"},
+						"features": map[string]interface{}{
+							"facetSearch": false,
+							"filter": map[string]interface{}{
+								"equality":   true,
+								"comparison": true,
+							},
+						},
+					},
+				},
+			},
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
+			name: "TestIndexUpdateFilterableAttributesOnlyObject",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: []interface{}{
+					map[string]interface{}{
+						"attributePatterns": []interface{}{"year"},
+						"features": map[string]interface{}{
+							"facetSearch": false,
+							"filter": map[string]interface{}{
+								"equality":   true,
+								"comparison": true,
+							},
+						},
+					},
+				},
+			},
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1361,19 +1412,19 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 
 func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
+		client  meilisearch.ServiceManager
 		request []string
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -1385,7 +1436,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 					"book_id", "tag", "title",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -1399,7 +1450,7 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 					"book_id", "tag", "title",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -1430,19 +1481,19 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 
 func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
+		client  meilisearch.ServiceManager
 		request string
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateDistinctAttribute",
@@ -1451,7 +1502,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 				client:  meili,
 				request: "movie_id",
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1462,7 +1513,7 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 				client:  customMeili,
 				request: "movie_id",
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -1492,19 +1543,19 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 
 func TestIndex_UpdateRankingRules(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
+		client  meilisearch.ServiceManager
 		request []string
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -1516,7 +1567,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"typo", "words",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
@@ -1530,7 +1581,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"typo", "words",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
@@ -1544,7 +1595,7 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 					"BookID:asc",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultRankingRules,
@@ -1575,19 +1626,19 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 
 func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
+		client  meilisearch.ServiceManager
 		request []string
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 		wantResp *[]string
 	}{
 		{
@@ -1599,7 +1650,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 					"title", "tag",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -1613,7 +1664,7 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 					"title", "tag",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &[]string{"*"},
@@ -1644,27 +1695,27 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 
 func TestIndex_UpdateSettings(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
-		request Settings
+		client  meilisearch.ServiceManager
+		request meilisearch.Settings
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
-		wantResp *Settings
+		wantTask *meilisearch.TaskInfo
+		wantResp *meilisearch.Settings
 	}{
 		{
 			name: "TestIndexBasicUpdateSettings",
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: Settings{
+				request: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -1687,30 +1738,31 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					SortableAttributes: []string{
 						"title",
 					},
-					TypoTolerance: &TypoTolerance{
+					TypoTolerance: &meilisearch.TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypos{
+						MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
 						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
+						DisableOnNumbers:    true,
 					},
-					Pagination: &Pagination{
+					Pagination: &meilisearch.Pagination{
 						MaxTotalHits: 1200,
 					},
-					Faceting: &Faceting{
+					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 200,
-						SortFacetValuesBy: map[string]SortFacetType{
-							"*": SortFacetTypeAlpha,
+						SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+							"*": meilisearch.SortFacetTypeAlpha,
 						},
 					},
 					SearchCutoffMs:     150,
-					ProximityPrecision: ByAttribute,
+					ProximityPrecision: meilisearch.ByAttribute,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
-					LocalizedAttributes: []*LocalizedAttributes{
+					LocalizedAttributes: []*meilisearch.LocalizedAttributes{
 						{
 							Locales:           []string{"jpn", "eng"},
 							AttributePatterns: []string{"*_ja"},
@@ -1718,12 +1770,13 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					},
 					PrefixSearch: stringPtr("indexingTime"),
 					FacetSearch:  true,
+					Embedders:    make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
@@ -1736,11 +1789,11 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
 				SearchCutoffMs:       150,
-				ProximityPrecision:   ByAttribute,
+				ProximityPrecision:   meilisearch.ByAttribute,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
-				LocalizedAttributes: []*LocalizedAttributes{
+				LocalizedAttributes: []*meilisearch.LocalizedAttributes{
 					{
 						Locales:           []string{"jpn", "eng"},
 						AttributePatterns: []string{"*_ja"},
@@ -1748,6 +1801,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				},
 				PrefixSearch: stringPtr("indexingTime"),
 				FacetSearch:  true,
+				Embedders:    make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -1755,7 +1809,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: customMeili,
-				request: Settings{
+				request: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -1778,37 +1832,39 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					SortableAttributes: []string{
 						"title",
 					},
-					TypoTolerance: &TypoTolerance{
+					TypoTolerance: &meilisearch.TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypos{
+						MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
 						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
+						DisableOnNumbers:    true,
 					},
-					Pagination: &Pagination{
+					Pagination: &meilisearch.Pagination{
 						MaxTotalHits: 1200,
 					},
-					Faceting: &Faceting{
+					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 200,
-						SortFacetValuesBy: map[string]SortFacetType{
-							"*": SortFacetTypeAlpha,
+						SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+							"*": meilisearch.SortFacetTypeAlpha,
 						},
 					},
 					SearchCutoffMs:     150,
-					ProximityPrecision: ByWord,
+					ProximityPrecision: meilisearch.ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
@@ -1821,12 +1877,13 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
 				SearchCutoffMs:       150,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
-				PrefixSearch: stringPtr("indexingTime"),
-				FacetSearch:  true,
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 	}
@@ -1851,30 +1908,30 @@ func TestIndex_UpdateSettings(t *testing.T) {
 
 func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID            string
-		client         ServiceManager
-		firstRequest   Settings
-		firstResponse  Settings
-		secondRequest  Settings
-		secondResponse Settings
+		client         meilisearch.ServiceManager
+		firstRequest   meilisearch.Settings
+		firstResponse  meilisearch.Settings
+		secondRequest  meilisearch.Settings
+		secondResponse meilisearch.Settings
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
-		wantResp *Settings
+		wantTask *meilisearch.TaskInfo
+		wantResp *meilisearch.Settings
 	}{
 		{
 			name: "TestIndexUpdateJustSynonyms",
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -1882,7 +1939,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"hp": {"harry potter"},
 					},
 				},
-				firstResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -1898,19 +1955,20 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
+					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
 				},
-				secondRequest: Settings{
+				secondRequest: meilisearch.Settings{
 					Synonyms: map[string][]string{
 						"al": {"alice"},
 					},
 				},
-				secondResponse: Settings{
+				secondResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -1926,18 +1984,19 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
+					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
@@ -1949,12 +2008,13 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -1962,7 +2022,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: customMeili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -1970,7 +2030,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"hp": {"harry potter"},
 					},
 				},
-				firstResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -1986,19 +2046,20 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
+					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
 				},
-				secondRequest: Settings{
+				secondRequest: meilisearch.Settings{
 					Synonyms: map[string][]string{
 						"al": {"alice"},
 					},
 				},
-				secondResponse: Settings{
+				secondResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2014,18 +2075,19 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
+					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
@@ -2037,12 +2099,13 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -2050,7 +2113,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2058,7 +2121,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"tag",
 					},
 				},
-				firstResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2068,25 +2131,26 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
+					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
 				},
-				secondRequest: Settings{
+				secondRequest: meilisearch.Settings{
 					SearchableAttributes: []string{
 						"title",
 					},
 				},
-				secondResponse: Settings{
+				secondResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2096,41 +2160,43 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
+					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -2138,7 +2204,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2146,7 +2212,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"book_id", "tag", "title",
 					},
 				},
-				firstResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2156,25 +2222,26 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"book_id", "tag", "title",
 					},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
+					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
 				},
-				secondRequest: Settings{
+				secondRequest: meilisearch.Settings{
 					DisplayedAttributes: []string{
 						"book_id", "tag",
 					},
 				},
-				secondResponse: Settings{
+				secondResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2184,41 +2251,43 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"book_id", "tag",
 					},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
+					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -2226,7 +2295,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2234,35 +2303,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"of", "the",
 					},
 				},
-				firstResponse: Settings{
-					RankingRules: []string{
-						"typo", "words",
-					},
-					DistinctAttribute:    (*string)(nil),
-					SearchableAttributes: []string{"*"},
-					DisplayedAttributes:  []string{"*"},
-					StopWords: []string{
-						"of", "the",
-					},
-					Synonyms:             map[string][]string(nil),
-					FilterableAttributes: []string{},
-					SortableAttributes:   []string{},
-					TypoTolerance:        &defaultTypoTolerance,
-					Pagination:           &defaultPagination,
-					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
-					SeparatorTokens:      make([]string, 0),
-					NonSeparatorTokens:   make([]string, 0),
-					Dictionary:           make([]string, 0),
-					PrefixSearch:         stringPtr("indexingTime"),
-					FacetSearch:          true,
-				},
-				secondRequest: Settings{
-					StopWords: []string{
-						"of", "the",
-					},
-				},
-				secondResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2272,41 +2313,72 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					StopWords: []string{
 						"of", "the",
 					},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
+					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
+				},
+				secondRequest: meilisearch.Settings{
+					StopWords: []string{
+						"of", "the",
+					},
+				},
+				secondResponse: meilisearch.Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords: []string{
+						"of", "the",
+					},
+					Synonyms:             make(map[string][]string),
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
+					Faceting:             &defaultFaceting,
+					ProximityPrecision:   meilisearch.ByWord,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -2314,7 +2386,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2322,35 +2394,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"title",
 					},
 				},
-				firstResponse: Settings{
-					RankingRules: []string{
-						"typo", "words",
-					},
-					DistinctAttribute:    (*string)(nil),
-					SearchableAttributes: []string{"*"},
-					DisplayedAttributes:  []string{"*"},
-					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
-					FilterableAttributes: []string{
-						"title",
-					},
-					SortableAttributes: []string{},
-					TypoTolerance:      &defaultTypoTolerance,
-					Pagination:         &defaultPagination,
-					Faceting:           &defaultFaceting,
-					ProximityPrecision: ByWord,
-					SeparatorTokens:    make([]string, 0),
-					NonSeparatorTokens: make([]string, 0),
-					Dictionary:         make([]string, 0),
-					PrefixSearch:       stringPtr("indexingTime"),
-					FacetSearch:        true,
-				},
-				secondRequest: Settings{
-					FilterableAttributes: []string{
-						"title",
-					},
-				},
-				secondResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2358,7 +2402,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{
 						"title",
 					},
@@ -2366,35 +2410,66 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
-					ProximityPrecision: ByWord,
+					ProximityPrecision: meilisearch.ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
+				},
+				secondRequest: meilisearch.Settings{
+					FilterableAttributes: []string{
+						"title",
+					},
+				},
+				secondResponse: meilisearch.Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             make(map[string][]string),
+					FilterableAttributes: []string{
+						"title",
+					},
+					SortableAttributes: []string{},
+					TypoTolerance:      &defaultTypoTolerance,
+					Pagination:         &defaultPagination,
+					Faceting:           &defaultFaceting,
+					ProximityPrecision: meilisearch.ByWord,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -2402,7 +2477,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2410,35 +2485,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						"title",
 					},
 				},
-				firstResponse: Settings{
-					RankingRules: []string{
-						"typo", "words",
-					},
-					DistinctAttribute:    (*string)(nil),
-					SearchableAttributes: []string{"*"},
-					DisplayedAttributes:  []string{"*"},
-					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
-					FilterableAttributes: []string{},
-					SortableAttributes: []string{
-						"title",
-					},
-					TypoTolerance:      &defaultTypoTolerance,
-					Pagination:         &defaultPagination,
-					Faceting:           &defaultFaceting,
-					ProximityPrecision: ByWord,
-					SeparatorTokens:    make([]string, 0),
-					NonSeparatorTokens: make([]string, 0),
-					Dictionary:         make([]string, 0),
-					PrefixSearch:       stringPtr("indexingTime"),
-					FacetSearch:        true,
-				},
-				secondRequest: Settings{
-					SortableAttributes: []string{
-						"title",
-					},
-				},
-				secondResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2446,7 +2493,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes: []string{
 						"title",
@@ -2454,35 +2501,66 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
-					ProximityPrecision: ByWord,
+					ProximityPrecision: meilisearch.ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
+				},
+				secondRequest: meilisearch.Settings{
+					SortableAttributes: []string{
+						"title",
+					},
+				},
+				secondResponse: meilisearch.Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             make(map[string][]string),
+					FilterableAttributes: []string{},
+					SortableAttributes: []string{
+						"title",
+					},
+					TypoTolerance:      &defaultTypoTolerance,
+					Pagination:         &defaultPagination,
+					Faceting:           &defaultFaceting,
+					ProximityPrecision: meilisearch.ByWord,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -2490,21 +2568,22 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
-					TypoTolerance: &TypoTolerance{
+					TypoTolerance: &meilisearch.TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypos{
+						MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
 						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
+						DisableOnNumbers:    false,
 					},
 				},
-				firstResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2512,31 +2591,33 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
-					TypoTolerance: &TypoTolerance{
+					Synonyms:             make(map[string][]string),
+					TypoTolerance: &meilisearch.TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypos{
+						MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
 						DisableOnWords:      []string{},
 						DisableOnAttributes: []string{},
+						DisableOnNumbers:    false,
 					},
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					Pagination:           &defaultPagination,
 					Faceting:             &defaultFaceting,
-					ProximityPrecision:   ByWord,
+					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
 					NonSeparatorTokens:   make([]string, 0),
 					Dictionary:           make([]string, 0),
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
 				},
-				secondRequest: Settings{
-					TypoTolerance: &TypoTolerance{
+				secondRequest: meilisearch.Settings{
+					TypoTolerance: &meilisearch.TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypos{
+						MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
@@ -2546,9 +2627,10 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						DisableOnAttributes: []string{
 							"year",
 						},
+						DisableOnNumbers: true,
 					},
 				},
-				secondResponse: Settings{
+				secondResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2556,12 +2638,12 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
-					TypoTolerance: &TypoTolerance{
+					TypoTolerance: &meilisearch.TypoTolerance{
 						Enabled: true,
-						MinWordSizeForTypos: MinWordSizeForTypos{
+						MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 							OneTypo:  7,
 							TwoTypos: 10,
 						},
@@ -2571,38 +2653,41 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						DisableOnAttributes: []string{
 							"year",
 						},
+						DisableOnNumbers: true,
 					},
 					Pagination:         &defaultPagination,
 					Faceting:           &defaultFaceting,
-					ProximityPrecision: ByWord,
+					ProximityPrecision: meilisearch.ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -2610,43 +2695,15 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
-					Pagination: &Pagination{
+					Pagination: &meilisearch.Pagination{
 						MaxTotalHits: 1200,
 					},
 				},
-				firstResponse: Settings{
-					RankingRules: []string{
-						"typo", "words",
-					},
-					DistinctAttribute:    (*string)(nil),
-					SearchableAttributes: []string{"*"},
-					DisplayedAttributes:  []string{"*"},
-					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
-					FilterableAttributes: []string{},
-					SortableAttributes:   []string{},
-					TypoTolerance:        &defaultTypoTolerance,
-					Pagination: &Pagination{
-						MaxTotalHits: 1200,
-					},
-					Faceting:           &defaultFaceting,
-					ProximityPrecision: ByWord,
-					SeparatorTokens:    make([]string, 0),
-					NonSeparatorTokens: make([]string, 0),
-					Dictionary:         make([]string, 0),
-					PrefixSearch:       stringPtr("indexingTime"),
-					FacetSearch:        true,
-				},
-				secondRequest: Settings{
-					Pagination: &Pagination{
-						MaxTotalHits: 1200,
-					},
-				},
-				secondResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2654,43 +2711,74 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
-					Pagination: &Pagination{
+					Pagination: &meilisearch.Pagination{
 						MaxTotalHits: 1200,
 					},
 					Faceting:           &defaultFaceting,
-					ProximityPrecision: ByWord,
+					ProximityPrecision: meilisearch.ByWord,
 					SeparatorTokens:    make([]string, 0),
 					NonSeparatorTokens: make([]string, 0),
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
+				},
+				secondRequest: meilisearch.Settings{
+					Pagination: &meilisearch.Pagination{
+						MaxTotalHits: 1200,
+					},
+				},
+				secondResponse: meilisearch.Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             make(map[string][]string),
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
+					Pagination: &meilisearch.Pagination{
+						MaxTotalHits: 1200,
+					},
+					Faceting:           &defaultFaceting,
+					ProximityPrecision: meilisearch.ByWord,
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -2698,46 +2786,15 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
-					Faceting: &Faceting{
+					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 200,
 					},
 				},
-				firstResponse: Settings{
-					RankingRules: []string{
-						"typo", "words",
-					},
-					DistinctAttribute:    (*string)(nil),
-					SearchableAttributes: []string{"*"},
-					DisplayedAttributes:  []string{"*"},
-					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
-					FilterableAttributes: []string{},
-					SortableAttributes:   []string{},
-					TypoTolerance:        &defaultTypoTolerance,
-					Pagination:           &defaultPagination,
-					ProximityPrecision:   ByWord,
-					Faceting: &Faceting{
-						MaxValuesPerFacet: 200,
-						SortFacetValuesBy: map[string]SortFacetType{
-							"*": SortFacetTypeAlpha,
-						},
-					},
-					SeparatorTokens:    make([]string, 0),
-					NonSeparatorTokens: make([]string, 0),
-					Dictionary:         make([]string, 0),
-					PrefixSearch:       stringPtr("indexingTime"),
-					FacetSearch:        true,
-				},
-				secondRequest: Settings{
-					Faceting: &Faceting{
-						MaxValuesPerFacet: 200,
-					},
-				},
-				secondResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2745,16 +2802,16 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
-					ProximityPrecision:   ByWord,
-					Faceting: &Faceting{
+					ProximityPrecision:   meilisearch.ByWord,
+					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 200,
-						SortFacetValuesBy: map[string]SortFacetType{
-							"*": SortFacetTypeAlpha,
+						SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+							"*": meilisearch.SortFacetTypeAlpha,
 						},
 					},
 					SeparatorTokens:    make([]string, 0),
@@ -2762,29 +2819,63 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
+				},
+				secondRequest: meilisearch.Settings{
+					Faceting: &meilisearch.Faceting{
+						MaxValuesPerFacet: 200,
+					},
+				},
+				secondResponse: meilisearch.Settings{
+					RankingRules: []string{
+						"typo", "words",
+					},
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             make(map[string][]string),
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
+					ProximityPrecision:   meilisearch.ByWord,
+					Faceting: &meilisearch.Faceting{
+						MaxValuesPerFacet: 200,
+						SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+							"*": meilisearch.SortFacetTypeAlpha,
+						},
+					},
+					SeparatorTokens:    make([]string, 0),
+					NonSeparatorTokens: make([]string, 0),
+					Dictionary:         make([]string, 0),
+					PrefixSearch:       stringPtr("indexingTime"),
+					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 		{
@@ -2792,13 +2883,13 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				firstRequest: Settings{
+				firstRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
-					ProximityPrecision: ByAttribute,
+					ProximityPrecision: meilisearch.ByAttribute,
 				},
-				firstResponse: Settings{
+				firstResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2806,16 +2897,16 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
-					ProximityPrecision:   ByAttribute,
-					Faceting: &Faceting{
+					ProximityPrecision:   meilisearch.ByAttribute,
+					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 100,
-						SortFacetValuesBy: map[string]SortFacetType{
-							"*": SortFacetTypeAlpha,
+						SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+							"*": meilisearch.SortFacetTypeAlpha,
 						},
 					},
 					SeparatorTokens:    make([]string, 0),
@@ -2823,14 +2914,15 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
 				},
-				secondRequest: Settings{
+				secondRequest: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
-					ProximityPrecision: ByWord,
+					ProximityPrecision: meilisearch.ByWord,
 				},
-				secondResponse: Settings{
+				secondResponse: meilisearch.Settings{
 					RankingRules: []string{
 						"typo", "words",
 					},
@@ -2838,16 +2930,16 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SearchableAttributes: []string{"*"},
 					DisplayedAttributes:  []string{"*"},
 					StopWords:            []string{},
-					Synonyms:             map[string][]string(nil),
+					Synonyms:             make(map[string][]string),
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
-					ProximityPrecision:   ByWord,
-					Faceting: &Faceting{
+					ProximityPrecision:   meilisearch.ByWord,
+					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 100,
-						SortFacetValuesBy: map[string]SortFacetType{
-							"*": SortFacetTypeAlpha,
+						SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+							"*": meilisearch.SortFacetTypeAlpha,
 						},
 					},
 					SeparatorTokens:    make([]string, 0),
@@ -2855,29 +2947,31 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Dictionary:         make([]string, 0),
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
+					Embedders:          make(map[string]meilisearch.Embedder),
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Settings{
+			wantResp: &meilisearch.Settings{
 				RankingRules:         defaultRankingRules,
 				DistinctAttribute:    (*string)(nil),
 				SearchableAttributes: []string{"*"},
 				DisplayedAttributes:  []string{"*"},
 				StopWords:            []string{},
-				Synonyms:             map[string][]string(nil),
+				Synonyms:             make(map[string][]string),
 				FilterableAttributes: []string{},
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
 				Faceting:             &defaultFaceting,
-				ProximityPrecision:   ByWord,
+				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
 				Dictionary:           make([]string, 0),
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
 			},
 		},
 	}
@@ -2888,16 +2982,15 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSettings()
+			_, err := i.GetSettings()
 			require.NoError(t, err)
-			require.Equal(t, tt.wantResp, gotResp)
 
 			gotTask, err := i.UpdateSettings(&tt.args.firstRequest)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
-			gotResp, err = i.GetSettings()
+			gotResp, err := i.GetSettings()
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.firstResponse, gotResp)
 
@@ -2916,19 +3009,19 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 
 func TestIndex_UpdateStopWords(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
+		client  meilisearch.ServiceManager
 		request []string
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateStopWords",
@@ -2939,7 +3032,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 					"of", "the", "to",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -2952,7 +3045,7 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 					"of", "the", "to",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -2982,19 +3075,19 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 
 func TestIndex_UpdateSynonyms(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
+		client  meilisearch.ServiceManager
 		request map[string][]string
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateSynonyms",
@@ -3005,7 +3098,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 					"wolverine": {"logan", "xmen"},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -3018,7 +3111,7 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 					"wolverine": {"logan", "xmen"},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -3048,19 +3141,19 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 
 func TestIndex_UpdateSortableAttributes(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
+		client  meilisearch.ServiceManager
 		request []string
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicUpdateSortableAttributes",
@@ -3071,7 +3164,7 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -3084,7 +3177,7 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 					"title",
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -3114,69 +3207,89 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 
 func TestIndex_UpdateTypoTolerance(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
-		request TypoTolerance
+		client  meilisearch.ServiceManager
+		request meilisearch.TypoTolerance
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
-		wantResp *TypoTolerance
+		wantTask *meilisearch.TaskInfo
+		wantResp *meilisearch.TypoTolerance
 	}{
 		{
 			name: "TestIndexBasicUpdateTypoTolerance",
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: TypoTolerance{
+				request: meilisearch.TypoTolerance{
 					Enabled: true,
-					MinWordSizeForTypos: MinWordSizeForTypos{
+					MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 						OneTypo:  7,
 						TwoTypos: 10,
 					},
 					DisableOnWords:      []string{},
 					DisableOnAttributes: []string{},
+					DisableOnNumbers:    true,
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &defaultTypoTolerance,
+			wantResp: &meilisearch.TypoTolerance{
+				Enabled: true,
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
+					OneTypo:  7,
+					TwoTypos: 10,
+				},
+				DisableOnWords:      []string{},
+				DisableOnAttributes: []string{},
+				DisableOnNumbers:    true,
+			},
 		},
 		{
 			name: "TestIndexUpdateTypoToleranceWithCustomClient",
 			args: args{
 				UID:    "indexUID",
 				client: customMeili,
-				request: TypoTolerance{
+				request: meilisearch.TypoTolerance{
 					Enabled: true,
-					MinWordSizeForTypos: MinWordSizeForTypos{
+					MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 						OneTypo:  7,
 						TwoTypos: 10,
 					},
 					DisableOnWords:      []string{},
 					DisableOnAttributes: []string{},
+					DisableOnNumbers:    false,
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &defaultTypoTolerance,
+			wantResp: &meilisearch.TypoTolerance{
+				Enabled: true,
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
+					OneTypo:  7,
+					TwoTypos: 10,
+				},
+				DisableOnWords:      []string{},
+				DisableOnAttributes: []string{},
+				DisableOnNumbers:    false,
+			},
 		},
 		{
 			name: "TestIndexUpdateTypoToleranceWithDisableOnWords",
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: TypoTolerance{
+				request: meilisearch.TypoTolerance{
 					Enabled: true,
-					MinWordSizeForTypos: MinWordSizeForTypos{
+					MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 						OneTypo:  7,
 						TwoTypos: 10,
 					},
@@ -3184,21 +3297,31 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 						"and",
 					},
 					DisableOnAttributes: []string{},
+					DisableOnNumbers:    true,
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &defaultTypoTolerance,
+			wantResp: &meilisearch.TypoTolerance{
+				Enabled: true,
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
+					OneTypo:  7,
+					TwoTypos: 10,
+				},
+				DisableOnWords:      []string{"and"},
+				DisableOnAttributes: []string{},
+				DisableOnNumbers:    true,
+			},
 		},
 		{
 			name: "TestIndexUpdateTypoToleranceWithDisableOnAttributes",
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: TypoTolerance{
+				request: meilisearch.TypoTolerance{
 					Enabled: true,
-					MinWordSizeForTypos: MinWordSizeForTypos{
+					MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 						OneTypo:  7,
 						TwoTypos: 10,
 					},
@@ -3206,33 +3329,51 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 					DisableOnAttributes: []string{
 						"year",
 					},
+					DisableOnNumbers: true,
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &defaultTypoTolerance,
+			wantResp: &meilisearch.TypoTolerance{
+				Enabled: true,
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
+					OneTypo:  7,
+					TwoTypos: 10,
+				},
+				DisableOnWords:      []string{},
+				DisableOnAttributes: []string{"year"},
+				DisableOnNumbers:    true,
+			},
 		},
 		{
 			name: "TestIndexDisableTypoTolerance",
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: TypoTolerance{
+				request: meilisearch.TypoTolerance{
 					Enabled: false,
-					MinWordSizeForTypos: MinWordSizeForTypos{
+					MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 						OneTypo:  5,
 						TwoTypos: 9,
 					},
 					DisableOnWords:      []string{},
 					DisableOnAttributes: []string{},
+					DisableOnNumbers:    false,
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &TypoTolerance{
+			wantResp: &meilisearch.TypoTolerance{
 				Enabled: false,
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
+					OneTypo:  5,
+					TwoTypos: 9,
+				},
+				DisableOnWords:      []string{},
+				DisableOnAttributes: []string{},
+				DisableOnNumbers:    false,
 			},
 		},
 	}
@@ -3250,38 +3391,38 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 
 			gotResp, err := i.GetTypoTolerance()
 			require.NoError(t, err)
-			require.Equal(t, &tt.args.request, gotResp)
+			require.Equal(t, tt.wantResp, gotResp)
 		})
 	}
 }
 
 func TestIndex_UpdatePagination(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
-		request Pagination
+		client  meilisearch.ServiceManager
+		request meilisearch.Pagination
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
-		wantResp *Pagination
+		wantTask *meilisearch.TaskInfo
+		wantResp *meilisearch.Pagination
 	}{
 		{
 			name: "TestIndexBasicUpdatePagination",
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: Pagination{
+				request: meilisearch.Pagination{
 					MaxTotalHits: 1200,
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultPagination,
@@ -3291,11 +3432,11 @@ func TestIndex_UpdatePagination(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: customMeili,
-				request: Pagination{
+				request: meilisearch.Pagination{
 					MaxTotalHits: 1200,
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultPagination,
@@ -3326,34 +3467,34 @@ func TestIndex_UpdatePagination(t *testing.T) {
 
 func TestIndex_UpdateFaceting(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
-		request Faceting
+		client  meilisearch.ServiceManager
+		request meilisearch.Faceting
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
-		wantResp *Faceting
+		wantTask *meilisearch.TaskInfo
+		wantResp *meilisearch.Faceting
 	}{
 		{
 			name: "TestIndexBasicUpdateFaceting",
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: Faceting{
+				request: meilisearch.Faceting{
 					MaxValuesPerFacet: 200,
-					SortFacetValuesBy: map[string]SortFacetType{
-						"*": SortFacetTypeAlpha,
+					SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+						"*": meilisearch.SortFacetTypeAlpha,
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultFaceting,
@@ -3363,14 +3504,14 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: customMeili,
-				request: Faceting{
+				request: meilisearch.Faceting{
 					MaxValuesPerFacet: 200,
-					SortFacetValuesBy: map[string]SortFacetType{
-						"*": SortFacetTypeAlpha,
+					SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+						"*": meilisearch.SortFacetTypeAlpha,
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantResp: &defaultFaceting,
@@ -3380,20 +3521,20 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: Faceting{
+				request: meilisearch.Faceting{
 					MaxValuesPerFacet: 2,
-					SortFacetValuesBy: map[string]SortFacetType{
-						"*": SortFacetTypeCount,
+					SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+						"*": meilisearch.SortFacetTypeCount,
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Faceting{
+			wantResp: &meilisearch.Faceting{
 				MaxValuesPerFacet: 2,
-				SortFacetValuesBy: map[string]SortFacetType{
-					"*": SortFacetTypeCount,
+				SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+					"*": meilisearch.SortFacetTypeCount,
 				},
 			},
 		},
@@ -3402,20 +3543,20 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: Faceting{
-					SortFacetValuesBy: map[string]SortFacetType{
-						"*":        SortFacetTypeAlpha,
-						"indexUID": SortFacetTypeCount,
+				request: meilisearch.Faceting{
+					SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+						"*":        meilisearch.SortFacetTypeAlpha,
+						"indexUID": meilisearch.SortFacetTypeCount,
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Faceting{
-				SortFacetValuesBy: map[string]SortFacetType{
-					"*":        SortFacetTypeAlpha,
-					"indexUID": SortFacetTypeCount,
+			wantResp: &meilisearch.Faceting{
+				SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+					"*":        meilisearch.SortFacetTypeAlpha,
+					"indexUID": meilisearch.SortFacetTypeCount,
 				},
 			},
 		},
@@ -3424,18 +3565,18 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: Faceting{
-					SortFacetValuesBy: map[string]SortFacetType{
-						"*": SortFacetTypeCount,
+				request: meilisearch.Faceting{
+					SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+						"*": meilisearch.SortFacetTypeCount,
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
-			wantResp: &Faceting{
-				SortFacetValuesBy: map[string]SortFacetType{
-					"*": SortFacetTypeCount,
+			wantResp: &meilisearch.Faceting{
+				SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+					"*": meilisearch.SortFacetTypeCount,
 				},
 			},
 		},
@@ -3464,15 +3605,15 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 
 	type args struct {
 		UID      string
-		client   ServiceManager
-		request  Settings
+		client   meilisearch.ServiceManager
+		request  meilisearch.Settings
 		newIndex bool
 	}
 	tests := []struct {
 		name          string
 		args          args
-		wantTask      *TaskInfo
-		wantEmbedders map[string]Embedder
+		wantTask      *meilisearch.TaskInfo
+		wantEmbedders map[string]meilisearch.Embedder
 		wantErr       string
 	}{
 		{
@@ -3480,16 +3621,16 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: Settings{
-					Embedders: map[string]Embedder{
+				request: meilisearch.Settings{
+					Embedders: map[string]meilisearch.Embedder{
 						"default": {
-							Source:           "openAi",
+							Source:           meilisearch.OpenaiEmbedderSource,
 							DocumentTemplate: "{{doc.foobar}}",
 						},
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantErr: "foobar",
@@ -3499,10 +3640,10 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: meili,
-				request: Settings{
-					Embedders: map[string]Embedder{
+				request: meilisearch.Settings{
+					Embedders: map[string]meilisearch.Embedder{
 						"default": {
-							Source:           "openAi",
+							Source:           meilisearch.OpenaiEmbedderSource,
 							APIKey:           "xxx",
 							Model:            "text-embedding-3-small",
 							DocumentTemplate: "A movie titled '{{doc.title}}'",
@@ -3510,10 +3651,37 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 			wantErr: "Incorrect API key",
+		},
+		{
+			name: "TestIndexUpdateSettingsEmbeddersHuggingFace",
+			args: args{
+				newIndex: true,
+				UID:      "newIndexUID",
+				client:   meili,
+				request: meilisearch.Settings{
+					Embedders: map[string]meilisearch.Embedder{
+						"default": {
+							Source:           meilisearch.HuggingFaceEmbedderSource,
+							Model:            "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+							DocumentTemplate: "A movie titled '{{doc.title}}' whose description starts with {{doc.overview|truncatewords: 20}}",
+							Distribution: &meilisearch.Distribution{
+								Mean:  0.7,
+								Sigma: 0.3,
+							},
+							Pooling:                  meilisearch.UseModelEmbedderPooling,
+							DocumentTemplateMaxBytes: 500,
+							BinaryQuantized:          false,
+						},
+					},
+				},
+			},
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
 		},
 		{
 			name: "TestIndexUpdateSettingsEmbeddersUserProvided",
@@ -3521,16 +3689,16 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 				newIndex: true,
 				UID:      "newIndexUID",
 				client:   meili,
-				request: Settings{
-					Embedders: map[string]Embedder{
+				request: meilisearch.Settings{
+					Embedders: map[string]meilisearch.Embedder{
 						"default": {
-							Source:     "userProvided",
+							Source:     meilisearch.UserProvidedEmbedderSource,
 							Dimensions: 3,
 						},
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -3540,15 +3708,15 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 				newIndex: true,
 				UID:      "newIndexUID",
 				client:   meili,
-				request: Settings{
-					Embedders: map[string]Embedder{
+				request: meilisearch.Settings{
+					Embedders: map[string]meilisearch.Embedder{
 						"default": {
-							Source:           "rest",
+							Source:           meilisearch.RestEmbedderSource,
 							URL:              "https://api.openai.com/v1/embeddings",
 							APIKey:           "<your-openai-api-key>",
 							Dimensions:       1536,
 							DocumentTemplate: "A movie titled '{{doc.title}}' whose description starts with {{doc.overview|truncatewords: 20}}",
-							Distribution: &Distribution{
+							Distribution: &meilisearch.Distribution{
 								Mean:  0.7,
 								Sigma: 0.3,
 							},
@@ -3571,7 +3739,66 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 					},
 				},
 			},
-			wantTask: &TaskInfo{
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
+			name: "TestIndexUpdateSettingsEmbeddersOllama",
+			args: args{
+				newIndex: true,
+				UID:      "newIndexUID",
+				client:   meili,
+				request: meilisearch.Settings{
+					Embedders: map[string]meilisearch.Embedder{
+						"default": {
+							Source:           meilisearch.OllamaEmbedderSource,
+							URL:              "http://localhost:11434/api/embeddings",
+							APIKey:           "<your-ollama-api-key>",
+							Model:            "nomic-embed-text",
+							DocumentTemplate: "blabla",
+							Distribution: &meilisearch.Distribution{
+								Mean:  0.7,
+								Sigma: 0.3,
+							},
+							Dimensions:               512,
+							DocumentTemplateMaxBytes: 500,
+							BinaryQuantized:          false,
+						},
+					},
+				},
+			},
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
+			name: "TestIndexUpdateSettingsEmbeddersComposite",
+			args: args{
+				newIndex: true,
+				UID:      "newIndexUID",
+				client:   meili,
+				request: meilisearch.Settings{
+					Embedders: map[string]meilisearch.Embedder{
+						"default": {
+							Source: meilisearch.CompositeEmbedderSource,
+							SearchEmbedder: &meilisearch.Embedder{
+								Source:  meilisearch.HuggingFaceEmbedderSource,
+								Model:   "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+								Pooling: meilisearch.UseModelEmbedderPooling,
+							},
+							IndexingEmbedder: &meilisearch.Embedder{
+								Source:                   meilisearch.HuggingFaceEmbedderSource,
+								Model:                    "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+								DocumentTemplate:         "{{doc.title}}",
+								Pooling:                  meilisearch.UseModelEmbedderPooling,
+								DocumentTemplateMaxBytes: 500,
+							},
+						},
+					},
+				},
+			},
+			wantTask: &meilisearch.TaskInfo{
 				TaskUID: 1,
 			},
 		},
@@ -3579,18 +3806,24 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
-			i, err := setUpIndexWithVector(c.(*meilisearch), tt.args.UID)
+			i, err := setUpIndexWithVector(c, tt.args.UID)
 			require.NoError(t, err)
 			t.Cleanup(cleanup(c))
+
+			feat := c.ExperimentalFeatures().SetCompositeEmbedders(true)
+			resp, err := feat.Update()
+			require.NoError(t, err)
+			require.True(t, resp.CompositeEmbedders)
 
 			gotTask, err := i.UpdateSettings(&tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForTask(t, i, gotTask)
 
-			gotResp, err := i.GetSettings()
+			gotResp, err := i.GetEmbedders()
 			require.NoError(t, err)
 			require.NotNil(t, gotResp)
+			assert.Equal(t, gotResp["default"].Source, tt.args.request.Embedders["default"].Source)
 		})
 	}
 }
@@ -3601,17 +3834,17 @@ func TestIndex_GetEmbedders(t *testing.T) {
 
 	indexID := "newIndexUID"
 	i := c.Index(indexID)
-	task, err := c.CreateIndex(&IndexConfig{Uid: indexID})
+	task, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: indexID})
 	require.NoError(t, err)
 	testWaitForTask(t, i, task)
 
-	expected := map[string]Embedder{
+	expected := map[string]meilisearch.Embedder{
 		"default": {
 			Source:     "userProvided",
 			Dimensions: 3,
 		},
 	}
-	task, err = i.UpdateSettings(&Settings{
+	task, err = i.UpdateSettings(&meilisearch.Settings{
 		Embedders: expected,
 	})
 	require.NoError(t, err)
@@ -3628,23 +3861,23 @@ func TestIndex_UpdateEmbedders(t *testing.T) {
 
 	indexID := "newIndexUID"
 	i := c.Index(indexID)
-	taskInfo, err := c.CreateIndex(&IndexConfig{Uid: indexID})
+	taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: indexID})
 	require.NoError(t, err)
 	testWaitForTask(t, i, taskInfo)
 
-	embedders := map[string]Embedder{
+	embedders := map[string]meilisearch.Embedder{
 		"someEmbbeder": {
 			Source:     "userProvided",
 			Dimensions: 3,
 		},
 	}
-	taskInfo, err = i.UpdateSettings(&Settings{
+	taskInfo, err = i.UpdateSettings(&meilisearch.Settings{
 		Embedders: embedders,
 	})
 	require.NoError(t, err)
 	testWaitForTask(t, i, taskInfo)
 
-	updated := map[string]Embedder{
+	updated := map[string]meilisearch.Embedder{
 		"someEmbbeder": {
 			Source:     "userProvided",
 			Dimensions: 5,
@@ -3655,7 +3888,7 @@ func TestIndex_UpdateEmbedders(t *testing.T) {
 	require.NoError(t, err)
 	task, err := i.WaitForTask(taskInfo.TaskUID, 0)
 	require.NoError(t, err)
-	require.Equal(t, TaskStatusSucceeded, task.Status)
+	require.Equal(t, meilisearch.TaskStatusSucceeded, task.Status)
 
 	got, err := i.GetEmbedders()
 	require.NoError(t, err)
@@ -3668,12 +3901,12 @@ func TestIndex_ResetEmbedders(t *testing.T) {
 
 	indexID := "newIndexUID"
 	i := c.Index(indexID)
-	taskInfo, err := c.CreateIndex(&IndexConfig{Uid: indexID})
+	taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: indexID})
 	require.NoError(t, err)
 	testWaitForTask(t, i, taskInfo)
 
-	taskInfo, err = i.UpdateSettings(&Settings{
-		Embedders: map[string]Embedder{
+	taskInfo, err = i.UpdateSettings(&meilisearch.Settings{
+		Embedders: map[string]meilisearch.Embedder{
 			"default": {
 				Source:     "userProvided",
 				Dimensions: 3,
@@ -3687,7 +3920,7 @@ func TestIndex_ResetEmbedders(t *testing.T) {
 	require.NoError(t, err)
 	task, err := i.WaitForTask(taskInfo.TaskUID, 0)
 	require.NoError(t, err)
-	require.Equal(t, TaskStatusSucceeded, task.Status)
+	require.Equal(t, meilisearch.TaskStatusSucceeded, task.Status)
 
 	got, err := i.GetEmbedders()
 	require.NoError(t, err)
@@ -3726,7 +3959,7 @@ func Test_SearchCutoffMs(t *testing.T) {
 
 	indexID := "newIndexUID"
 	i := c.Index(indexID)
-	taskInfo, err := c.CreateIndex(&IndexConfig{Uid: indexID})
+	taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: indexID})
 	require.NoError(t, err)
 	testWaitForTask(t, i, taskInfo)
 
@@ -3808,15 +4041,15 @@ func Test_ProximityPrecision(t *testing.T) {
 
 	got, err := i.GetProximityPrecision()
 	require.NoError(t, err)
-	require.Equal(t, ByWord, got)
+	require.Equal(t, meilisearch.ByWord, got)
 
-	task, err := i.UpdateProximityPrecision(ByAttribute)
+	task, err := i.UpdateProximityPrecision(meilisearch.ByAttribute)
 	require.NoError(t, err)
 	testWaitForTask(t, i, task)
 
 	got, err = i.GetProximityPrecision()
 	require.NoError(t, err)
-	require.Equal(t, ByAttribute, got)
+	require.Equal(t, meilisearch.ByAttribute, got)
 
 	task, err = i.ResetProximityPrecision()
 	require.NoError(t, err)
@@ -3824,7 +4057,7 @@ func Test_ProximityPrecision(t *testing.T) {
 
 	got, err = i.GetProximityPrecision()
 	require.NoError(t, err)
-	require.Equal(t, ByWord, got)
+	require.Equal(t, meilisearch.ByWord, got)
 }
 
 func Test_LocalizedAttributes(t *testing.T) {
@@ -3833,7 +4066,7 @@ func Test_LocalizedAttributes(t *testing.T) {
 
 	indexID := "newIndexUID"
 	i := c.Index(indexID)
-	taskInfo, err := c.CreateIndex(&IndexConfig{Uid: indexID})
+	taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: indexID})
 	require.NoError(t, err)
 	testWaitForTask(t, i, taskInfo)
 
@@ -3844,12 +4077,12 @@ func Test_LocalizedAttributes(t *testing.T) {
 		require.NoError(t, err)
 		require.Len(t, got, 0)
 
-		localized := &LocalizedAttributes{
+		localized := &meilisearch.LocalizedAttributes{
 			Locales:           []string{"jpn", "eng"},
 			AttributePatterns: []string{"*_ja"},
 		}
 
-		task, err := i.UpdateLocalizedAttributes([]*LocalizedAttributes{localized})
+		task, err := i.UpdateLocalizedAttributes([]*meilisearch.LocalizedAttributes{localized})
 		require.NoError(t, err)
 		testWaitForTask(t, i, task)
 
@@ -3870,25 +4103,25 @@ func Test_LocalizedAttributes(t *testing.T) {
 	})
 
 	t.Run("Test invalid locate", func(t *testing.T) {
-		invalidLocalized := &LocalizedAttributes{
+		invalidLocalized := &meilisearch.LocalizedAttributes{
 			Locales:           []string{"foo"},
 			AttributePatterns: []string{"*_ja"},
 		}
 
-		_, err := i.UpdateLocalizedAttributes([]*LocalizedAttributes{invalidLocalized})
+		_, err := i.UpdateLocalizedAttributes([]*meilisearch.LocalizedAttributes{invalidLocalized})
 		require.Error(t, err)
 	})
 }
 
 func TestIndex_GetPrefixSearch(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -3928,19 +4161,19 @@ func TestIndex_GetPrefixSearch(t *testing.T) {
 
 func TestIndex_UpdatePrefixSearch(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
+		client  meilisearch.ServiceManager
 		request string
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 		wantResp *string
 	}{
 		{
@@ -3950,7 +4183,7 @@ func TestIndex_UpdatePrefixSearch(t *testing.T) {
 				client:  meili,
 				request: "disabled",
 			},
-			wantTask: &TaskInfo{TaskUID: 1},
+			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
 			wantResp: stringPtr("disabled"),
 		},
 		{
@@ -3960,7 +4193,7 @@ func TestIndex_UpdatePrefixSearch(t *testing.T) {
 				client:  customMeili,
 				request: "disabled",
 			},
-			wantTask: &TaskInfo{TaskUID: 1},
+			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
 			wantResp: stringPtr("disabled"),
 		},
 	}
@@ -3985,18 +4218,18 @@ func TestIndex_UpdatePrefixSearch(t *testing.T) {
 
 func TestIndex_ResetPrefixSearch(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 		wantResp *string
 	}{
 		{
@@ -4005,7 +4238,7 @@ func TestIndex_ResetPrefixSearch(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{TaskUID: 1},
+			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
 			wantResp: stringPtr("indexingTime"),
 		},
 		{
@@ -4014,7 +4247,7 @@ func TestIndex_ResetPrefixSearch(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{TaskUID: 1},
+			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
 			wantResp: stringPtr("indexingTime"),
 		},
 	}
@@ -4043,13 +4276,13 @@ func TestIndex_ResetPrefixSearch(t *testing.T) {
 
 func TestIndex_GetFacetSearch(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -4089,19 +4322,19 @@ func TestIndex_GetFacetSearch(t *testing.T) {
 
 func TestIndex_UpdateFacetSearch(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID     string
-		client  ServiceManager
+		client  meilisearch.ServiceManager
 		request bool
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 		wantResp bool
 	}{
 		{
@@ -4111,7 +4344,7 @@ func TestIndex_UpdateFacetSearch(t *testing.T) {
 				client:  meili,
 				request: false,
 			},
-			wantTask: &TaskInfo{TaskUID: 1},
+			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
 			wantResp: boolPtr(false),
 		},
 		{
@@ -4121,7 +4354,7 @@ func TestIndex_UpdateFacetSearch(t *testing.T) {
 				client:  customMeili,
 				request: false,
 			},
-			wantTask: &TaskInfo{TaskUID: 1},
+			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
 			wantResp: boolPtr(false),
 		},
 	}
@@ -4146,18 +4379,18 @@ func TestIndex_UpdateFacetSearch(t *testing.T) {
 
 func TestIndex_ResetFacetSearch(t *testing.T) {
 	meili := setup(t, "")
-	customMeili := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantTask *TaskInfo
+		wantTask *meilisearch.TaskInfo
 		wantResp bool
 	}{
 		{
@@ -4166,7 +4399,7 @@ func TestIndex_ResetFacetSearch(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantTask: &TaskInfo{TaskUID: 1},
+			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
 			wantResp: boolPtr(true),
 		},
 		{
@@ -4175,7 +4408,7 @@ func TestIndex_ResetFacetSearch(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantTask: &TaskInfo{TaskUID: 1},
+			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
 			wantResp: boolPtr(true),
 		},
 	}
