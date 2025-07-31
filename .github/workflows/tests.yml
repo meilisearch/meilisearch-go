@@ -3,10 +3,7 @@ name: Tests
 on:
   pull_request:
   push:
-    # trying and staging branches are for BORS config
     branches:
-      - trying
-      - staging
       - main
 
 jobs:
