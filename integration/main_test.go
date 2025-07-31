@@ -218,7 +218,9 @@ func setupMovieIndex(t *testing.T, client meilisearch.ServiceManager, uid string
 
 	testdata, err := os.Open("./testdata/movies.json")
 	require.NoError(t, err)
-	defer testdata.Close()
+	defer func() {
+		_ = testdata.Close()
+	}()
 
 	tests := make([]map[string]interface{}, 0)
 
@@ -242,7 +244,9 @@ func setupComicIndex(t *testing.T, client meilisearch.ServiceManager, uid string
 
 	testdata, err := os.Open("./testdata/comics.json")
 	require.NoError(t, err)
-	defer testdata.Close()
+	defer func() {
+		_ = testdata.Close()
+	}()
 
 	tests := make([]map[string]interface{}, 0)
 

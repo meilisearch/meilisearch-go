@@ -146,7 +146,7 @@ func (e *Error) ErrorBody(body []byte) {
 	msg := meilisearchApiError{}
 
 	if e.encoder != nil {
-		err := e.encoder.Decode(body, &msg)
+		err := e.Decode(body, &msg)
 		if err == nil {
 			e.MeilisearchApiError.Message = msg.Message
 			e.MeilisearchApiError.Code = msg.Code

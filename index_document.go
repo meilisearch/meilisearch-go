@@ -621,7 +621,7 @@ func (i *index) updateDocumentsNdjsonFromReaderInBatches(ctx context.Context, do
 		}
 	}
 	if err := scanner.Err(); err != nil {
-		return nil, fmt.Errorf("Could not read NDJSON: %w", err)
+		return nil, fmt.Errorf("could not read NDJSON: %w", err)
 	}
 
 	// Send remaining records as the last batch if there is any
