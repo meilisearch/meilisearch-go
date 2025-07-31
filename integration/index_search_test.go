@@ -288,6 +288,28 @@ func TestIndex_Search(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "TestIndexSearchWithLocale",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				query:  "王子",
+				request: &meilisearch.SearchRequest{
+					Locales: []string{"jpn"},
+				},
+			},
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
+					map[string]json.RawMessage{
+						"book_id": toRawMessage(float64(1050)), "title": toRawMessage("星の王子さま"),
+					},
+				},
+				EstimatedTotalHits: 1,
+				Offset:             0,
+				Limit:              20,
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
