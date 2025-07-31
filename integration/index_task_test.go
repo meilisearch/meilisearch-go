@@ -1,8 +1,9 @@
-package meilisearch
+package integration
 
 import (
 	"context"
 	"crypto/tls"
+	"github.com/meilisearch/meilisearch-go"
 	"github.com/stretchr/testify/require"
 	"testing"
 	"time"
@@ -10,13 +11,13 @@ import (
 
 func TestIndex_GetTask(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID      string
-		client   ServiceManager
+		client   meilisearch.ServiceManager
 		taskUID  int64
 		document []docTest
 	}
@@ -79,7 +80,7 @@ func TestIndex_GetTask(t *testing.T) {
 			require.NotNil(t, gotResp)
 			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskUID)
 			require.Equal(t, gotResp.IndexUID, tt.args.UID)
-			require.Equal(t, gotResp.Status, TaskStatusSucceeded)
+			require.Equal(t, gotResp.Status, meilisearch.TaskStatusSucceeded)
 
 			// Make sure that timestamps are also retrieved
 			require.NotZero(t, gotResp.EnqueuedAt)
@@ -91,15 +92,15 @@ func TestIndex_GetTask(t *testing.T) {
 
 func TestIndex_GetTasks(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID      string
-		client   ServiceManager
+		client   meilisearch.ServiceManager
 		document []docTest
-		query    *TasksQuery
+		query    *meilisearch.TasksQuery
 	}
 	tests := []struct {
 		name string
@@ -133,9 +134,9 @@ func TestIndex_GetTasks(t *testing.T) {
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
-				query: &TasksQuery{
-					Statuses: []TaskStatus{TaskStatusSucceeded},
-					Types:    []TaskType{TaskTypeDocumentAdditionOrUpdate},
+				query: &meilisearch.TasksQuery{
+					Statuses: []meilisearch.TaskStatus{meilisearch.TaskStatusSucceeded},
+					Types:    []meilisearch.TaskType{meilisearch.TaskTypeDocumentAdditionOrUpdate},
 				},
 			},
 		},
@@ -147,12 +148,12 @@ func TestIndex_GetTasks(t *testing.T) {
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
-				query: &TasksQuery{
+				query: &meilisearch.TasksQuery{
 					IndexUIDS: []string{"indexUID"},
 					Limit:     10,
 					From:      0,
-					Statuses:  []TaskStatus{TaskStatusSucceeded},
-					Types:     []TaskType{TaskTypeDocumentAdditionOrUpdate},
+					Statuses:  []meilisearch.TaskStatus{meilisearch.TaskStatusSucceeded},
+					Types:     []meilisearch.TaskType{meilisearch.TaskTypeDocumentAdditionOrUpdate},
 					Reverse:   true,
 				},
 			},
@@ -180,13 +181,13 @@ func TestIndex_GetTasks(t *testing.T) {
 
 func TestIndex_WaitForTask(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID      string
-		client   ServiceManager
+		client   meilisearch.ServiceManager
 		interval time.Duration
 		timeout  time.Duration
 		document []docTest
@@ -194,7 +195,7 @@ func TestIndex_WaitForTask(t *testing.T) {
 	tests := []struct {
 		name string
 		args args
-		want TaskStatus
+		want meilisearch.TaskStatus
 	}{
 		{
 			name: "TestWaitForTask50",

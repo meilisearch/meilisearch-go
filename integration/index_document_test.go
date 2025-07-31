@@ -1,18 +1,18 @@
-package meilisearch
+package integration
 
 import (
 	"bytes"
 	"crypto/tls"
-	"testing"
-
+	"github.com/meilisearch/meilisearch-go"
 	"github.com/stretchr/testify/require"
+	"testing"
 )
 
-func Test_GetDocumentsByIDS(t *testing.T) {
+func Test_GetDocumentsByIDs(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanup(sv))
 
-	_, err := sv.CreateIndex(&IndexConfig{
+	_, err := sv.CreateIndex(&meilisearch.IndexConfig{
 		Uid: "TestGetDocumentsByIDs",
 	})
 
@@ -29,11 +29,11 @@ func Test_GetDocumentsByIDS(t *testing.T) {
 
 	testWaitForTask(t, i, ts)
 
-	var documents DocumentsResult
-	err = sv.Index("TestGetDocumentsByIDs").GetDocuments(&DocumentsQuery{Ids: []string{"1", "2", "3"}}, &documents)
+	var documents meilisearch.DocumentsResult
+	err = sv.Index("TestGetDocumentsByIDs").GetDocuments(&meilisearch.DocumentsQuery{Ids: []string{"1", "2", "3"}}, &documents)
 	require.NoError(t, err)
 
-	results := Hits{
+	results := meilisearch.Hits{
 		{"ID": toRawMessage("1"), "Name": toRawMessage("Pride and Prejudice 1")},
 		{"ID": toRawMessage("2"), "Name": toRawMessage("Pride and Prejudice 2")},
 		{"ID": toRawMessage("3"), "Name": toRawMessage("Pride and Prejudice 3")},
@@ -44,30 +44,30 @@ func Test_GetDocumentsByIDS(t *testing.T) {
 func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 	tests := []struct {
 		Name            string
-		ContentEncoding ContentEncoding
+		ContentEncoding meilisearch.ContentEncoding
 		Request         []map[string]interface{}
 		Response        struct {
-			WantResp *TaskInfo
-			DocResp  DocumentsResult
+			WantResp *meilisearch.TaskInfo
+			DocResp  meilisearch.DocumentsResult
 		}
 	}{
 		{
 			Name:            "TestIndexBasicAddDocumentsWithGzip",
-			ContentEncoding: GzipEncoding,
+			ContentEncoding: meilisearch.GzipEncoding,
 			Request: []map[string]interface{}{
 				{"ID": "123", "Name": "Pride and Prejudice"},
 			},
 			Response: struct {
-				WantResp *TaskInfo
-				DocResp  DocumentsResult
+				WantResp *meilisearch.TaskInfo
+				DocResp  meilisearch.DocumentsResult
 			}{
-				WantResp: &TaskInfo{
+				WantResp: &meilisearch.TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
-				DocResp: DocumentsResult{
-					Results: Hits{
+				DocResp: meilisearch.DocumentsResult{
+					Results: meilisearch.Hits{
 						{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
@@ -78,21 +78,21 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 		},
 		{
 			Name:            "TestIndexBasicAddDocumentsWithDeflate",
-			ContentEncoding: DeflateEncoding,
+			ContentEncoding: meilisearch.DeflateEncoding,
 			Request: []map[string]interface{}{
 				{"ID": "123", "Name": "Pride and Prejudice"},
 			},
 			Response: struct {
-				WantResp *TaskInfo
-				DocResp  DocumentsResult
+				WantResp *meilisearch.TaskInfo
+				DocResp  meilisearch.DocumentsResult
 			}{
-				WantResp: &TaskInfo{
+				WantResp: &meilisearch.TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
-				DocResp: DocumentsResult{
-					Results: Hits{
+				DocResp: meilisearch.DocumentsResult{
+					Results: meilisearch.Hits{
 						{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
@@ -103,21 +103,21 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 		},
 		{
 			Name:            "TestIndexBasicAddDocumentsWithBrotli",
-			ContentEncoding: BrotliEncoding,
+			ContentEncoding: meilisearch.BrotliEncoding,
 			Request: []map[string]interface{}{
 				{"ID": "123", "Name": "Pride and Prejudice"},
 			},
 			Response: struct {
-				WantResp *TaskInfo
-				DocResp  DocumentsResult
+				WantResp *meilisearch.TaskInfo
+				DocResp  meilisearch.DocumentsResult
 			}{
-				WantResp: &TaskInfo{
+				WantResp: &meilisearch.TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
-				DocResp: DocumentsResult{
-					Results: Hits{
+				DocResp: meilisearch.DocumentsResult{
+					Results: meilisearch.Hits{
 						{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
@@ -130,7 +130,7 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			sv := setup(t, "", WithContentEncoding(tt.ContentEncoding, DefaultCompression))
+			sv := setup(t, "", meilisearch.WithContentEncoding(tt.ContentEncoding, meilisearch.DefaultCompression))
 			t.Cleanup(cleanup(sv))
 
 			i := sv.Index("indexUID")
@@ -147,8 +147,8 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 			testWaitForTask(t, i, gotResp)
 
 			// Get Documents
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{Limit: 3}, &documents)
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{Limit: 3}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.Response.DocResp, documents)
 
@@ -168,12 +168,12 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 
 	type args struct {
 		UID          string
-		client       ServiceManager
+		client       meilisearch.ServiceManager
 		documentsPtr interface{}
 	}
 	type resp struct {
-		wantResp     *TaskInfo
-		documentsRes DocumentsResult
+		wantResp     *meilisearch.TaskInfo
+		documentsRes meilisearch.DocumentsResult
 	}
 	tests := []struct {
 		name string
@@ -190,13 +190,13 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 				},
 			},
 			resp: resp{
-				wantResp: &TaskInfo{
+				wantResp: &meilisearch.TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
-				documentsRes: DocumentsResult{
-					Results: Hits{
+				documentsRes: meilisearch.DocumentsResult{
+					Results: meilisearch.Hits{
 						{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
@@ -215,13 +215,13 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 				},
 			},
 			resp: resp{
-				wantResp: &TaskInfo{
+				wantResp: &meilisearch.TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
-				documentsRes: DocumentsResult{
-					Results: Hits{
+				documentsRes: meilisearch.DocumentsResult{
+					Results: meilisearch.Hits{
 						{"BookID": toRawMessage(123), "Title": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
@@ -248,8 +248,8 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{Limit: 3}, &documents)
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{Limit: 3}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.resp.documentsRes, documents)
 
@@ -269,13 +269,13 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 
 	type args struct {
 		UID          string
-		client       ServiceManager
+		client       meilisearch.ServiceManager
 		documentsPtr interface{}
 		primaryKey   string
 	}
 	type resp struct {
-		wantResp     *TaskInfo
-		documentsRes DocumentsResult
+		wantResp     *meilisearch.TaskInfo
+		documentsRes meilisearch.DocumentsResult
 	}
 	tests := []struct {
 		name string
@@ -293,13 +293,13 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "key",
 			},
 			resp: resp{
-				wantResp: &TaskInfo{
+				wantResp: &meilisearch.TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
-				documentsRes: DocumentsResult{
-					Results: Hits{
+				documentsRes: meilisearch.DocumentsResult{
+					Results: meilisearch.Hits{
 						{"key": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
@@ -319,13 +319,13 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 				primaryKey: "key",
 			},
 			resp: resp{
-				wantResp: &TaskInfo{
+				wantResp: &meilisearch.TaskInfo{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
-				documentsRes: DocumentsResult{
-					Results: Hits{
+				documentsRes: meilisearch.DocumentsResult{
+					Results: meilisearch.Hits{
 						{"key": toRawMessage(123), "Name": toRawMessage("Pride and Prejudice")},
 					},
 					Limit:  3,
@@ -352,8 +352,8 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{Limit: 3}, &documents)
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{Limit: 3}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.resp.documentsRes, documents)
 		})
@@ -365,14 +365,14 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 
 	type argsNoKey struct {
 		UID          string
-		client       ServiceManager
+		client       meilisearch.ServiceManager
 		documentsPtr interface{}
 		batchSize    int
 	}
 
 	type argsWithKey struct {
 		UID          string
-		client       ServiceManager
+		client       meilisearch.ServiceManager
 		documentsPtr interface{}
 		batchSize    int
 		primaryKey   string
@@ -381,15 +381,15 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 	testsNoKey := []struct {
 		name          string
 		args          argsNoKey
-		wantResp      []TaskInfo
-		expectedError Error
+		wantResp      []meilisearch.TaskInfo
+		expectedError meilisearch.Error
 	}{
 		{
 			name: "TestIndexBasicAddDocumentsInBatches",
 			args: argsNoKey{
 				UID:    "TestIndexBasicAddDocumentsInBatches",
 				client: sv,
-				documentsPtr: Hits{
+				documentsPtr: meilisearch.Hits{
 					{"ID": toRawMessage("122"), "Name": toRawMessage("Pride and Prejudice")},
 					{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudica")},
 					{"ID": toRawMessage("124"), "Name": toRawMessage("Pride and Prejudicb")},
@@ -397,16 +397,16 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 				},
 				batchSize: 2,
 			},
-			wantResp: []TaskInfo{
+			wantResp: []meilisearch.TaskInfo{
 				{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
 				{
 					TaskUID: 1,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
 			},
 		},
@@ -415,15 +415,15 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 	testsWithKey := []struct {
 		name          string
 		args          argsWithKey
-		wantResp      []TaskInfo
-		expectedError Error
+		wantResp      []meilisearch.TaskInfo
+		expectedError meilisearch.Error
 	}{
 		{
 			name: "TestIndexBasicAddDocumentsInBatchesWithKey",
 			args: argsWithKey{
 				UID:    "TestIndexBasicAddDocumentsInBatchesWithKey",
 				client: sv,
-				documentsPtr: Hits{
+				documentsPtr: meilisearch.Hits{
 					{"ID": toRawMessage("122"), "Name": toRawMessage("Pride and Prejudice")},
 					{"ID": toRawMessage("123"), "Name": toRawMessage("Pride and Prejudica")},
 					{"ID": toRawMessage("124"), "Name": toRawMessage("Pride and Prejudicb")},
@@ -432,16 +432,16 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 				batchSize:  2,
 				primaryKey: "ID",
 			},
-			wantResp: []TaskInfo{
+			wantResp: []meilisearch.TaskInfo{
 				{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
 				{
 					TaskUID: 1,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
 			},
 		},
@@ -466,8 +466,8 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 
 			testWaitForBatchTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{
 				Limit: 4,
 			}, &documents)
 
@@ -507,8 +507,8 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 
 			testWaitForBatchTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{
 				Limit: 4,
 			}, &documents)
 
@@ -523,13 +523,13 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 
 	type args struct {
 		UID       string
-		client    ServiceManager
+		client    meilisearch.ServiceManager
 		documents []byte
 	}
 	type testData struct {
 		name     string
 		args     args
-		wantResp *TaskInfo
+		wantResp *meilisearch.TaskInfo
 	}
 
 	tests := []testData{
@@ -540,10 +540,10 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 				client:    sv,
 				documents: testNdjsonDocuments,
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 0,
 				Status:  "enqueued",
-				Type:    TaskTypeDocumentAdditionOrUpdate,
+				Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 			},
 		},
 	}
@@ -570,7 +570,7 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 			require.NotEmpty(t, wantDocs, "Parsed NDJSON documents should not be empty")
 
 			var (
-				gotResp *TaskInfo
+				gotResp *meilisearch.TaskInfo
 				err     error
 			)
 
@@ -589,8 +589,8 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 
@@ -618,14 +618,14 @@ func TestIndex_AddOrUpdateDocumentsCsvInBatches(t *testing.T) {
 
 	type args struct {
 		UID       string
-		client    ServiceManager
+		client    meilisearch.ServiceManager
 		batchSize int
 		documents []byte
 	}
 	type testData struct {
 		name     string
 		args     args
-		wantResp []TaskInfo
+		wantResp []meilisearch.TaskInfo
 	}
 
 	tests := []testData{
@@ -637,21 +637,21 @@ func TestIndex_AddOrUpdateDocumentsCsvInBatches(t *testing.T) {
 				batchSize: 2,
 				documents: testCsvDocuments,
 			},
-			wantResp: []TaskInfo{
+			wantResp: []meilisearch.TaskInfo{
 				{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
 				{
 					TaskUID: 1,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
 				{
 					TaskUID: 2,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
 			},
 		},
@@ -679,7 +679,7 @@ func TestIndex_AddOrUpdateDocumentsCsvInBatches(t *testing.T) {
 			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp []TaskInfo
+				gotResp []meilisearch.TaskInfo
 				err     error
 			)
 
@@ -699,8 +699,8 @@ func TestIndex_AddOrUpdateDocumentsCsvInBatches(t *testing.T) {
 
 			testWaitForBatchTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
 
@@ -730,13 +730,13 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 
 	type args struct {
 		UID       string
-		client    ServiceManager
+		client    meilisearch.ServiceManager
 		documents []byte
 	}
 	type testData struct {
 		name     string
 		args     args
-		wantResp *TaskInfo
+		wantResp *meilisearch.TaskInfo
 	}
 
 	tests := []testData{
@@ -747,10 +747,10 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 				client:    sv,
 				documents: testCsvDocuments,
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 0,
 				Status:  "enqueued",
-				Type:    TaskTypeDocumentAdditionOrUpdate,
+				Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 			},
 		},
 	}
@@ -776,7 +776,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp *TaskInfo
+				gotResp *meilisearch.TaskInfo
 				err     error
 			)
 
@@ -794,8 +794,8 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
 		})
@@ -813,14 +813,14 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 
 	type args struct {
 		UID       string
-		client    ServiceManager
+		client    meilisearch.ServiceManager
 		documents []byte
-		options   *CsvDocumentsQuery
+		options   *meilisearch.CsvDocumentsQuery
 	}
 	type testData struct {
 		name     string
 		args     args
-		wantResp *TaskInfo
+		wantResp *meilisearch.TaskInfo
 	}
 
 	tests := []testData{
@@ -830,15 +830,15 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 				UID:       "csv",
 				client:    sv,
 				documents: testCsvDocuments,
-				options: &CsvDocumentsQuery{
+				options: &meilisearch.CsvDocumentsQuery{
 					PrimaryKey:   "id",
 					CsvDelimiter: ",",
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 0,
 				Status:  "enqueued",
-				Type:    TaskTypeDocumentAdditionOrUpdate,
+				Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 			},
 		},
 		{
@@ -847,14 +847,14 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 				UID:       "csv",
 				client:    sv,
 				documents: testCsvDocuments,
-				options: &CsvDocumentsQuery{
+				options: &meilisearch.CsvDocumentsQuery{
 					PrimaryKey: "id",
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 0,
 				Status:  "enqueued",
-				Type:    TaskTypeDocumentAdditionOrUpdate,
+				Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 			},
 		},
 		{
@@ -863,14 +863,14 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 				UID:       "csv",
 				client:    sv,
 				documents: testCsvDocuments,
-				options: &CsvDocumentsQuery{
+				options: &meilisearch.CsvDocumentsQuery{
 					CsvDelimiter: ",",
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 0,
 				Status:  "enqueued",
-				Type:    TaskTypeDocumentAdditionOrUpdate,
+				Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 			},
 		},
 	}
@@ -896,7 +896,7 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp *TaskInfo
+				gotResp *meilisearch.TaskInfo
 				err     error
 			)
 
@@ -914,8 +914,8 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
 		})
@@ -933,14 +933,14 @@ func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
 
 	type args struct {
 		UID       string
-		client    ServiceManager
+		client    meilisearch.ServiceManager
 		batchSize int
 		documents []byte
 	}
 	type testData struct {
 		name     string
 		args     args
-		wantResp []TaskInfo
+		wantResp []meilisearch.TaskInfo
 	}
 
 	tests := []testData{
@@ -952,21 +952,21 @@ func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
 				batchSize: 2,
 				documents: testNdjsonDocuments,
 			},
-			wantResp: []TaskInfo{
+			wantResp: []meilisearch.TaskInfo{
 				{
 					TaskUID: 0,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
 				{
 					TaskUID: 1,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
 				{
 					TaskUID: 2,
 					Status:  "enqueued",
-					Type:    TaskTypeDocumentAdditionOrUpdate,
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 				},
 			},
 		},
@@ -994,7 +994,7 @@ func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
 			wantDocs := testParseNdjsonDocuments(t, bytes.NewReader(tt.args.documents))
 
 			var (
-				gotResp []TaskInfo
+				gotResp []meilisearch.TaskInfo
 				err     error
 			)
 
@@ -1014,8 +1014,8 @@ func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
 
 			testWaitForBatchTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 
@@ -1042,18 +1042,18 @@ func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
 
 func TestIndex_DeleteAllDocuments(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID    string
-		client ServiceManager
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *TaskInfo
+		wantResp *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicDeleteAllDocuments",
@@ -1061,7 +1061,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 				UID:    "TestIndexBasicDeleteAllDocuments",
 				client: sv,
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1073,7 +1073,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 				UID:    "TestIndexDeleteAllDocumentsWithCustomClient",
 				client: customSv,
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 2,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1096,8 +1096,8 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{Limit: 5}, &documents)
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{Limit: 5}, &documents)
 			require.NoError(t, err)
 			require.Empty(t, documents.Results)
 		})
@@ -1106,21 +1106,21 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 
 func TestIndex_DeleteOneDocument(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID          string
 		PrimaryKey   string
-		client       ServiceManager
+		client       meilisearch.ServiceManager
 		identifier   string
 		documentsPtr interface{}
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *TaskInfo
+		wantResp *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicDeleteOneDocument",
@@ -1132,7 +1132,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"ID": "123", "Name": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1148,7 +1148,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"ID": "123", "Name": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1166,7 +1166,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"ID": "1", "Name": "Alice In Wonderland"},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1182,7 +1182,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"BookID": 123, "Title": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1198,7 +1198,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"BookID": 123, "Title": "Pride and Prejudice"},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1216,7 +1216,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 					{"BookID": 1, "Title": "Alice In Wonderland"},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1254,20 +1254,20 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 
 func TestIndex_DeleteDocuments(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID          string
-		client       ServiceManager
+		client       meilisearch.ServiceManager
 		identifier   []string
 		documentsPtr []docTest
 	}
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *TaskInfo
+		wantResp *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexBasicDeleteDocuments",
@@ -1279,7 +1279,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1295,7 +1295,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1313,7 +1313,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "1", Name: "Alice In Wonderland"},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1331,7 +1331,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 					{ID: "1", Name: "Alice In Wonderland"},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1370,13 +1370,13 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 
 func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID            string
-		client         ServiceManager
+		client         meilisearch.ServiceManager
 		filterToDelete interface{}
 		filterToApply  []interface{}
 		documentsPtr   []docTestBooks
@@ -1384,7 +1384,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 	tests := []struct {
 		name     string
 		args     args
-		wantResp *TaskInfo
+		wantResp *meilisearch.TaskInfo
 	}{
 		{
 			name: "TestIndexDeleteDocumentsByFilterString",
@@ -1397,7 +1397,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 					{BookID: 123, Title: "Pride and Prejudice", Tag: "Romance", Year: 1813},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1416,7 +1416,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 					{BookID: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Epic fantasy", Year: 1978},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1435,7 +1435,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 					{BookID: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Epic fantasy", Year: 1978},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1455,7 +1455,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 					{BookID: 42, Title: "The Hitchhiker's Guide to the Galaxy", Tag: "Epic fantasy", Year: 1978},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1467,21 +1467,21 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 				UID:    "1",
 				client: customSv,
 				filterToApply: []interface{}{
-					AttributeRule{
+					meilisearch.AttributeRule{
 						AttributePatterns: []string{"tag"},
-						Features: AttributeFeatures{
+						Features: meilisearch.AttributeFeatures{
 							FacetSearch: false,
-							Filter: FilterFeatures{
+							Filter: meilisearch.FilterFeatures{
 								Equality:   true,
 								Comparison: false,
 							},
 						},
 					},
-					AttributeRule{
+					meilisearch.AttributeRule{
 						AttributePatterns: []string{"year"},
-						Features: AttributeFeatures{
+						Features: meilisearch.AttributeFeatures{
 							FacetSearch: false,
-							Filter: FilterFeatures{
+							Filter: meilisearch.FilterFeatures{
 								Equality:   true,
 								Comparison: true,
 							},
@@ -1494,7 +1494,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 					{BookID: 1344, Title: "The Hobbit", Tag: "Fantasy", Year: 1937},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1507,11 +1507,11 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 				client: customSv,
 				filterToApply: []interface{}{
 					"title",
-					AttributeRule{
+					meilisearch.AttributeRule{
 						AttributePatterns: []string{"year"},
-						Features: AttributeFeatures{
+						Features: meilisearch.AttributeFeatures{
 							FacetSearch: false,
-							Filter: FilterFeatures{
+							Filter: meilisearch.FilterFeatures{
 								Equality:   true,
 								Comparison: true,
 							},
@@ -1523,7 +1523,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 					{BookID: 1344, Title: "The Hobbit", Tag: "Fantasy", Year: 1937},
 				},
 			},
-			wantResp: &TaskInfo{
+			wantResp: &meilisearch.TaskInfo{
 				TaskUID: 1,
 				Status:  "enqueued",
 				Type:    "documentDeletion",
@@ -1556,8 +1556,8 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 
 			testWaitForTask(t, i, gotResp)
 
-			var documents DocumentsResult
-			err = i.GetDocuments(&DocumentsQuery{}, &documents)
+			var documents meilisearch.DocumentsResult
+			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Zero(t, len(documents.Results))
 		})
@@ -1577,7 +1577,7 @@ func TestIndex_UpdateDocumentsByFunction(t *testing.T) {
 	t.Cleanup(cleanup(c))
 
 	t.Run("Test Upper Case and Add Sparkles around Movie Titles", func(t *testing.T) {
-		task, err := idx.UpdateDocumentsByFunction(&UpdateDocumentByFunctionRequest{
+		task, err := idx.UpdateDocumentsByFunction(&meilisearch.UpdateDocumentByFunctionRequest{
 			Filter:   "id > 3000",
 			Function: "doc.title = `✨ ${doc.title.to_upper()} ✨`",
 		})
@@ -1586,7 +1586,7 @@ func TestIndex_UpdateDocumentsByFunction(t *testing.T) {
 	})
 
 	t.Run("Test User-defined Context", func(t *testing.T) {
-		task, err := idx.UpdateDocumentsByFunction(&UpdateDocumentByFunctionRequest{
+		task, err := idx.UpdateDocumentsByFunction(&meilisearch.UpdateDocumentByFunctionRequest{
 			Context: map[string]interface{}{
 				"idmax": 50,
 			},

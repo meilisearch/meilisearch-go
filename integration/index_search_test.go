@@ -1,8 +1,9 @@
-package meilisearch
+package integration
 
 import (
 	"crypto/tls"
 	"encoding/json"
+	"github.com/meilisearch/meilisearch-go"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -11,34 +12,34 @@ import (
 func TestIndex_SearchWithContentEncoding(t *testing.T) {
 	tests := []struct {
 		Name            string
-		ContentEncoding ContentEncoding
+		ContentEncoding meilisearch.ContentEncoding
 		Query           string
-		Request         *SearchRequest
-		FacetRequest    *FacetSearchRequest
-		Response        *SearchResponse
-		FacetResponse   *FacetSearchResponse
+		Request         *meilisearch.SearchRequest
+		FacetRequest    *meilisearch.FacetSearchRequest
+		Response        *meilisearch.SearchResponse
+		FacetResponse   *meilisearch.FacetSearchResponse
 	}{
 		{
 			Name:            "SearchResultWithGzipEncoding",
-			ContentEncoding: GzipEncoding,
+			ContentEncoding: meilisearch.GzipEncoding,
 			Query:           "prince",
-			Request: &SearchRequest{
+			Request: &meilisearch.SearchRequest{
 				IndexUID: "indexUID",
 				Limit:    20,
 				Offset:   0,
 			},
-			FacetRequest: &FacetSearchRequest{
+			FacetRequest: &meilisearch.FacetSearchRequest{
 				FacetName:  "tag",
 				FacetQuery: "Novel",
 			},
-			FacetResponse: &FacetSearchResponse{
-				FacetHits: Hits{
+			FacetResponse: &meilisearch.FacetSearchResponse{
+				FacetHits: meilisearch.Hits{
 					{"value": json.RawMessage(`"Novel"`), "count": json.RawMessage(`5`)},
 				},
 				FacetQuery: "Novel",
 			},
-			Response: &SearchResponse{
-				Hits: Hits{
+			Response: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": json.RawMessage(`456`), "title": json.RawMessage(`"Le Petit Prince"`)},
 					{"Tag": json.RawMessage(`"Epic fantasy"`), "book_id": json.RawMessage(`4`), "title": json.RawMessage(`"Harry Potter and the Half-Blood Prince"`)},
 				},
@@ -49,15 +50,15 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 		},
 		{
 			Name:            "SearchResultWithDeflateEncoding",
-			ContentEncoding: DeflateEncoding,
+			ContentEncoding: meilisearch.DeflateEncoding,
 			Query:           "prince",
-			Request: &SearchRequest{
+			Request: &meilisearch.SearchRequest{
 				IndexUID: "indexUID",
 				Limit:    20,
 				Offset:   0,
 			},
-			Response: &SearchResponse{
-				Hits: Hits{
+			Response: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": json.RawMessage(`456`), "title": json.RawMessage(`"Le Petit Prince"`)},
 					{"Tag": json.RawMessage(`"Epic fantasy"`), "book_id": json.RawMessage(`4`), "title": json.RawMessage(`"Harry Potter and the Half-Blood Prince"`)},
 				},
@@ -65,12 +66,12 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
-			FacetRequest: &FacetSearchRequest{
+			FacetRequest: &meilisearch.FacetSearchRequest{
 				FacetName:  "tag",
 				FacetQuery: "Novel",
 			},
-			FacetResponse: &FacetSearchResponse{
-				FacetHits: Hits{
+			FacetResponse: &meilisearch.FacetSearchResponse{
+				FacetHits: meilisearch.Hits{
 					{"value": json.RawMessage(`"Novel"`), "count": json.RawMessage(`5`)},
 				},
 				FacetQuery: "Novel",
@@ -78,15 +79,15 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 		},
 		{
 			Name:            "SearchResultWithBrotliEncoding",
-			ContentEncoding: BrotliEncoding,
+			ContentEncoding: meilisearch.BrotliEncoding,
 			Query:           "prince",
-			Request: &SearchRequest{
+			Request: &meilisearch.SearchRequest{
 				IndexUID: "indexUID",
 				Limit:    20,
 				Offset:   0,
 			},
-			Response: &SearchResponse{
-				Hits: Hits{
+			Response: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": json.RawMessage(`456`), "title": json.RawMessage(`"Le Petit Prince"`)},
 					{"Tag": json.RawMessage(`"Epic fantasy"`), "book_id": json.RawMessage(`4`), "title": json.RawMessage(`"Harry Potter and the Half-Blood Prince"`)},
 				},
@@ -94,12 +95,12 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 				Offset:             0,
 				Limit:              20,
 			},
-			FacetRequest: &FacetSearchRequest{
+			FacetRequest: &meilisearch.FacetSearchRequest{
 				FacetName:  "tag",
 				FacetQuery: "Novel",
 			},
-			FacetResponse: &FacetSearchResponse{
-				FacetHits: Hits{
+			FacetResponse: &meilisearch.FacetSearchResponse{
+				FacetHits: meilisearch.Hits{
 					{"value": json.RawMessage(`"Novel"`), "count": json.RawMessage(`5`)},
 				},
 				FacetQuery: "Novel",
@@ -109,7 +110,7 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.Name, func(t *testing.T) {
-			sv := setup(t, "", WithContentEncoding(tt.ContentEncoding, DefaultCompression))
+			sv := setup(t, "", meilisearch.WithContentEncoding(tt.ContentEncoding, meilisearch.DefaultCompression))
 			setUpIndexForFaceting(sv)
 			i := sv.Index(tt.Request.IndexUID)
 			t.Cleanup(cleanup(sv))
@@ -123,9 +124,9 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			gotJson, err := i.SearchRaw(tt.Query, tt.Request)
 			require.NoError(t, err)
 
-			var resp SearchResponse
+			var resp meilisearch.SearchResponse
 			err = json.Unmarshal(*gotJson, &resp)
-			require.NoError(t, err, "error unmarshalling raw got SearchResponse")
+			require.NoError(t, err, "error unmarshalling raw got meilisearch.SearchResponse")
 			require.Equal(t, len(tt.Response.Hits), len(resp.Hits))
 
 			filterableAttrs := []interface{}{"tag"}
@@ -135,9 +136,9 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 
 			gotJson, err = i.FacetSearch(tt.FacetRequest)
 			require.NoError(t, err)
-			var gotFacet FacetSearchResponse
+			var gotFacet meilisearch.FacetSearchResponse
 			err = json.Unmarshal(*gotJson, &gotFacet)
-			require.NoError(t, err, "error unmarshalling raw got FacetSearchResponse")
+			require.NoError(t, err, "error unmarshalling raw got meilisearch.FacetSearchResponse")
 			require.Equal(t, len(gotFacet.FacetHits), len(tt.FacetResponse.FacetHits))
 		})
 	}
@@ -149,15 +150,15 @@ func TestIndex_SearchRaw(t *testing.T) {
 	type args struct {
 		UID        string
 		PrimaryKey string
-		client     ServiceManager
+		client     meilisearch.ServiceManager
 		query      string
-		request    *SearchRequest
+		request    *meilisearch.SearchRequest
 	}
 
 	tests := []struct {
 		name    string
 		args    args
-		want    *SearchResponse
+		want    *meilisearch.SearchResponse
 		wantErr bool
 	}{
 		{
@@ -166,12 +167,12 @@ func TestIndex_SearchRaw(t *testing.T) {
 				UID:    "indexUID",
 				client: sv,
 				query:  "prince",
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					IndexUID: "foobar",
 				},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": json.RawMessage(`456`), "title": json.RawMessage(`"Le Petit Prince"`)},
 					{"Tag": json.RawMessage(`"Epic fantasy"`), "book_id": json.RawMessage(`4`), "title": json.RawMessage(`"Harry Potter and the Half-Blood Prince"`)},
 				},
@@ -210,15 +211,15 @@ func TestIndex_SearchRaw(t *testing.T) {
 
 			require.NoError(t, err)
 
-			// Unmarshal the raw response from SearchRaw into a SearchResponse
-			var got SearchResponse
+			// Unmarshal the raw response from SearchRaw into a meilisearch.SearchResponse
+			var got meilisearch.SearchResponse
 			err = json.Unmarshal(*gotRaw, &got)
-			require.NoError(t, err, "error unmarshalling raw got SearchResponse")
+			require.NoError(t, err, "error unmarshalling raw got meilisearch.SearchResponse")
 
-			// Check Hits length
+			// Check meilisearch.Hits length
 			require.Equal(t, len(tt.want.Hits), len(got.Hits))
 
-			// Compare each hit in Hits
+			// Compare each hit in meilisearch.Hits
 			for idx := range got.Hits {
 				expectedHit := tt.want.Hits[idx]
 				actualHit := got.Hits[idx]
@@ -247,14 +248,14 @@ func TestIndex_Search(t *testing.T) {
 	type args struct {
 		UID        string
 		PrimaryKey string
-		client     ServiceManager
+		client     meilisearch.ServiceManager
 		query      string
-		request    *SearchRequest
+		request    *meilisearch.SearchRequest
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    *SearchResponse
+		want    *meilisearch.SearchResponse
 		wantErr bool
 	}{
 		{
@@ -274,10 +275,10 @@ func TestIndex_Search(t *testing.T) {
 				UID:     "indexUID",
 				client:  sv,
 				query:   "prince",
-				request: &SearchRequest{},
+				request: &meilisearch.SearchRequest{},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": json.RawMessage(`456`), "title": json.RawMessage(`"Le Petit Prince"`)},
 					{"Tag": json.RawMessage(`"Epic fantasy"`), "book_id": json.RawMessage(`4`), "title": json.RawMessage(`"Harry Potter and the Half-Blood Prince"`)},
 				},
@@ -329,22 +330,22 @@ func TestIndex_Search(t *testing.T) {
 
 func TestIndex_SearchFacets(t *testing.T) {
 	sv := setup(t, "")
-	customSv := setup(t, "", WithCustomClientWithTLS(&tls.Config{
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
 
 	type args struct {
 		UID                  string
 		PrimaryKey           string
-		client               ServiceManager
+		client               meilisearch.ServiceManager
 		query                string
-		request              *SearchRequest
+		request              *meilisearch.SearchRequest
 		filterableAttributes []interface{}
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    *SearchResponse
+		want    *meilisearch.SearchResponse
 		wantErr bool
 	}{
 		{
@@ -364,13 +365,13 @@ func TestIndex_SearchFacets(t *testing.T) {
 				UID:    "indexUID",
 				client: sv,
 				query:  "prince",
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					Facets: []string{"*"},
 				},
 				filterableAttributes: []interface{}{"tag"},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": json.RawMessage(`456`), "title": json.RawMessage(`"Le Petit Prince"`)},
 					{"book_id": json.RawMessage(`4`), "title": json.RawMessage(`"Harry Potter and the Half-Blood Prince"`)},
 				},
@@ -392,13 +393,13 @@ func TestIndex_SearchFacets(t *testing.T) {
 				UID:    "indexUID",
 				client: customSv,
 				query:  "prince",
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					Facets: []string{"*"},
 				},
 				filterableAttributes: []interface{}{"tag"},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": json.RawMessage(`456`), "title": json.RawMessage(`"Le Petit Prince"`)},
 					{"book_id": json.RawMessage(`4`), "title": json.RawMessage(`"Harry Potter and the Half-Blood Prince"`)},
 				},
@@ -420,13 +421,13 @@ func TestIndex_SearchFacets(t *testing.T) {
 				UID:    "indexUID",
 				client: sv,
 				query:  "prince",
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					Facets: []string{"book_id"},
 				},
 				filterableAttributes: []interface{}{"book_id"},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": json.RawMessage(`456`), "title": json.RawMessage(`"Le Petit Prince"`)},
 					{"book_id": json.RawMessage(`4`), "title": json.RawMessage(`"Harry Potter and the Half-Blood Prince"`)},
 				},
@@ -497,15 +498,15 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 	type args struct {
 		UID                  string
 		PrimaryKey           string
-		client               ServiceManager
+		client               meilisearch.ServiceManager
 		query                string
 		filterableAttributes []interface{}
-		request              *SearchRequest
+		request              *meilisearch.SearchRequest
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    *SearchResponse
+		want    *meilisearch.SearchResponse
 		wantErr bool
 	}{
 		{
@@ -515,12 +516,12 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				client:               sv,
 				query:                "and",
 				filterableAttributes: []interface{}{"tag"},
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					Filter: "tag = romance",
 				},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": json.RawMessage(`123`), "title": json.RawMessage(`"Pride and Prejudice"`)},
 				},
 				EstimatedTotalHits: 1,
@@ -536,12 +537,12 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 				client:               sv,
 				query:                "and",
 				filterableAttributes: []interface{}{"year"},
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					Filter: "year = 2005",
 				},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": json.RawMessage(`4`), "title": json.RawMessage(`"Harry Potter and the Half-Blood Prince"`)},
 				},
 				EstimatedTotalHits: 1,
@@ -596,15 +597,15 @@ func TestIndex_SearchWithSort(t *testing.T) {
 	type args struct {
 		UID                string
 		PrimaryKey         string
-		client             ServiceManager
+		client             meilisearch.ServiceManager
 		query              string
 		sortableAttributes []string
-		request            *SearchRequest
+		request            *meilisearch.SearchRequest
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    *SearchResponse
+		want    *meilisearch.SearchResponse
 		wantErr bool
 	}{
 		{
@@ -614,12 +615,12 @@ func TestIndex_SearchWithSort(t *testing.T) {
 				client:             sv,
 				query:              "and",
 				sortableAttributes: []string{"year"},
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					Sort: []string{"year:asc"},
 				},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": toRawMessage(123), "title": toRawMessage("Pride and Prejudice")},
 					{"book_id": toRawMessage(730), "title": toRawMessage("War and Peace")},
 					{"book_id": toRawMessage(1032), "title": toRawMessage("Crime and Punishment")},
@@ -676,16 +677,16 @@ func TestIndex_SearchOnNestedFields(t *testing.T) {
 	type args struct {
 		UID                 string
 		PrimaryKey          string
-		client              ServiceManager
+		client              meilisearch.ServiceManager
 		query               string
-		request             *SearchRequest
+		request             *meilisearch.SearchRequest
 		searchableAttribute []string
 		sortableAttribute   []string
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    *SearchResponse
+		want    *meilisearch.SearchResponse
 		wantErr bool
 	}{
 		{
@@ -694,10 +695,10 @@ func TestIndex_SearchOnNestedFields(t *testing.T) {
 				UID:     "TestIndexBasicSearchOnNestedFields",
 				client:  sv,
 				query:   "An awesome",
-				request: &SearchRequest{},
+				request: &meilisearch.SearchRequest{},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{
 						"id": toRawMessage(5), "title": toRawMessage("The Hobbit"),
 						"info": toRawMessage(map[string]interface{}{
@@ -765,14 +766,14 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 	type args struct {
 		UID        string
 		PrimaryKey string
-		client     ServiceManager
+		client     meilisearch.ServiceManager
 		query      string
-		request    *SearchRequest
+		request    *meilisearch.SearchRequest
 	}
 	tests := []struct {
 		name    string
 		args    args
-		want    *SearchResponse
+		want    *meilisearch.SearchResponse
 		wantErr bool
 	}{
 		{
@@ -781,12 +782,12 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				UID:    "indexUID",
 				client: sv,
 				query:  "and",
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					HitsPerPage: 10,
 				},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": toRawMessage(123), "title": toRawMessage("Pride and Prejudice")},
 					{"book_id": toRawMessage(730), "title": toRawMessage("War and Peace")},
 					{"book_id": toRawMessage(1032), "title": toRawMessage("Crime and Punishment")},
@@ -805,12 +806,12 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				UID:    "indexUID",
 				client: sv,
 				query:  "and",
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					Page: 1,
 				},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": toRawMessage(123), "title": toRawMessage("Pride and Prejudice")},
 					{"book_id": toRawMessage(730), "title": toRawMessage("War and Peace")},
 					{"book_id": toRawMessage(1032), "title": toRawMessage("Crime and Punishment")},
@@ -829,13 +830,13 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				UID:    "indexUID",
 				client: sv,
 				query:  "and",
-				request: &SearchRequest{
+				request: &meilisearch.SearchRequest{
 					HitsPerPage: 10,
 					Page:        1,
 				},
 			},
-			want: &SearchResponse{
-				Hits: Hits{
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
 					{"book_id": toRawMessage(123), "title": toRawMessage("Pride and Prejudice")},
 					{"book_id": toRawMessage(730), "title": toRawMessage("War and Peace")},
 					{"book_id": toRawMessage(1032), "title": toRawMessage("Crime and Punishment")},
@@ -890,16 +891,16 @@ func TestIndex_SearchWithShowRankingScore(t *testing.T) {
 	type args struct {
 		UID        string
 		PrimaryKey string
-		client     ServiceManager
+		client     meilisearch.ServiceManager
 		query      string
-		request    SearchRequest
+		request    meilisearch.SearchRequest
 	}
 
 	testArg := args{
 		UID:    "indexUID",
 		client: sv,
 		query:  "and",
-		request: SearchRequest{
+		request: meilisearch.SearchRequest{
 			ShowRankingScore: true,
 		},
 	}
@@ -929,16 +930,16 @@ func TestIndex_SearchWithShowRankingScoreDetails(t *testing.T) {
 	type args struct {
 		UID        string
 		PrimaryKey string
-		client     ServiceManager
+		client     meilisearch.ServiceManager
 		query      string
-		request    SearchRequest
+		request    meilisearch.SearchRequest
 	}
 
 	testArg := args{
 		UID:    "indexUID",
 		client: sv,
 		query:  "and",
-		request: SearchRequest{
+		request: meilisearch.SearchRequest{
 			ShowRankingScoreDetails: true,
 		},
 	}
@@ -967,17 +968,17 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 		name       string
 		UID        string
 		PrimaryKey string
-		client     ServiceManager
+		client     meilisearch.ServiceManager
 		query      string
-		request    SearchRequest
+		request    meilisearch.SearchRequest
 	}{
 		{
 			name:   "basic hybrid test",
 			UID:    "indexUID",
 			client: sv,
 			query:  "Pride and Prejudice",
-			request: SearchRequest{
-				Hybrid: &SearchRequestHybrid{
+			request: meilisearch.SearchRequest{
+				Hybrid: &meilisearch.SearchRequestHybrid{
 					SemanticRatio: 0.5,
 					Embedder:      "default",
 				},
@@ -988,7 +989,7 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			i, err := setUpIndexWithVector(tt.client.(*meilisearch), tt.UID)
+			i, err := setUpIndexWithVector(tt.client, tt.UID)
 			require.NoError(t, err)
 
 			c := tt.client
@@ -1014,15 +1015,15 @@ func TestIndex_SearchWithDistinct(t *testing.T) {
 	tests := []struct {
 		UID        string
 		PrimaryKey string
-		client     ServiceManager
+		client     meilisearch.ServiceManager
 		query      string
-		request    SearchRequest
+		request    meilisearch.SearchRequest
 	}{
 		{
 			UID:    "indexUID",
 			client: sv,
 			query:  "white shirt",
-			request: SearchRequest{
+			request: meilisearch.SearchRequest{
 				Distinct: "sku",
 			},
 		},
@@ -1048,35 +1049,35 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 	tests := []struct {
 		UID        string
 		PrimaryKey string
-		client     ServiceManager
-		request    *SimilarDocumentQuery
-		resp       *SimilarDocumentResult
+		client     meilisearch.ServiceManager
+		request    *meilisearch.SimilarDocumentQuery
+		resp       *meilisearch.SimilarDocumentResult
 		wantErr    bool
 	}{
 		{
 			UID:    "indexUID",
 			client: sv,
-			request: &SimilarDocumentQuery{
+			request: &meilisearch.SimilarDocumentQuery{
 				Id:       "123",
 				Embedder: "default",
 			},
-			resp:    new(SimilarDocumentResult),
+			resp:    new(meilisearch.SimilarDocumentResult),
 			wantErr: false,
 		},
 		{
 			UID:    "indexUID",
 			client: sv,
-			request: &SimilarDocumentQuery{
+			request: &meilisearch.SimilarDocumentQuery{
 				Embedder: "default",
 			},
-			resp:    new(SimilarDocumentResult),
+			resp:    new(meilisearch.SimilarDocumentResult),
 			wantErr: true,
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.UID, func(t *testing.T) {
-			i, err := setUpIndexWithVector(tt.client.(*meilisearch), tt.UID)
+			i, err := setUpIndexWithVector(tt.client, tt.UID)
 			require.NoError(t, err)
 			c := tt.client
 			t.Cleanup(cleanup(c))
@@ -1099,15 +1100,15 @@ func TestIndex_FacetSearch(t *testing.T) {
 	type args struct {
 		UID                  string
 		PrimaryKey           string
-		client               ServiceManager
-		request              *FacetSearchRequest
+		client               meilisearch.ServiceManager
+		request              *meilisearch.FacetSearchRequest
 		filterableAttributes []interface{}
 	}
 
 	tests := []struct {
 		name    string
 		args    args
-		want    *FacetSearchResponse
+		want    *meilisearch.FacetSearchResponse
 		wantErr bool
 	}{
 		{
@@ -1115,14 +1116,14 @@ func TestIndex_FacetSearch(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: sv,
-				request: &FacetSearchRequest{
+				request: &meilisearch.FacetSearchRequest{
 					FacetName:  "tag",
 					FacetQuery: "Novel",
 				},
 				filterableAttributes: []interface{}{"tag"},
 			},
-			want: &FacetSearchResponse{
-				FacetHits: Hits{
+			want: &meilisearch.FacetSearchResponse{
+				FacetHits: meilisearch.Hits{
 					{"value": toRawMessage("Novel"), "count": toRawMessage(5)},
 				},
 				FacetQuery: "Novel",
@@ -1144,7 +1145,7 @@ func TestIndex_FacetSearch(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: sv,
-				request: &FacetSearchRequest{
+				request: &meilisearch.FacetSearchRequest{
 					FacetQuery: "Novel",
 				},
 			},
@@ -1156,14 +1157,14 @@ func TestIndex_FacetSearch(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: sv,
-				request: &FacetSearchRequest{
+				request: &meilisearch.FacetSearchRequest{
 					Q:         "query",
 					FacetName: "tag",
 				},
 				filterableAttributes: []interface{}{"tag"},
 			},
-			want: &FacetSearchResponse{
-				FacetHits:  Hits{},
+			want: &meilisearch.FacetSearchResponse{
+				FacetHits:  meilisearch.Hits{},
 				FacetQuery: "",
 			},
 			wantErr: false,
@@ -1194,10 +1195,10 @@ func TestIndex_FacetSearch(t *testing.T) {
 			require.NoError(t, err)
 			require.NotNil(t, gotRaw)
 
-			// Unmarshal the raw response into a FacetSearchResponse
-			var got FacetSearchResponse
+			// Unmarshal the raw response into a meilisearch.FacetSearchResponse
+			var got meilisearch.FacetSearchResponse
 			err = json.Unmarshal(*gotRaw, &got)
-			require.NoError(t, err, "error unmarshalling raw got FacetSearchResponse")
+			require.NoError(t, err, "error unmarshalling raw got meilisearch.FacetSearchResponse")
 
 			require.Equal(t, len(tt.want.FacetHits), len(got.FacetHits))
 
