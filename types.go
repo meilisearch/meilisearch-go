@@ -536,7 +536,6 @@ type ExperimentalFeaturesBase struct {
 	ContainsFilter          *bool `json:"containsFilter,omitempty"`
 	Network                 *bool `json:"network,omitempty"`
 	CompositeEmbedders      *bool `json:"compositeEmbedders,omitempty"`
-	VectorStore             *bool `json:"vectorStore,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
