@@ -50,22 +50,29 @@ jobs:
         uses: actions/setup-go@v5
         with:
           go-version: ${{ matrix.go }}
+
       - name: Check out code into the Go module directory
         uses: actions/checkout@v4
+
       - name: Get dependencies
-        run: go mod download -x
+        run: go mod download
+
       - name: Meilisearch setup (latest version) with Docker
         run: docker run -d -p 7700:7700 getmeili/meilisearch:latest meilisearch --master-key=masterKey --no-analytics
+
       - name: Run unit tests
         run: |
           go test --race -v -gcflags=-l -coverprofile=unit_coverage.txt -covermode=atomic $(go list ./... | grep -v /integration)
+
       - name: Run integration tests
         run: |
           go test --race -v -gcflags=-l -coverprofile=integration_coverage.txt -covermode=atomic -coverpkg=./... ./integration
+
       - name: Merge coverage reports
         run: |
           go install github.com/ja7ad/gocovmerge/cmd/gocovmerge@v0.2.0
           gocovmerge unit_coverage.txt integration_coverage.txt > coverage.txt
+
       - name: Upload coverage report
         uses: codecov/codecov-action@v5
         env:
