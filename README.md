@@ -32,7 +32,7 @@
 ## Table of Contents
 
 - [📖 Documentation](#-documentation)
-- [🔧 Installation](#-installation)
+- [🔧 Installation](#-installation--120)
 - [🚀 Getting started](#-getting-started)
   - [Add documents](#add-documents)
   - [Basic search](#basic-search)
@@ -52,7 +52,7 @@ This readme contains all the documentation you need to start using this Meilisea
 For general information on how to use Meilisearch—such as our API reference, tutorials, guides, and in-depth articles—refer to our [main documentation website](https://www.meilisearch.com/docs/).
 
 
-## 🔧 Installation
+## 🔧 Installation (>= 1.20)
 
 With `go get` in command line:
 ```bash
