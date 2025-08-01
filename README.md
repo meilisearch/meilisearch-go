@@ -32,7 +32,7 @@
 ## Table of Contents
 
 - [📖 Documentation](#-documentation)
-- [🔧 Installation](#-installation)
+- [🔧 Installation (>= 1.20)](#-installation-120)
 - [🚀 Getting started](#-getting-started)
   - [Add documents](#add-documents)
   - [Basic search](#basic-search)
