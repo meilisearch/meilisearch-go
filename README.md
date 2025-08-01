@@ -31,7 +31,7 @@
 ## Table of Contents
 
 - [📖 Documentation](#-documentation)
-- [🔧 Installation (>= 1.20)](#-installation--120)
+- [🔧 Installation](#-installation--120)
 - [🚀 Getting started](#-getting-started)
   - [Add documents](#add-documents)
   - [Basic search](#basic-search)
