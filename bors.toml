@@ -1,3 +1,0 @@
-status = ['integration-tests (go current version)', 'integration-tests (go latest version)', 'linter']
-# 1 hour timeout
-timeout-sec = 3600
