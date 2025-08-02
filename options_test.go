@@ -1,12 +1,101 @@
 package meilisearch
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
-	"github.com/stretchr/testify/require"
+	"net"
 	"net/http"
+	"net/url"
+	"reflect"
 	"testing"
+	"time"
+
+	"github.com/stretchr/testify/require"
 )
+
+func TestOptions_WithCustomProxy(t *testing.T) {
+	proxy := func(*http.Request) (*url.URL, error) { return nil, nil }
+	meili := New("localhost:7700", WithCustomProxy(proxy))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+	transport, ok := m.client.client.Transport.(*http.Transport)
+	require.True(t, ok)
+
+	require.Equal(t, reflect.ValueOf(proxy).Pointer(), reflect.ValueOf(transport.Proxy).Pointer())
+}
+
+func TestOptions_WithCustomDialContext(t *testing.T) {
+	dial := func(ctx context.Context, network, addr string) (net.Conn, error) { return nil, nil }
+	meili := New("localhost:7700", WithCustomDialContext(dial))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+	transport, ok := m.client.client.Transport.(*http.Transport)
+	require.True(t, ok)
+	require.Equal(t, reflect.ValueOf(dial).Pointer(), reflect.ValueOf(transport.DialContext).Pointer())
+}
+
+func TestOptions_WithCustomMaxIdleConns(t *testing.T) {
+	meili := New("localhost:7700", WithCustomMaxIdleConns(50))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+	transport, ok := m.client.client.Transport.(*http.Transport)
+	require.True(t, ok)
+	require.Equal(t, 50, transport.MaxIdleConns)
+}
+
+func TestOptions_WithCustomMaxIdleConnsPerHost(t *testing.T) {
+	meili := New("localhost:7700", WithCustomMaxIdleConnsPerHost(50))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+	transport, ok := m.client.client.Transport.(*http.Transport)
+	require.True(t, ok)
+	require.Equal(t, 50, transport.MaxIdleConnsPerHost)
+}
+
+func TestOptions_WithCustomIdleConnTimeout(t *testing.T) {
+	timeout := time.Second * 5
+	meili := New("localhost:7700", WithCustomIdleConnTimeout(timeout))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+	transport, ok := m.client.client.Transport.(*http.Transport)
+	require.True(t, ok)
+	require.Equal(t, timeout, transport.IdleConnTimeout)
+}
+
+func TestOptions_WithCustomTLSHandshakeTimeout(t *testing.T) {
+	timeout := time.Second * 5
+	meili := New("localhost:7700", WithCustomTLSHandshakeTimeout(timeout))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+	transport, ok := m.client.client.Transport.(*http.Transport)
+	require.True(t, ok)
+	require.Equal(t, timeout, transport.TLSHandshakeTimeout)
+}
+
+func TestOptions_WithCustomExpectContinueTimeout(t *testing.T) {
+	timeout := time.Second * 5
+	meili := New("localhost:7700", WithCustomExpectContinueTimeout(timeout))
+	require.NotNil(t, meili)
+
+	m, ok := meili.(*meilisearch)
+	require.True(t, ok)
+	transport, ok := m.client.client.Transport.(*http.Transport)
+	require.True(t, ok)
+	require.Equal(t, timeout, transport.ExpectContinueTimeout)
+}
 
 func TestOptions_WithCustomClient(t *testing.T) {
 	meili := New("localhost:7700", WithCustomClient(http.DefaultClient))
