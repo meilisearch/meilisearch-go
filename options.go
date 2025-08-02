@@ -1,15 +1,18 @@
 package meilisearch
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"net"
 	"net/http"
+	"net/url"
 	"time"
 )
 
 type meiliOpt struct {
 	client          *http.Client
+	transport       *http.Transport
 	apiKey          string
 	contentEncoding *encodingOpt
 	retryOnStatus   map[int]bool
@@ -27,10 +30,12 @@ type encodingOpt struct {
 type Option func(*meiliOpt)
 
 func _defaultOpts() *meiliOpt {
+	transport := baseTransport()
 	return &meiliOpt{
 		client: &http.Client{
-			Transport: baseTransport(),
+			Transport: transport,
 		},
+		transport: transport,
 		contentEncoding: &encodingOpt{
 			level: DefaultCompression,
 		},
@@ -50,6 +55,55 @@ func _defaultOpts() *meiliOpt {
 func WithCustomClient(client *http.Client) Option {
 	return func(opt *meiliOpt) {
 		opt.client = client
+	}
+}
+
+// WithCustomProxy sets a custom proxy function
+func WithCustomProxy(proxy func(*http.Request) (*url.URL, error)) Option {
+	return func(opt *meiliOpt) {
+		opt.transport.Proxy = proxy
+	}
+}
+
+// WithCustomDialContext sets a custom dial context
+func WithCustomDialContext(dial func(ctx context.Context, network, addr string) (net.Conn, error)) Option {
+	return func(opt *meiliOpt) {
+		opt.transport.DialContext = dial
+	}
+}
+
+// WithCustomMaxIdleConns sets the max number of idle connections
+func WithCustomMaxIdleConns(maxIdleConns int) Option {
+	return func(opt *meiliOpt) {
+		opt.transport.MaxIdleConns = maxIdleConns
+	}
+}
+
+// WithCustomMaxIdleConnsPerHost sets max idle connections per host
+func WithCustomMaxIdleConnsPerHost(maxIdleConnsPerHost int) Option {
+	return func(opt *meiliOpt) {
+		opt.transport.MaxIdleConnsPerHost = maxIdleConnsPerHost
+	}
+}
+
+// WithCustomIdleConnTimeout sets the idle connection timeout
+func WithCustomIdleConnTimeout(timeout time.Duration) Option {
+	return func(opt *meiliOpt) {
+		opt.transport.IdleConnTimeout = timeout
+	}
+}
+
+// WithCustomTLSHandshakeTimeout sets the TLS handshake timeout
+func WithCustomTLSHandshakeTimeout(timeout time.Duration) Option {
+	return func(opt *meiliOpt) {
+		opt.transport.TLSHandshakeTimeout = timeout
+	}
+}
+
+// WithCustomExpectContinueTimeout sets the Expect-Continue timeout
+func WithCustomExpectContinueTimeout(timeout time.Duration) Option {
+	return func(opt *meiliOpt) {
+		opt.transport.ExpectContinueTimeout = timeout
 	}
 }
 
