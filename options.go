@@ -61,14 +61,18 @@ func WithCustomClient(client *http.Client) Option {
 // WithCustomProxy sets a custom proxy function
 func WithCustomProxy(proxy func(*http.Request) (*url.URL, error)) Option {
 	return func(opt *meiliOpt) {
-		opt.transport.Proxy = proxy
+		if proxy != nil {
+			opt.transport.Proxy = proxy
+		}
 	}
 }
 
 // WithCustomDialContext sets a custom dial context
 func WithCustomDialContext(dial func(ctx context.Context, network, addr string) (net.Conn, error)) Option {
 	return func(opt *meiliOpt) {
-		opt.transport.DialContext = dial
+		if dial != nil {
+			opt.transport.DialContext = dial
+		}
 	}
 }
 
