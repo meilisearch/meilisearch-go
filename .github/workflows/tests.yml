@@ -2,11 +2,9 @@ name: Tests
 
 on:
   pull_request:
+  merge_group:
   push:
-    # trying and staging branches are for BORS config
     branches:
-      - trying
-      - staging
       - main
 
 jobs:
