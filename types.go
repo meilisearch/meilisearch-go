@@ -79,6 +79,7 @@ type Settings struct {
 	Embedders            map[string]Embedder    `json:"embedders,omitempty"`
 	PrefixSearch         *string                `json:"prefixSearch,omitempty"`
 	FacetSearch          bool                   `json:"facetSearch,omitempty"`
+	Chat                 *Chat                  `json:"chat,omitempty"`
 }
 
 type LocalizedAttributes struct {
@@ -111,6 +112,23 @@ type Faceting struct {
 	MaxValuesPerFacet int64 `json:"maxValuesPerFacet"`
 	// SortFacetValuesBy index_name: alpha|count
 	SortFacetValuesBy map[string]SortFacetType `json:"sortFacetValuesBy"`
+}
+
+type Chat struct {
+	Description              string            `json:"description,omitempty"`
+	DocumentTemplate         string            `json:"documentTemplate,omitempty"`
+	DocumentTemplateMaxBytes int               `json:"documentTemplateMaxBytes,omitempty"`
+	SearchParameters         *SearchParameters `json:"searchParameters,omitempty"`
+}
+
+type SearchParameters struct {
+	Limit                 int64                `json:"limit,omitempty"`
+	AttributesToSearchOn  []string             `json:"attributesToSearchOn,omitempty"`
+	MatchingStrategy      MatchingStrategy     `json:"matchingStrategy,omitempty"`
+	Sort                  []string             `json:"sort,omitempty"`
+	Distinct              string               `json:"distinct,omitempty"`
+	Hybrid                *SearchRequestHybrid `json:"hybrid,omitempty"`
+	RankingScoreThreshold float64              `json:"rankingScoreThreshold,omitempty"`
 }
 
 // Embedder represents a unified configuration for various embedder types.

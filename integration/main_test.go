@@ -5,12 +5,13 @@ import (
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
-	"github.com/meilisearch/meilisearch-go"
-	"github.com/stretchr/testify/require"
 	"io"
 	"os"
 	"strings"
 	"testing"
+
+	"github.com/meilisearch/meilisearch-go"
+	"github.com/stretchr/testify/require"
 )
 
 var (
@@ -35,6 +36,16 @@ var (
 		MaxValuesPerFacet: 100,
 		SortFacetValuesBy: map[string]meilisearch.SortFacetType{
 			"*": meilisearch.SortFacetTypeAlpha,
+		},
+	}
+	defaultChat = meilisearch.Chat{
+		DocumentTemplate:         "{% for field in fields %}{% if field.is_searchable and field.value != nil %}{{ field.name }}: {{ field.value }}\n{% endif %}{% endfor %}",
+		DocumentTemplateMaxBytes: 400,
+		SearchParameters: &meilisearch.SearchParameters{
+			Limit:                 0,
+			MatchingStrategy:      "",
+			Distinct:              "",
+			RankingScoreThreshold: 0,
 		},
 	}
 )
