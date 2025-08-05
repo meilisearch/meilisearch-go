@@ -44,6 +44,11 @@ func (ef *ExperimentalFeatures) SetCompositeEmbedders(enable bool) *Experimental
 	return ef
 }
 
+func (ef *ExperimentalFeatures) SetChatCompletions(enable bool) *ExperimentalFeatures {
+	ef.ChatCompletions = &enable
+	return ef
+}
+
 func (ef *ExperimentalFeatures) Get() (*ExperimentalFeaturesResult, error) {
 	return ef.GetWithContext(context.Background())
 }
@@ -79,6 +84,7 @@ func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*Experim
 		ContainsFilter:          ef.ContainsFilter,
 		Network:                 ef.Network,
 		CompositeEmbedders:      ef.CompositeEmbedders,
+		ChatCompletions:         ef.ChatCompletions,
 	}
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{

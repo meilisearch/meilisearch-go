@@ -67,6 +67,7 @@ func TestUpdate_ExperimentalFeatures(t *testing.T) {
 			ef.SetContainsFilter(true)
 			ef.SetNetwork(true)
 			ef.SetCompositeEmbedders(true)
+			ef.SetChatCompletions(true)
 			gotResp, err := ef.Update()
 			require.NoError(t, err)
 
@@ -76,6 +77,7 @@ func TestUpdate_ExperimentalFeatures(t *testing.T) {
 			require.Equal(t, true, gotResp.ContainsFilter, "ExperimentalFeatures.Update() should return containsFilter as true")
 			require.Equal(t, true, gotResp.Network, "ExperimentalFeatures.Update() should return network as true")
 			require.Equal(t, true, gotResp.CompositeEmbedders, "ExperimentalFeatures.Update() should return composite embedders as true")
+			require.Equal(t, true, gotResp.ChatCompletions, "ExperimentalFeatures.Update() should return chat completions as true")
 		})
 	}
 }
