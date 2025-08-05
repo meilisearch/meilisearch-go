@@ -536,6 +536,7 @@ type ExperimentalFeaturesBase struct {
 	ContainsFilter          *bool `json:"containsFilter,omitempty"`
 	Network                 *bool `json:"network,omitempty"`
 	CompositeEmbedders      *bool `json:"compositeEmbedders,omitempty"`
+	ChatCompletions         *bool `json:"chatCompletions,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -545,6 +546,7 @@ type ExperimentalFeaturesResult struct {
 	ContainsFilter          bool `json:"containsFilter"`
 	Network                 bool `json:"network"`
 	CompositeEmbedders      bool `json:"compositeEmbedders"`
+	ChatCompletions         bool `json:"chatCompletions"`
 }
 
 type SwapIndexesParams struct {
