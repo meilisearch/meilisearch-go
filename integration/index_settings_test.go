@@ -2,10 +2,11 @@ package integration
 
 import (
 	"crypto/tls"
+	"testing"
+
 	"github.com/meilisearch/meilisearch-go"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestIndex_GetFilterableAttributes(t *testing.T) {
@@ -265,6 +266,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -294,6 +296,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 	}
@@ -907,6 +910,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -938,6 +942,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 	}
@@ -1771,6 +1776,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					PrefixSearch: stringPtr("indexingTime"),
 					FacetSearch:  true,
 					Embedders:    make(map[string]meilisearch.Embedder),
+					Chat:         &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -1802,6 +1808,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				PrefixSearch: stringPtr("indexingTime"),
 				FacetSearch:  true,
 				Embedders:    make(map[string]meilisearch.Embedder),
+				Chat:         &defaultChat,
 			},
 		},
 		{
@@ -1859,6 +1866,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -1884,6 +1892,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 	}
@@ -1962,6 +1971,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					Synonyms: map[string][]string{
@@ -1991,6 +2001,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2015,6 +2026,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -2053,6 +2065,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					Synonyms: map[string][]string{
@@ -2082,6 +2095,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2106,6 +2120,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -2144,6 +2159,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					SearchableAttributes: []string{
@@ -2173,6 +2189,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2197,6 +2214,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -2235,6 +2253,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					DisplayedAttributes: []string{
@@ -2264,6 +2283,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2288,6 +2308,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -2326,6 +2347,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					StopWords: []string{
@@ -2355,6 +2377,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2379,6 +2402,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -2417,6 +2441,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					FilterableAttributes: []string{
@@ -2446,6 +2471,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2470,6 +2496,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -2508,6 +2535,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					SortableAttributes: []string{
@@ -2537,6 +2565,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2561,6 +2590,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -2613,6 +2643,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:         stringPtr("indexingTime"),
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat:                 &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					TypoTolerance: &meilisearch.TypoTolerance{
@@ -2664,6 +2695,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2688,6 +2720,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -2726,6 +2759,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					Pagination: &meilisearch.Pagination{
@@ -2755,6 +2789,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2779,6 +2814,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -2820,6 +2856,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					Faceting: &meilisearch.Faceting{
@@ -2852,6 +2889,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2876,6 +2914,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 		{
@@ -2915,6 +2954,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 				secondRequest: meilisearch.Settings{
 					RankingRules: []string{
@@ -2948,6 +2988,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					PrefixSearch:       stringPtr("indexingTime"),
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
+					Chat:               &defaultChat,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2972,6 +3013,109 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				PrefixSearch:         stringPtr("indexingTime"),
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
+			},
+		},
+		{
+			name: "TestIndexUpdateJustChat",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				firstRequest: meilisearch.Settings{
+					Chat: &meilisearch.Chat{
+						Description:              "A comprehensive movie database containing titles, descriptions, genres, and release dates to help users find movies",
+						DocumentTemplate:         "{% for field in fields %}{% if field.is_searchable and field.value != nil %}{{ field.name }}: {{ field.value }}\n{% endif %}{% endfor %}",
+						DocumentTemplateMaxBytes: 400,
+					},
+				},
+				firstResponse: meilisearch.Settings{
+					RankingRules:         defaultRankingRules,
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             make(map[string][]string),
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
+					Faceting:             &defaultFaceting,
+					ProximityPrecision:   meilisearch.ByWord,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat: &meilisearch.Chat{
+						Description:              "A comprehensive movie database containing titles, descriptions, genres, and release dates to help users find movies",
+						DocumentTemplate:         "{% for field in fields %}{% if field.is_searchable and field.value != nil %}{{ field.name }}: {{ field.value }}\n{% endif %}{% endfor %}",
+						DocumentTemplateMaxBytes: 400,
+						SearchParameters:         defaultChat.SearchParameters,
+					},
+				},
+				secondRequest: meilisearch.Settings{
+					Chat: &meilisearch.Chat{
+						Description:              "A comprehensive movie database containing titles, descriptions, genres, and release dates to help users find movies",
+						DocumentTemplate:         "{% for field in fields %}{% if field.is_searchable and field.value != nil %}{{ field.name }}: {{ field.value }}\n{% endif %}{% endfor %}",
+						DocumentTemplateMaxBytes: 400,
+						SearchParameters: &meilisearch.SearchParameters{
+							Limit: 20,
+						},
+					},
+				},
+				secondResponse: meilisearch.Settings{
+					RankingRules:         defaultRankingRules,
+					DistinctAttribute:    (*string)(nil),
+					SearchableAttributes: []string{"*"},
+					DisplayedAttributes:  []string{"*"},
+					StopWords:            []string{},
+					Synonyms:             make(map[string][]string),
+					FilterableAttributes: []string{},
+					SortableAttributes:   []string{},
+					TypoTolerance:        &defaultTypoTolerance,
+					Pagination:           &defaultPagination,
+					Faceting:             &defaultFaceting,
+					ProximityPrecision:   meilisearch.ByWord,
+					SeparatorTokens:      make([]string, 0),
+					NonSeparatorTokens:   make([]string, 0),
+					Dictionary:           make([]string, 0),
+					PrefixSearch:         stringPtr("indexingTime"),
+					FacetSearch:          true,
+					Embedders:            make(map[string]meilisearch.Embedder),
+					Chat: &meilisearch.Chat{
+						Description:              "A comprehensive movie database containing titles, descriptions, genres, and release dates to help users find movies",
+						DocumentTemplate:         "{% for field in fields %}{% if field.is_searchable and field.value != nil %}{{ field.name }}: {{ field.value }}\n{% endif %}{% endfor %}",
+						DocumentTemplateMaxBytes: 400,
+						SearchParameters: &meilisearch.SearchParameters{
+							Limit: 20,
+						},
+					},
+				},
+			},
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &meilisearch.Settings{
+				RankingRules:         defaultRankingRules,
+				DistinctAttribute:    (*string)(nil),
+				SearchableAttributes: []string{"*"},
+				DisplayedAttributes:  []string{"*"},
+				StopWords:            []string{},
+				Synonyms:             make(map[string][]string),
+				FilterableAttributes: []string{},
+				SortableAttributes:   []string{},
+				TypoTolerance:        &defaultTypoTolerance,
+				Pagination:           &defaultPagination,
+				Faceting:             &defaultFaceting,
+				ProximityPrecision:   meilisearch.ByWord,
+				SeparatorTokens:      make([]string, 0),
+				NonSeparatorTokens:   make([]string, 0),
+				Dictionary:           make([]string, 0),
+				PrefixSearch:         stringPtr("indexingTime"),
+				FacetSearch:          true,
+				Embedders:            make(map[string]meilisearch.Embedder),
+				Chat:                 &defaultChat,
 			},
 		},
 	}
