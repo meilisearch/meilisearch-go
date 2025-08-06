@@ -809,3 +809,46 @@ func waitForTask(ctx context.Context, cli *client, taskUID int64, interval time.
 		}
 	}
 }
+
+func (m *meilisearch) GetWorkspaceSettings(workspaceUID string) (*ChatWorkspaceSettingsResult, error) {
+	return m.GetWorkspaceSettingsWithContext(context.Background(), workspaceUID)
+}
+
+func (m *meilisearch) GetWorkspaceSettingsWithContext(ctx context.Context, workspaceUID string) (*ChatWorkspaceSettingsResult, error) {
+	resp := new(ChatWorkspaceSettingsResult)
+	req := &internalRequest{
+		endpoint:            "/chats/" + workspaceUID + "/settings",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        &resp,
+		withQueryParams:     map[string]string{},
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetWorkspaceSettings",
+	}
+
+	if err := m.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (m *meilisearch) UpdateWorkspaceSettings(workspaceUID string, request *ChatWorkspaceSettings) (*ChatWorkspaceSettingsResult, error) {
+	return m.UpdateWorkspaceSettingsWithContext(context.Background(), workspaceUID, request)
+}
+
+func (m *meilisearch) UpdateWorkspaceSettingsWithContext(ctx context.Context, workspaceUID string, request *ChatWorkspaceSettings) (*ChatWorkspaceSettingsResult, error) {
+	resp := new(ChatWorkspaceSettingsResult)
+	req := &internalRequest{
+		endpoint:            "/chats/" + workspaceUID + "/settings",
+		method:              http.MethodPatch,
+		contentType:         contentTypeJSON,
+		withRequest:         &request,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "UpdateWorkspaceSettings",
+	}
+	if err := m.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
