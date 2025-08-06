@@ -32,7 +32,7 @@ func Test_ChatWorkspaceSettings(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
-			workspaceUID := "test-workspace-" + t.Name()
+			workspaceUID := "test-workspace-" + tt.name
 			apiKey := "test-api-key-placeholder"
 
 			updateResp, err := tt.client.UpdateWorkspaceSettings(
