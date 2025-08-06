@@ -9,6 +9,7 @@ type ServiceManager interface {
 	ServiceReader
 	KeyManager
 	TaskManager
+	ChatManager
 
 	ServiceReader() ServiceReader
 
@@ -196,4 +197,18 @@ type TaskReader interface {
 
 	// WaitForTaskWithContext waits for a task to complete by its UID with the given interval using the provided context for cancellation.
 	WaitForTaskWithContext(ctx context.Context, taskUID int64, interval time.Duration) (*Task, error)
+}
+
+type ChatManager interface {
+	// GetWorkspaceSettings Retrieve the current settings for a chat workspace.
+	GetWorkspaceSettings(workspaceUID string) (*ChatWorkspaceSettingsResult, error)
+
+	// GetWorkspaceSettingsWithContext Retrieve the current settings for a chat workspace using the provided context for cancellation.
+	GetWorkspaceSettingsWithContext(ctx context.Context, workspaceUID string) (*ChatWorkspaceSettingsResult, error)
+
+	// UpdateWorkspaceSettings Configure the LLM provider and settings for a chat workspace.
+	UpdateWorkspaceSettings(workspaceUID string, request *ChatWorkspaceSettings) (*ChatWorkspaceSettingsResult, error)
+
+	// UpdateWorkspaceSettingsWithContext Configure the LLM provider and settings for a chat workspace using the provided context for cancellation.
+	UpdateWorkspaceSettingsWithContext(ctx context.Context, workspaceUID string, request *ChatWorkspaceSettings) (*ChatWorkspaceSettingsResult, error)
 }

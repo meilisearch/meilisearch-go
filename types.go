@@ -669,3 +669,31 @@ type BatchesQuery struct {
 	AfterStartedAt   time.Time
 	AfterFinishedAt  time.Time
 }
+
+type ChatWorkspaceSettingsResult struct {
+	Source       string   `json:"source"`
+	OrgID        *string  `json:"orgId,omitempty"`
+	ProjectID    *string  `json:"projectId,omitempty"`
+	APIVersion   *string  `json:"apiVersion,omitempty"`
+	DeploymentID *string  `json:"deploymentId,omitempty"`
+	BaseURL      *string  `json:"baseUrl,omitempty"`
+	Prompts      *Prompts `json:"prompts,omitempty"`
+}
+
+type ChatWorkspaceSettings struct {
+	Source       string   `json:"source"`
+	OrgID        string   `json:"orgId,omitempty"`
+	ProjectID    string   `json:"projectId,omitempty"`
+	APIVersion   string   `json:"apiVersion,omitempty"`
+	DeploymentID string   `json:"deploymentId,omitempty"`
+	BaseURL      string   `json:"baseUrl,omitempty"`
+	APIKey       string   `json:"apiKey,omitempty"`
+	Prompts      *Prompts `json:"prompts,omitempty"`
+}
+
+type Prompts struct {
+	System              string `json:"system"`
+	SearchDescription   string `json:"searchDescription,omitempty"`
+	SearchQParam        string `json:"searchQParam,omitempty"`
+	SearchIndexUidParam string `json:"searchIndexUidParam,omitempty"`
+}
