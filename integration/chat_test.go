@@ -2,7 +2,6 @@ package integration
 
 import (
 	"crypto/tls"
-	"os"
 	"testing"
 
 	"github.com/meilisearch/meilisearch-go"
@@ -34,10 +33,7 @@ func Test_ChatWorkspaceSettings(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 
 			workspaceUID := "test-workspace-" + t.Name()
-			apiKey := os.Getenv("TEST_API_KEY")
-			if apiKey == "" {
-				apiKey = "test-api-key-placeholder"
-			}
+			apiKey := "test-api-key-placeholder"
 
 			updateResp, err := tt.client.UpdateWorkspaceSettings(
 				workspaceUID,
