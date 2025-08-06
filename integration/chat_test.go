@@ -2,6 +2,7 @@ package integration
 
 import (
 	"crypto/tls"
+	"os"
 	"testing"
 
 	"github.com/meilisearch/meilisearch-go"
@@ -11,6 +12,7 @@ import (
 func Test_ChatWorkspaceSettings(t *testing.T) {
 	sv := setup(t, "")
 	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
+		MinVersion:         tls.VersionTLS12,
 		InsecureSkipVerify: true,
 	}))
 
@@ -31,14 +33,20 @@ func Test_ChatWorkspaceSettings(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 
+			workspaceUID := "test-workspace-" + t.Name()
+			apiKey := os.Getenv("TEST_API_KEY")
+			if apiKey == "" {
+				apiKey = "test-api-key-placeholder"
+			}
+
 			updateResp, err := tt.client.UpdateWorkspaceSettings(
-				"workspace_uid",
+				workspaceUID,
 				&meilisearch.ChatWorkspaceSettings{
 					Source:       "azureOpenAi",
 					OrgID:        "your-azure-org-id",
 					APIVersion:   "your-api-version",
 					DeploymentID: "your-deployment-id",
-					APIKey:       "OPEN_AI_API_KEY",
+					APIKey:       apiKey,
 					BaseURL:      "https://your-resource.openai.azure.com",
 					Prompts: &meilisearch.Prompts{
 						System: "You are a helpful customer support assistant.",
@@ -47,7 +55,7 @@ func Test_ChatWorkspaceSettings(t *testing.T) {
 			)
 			require.NoError(t, err)
 
-			getResp, err := tt.client.GetWorkspaceSettings("workspace_uid")
+			getResp, err := tt.client.GetWorkspaceSettings(workspaceUID)
 			require.NoError(t, err)
 
 			require.Equal(t, updateResp, getResp)
