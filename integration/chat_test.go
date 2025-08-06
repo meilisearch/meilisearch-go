@@ -19,11 +19,11 @@ func Test_ChatWorkspaceSettings(t *testing.T) {
 		client meilisearch.ServiceManager
 	}{
 		{
-			name:   "TestUpdateStats",
+			name:   "TestChatWorkspaceSettings",
 			client: sv,
 		},
 		{
-			name:   "TestUpdateStatsWithCustomClient",
+			name:   "TestChatWorkspaceSettingsWithCustomClient",
 			client: customSv,
 		},
 	}
