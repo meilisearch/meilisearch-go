@@ -31,6 +31,12 @@ func Test_ChatWorkspaceSettings(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			t.Cleanup(cleanup(tt.client))
+
+			// enable chat feature
+			tt.client.ExperimentalFeatures().
+				SetChatCompletions(true).
+				Update()
 
 			workspaceUID := "test-workspace-" + tt.name
 			apiKey := "test-api-key-placeholder"
