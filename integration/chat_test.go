@@ -34,9 +34,11 @@ func Test_ChatWorkspaceSettings(t *testing.T) {
 			t.Cleanup(cleanup(tt.client))
 
 			// enable chat feature
-			tt.client.ExperimentalFeatures().
+			_, err := tt.client.ExperimentalFeatures().
 				SetChatCompletions(true).
 				Update()
+
+			require.NoError(t, err)
 
 			workspaceUID := "test-workspace-" + tt.name
 			apiKey := "test-api-key-placeholder"
