@@ -75,6 +75,8 @@ const (
 	TaskTypeTaskDeletion TaskType = "taskDeletion"
 	// TaskTypeSnapshotCreation represents a snapshot creation
 	TaskTypeSnapshotCreation TaskType = "snapshotCreation"
+	// TaskTypeExport represents a task exportation
+	TaskTypeExport TaskType = "export"
 )
 
 type (
