@@ -85,11 +85,15 @@ func setup(t *testing.T, host string, options ...meilisearch.Option) meilisearch
 	opts = append(opts, options...)
 
 	if host == "" {
-		host = getenv("MEILISEARCH_URL", "http://localhost:7700")
+		host = getDefaultHost()
 	}
 
 	sv := meilisearch.New(host, opts...)
 	return sv
+}
+
+func getDefaultHost() string {
+	return getenv("MEILISEARCH_URL", "http://localhost:7700")
 }
 
 func cleanup(services ...meilisearch.ServiceManager) func() {

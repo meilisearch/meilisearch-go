@@ -4,12 +4,13 @@ import (
 	"context"
 	"crypto/tls"
 	"errors"
-	"github.com/meilisearch/meilisearch-go"
 	"math"
 	"strings"
 	"sync"
 	"testing"
 	"time"
+
+	"github.com/meilisearch/meilisearch-go"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -2662,5 +2663,68 @@ func TestGetBatches(t *testing.T) {
 			}
 		})
 	}
+}
 
+func TestExport(t *testing.T) {
+	c := setup(t, "")
+	t.Cleanup(cleanup(c))
+
+	movieIndexUID := "movies"
+	comicsIndexUID := "comics"
+	setupMovieIndex(t, c, movieIndexUID)
+	setupComicIndex(t, c, comicsIndexUID)
+
+	tests := []struct {
+		name   string
+		params *meilisearch.ExportParams
+	}{
+		{
+			name: "ExportWithoutIndexes",
+			params: &meilisearch.ExportParams{
+				URL:         getDefaultHost(),
+				PayloadSize: "1MB",
+				Indexes:     nil,
+			},
+		},
+		{
+			name: "ExportWithOneIndex",
+			params: &meilisearch.ExportParams{
+				URL:         getDefaultHost(),
+				PayloadSize: "10MB",
+				Indexes: map[string]meilisearch.IndexExportOptions{
+					movieIndexUID: {
+						Filter:           "id > 50",
+						OverrideSettings: true,
+					},
+				},
+			},
+		},
+		{
+			name: "ExportWithMultipleIndexes",
+			params: &meilisearch.ExportParams{
+				URL:         getDefaultHost(),
+				PayloadSize: "10MB",
+				Indexes: map[string]meilisearch.IndexExportOptions{
+					movieIndexUID: {
+						Filter:           "id > 86",
+						OverrideSettings: true,
+					},
+					comicsIndexUID: {
+						Filter:           "genres = 'Mystery'",
+						OverrideSettings: false,
+					},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			result, err := c.Export(tt.params)
+			require.NoError(t, err)
+			require.NotZero(t, result.TaskUID)
+			require.Equal(t, meilisearch.TaskStatusEnqueued, result.Status)
+			require.Equal(t, meilisearch.TaskTypeExport, result.Type)
+			require.NotZero(t, result.EnqueuedAt)
+		})
+	}
 }
