@@ -746,7 +746,7 @@ func (m *meilisearch) ExportWithContext(ctx context.Context, param *ExportParams
 		contentType:         contentTypeJSON,
 		withResponse:        resp,
 		withQueryParams:     map[string]string{},
-		acceptedStatusCodes: []int{http.StatusAccepted},
+		acceptedStatusCodes: []int{http.StatusOK, http.StatusAccepted},
 		functionName:        "Export",
 	}
 	if err := m.client.executeRequest(ctx, req); err != nil {
