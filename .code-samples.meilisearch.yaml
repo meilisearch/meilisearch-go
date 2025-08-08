@@ -985,3 +985,21 @@ get_all_batches_1: |-
   client.GetBatches();
 get_batch_1: |-
   client.GetBatch(BATCH_UID);
+export_1: |-
+  client.Export(&meilisearch.ExportParams{
+      URL: URL, 
+      APIKEY: API_KEY,
+      PayloadSize: "100MB",
+  })
+export_2: |-
+  client.Export(&meilisearch.ExportParams{
+      URL: URL, 
+      APIKEY: API_KEY,
+      PayloadSize: "50MB",
+      Indexes: map[string]meilisearch.IndexExportOptions{
+        indexUID: {
+          Filter: filter,
+          OverrideSettings: true
+        }
+      }
+  })
