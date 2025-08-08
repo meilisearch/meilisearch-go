@@ -54,6 +54,12 @@ type ServiceManager interface {
 	// ExperimentalFeatures returns the experimental features manager.
 	ExperimentalFeatures() *ExperimentalFeatures
 
+	// Export transfers data from your origin instance to a remote target instance.
+	Export(params *ExportParams) (*TaskInfo, error)
+
+	// ExportWithContext transfers data from your origin instance to a remote target instance with a context for cancellation.
+	ExportWithContext(ctx context.Context, params *ExportParams) (*TaskInfo, error)
+
 	// Close closes the connection to the Meilisearch server.
 	Close()
 }
@@ -124,12 +130,6 @@ type ServiceReader interface {
 
 	// GetBatchWithContext retrieves a specific batch by its UID with a context for cancellation.
 	GetBatchWithContext(ctx context.Context, batchUID int) (*Batch, error)
-
-	// Export transfers data from your origin instance to a remote target instance.
-	Export(params *ExportParams) (*TaskInfo, error)
-
-	// ExportWithContext transfers data from your origin instance to a remote target instance with a context for cancellation.
-	ExportWithContext(ctx context.Context, params *ExportParams) (*TaskInfo, error)
 }
 
 type KeyManager interface {
