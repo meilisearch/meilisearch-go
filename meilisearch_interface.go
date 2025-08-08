@@ -148,6 +148,14 @@ type KeyManager interface {
 	DeleteKeyWithContext(ctx context.Context, keyOrUID string) (bool, error)
 }
 
+type Exporter interface {
+	// Export transfers data from your origin instance to a remote target instance.
+	Export(params *ExportParams) (*ExportInfo, error)
+
+	// ExportWithContext transfers data from your origin instance to a remote target instance with a context for cancellation.
+	ExportWithContext(ctx context.Context, params *ExportParams) (*ExportInfo, error)
+}
+
 type KeyReader interface {
 	// GetKey fetches the details of a specific API key.
 	GetKey(identifier string) (*Key, error)
