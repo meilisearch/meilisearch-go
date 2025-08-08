@@ -124,6 +124,12 @@ type ServiceReader interface {
 
 	// GetBatchWithContext retrieves a specific batch by its UID with a context for cancellation.
 	GetBatchWithContext(ctx context.Context, batchUID int) (*Batch, error)
+
+	// Export transfers data from your origin instance to a remote target instance.
+	Export(params *ExportParams) (*TaskInfo, error)
+
+	// ExportWithContext transfers data from your origin instance to a remote target instance with a context for cancellation.
+	ExportWithContext(ctx context.Context, params *ExportParams) (*TaskInfo, error)
 }
 
 type KeyManager interface {
@@ -146,14 +152,6 @@ type KeyManager interface {
 
 	// DeleteKeyWithContext deletes a specific API key with a context for cancellation.
 	DeleteKeyWithContext(ctx context.Context, keyOrUID string) (bool, error)
-}
-
-type Exporter interface {
-	// Export transfers data from your origin instance to a remote target instance.
-	Export(params *ExportParams) (*ExportInfo, error)
-
-	// ExportWithContext transfers data from your origin instance to a remote target instance with a context for cancellation.
-	ExportWithContext(ctx context.Context, params *ExportParams) (*ExportInfo, error)
 }
 
 type KeyReader interface {

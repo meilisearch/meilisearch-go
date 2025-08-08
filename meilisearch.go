@@ -77,10 +77,6 @@ func (m *meilisearch) KeyReader() KeyReader {
 	return m
 }
 
-func (m *meilisearch) Exporter() Exporter {
-	return m
-}
-
 func (m *meilisearch) Index(uid string) IndexManager {
 	return newIndex(m.client, uid)
 }
@@ -737,16 +733,17 @@ func (m *meilisearch) GetBatchWithContext(ctx context.Context, batchUID int) (*B
 	return resp, nil
 }
 
-func (m *meilisearch) Export(params *ExportParams) (*ExportInfo, error) {
-	return m.ExportWithContext(context.Background(), params)
+func (m *meilisearch) Export(param *ExportParams) (*TaskInfo, error) {
+	return m.ExportWithContext(context.Background(), param)
 }
 
-func (m *meilisearch) ExportWithContext(ctx context.Context, params *ExportParams) (*ExportInfo, error) {
-	resp := new(ExportInfo)
+func (m *meilisearch) ExportWithContext(ctx context.Context, param *ExportParams) (*TaskInfo, error) {
+	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/export",
 		method:              http.MethodPost,
-		withRequest:         nil,
+		withRequest:         param,
+		contentType:         contentTypeJSON,
 		withResponse:        &resp,
 		withQueryParams:     map[string]string{},
 		acceptedStatusCodes: []int{http.StatusOK},
