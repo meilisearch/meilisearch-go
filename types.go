@@ -672,20 +672,12 @@ type BatchesQuery struct {
 
 type ExportParams struct {
 	URL         string                        `json:"url,omitempty"`
-	APIKey      string                        `json:"api_key,omitempty"`
-	PayloadSize *string                       `json:"payload_size,omitempty"`
+	APIKey      string                        `json:"apiKey,omitempty"`
+	PayloadSize string                        `json:"payloadSize,omitempty"`
 	Indexes     map[string]IndexExportOptions `json:"indexes,omitempty"`
 }
 
 type IndexExportOptions struct {
-	Filter           *string `json:"filter,omitempty"`
-	OverrideSettings *bool   `json:"override_settings,omitempty"`
-}
-
-type ExportInfo struct {
-	TaskUID    int       `json:"task_uid,omitempty"`
-	IndexUID   *string   `json:"index_uid,omitempty"`
-	Status     string    `json:"status,omitempty"`
-	Type       string    `json:"type,omitempty"`
-	EnqueuedAt time.Time `json:"enqueued_at,omitempty"`
+	Filter           string `json:"filter,omitempty"`
+	OverrideSettings bool   `json:"overrideSettings,omitempty"`
 }
