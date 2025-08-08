@@ -987,7 +987,7 @@ get_batch_1: |-
   client.GetBatch(BATCH_UID);
 export_1: |-
   client.Export(&meilisearch.ExportParams{
-    URL: URL, 
+    URL: URL,
     APIKey: API_KEY,
     PayloadSize: "100MB",
   });
