@@ -503,6 +503,7 @@ type DocumentsQuery struct {
 	Filter          interface{} `json:"filter,omitempty"`
 	RetrieveVectors bool        `json:"retrieveVectors,omitempty"`
 	Ids             []string    `json:"ids,omitempty"`
+	Sort            []string    `json:"sort,omitempty"`
 }
 
 // SimilarDocumentQuery is query parameters of similar documents

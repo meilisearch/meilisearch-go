@@ -284,7 +284,7 @@ func (i *index) GetDocumentsWithContext(ctx context.Context, param *DocumentsQue
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDocuments",
 	}
-	if param != nil && param.Filter == nil {
+	if param != nil && param.Filter == nil && len(param.Ids) == 0 && len(param.Sort) == 0 {
 		req.withQueryParams = map[string]string{}
 		if param.Limit != 0 {
 			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
@@ -298,7 +298,7 @@ func (i *index) GetDocumentsWithContext(ctx context.Context, param *DocumentsQue
 		if param.RetrieveVectors {
 			req.withQueryParams["retrieveVectors"] = "true"
 		}
-	} else if param != nil && param.Filter != nil {
+	} else if param != nil && (param.Filter != nil || len(param.Ids) > 0 || len(param.Sort) > 0) {
 		req.withRequest = param
 		req.method = http.MethodPost
 		req.endpoint = req.endpoint + "/fetch"
