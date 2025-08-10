@@ -2,8 +2,9 @@ package meilisearch
 
 import (
 	"encoding/json"
-	"github.com/stretchr/testify/require"
 	"testing"
+
+	"github.com/stretchr/testify/require"
 )
 
 type sampleStructure struct {
@@ -80,5 +81,42 @@ func TestSearchRequest_validate(t *testing.T) {
 		sr.validate()
 		require.NotNil(t, sr.Hybrid)
 		require.Equal(t, "custom", sr.Hybrid.Embedder)
+	})
+}
+
+func TestDocumentsQuery_JSONSerialization(t *testing.T) {
+	t.Parallel()
+
+	t.Run("DocumentsQuery with Sort field", func(t *testing.T) {
+		dq := &DocumentsQuery{
+			Limit:  10,
+			Offset: 0,
+			Fields: []string{"title", "id"},
+			Sort:   []string{"title:asc", "id:desc"},
+		}
+
+		expected := `{"limit":10,"fields":["title","id"],"sort":["title:asc","id:desc"]}`
+
+		raw, err := json.Marshal(dq)
+		require.NoError(t, err)
+		require.JSONEq(t, expected, string(raw))
+	})
+
+	t.Run("DocumentsQuery with all fields", func(t *testing.T) {
+		dq := &DocumentsQuery{
+			Offset:          5,
+			Limit:           20,
+			Fields:          []string{"title", "author"},
+			Filter:          "rating > 4",
+			RetrieveVectors: true,
+			Ids:             []string{"1", "2", "3"},
+			Sort:            []string{"rating:desc"},
+		}
+
+		expected := `{"offset":5,"limit":20,"fields":["title","author"],"filter":"rating > 4","retrieveVectors":true,"ids":["1","2","3"],"sort":["rating:desc"]}`
+
+		raw, err := json.Marshal(dq)
+		require.NoError(t, err)
+		require.JSONEq(t, expected, string(raw))
 	})
 }
