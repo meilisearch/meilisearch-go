@@ -10,7 +10,6 @@ import (
 	"math"
 	"net/http"
 	"reflect"
-	"strconv"
 	"strings"
 )
 
@@ -275,33 +274,13 @@ func (i *index) GetDocuments(param *DocumentsQuery, resp *DocumentsResult) error
 
 func (i *index) GetDocumentsWithContext(ctx context.Context, param *DocumentsQuery, resp *DocumentsResult) error {
 	req := &internalRequest{
-		endpoint:            "/indexes/" + i.uid + "/documents",
-		method:              http.MethodGet,
+		endpoint:            "/indexes/" + i.uid + "/documents/fetch",
+		method:              http.MethodPost,
 		contentType:         contentTypeJSON,
-		withRequest:         nil,
+		withRequest:         param,
 		withResponse:        resp,
-		withQueryParams:     nil,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetDocuments",
-	}
-	if param != nil && param.Filter == nil && len(param.Ids) == 0 && len(param.Sort) == 0 {
-		req.withQueryParams = map[string]string{}
-		if param.Limit != 0 {
-			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
-		}
-		if param.Offset != 0 {
-			req.withQueryParams["offset"] = strconv.FormatInt(param.Offset, 10)
-		}
-		if len(param.Fields) != 0 {
-			req.withQueryParams["fields"] = strings.Join(param.Fields, ",")
-		}
-		if param.RetrieveVectors {
-			req.withQueryParams["retrieveVectors"] = "true"
-		}
-	} else if param != nil && (param.Filter != nil || len(param.Ids) > 0 || len(param.Sort) > 0) {
-		req.withRequest = param
-		req.method = http.MethodPost
-		req.endpoint = req.endpoint + "/fetch"
 	}
 	if err := i.client.executeRequest(ctx, req); err != nil {
 		return VersionErrorHintMessage(err, req)
