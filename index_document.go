@@ -273,6 +273,9 @@ func (i *index) GetDocuments(param *DocumentsQuery, resp *DocumentsResult) error
 }
 
 func (i *index) GetDocumentsWithContext(ctx context.Context, param *DocumentsQuery, resp *DocumentsResult) error {
+	if param == nil {
+		param = &DocumentsQuery{}
+	}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/documents/fetch",
 		method:              http.MethodPost,

@@ -77,6 +77,12 @@ func Test_GetDocumentsWithQuery(t *testing.T) {
 		description   string
 	}{
 		{
+			name:          "Get all documents with nil query",
+			query:         nil,
+			expectedCount: 4,
+			description:   "Should return all documents when query is nil",
+		},
+		{
 			name:          "Get all documents with no query",
 			query:         &meilisearch.DocumentsQuery{},
 			expectedCount: 4,
@@ -161,19 +167,24 @@ func Test_GetDocumentsWithQuery(t *testing.T) {
 				}
 
 			case "Get documents with Sort parameter":
-				// Verify documents are sorted by year ascending
-				if len(documents.Results) >= 2 {
-					// First document should be Pride and Prejudice (1813)
-					firstDoc := documents.Results[0]
-					require.Equal(t, toRawMessage("2"), firstDoc["id"], "First document should be Pride and Prejudice (1813)")
+				// Verify documents are sorted by year ascending (1813, 1865, 1925, 1960)
+				if len(documents.Results) >= 4 {
+					expectedOrder := []string{"2", "1", "3", "4"} // IDs in order: 1813, 1865, 1925, 1960
+					for i, expectedID := range expectedOrder {
+						actualID := documents.Results[i]["id"]
+						require.Equal(t, toRawMessage(expectedID), actualID, "Document at position %d should have ID %s (sorted by year ascending)", i, expectedID)
+					}
 				}
 
 			case "Get documents with multiple Sort parameters":
 				// Verify documents are sorted by rating desc, then year asc
-				if len(documents.Results) >= 2 {
-					// First document should be To Kill a Mockingbird (highest rating: 4.9)
-					firstDoc := documents.Results[0]
-					require.Equal(t, toRawMessage("4"), firstDoc["id"], "First document should be To Kill a Mockingbird (highest rating)")
+				// Expected order: 4.9 (ID:4, 1960), 4.8 (ID:2, 1813), 4.5 (ID:1, 1865), 4.2 (ID:3, 1925)
+				if len(documents.Results) >= 4 {
+					expectedOrder := []string{"4", "2", "1", "3"} // Sorted by rating desc, then year asc
+					for i, expectedID := range expectedOrder {
+						actualID := documents.Results[i]["id"]
+						require.Equal(t, toRawMessage(expectedID), actualID, "Document at position %d should have ID %s (sorted by rating desc, then year asc)", i, expectedID)
+					}
 				}
 
 			case "Get documents with IDs":
@@ -181,6 +192,23 @@ func Test_GetDocumentsWithQuery(t *testing.T) {
 				for _, doc := range documents.Results {
 					id := doc["id"]
 					require.Contains(t, []interface{}{toRawMessage("1"), toRawMessage("3")}, id, "Should only return documents with IDs 1 or 3")
+				}
+
+			case "Get documents with combined parameters":
+				// Verify documents are sorted by rating desc and limited to 3, with only specified fields
+				if len(documents.Results) >= 3 {
+					expectedOrder := []string{"4", "2", "1"} // Top 3 by rating desc: 4.9, 4.8, 4.5
+					for i, expectedID := range expectedOrder {
+						doc := documents.Results[i]
+						actualID := doc["id"]
+						require.Equal(t, toRawMessage(expectedID), actualID, "Document at position %d should have ID %s (sorted by rating desc, limited to 3)", i, expectedID)
+
+						// Verify only specified fields are present
+						require.Contains(t, doc, "id", "Should contain id field")
+						require.Contains(t, doc, "title", "Should contain title field")
+						require.Contains(t, doc, "rating", "Should contain rating field")
+						require.NotContains(t, doc, "year", "Should not contain year field when not requested")
+					}
 				}
 			}
 		})
