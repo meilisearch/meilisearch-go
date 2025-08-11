@@ -3,9 +3,10 @@ package integration
 import (
 	"bytes"
 	"crypto/tls"
+	"testing"
+
 	"github.com/meilisearch/meilisearch-go"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func Test_GetDocumentsByIDs(t *testing.T) {
@@ -39,6 +40,151 @@ func Test_GetDocumentsByIDs(t *testing.T) {
 		{"ID": toRawMessage("3"), "Name": toRawMessage("Pride and Prejudice 3")},
 	}
 	require.Equal(t, results, documents.Results)
+}
+
+func Test_GetDocumentsWithQuery(t *testing.T) {
+	sv := setup(t, "")
+	t.Cleanup(cleanup(sv))
+
+	indexUID := "TestGetDocumentsWithQuery"
+	_, err := sv.CreateIndex(&meilisearch.IndexConfig{
+		Uid: indexUID,
+	})
+	require.NoError(t, err)
+
+	// Add test documents with sortable fields
+	testDocuments := []map[string]interface{}{
+		{"id": "1", "title": "Alice in Wonderland", "rating": 4.5, "year": 1865},
+		{"id": "2", "title": "Pride and Prejudice", "rating": 4.8, "year": 1813},
+		{"id": "3", "title": "The Great Gatsby", "rating": 4.2, "year": 1925},
+		{"id": "4", "title": "To Kill a Mockingbird", "rating": 4.9, "year": 1960},
+	}
+
+	index := sv.Index(indexUID)
+	task, err := index.AddDocuments(testDocuments, nil)
+	require.NoError(t, err)
+	testWaitForTask(t, index, task)
+
+	// Set sortable attributes for sorting tests
+	task, err = index.UpdateSortableAttributes(&[]string{"title", "rating", "year"})
+	require.NoError(t, err)
+	testWaitForTask(t, index, task)
+
+	tests := []struct {
+		name          string
+		query         *meilisearch.DocumentsQuery
+		expectedCount int
+		description   string
+	}{
+		{
+			name:          "Get all documents with no query",
+			query:         &meilisearch.DocumentsQuery{},
+			expectedCount: 4,
+			description:   "Should return all documents when no filters applied",
+		},
+		{
+			name: "Get documents with limit",
+			query: &meilisearch.DocumentsQuery{
+				Limit: 2,
+			},
+			expectedCount: 2,
+			description:   "Should return only 2 documents when limit is set",
+		},
+		{
+			name: "Get documents with offset",
+			query: &meilisearch.DocumentsQuery{
+				Offset: 2,
+			},
+			expectedCount: 2,
+			description:   "Should return 2 documents when offset is 2",
+		},
+		{
+			name: "Get documents with specific fields",
+			query: &meilisearch.DocumentsQuery{
+				Fields: []string{"id", "title"},
+			},
+			expectedCount: 4,
+			description:   "Should return all documents but only specified fields",
+		},
+		{
+			name: "Get documents with IDs",
+			query: &meilisearch.DocumentsQuery{
+				Ids: []string{"1", "3"},
+			},
+			expectedCount: 2,
+			description:   "Should return only documents with specified IDs",
+		},
+		{
+			name: "Get documents with Sort parameter",
+			query: &meilisearch.DocumentsQuery{
+				Sort: []string{"year:asc"},
+			},
+			expectedCount: 4,
+			description:   "Should return all documents sorted by year ascending",
+		},
+		{
+			name: "Get documents with multiple Sort parameters",
+			query: &meilisearch.DocumentsQuery{
+				Sort: []string{"rating:desc", "year:asc"},
+			},
+			expectedCount: 4,
+			description:   "Should return all documents sorted by rating desc, then year asc",
+		},
+		{
+			name: "Get documents with combined parameters",
+			query: &meilisearch.DocumentsQuery{
+				Limit:  3,
+				Fields: []string{"id", "title", "rating"},
+				Sort:   []string{"rating:desc"},
+			},
+			expectedCount: 3,
+			description:   "Should return 3 documents with specified fields sorted by rating",
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var documents meilisearch.DocumentsResult
+			err := index.GetDocuments(tt.query, &documents)
+			require.NoError(t, err, "GetDocuments should not return an error for: %s", tt.description)
+			require.Len(t, documents.Results, tt.expectedCount, "Expected %d documents but got %d for: %s", tt.expectedCount, len(documents.Results), tt.description)
+
+			// Additional validation for specific test cases
+			switch tt.name {
+			case "Get documents with specific fields":
+				// Verify only specified fields are returned
+				if len(documents.Results) > 0 {
+					doc := documents.Results[0]
+					require.Contains(t, doc, "id", "Should contain id field")
+					require.Contains(t, doc, "title", "Should contain title field")
+					require.NotContains(t, doc, "rating", "Should not contain rating field when not requested")
+				}
+
+			case "Get documents with Sort parameter":
+				// Verify documents are sorted by year ascending
+				if len(documents.Results) >= 2 {
+					// First document should be Pride and Prejudice (1813)
+					firstDoc := documents.Results[0]
+					require.Equal(t, toRawMessage("2"), firstDoc["id"], "First document should be Pride and Prejudice (1813)")
+				}
+
+			case "Get documents with multiple Sort parameters":
+				// Verify documents are sorted by rating desc, then year asc
+				if len(documents.Results) >= 2 {
+					// First document should be To Kill a Mockingbird (highest rating: 4.9)
+					firstDoc := documents.Results[0]
+					require.Equal(t, toRawMessage("4"), firstDoc["id"], "First document should be To Kill a Mockingbird (highest rating)")
+				}
+
+			case "Get documents with IDs":
+				// Verify only specified IDs are returned
+				for _, doc := range documents.Results {
+					id := doc["id"]
+					require.Contains(t, []interface{}{toRawMessage("1"), toRawMessage("3")}, id, "Should only return documents with IDs 1 or 3")
+				}
+			}
+		})
+	}
 }
 
 func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
