@@ -9,6 +9,8 @@ type ServiceManager interface {
 	ServiceReader
 	KeyManager
 	TaskManager
+	ChatManager
+	ChatReader
 
 	ServiceReader() ServiceReader
 
@@ -17,6 +19,9 @@ type ServiceManager interface {
 
 	KeyManager() KeyManager
 	KeyReader() KeyReader
+
+	ChatManager() ChatManager
+	ChatReader() ChatReader
 
 	// CreateIndex creates a new index.
 	CreateIndex(config *IndexConfig) (*TaskInfo, error)

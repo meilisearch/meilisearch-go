@@ -682,3 +682,38 @@ type IndexExportOptions struct {
 	Filter           string `json:"filter,omitempty"`
 	OverrideSettings bool   `json:"overrideSettings,omitempty"`
 }
+
+type ChatWorkspace struct {
+	UID string `json:"uid"`
+}
+
+type ChatWorkspaceSettings struct {
+	Source       ChatSource                    `json:"source"`
+	OrgId        string                        `json:"orgId"`
+	ProjectId    string                        `json:"projectId"`
+	ApiVersion   string                        `json:"apiVersion"`
+	DeploymentId string                        `json:"deploymentId"`
+	BaseUrl      string                        `json:"baseUrl"`
+	ApiKey       string                        `json:"apiKey,omitempty"`
+	Prompts      *ChatWorkspaceSettingsPrompts `json:"prompts"`
+}
+
+type ChatWorkspaceSettingsPrompts struct {
+	System              string `json:"system"`
+	SearchDescription   string `json:"searchDescription"`
+	SearchQParam        string `json:"searchQParam"`
+	SearchFilterParam   string `json:"searchFilterParam"`
+	SearchIndexUidParam string `json:"searchIndexUidParam"`
+}
+
+type ListChatWorkspace struct {
+	Results []*ChatWorkspace `json:"results"`
+	Offset  int64            `json:"offset"`
+	Limit   int64            `json:"limit"`
+	Total   int64            `json:"total"`
+}
+
+type ListChatWorkSpaceQuery struct {
+	Limit  int64
+	Offset int64
+}

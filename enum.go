@@ -122,6 +122,17 @@ const (
 	CompositeEmbedderSource EmbedderSource = "composite"
 )
 
+// ChatSource The source corresponds to a service that generates chat completions from your messages.
+type ChatSource string
+
+const (
+	OpenaiChatSource      ChatSource = "openAi"
+	AzureOpenAiChatSource ChatSource = "azureOpenAi"
+	MistralChatSource     ChatSource = "mistral"
+	GeminiChatSource      ChatSource = "gemini"
+	VLlmChatSource        ChatSource = "vLlm"
+)
+
 // EmbedderPooling Configure how Meilisearch should merge individual tokens into a single embedding.
 //
 // pooling is optional for embedders with the huggingFace source.

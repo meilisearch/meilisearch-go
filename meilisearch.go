@@ -77,6 +77,10 @@ func (m *meilisearch) KeyReader() KeyReader {
 	return m
 }
 
+func (m *meilisearch) ChatManager() ChatManager { return m }
+
+func (m *meilisearch) ChatReader() ChatReader { return m }
+
 func (m *meilisearch) Index(uid string) IndexManager {
 	return newIndex(m.client, uid)
 }
