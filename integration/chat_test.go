@@ -232,6 +232,13 @@ func Test_UpdateChatWorkspaceSettings(t *testing.T) {
 			require.NotNil(t, got)
 
 			assert.Equal(t, resp, got)
+			assert.Equal(t, resp.Source, got.Source)
+			assert.Equal(t, resp.OrgId, got.OrgId)
+			assert.Equal(t, resp.ProjectId, got.ProjectId)
+			assert.Equal(t, resp.ApiVersion, got.ApiVersion)
+			assert.Equal(t, resp.DeploymentId, got.DeploymentId)
+			assert.Equal(t, resp.BaseUrl, got.BaseUrl)
+			assert.Equal(t, resp.Prompts, got.Prompts)
 		})
 	}
 }
