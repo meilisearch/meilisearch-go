@@ -12,12 +12,17 @@ func Test_GetChatWorkspace(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupChat(sv))
 
+	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update()
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.True(t, resp.ChatCompletions)
+
 	chat := sv.ChatManager()
 	require.NotNil(t, chat)
 
 	uid := "test-workspace"
 
-	resp, err := chat.UpdateChatWorkspace(uid, &meilisearch.ChatWorkspaceSettings{
+	workspace, err := chat.UpdateChatWorkspace(uid, &meilisearch.ChatWorkspaceSettings{
 		Source: meilisearch.OpenaiChatSource,
 		ApiKey: "test-api-key",
 		Prompts: &meilisearch.ChatWorkspaceSettingsPrompts{
@@ -25,12 +30,12 @@ func Test_GetChatWorkspace(t *testing.T) {
 		},
 	})
 	require.NoError(t, err)
-	require.NotNil(t, resp)
-
-	workspace, err := chat.GetChatWorkspace(uid)
-	require.NoError(t, err)
 	require.NotNil(t, workspace)
-	assert.Equal(t, uid, workspace.UID)
+
+	got, err := chat.GetChatWorkspace(uid)
+	require.NoError(t, err)
+	require.NotNil(t, got)
+	assert.Equal(t, uid, got.UID)
 }
 
 func Test_GetChatWorkspaceSettings(t *testing.T) {
