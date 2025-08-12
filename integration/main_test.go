@@ -101,6 +101,15 @@ func cleanup(services ...meilisearch.ServiceManager) func() {
 		for _, s := range services {
 			_, _ = deleteAllIndexes(s)
 			_, _ = deleteAllKeys(s)
+
+		}
+	}
+}
+
+func cleanupChat(services ...meilisearch.ChatManager) func() {
+	return func() {
+		for _, s := range services {
+			_, _ = deleteAllChatWorkspaces(s)
 		}
 	}
 }
@@ -140,6 +149,25 @@ func deleteAllIndexes(sv meilisearch.ServiceManager) (ok bool, err error) {
 	for _, index := range list.Results {
 		task, _ := sv.DeleteIndex(index.UID)
 		_, err := sv.WaitForTask(task.TaskUID, 0)
+		if err != nil {
+			return false, err
+		}
+	}
+
+	return true, nil
+}
+
+func deleteAllChatWorkspaces(chatMgr meilisearch.ChatManager) (ok bool, err error) {
+	list, err := chatMgr.ListChatWorkspaces(&meilisearch.ListChatWorkSpaceQuery{
+		Limit:  1000,
+		Offset: 0,
+	})
+	if err != nil {
+		return false, err
+	}
+
+	for _, work := range list.Results {
+		_, err := chatMgr.ResetChatWorkspace(work.UID)
 		if err != nil {
 			return false, err
 		}
