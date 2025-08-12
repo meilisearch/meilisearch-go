@@ -7,10 +7,10 @@ import (
 )
 
 func (m *meilisearch) GetChatWorkspace(id string) (*ChatWorkspace, error) {
-	return m.GetChatWorkSpaceWithContext(context.Background(), id)
+	return m.GetChatWorkspaceWithContext(context.Background(), id)
 }
 
-func (m *meilisearch) GetChatWorkSpaceWithContext(ctx context.Context, uid string) (*ChatWorkspace, error) {
+func (m *meilisearch) GetChatWorkspaceWithContext(ctx context.Context, uid string) (*ChatWorkspace, error) {
 	resp := new(ChatWorkspace)
 	req := &internalRequest{
 		endpoint:            "/chats/" + uid,

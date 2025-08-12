@@ -24,8 +24,8 @@ type ChatReader interface {
 
 	// GetChatWorkspace retrieves a chat workspace by its ID.
 	GetChatWorkspace(uid string) (*ChatWorkspace, error)
-	// GetChatWorkSpaceWithContext retrieves a chat workspace by its ID with a context.
-	GetChatWorkSpaceWithContext(ctx context.Context, uid string) (*ChatWorkspace, error)
+	// GetChatWorkspaceWithContext retrieves a chat workspace by its ID with a context.
+	GetChatWorkspaceWithContext(ctx context.Context, uid string) (*ChatWorkspace, error)
 
 	// GetChatWorkspaceSettings retrieves chat workspace settings by its ID.
 	GetChatWorkspaceSettings(uid string) (*ChatWorkspaceSettings, error)
