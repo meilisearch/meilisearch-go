@@ -32,7 +32,10 @@ func Test_GetChatWorkspace(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, workspace)
 
-	got, err := chat.GetChatWorkspace(uid)
+	chatReader := sv.ChatReader()
+	require.NotNil(t, chatReader)
+
+	got, err := chatReader.GetChatWorkspace(uid)
 	require.NoError(t, err)
 	require.NotNil(t, got)
 	assert.Equal(t, uid, got.UID)
