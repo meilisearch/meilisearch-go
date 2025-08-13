@@ -170,6 +170,12 @@ type Embedder struct {
 	Pooling                  EmbedderPooling        `json:"pooling,omitempty"`
 	IndexingEmbedder         *Embedder              `json:"indexingEmbedder,omitempty"` // For Composite
 	SearchEmbedder           *Embedder              `json:"searchEmbedder,omitempty"`   // For Composite
+	IndexingFragments        map[string]Fragment    `json:"indexingFragments,omitempty"`
+	SearchFragments          map[string]Fragment    `json:"searchFragments,omitempty"`
+}
+
+type Fragment struct {
+	Value map[string]any `json:"value,omitempty"`
 }
 
 // Distribution represents a statistical distribution with mean and standard deviation (sigma).
