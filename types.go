@@ -562,6 +562,7 @@ type ExperimentalFeaturesBase struct {
 	Network                 *bool `json:"network,omitempty"`
 	CompositeEmbedders      *bool `json:"compositeEmbedders,omitempty"`
 	ChatCompletions         *bool `json:"chatCompletions,omitempty"`
+	MultiModal              *bool `json:"multimodal,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -572,6 +573,7 @@ type ExperimentalFeaturesResult struct {
 	Network                 bool `json:"network"`
 	CompositeEmbedders      bool `json:"compositeEmbedders"`
 	ChatCompletions         bool `json:"chatCompletions"`
+	MultiModal              bool `json:"multimodal,omitempty"`
 }
 
 type SwapIndexesParams struct {

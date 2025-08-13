@@ -49,6 +49,11 @@ func (ef *ExperimentalFeatures) SetChatCompletions(enable bool) *ExperimentalFea
 	return ef
 }
 
+func (ef *ExperimentalFeatures) SetMultiModal(enable bool) *ExperimentalFeatures {
+	ef.MultiModal = &enable
+	return ef
+}
+
 func (ef *ExperimentalFeatures) Get() (*ExperimentalFeaturesResult, error) {
 	return ef.GetWithContext(context.Background())
 }
