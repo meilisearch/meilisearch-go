@@ -90,6 +90,7 @@ func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*Experim
 		Network:                 ef.Network,
 		CompositeEmbedders:      ef.CompositeEmbedders,
 		ChatCompletions:         ef.ChatCompletions,
+		MultiModal:              ef.MultiModal,
 	}
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{
