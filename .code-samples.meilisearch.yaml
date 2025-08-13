@@ -1003,3 +1003,16 @@ export_2: |-
       }
     }
   });
+search_parameter_reference_media_1: |-
+  client.Index("INDEX_NAME").Search("", &meilisearch.SearchRequest{
+    Hybrid: &meilisearch.SearchRequestHybrid{
+      Embedder: "EMBEDDER_NAME",
+    },
+    Media: map[string]any{
+      "FIELD_A": "VALUE_A",
+      "FIELD_B": map[string]any{
+        "FIELD_C": "VALUE_B",
+        "FIELD_D": "VALUE_C",
+      },
+    },
+  });
