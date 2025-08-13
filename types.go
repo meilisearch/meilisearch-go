@@ -422,6 +422,7 @@ type SearchRequest struct {
 	RankingScoreThreshold   float64                  `json:"rankingScoreThreshold,omitempty"`
 	FederationOptions       *SearchFederationOptions `json:"federationOptions,omitempty"`
 	Locales                 []string                 `json:"locales,omitempty"`
+	Media                   map[string]any           `json:"media,omitempty"`
 }
 
 type SearchFederationOptions struct {
