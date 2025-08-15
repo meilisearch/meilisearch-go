@@ -14,7 +14,7 @@ func Test_AddWebhook(t *testing.T) {
 
 	webhook := &meilisearch.AddWebhookRequest{
 		URL:     "http://example.com",
-		Headers: map[string]string{"FOO": "BAR"},
+		Headers: map[string]string{"FOO": "BAR", "BAR": ""},
 	}
 	result, err := sv.AddWebhook(webhook)
 	require.NoError(t, err)
@@ -50,7 +50,7 @@ func Test_UpdateWebhook(t *testing.T) {
 
 	updatedWb, err := sv.UpdateWebhook(wb.UUID, &meilisearch.UpdateWebhookRequest{
 		URL:     "http://update.com",
-		Headers: nil,
+		Headers: map[string]string{"FOO": "UPDATED", "BAR": ""},
 	})
 	require.NoError(t, err)
 
