@@ -16,6 +16,7 @@ func (m *meilisearch) AddWebhookWithContext(ctx context.Context, params *AddWebh
 		endpoint:            "/webhooks",
 		method:              http.MethodPost,
 		withRequest:         params,
+		contentType:         contentTypeJSON,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusCreated, http.StatusOK},
 		functionName:        "AddWebhook",
@@ -73,9 +74,10 @@ func (m *meilisearch) UpdateWebhook(uuid string, params *UpdateWebhookRequest) (
 func (m *meilisearch) UpdateWebhookWithContext(ctx context.Context, uuid string, params *UpdateWebhookRequest) (*Webhook, error) {
 	resp := new(Webhook)
 	req := &internalRequest{
-		endpoint:            "/webhooks",
+		endpoint:            fmt.Sprintf("/webhooks/%s", uuid),
 		method:              http.MethodPatch,
 		withRequest:         params,
+		contentType:         contentTypeJSON,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "UpdateWebhook",
@@ -96,7 +98,7 @@ func (m *meilisearch) DeleteWebhookWithContext(ctx context.Context, uuid string)
 		method:              http.MethodDelete,
 		withRequest:         nil,
 		withResponse:        nil,
-		acceptedStatusCodes: []int{http.StatusOK},
+		acceptedStatusCodes: []int{http.StatusNoContent},
 		functionName:        "DeleteWebhook",
 	}
 	return m.client.executeRequest(ctx, req)
