@@ -77,6 +77,10 @@ func (m *meilisearch) KeyReader() KeyReader {
 	return m
 }
 
+func (m *meilisearch) WebhookManager() WebhookManager { return m }
+
+func (m *meilisearch) WebhookReader() WebhookReader { return m }
+
 func (m *meilisearch) ChatManager() ChatManager { return m }
 
 func (m *meilisearch) ChatReader() ChatReader { return m }
