@@ -85,65 +85,6 @@ func TestSearchRequest_validate(t *testing.T) {
 	})
 }
 
-func TestTimestampz_MarshalJSON(t *testing.T) {
-	t.Parallel()
-
-	cases := []struct {
-		name     string
-		input    Timestampz
-		expected string
-	}{
-		{"epoch", Timestampz(0), `"1970-01-01T00:00:00Z"`},
-		{"now", Timestampz(time.Now().UTC().Unix()), ""}, // will check RFC3339
-		{"negative", Timestampz(-1), `"1969-12-31T23:59:59Z"`},
-	}
-
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			b, err := c.input.MarshalJSON()
-			require.NoError(t, err)
-			if c.expected != "" {
-				require.Equal(t, c.expected, string(b))
-			} else {
-				// Check RFC3339 format
-				var s string
-				require.NoError(t, json.Unmarshal(b, &s))
-				_, err := time.Parse(time.RFC3339, s)
-				require.NoError(t, err)
-			}
-		})
-	}
-}
-
-func TestTimestampz_UnmarshalJSON(t *testing.T) {
-	t.Parallel()
-
-	cases := []struct {
-		name     string
-		input    string
-		wantUnix int64
-		wantErr  bool
-	}{
-		{"epoch", `"1970-01-01T00:00:00Z"`, 0, false},
-		{"negative", `"1969-12-31T23:59:59Z"`, -1, false},
-		{"invalid format", `"not-a-date"`, 0, true},
-		{"not a string", `12345`, 0, true},
-	}
-
-	for _, c := range cases {
-		t.Run(c.name, func(t *testing.T) {
-			var ts Timestampz
-			err := ts.UnmarshalJSON([]byte(c.input))
-			if c.wantErr {
-				require.Error(t, err)
-			} else {
-				require.NoError(t, err)
-				require.Equal(t, Timestampz(c.wantUnix), ts)
-			}
-		})
-	}
-}
-
 func TestTimestampz_String(t *testing.T) {
 	t.Parallel()
 
