@@ -14,6 +14,22 @@ const (
 	nullBody                 = "null"
 )
 
+type Webhook struct {
+	UUID       string            `json:"uuid"`
+	IsEditable bool              `json:"isEditable"`
+	URL        string            `json:"url"`
+	Headers    map[string]string `json:"headers"`
+}
+
+type WebhookResults struct {
+	Result []*Webhook `json:"results"`
+}
+
+type AddWebhookQuery struct {
+	URL     string            `json:"url"`
+	Headers map[string]string `json:"headers,omitempty"`
+}
+
 type IndexConfig struct {
 	// Uid is the unique identifier of a given index.
 	Uid string
