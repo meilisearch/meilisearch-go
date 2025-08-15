@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"os"
 	"testing"
 
 	"github.com/meilisearch/meilisearch-go"
@@ -270,4 +271,65 @@ func Test_ResetChatWorkspaceSettings(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, got)
 	assert.Equal(t, meilisearch.OpenaiChatSource, got.Source)
+}
+
+func Test_ChatCompletionStream(t *testing.T) {
+	sv := setup(t, "")
+	t.Cleanup(cleanupChat(sv))
+
+	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update()
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.True(t, resp.ChatCompletions)
+
+	chat := sv.ChatManager()
+	require.NotNil(t, chat)
+
+	uid := "test-workspace"
+	apiKey := os.Getenv("OPENAI_API_KEY")
+	if apiKey == "" {
+		apiKey = "sk-XXXXX..."
+	}
+
+	_, err = chat.UpdateChatWorkspace(uid, &meilisearch.ChatWorkspaceSettings{
+		Source: meilisearch.OpenaiChatSource,
+		ApiKey: apiKey,
+		Prompts: &meilisearch.ChatWorkspaceSettingsPrompts{
+			System: "You are a helpful assistant that answers questions based on the provided context.",
+		},
+	})
+	require.NoError(t, err)
+
+	query := &meilisearch.ChatCompletionQuery{
+		Model: "gpt-4o-mini",
+		Messages: []*meilisearch.ChatCompletionMessage{
+			{
+				Role:    meilisearch.ChatRoleUser,
+				Content: "Hello, how are you?",
+			},
+		},
+		Stream: true,
+	}
+
+	stream, err := chat.ChatCompletionStream(uid, query)
+	require.NoError(t, err)
+	require.NotNil(t, stream)
+
+	content := ""
+
+	for stream.Next() {
+		require.NoError(t, stream.Err())
+		chunk := stream.Current()
+		require.NotNil(t, chunk)
+		assert.NotEmpty(t, chunk.Choices)
+		for _, choice := range chunk.Choices {
+			require.NotNil(t, choice.Delta)
+			if choice.Delta.Content != nil {
+				content += *choice.Delta.Content
+			}
+		}
+	}
+
+	assert.NotEmpty(t, content)
+	t.Log(content)
 }
