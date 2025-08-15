@@ -114,6 +114,14 @@ func cleanupChat(services ...meilisearch.ChatManager) func() {
 	}
 }
 
+func cleanupWebhook(services ...meilisearch.WebhookManager) func() {
+	return func() {
+		for _, s := range services {
+			_, _ = deleteAllWebhooks(s)
+		}
+	}
+}
+
 func getPrivateKey(sv meilisearch.ServiceManager) (key string) {
 	list, err := sv.GetKeys(nil)
 	if err != nil {
@@ -154,6 +162,19 @@ func deleteAllIndexes(sv meilisearch.ServiceManager) (ok bool, err error) {
 		}
 	}
 
+	return true, nil
+}
+
+func deleteAllWebhooks(webhookMgr meilisearch.WebhookManager) (ok bool, err error) {
+	list, err := webhookMgr.ListWebhooks()
+	if err != nil {
+		return false, err
+	}
+	for _, webhook := range list.Result {
+		if err := webhookMgr.DeleteWebhook(webhook.UUID); err != nil {
+			return false, err
+		}
+	}
 	return true, nil
 }
 
