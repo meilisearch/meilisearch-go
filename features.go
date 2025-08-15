@@ -49,6 +49,11 @@ func (ef *ExperimentalFeatures) SetChatCompletions(enable bool) *ExperimentalFea
 	return ef
 }
 
+func (ef *ExperimentalFeatures) SetMultiModal(enable bool) *ExperimentalFeatures {
+	ef.MultiModal = &enable
+	return ef
+}
+
 func (ef *ExperimentalFeatures) Get() (*ExperimentalFeaturesResult, error) {
 	return ef.GetWithContext(context.Background())
 }
@@ -85,6 +90,7 @@ func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*Experim
 		Network:                 ef.Network,
 		CompositeEmbedders:      ef.CompositeEmbedders,
 		ChatCompletions:         ef.ChatCompletions,
+		MultiModal:              ef.MultiModal,
 	}
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{

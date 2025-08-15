@@ -4000,43 +4000,167 @@ func TestIndex_GetEmbedders(t *testing.T) {
 }
 
 func TestIndex_UpdateEmbedders(t *testing.T) {
-	c := setup(t, "")
-	t.Cleanup(cleanup(c))
-
-	indexID := "newIndexUID"
-	i := c.Index(indexID)
-	taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: indexID})
-	require.NoError(t, err)
-	testWaitForTask(t, i, taskInfo)
-
-	embedders := map[string]meilisearch.Embedder{
-		"someEmbbeder": {
-			Source:     "userProvided",
-			Dimensions: 3,
+	tests := []struct {
+		name         string
+		indexID      string
+		experimental bool
+		initialEmbed map[string]meilisearch.Embedder
+		updatedEmbed map[string]meilisearch.Embedder
+	}{
+		{
+			name:         "update existing embedder dimensions",
+			indexID:      "newIndexUID",
+			experimental: false,
+			initialEmbed: map[string]meilisearch.Embedder{
+				"someEmbbeder": {
+					Source:     "userProvided",
+					Dimensions: 3,
+				},
+			},
+			updatedEmbed: map[string]meilisearch.Embedder{
+				"someEmbbeder": {
+					Source:     "userProvided",
+					Dimensions: 5,
+				},
+			},
+		},
+		{
+			name:         "update indexingFragments & searchFragments",
+			indexID:      "newIndexUID",
+			experimental: true,
+			initialEmbed: map[string]meilisearch.Embedder{
+				"voyageAI": {
+					Source: "rest",
+					URL:    "https://api.voyageai.com/v1/multimodalembeddings",
+					Request: map[string]any{
+						"inputs": []string{
+							"{{fragment}}",
+							"{{..}}",
+						},
+						"model": "voyage-multimodal-3",
+					},
+					Response: map[string]any{
+						"response": map[string]any{
+							"data": []any{
+								map[string]any{
+									"embedding": "{{embedding}}",
+								},
+								"{{..}}",
+							},
+						},
+					},
+					Dimensions: 5,
+					IndexingFragments: map[string]meilisearch.Fragment{
+						"text": {
+							Value: map[string]any{
+								"content": []any{
+									map[string]any{
+										"type": "text",
+										"text": "A movie titled {{doc.title}} whose description starts with {{doc.overview|truncatewords:20}}.",
+									},
+								},
+							},
+						},
+					},
+					SearchFragments: map[string]meilisearch.Fragment{
+						"text": {
+							Value: map[string]any{
+								"content": []any{
+									map[string]any{
+										"type": "text",
+										"text": "A movie titled {{doc.title}} whose description starts with {{doc.overview|truncatewords:20}}.",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
+			updatedEmbed: map[string]meilisearch.Embedder{
+				"voyageAI": {
+					Source:  "rest",
+					URL:     "https://api.voyageai.com/v1/multimodalembeddings",
+					Headers: map[string]string{},
+					Request: map[string]any{
+						"inputs": []any{
+							"{{fragment}}",
+							"{{..}}",
+						},
+						"model": "voyage-multimodal-3",
+					},
+					Response: map[string]any{
+						"response": map[string]any{
+							"data": []any{
+								map[string]any{
+									"embedding": "{{embedding}}",
+								},
+								"{{..}}",
+							},
+						},
+					},
+					Dimensions: 5,
+					IndexingFragments: map[string]meilisearch.Fragment{
+						"text": {
+							Value: map[string]any{
+								"content": []any{
+									map[string]any{
+										"type": "text",
+										"text": "A movie titled {{doc.title}} whose description starts with {{doc.overview|truncatewords:20}}.",
+									},
+								},
+							},
+						},
+					},
+					SearchFragments: map[string]meilisearch.Fragment{
+						"text": {
+							Value: map[string]any{
+								"content": []any{
+									map[string]any{
+										"type": "text",
+										"text": "{{q}}",
+									},
+								},
+							},
+						},
+					},
+				},
+			},
 		},
 	}
-	taskInfo, err = i.UpdateSettings(&meilisearch.Settings{
-		Embedders: embedders,
-	})
-	require.NoError(t, err)
-	testWaitForTask(t, i, taskInfo)
 
-	updated := map[string]meilisearch.Embedder{
-		"someEmbbeder": {
-			Source:     "userProvided",
-			Dimensions: 5,
-		},
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := setup(t, "")
+			t.Cleanup(cleanup(c))
+
+			i := c.Index(tt.indexID)
+			taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: tt.indexID})
+			require.NoError(t, err)
+			testWaitForTask(t, i, taskInfo)
+
+			if tt.experimental {
+				result, err := c.ExperimentalFeatures().SetMultiModal(true).Update()
+				require.NoError(t, err)
+				require.True(t, result.MultiModal)
+			}
+
+			taskInfo, err = i.UpdateSettings(&meilisearch.Settings{
+				Embedders: tt.initialEmbed,
+			})
+			require.NoError(t, err)
+			testWaitForTask(t, i, taskInfo)
+
+			taskInfo, err = i.UpdateEmbedders(tt.updatedEmbed)
+			require.NoError(t, err)
+			task, err := i.WaitForTask(taskInfo.TaskUID, 0)
+			require.NoError(t, err)
+			require.Equal(t, meilisearch.TaskStatusSucceeded, task.Status)
+
+			got, err := i.GetEmbedders()
+			require.NoError(t, err)
+			require.Equal(t, tt.updatedEmbed, got)
+		})
 	}
-
-	taskInfo, err = i.UpdateEmbedders(updated)
-	require.NoError(t, err)
-	task, err := i.WaitForTask(taskInfo.TaskUID, 0)
-	require.NoError(t, err)
-	require.Equal(t, meilisearch.TaskStatusSucceeded, task.Status)
-
-	got, err := i.GetEmbedders()
-	require.NoError(t, err)
-	require.Equal(t, updated, got)
 }
 
 func TestIndex_ResetEmbedders(t *testing.T) {

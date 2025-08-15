@@ -170,6 +170,12 @@ type Embedder struct {
 	Pooling                  EmbedderPooling        `json:"pooling,omitempty"`
 	IndexingEmbedder         *Embedder              `json:"indexingEmbedder,omitempty"` // For Composite
 	SearchEmbedder           *Embedder              `json:"searchEmbedder,omitempty"`   // For Composite
+	IndexingFragments        map[string]Fragment    `json:"indexingFragments,omitempty"`
+	SearchFragments          map[string]Fragment    `json:"searchFragments,omitempty"`
+}
+
+type Fragment struct {
+	Value map[string]any `json:"value,omitempty"`
 }
 
 // Distribution represents a statistical distribution with mean and standard deviation (sigma).
@@ -416,6 +422,7 @@ type SearchRequest struct {
 	RankingScoreThreshold   float64                  `json:"rankingScoreThreshold,omitempty"`
 	FederationOptions       *SearchFederationOptions `json:"federationOptions,omitempty"`
 	Locales                 []string                 `json:"locales,omitempty"`
+	Media                   map[string]any           `json:"media,omitempty"`
 }
 
 type SearchFederationOptions struct {
@@ -556,6 +563,7 @@ type ExperimentalFeaturesBase struct {
 	Network                 *bool `json:"network,omitempty"`
 	CompositeEmbedders      *bool `json:"compositeEmbedders,omitempty"`
 	ChatCompletions         *bool `json:"chatCompletions,omitempty"`
+	MultiModal              *bool `json:"multimodal,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -566,6 +574,7 @@ type ExperimentalFeaturesResult struct {
 	Network                 bool `json:"network"`
 	CompositeEmbedders      bool `json:"compositeEmbedders"`
 	ChatCompletions         bool `json:"chatCompletions"`
+	MultiModal              bool `json:"multimodal,omitempty"`
 }
 
 type SwapIndexesParams struct {
