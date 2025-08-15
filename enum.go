@@ -146,3 +146,12 @@ const (
 	// ForceClsEmbedderPooling always use CLS pooling
 	ForceClsEmbedderPooling EmbedderPooling = "forceCls"
 )
+
+// ChatRole The role of a message in a chat conversation.
+type ChatRole string
+
+const (
+	ChatRoleUser      ChatRole = "user"
+	ChatRoleAssistant ChatRole = "assistant"
+	ChatRoleSystem    ChatRole = "system"
+)
