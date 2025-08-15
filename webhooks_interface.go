@@ -10,18 +10,18 @@ type WebhookManager interface {
 	// AddWebhookWithContext add a new webhook to meilisearch with a context.
 	AddWebhookWithContext(ctx context.Context, params *AddWebhookRequest) (*Webhook, error)
 
-	// UpdateWebhook updates a webhook by uuid.
+	// UpdateWebhook modifies a previously existing webhook.
 	// If the webhook has isEditable to false the HTTP call returns an error.
 	UpdateWebhook(uuid string, params *UpdateWebhookRequest) (*Webhook, error)
-	// UpdateWebhookWithContext updates a webhook by uuid with a context.
+	// UpdateWebhookWithContext modifies a previously existing webhook with a context.
 	// If the webhook has isEditable to false the HTTP call returns an error.
 	UpdateWebhookWithContext(ctx context.Context, uuid string, params *UpdateWebhookRequest) (*Webhook, error)
 
-	// DeleteWebhook deletes a webhook by id.
+	// DeleteWebhook deletes an existing webhook. Will also fail when the webhook doesn’t exist.
 	// If the webhook has isEditable to false the HTTP call returns an error.
 	DeleteWebhook(uuid string) error
 
-	// DeleteWebhookWithContext deletes a webhook by id with a context.
+	// DeleteWebhookWithContext deletes an existing webhook with a context. Will also fail when the webhook doesn’t exist.
 	// If the webhook has isEditable to false the HTTP call returns an error.
 	DeleteWebhookWithContext(ctx context.Context, uuid string) error
 }
