@@ -17,6 +17,11 @@ type ChatManager interface {
 }
 
 type ChatReader interface {
+	// ChatCompletionStream retrieves a stream of chat completions for a given workspace and query.
+	ChatCompletionStream(workspace string, query *ChatCompletionQuery) (*Stream[*ChatCompletionStreamChunk], error)
+	// ChatCompletionStreamWithContext retrieves a stream of chat completions for a given workspace and query with a context.
+	ChatCompletionStreamWithContext(ctx context.Context, workspace string, query *ChatCompletionQuery) (*Stream[*ChatCompletionStreamChunk], error)
+
 	// ListChatWorkspaces retrieves all chat workspaces.
 	ListChatWorkspaces(query *ListChatWorkSpaceQuery) (*ListChatWorkspace, error)
 	// ListChatWorkspacesWithContext retrieves all chat workspaces with a context.
