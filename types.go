@@ -14,6 +14,11 @@ const (
 	nullBody                 = "null"
 )
 
+type UpdateWebhookRequest struct {
+	URL     string            `json:"url,omitempty"`
+	Headers map[string]string `json:"headers,omitempty"`
+}
+
 type Webhook struct {
 	UUID       string            `json:"uuid"`
 	IsEditable bool              `json:"isEditable"`
@@ -25,7 +30,7 @@ type WebhookResults struct {
 	Result []*Webhook `json:"results"`
 }
 
-type AddWebhookQuery struct {
+type AddWebhookRequest struct {
 	URL     string            `json:"url"`
 	Headers map[string]string `json:"headers,omitempty"`
 }
