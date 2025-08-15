@@ -288,7 +288,7 @@ func Test_ChatCompletionStream(t *testing.T) {
 	uid := "test-workspace"
 	apiKey := os.Getenv("OPENAI_API_KEY")
 	if apiKey == "" {
-		apiKey = "sk-XXXXX..."
+		t.Skip("OPENAI_API_KEY not set; skipping live chat completion stream integration test")
 	}
 
 	_, err = chat.UpdateChatWorkspace(uid, &meilisearch.ChatWorkspaceSettings{
@@ -314,6 +314,7 @@ func Test_ChatCompletionStream(t *testing.T) {
 	stream, err := chat.ChatCompletionStream(uid, query)
 	require.NoError(t, err)
 	require.NotNil(t, stream)
+	defer func() { _ = stream.Close() }()
 
 	content := ""
 
