@@ -1016,3 +1016,23 @@ search_parameter_reference_media_1: |-
       },
     },
   });
+webhooks_get_1: |-
+  client.ListWebhooks();
+webhooks_get_single_1: |-
+  client.GetWebhook("WEBHOOK_UUID");
+webhooks_post_1: |-
+  client.AddWebhook(&meilisearch.AddWebhookRequest{
+    URL: "WEBHOOK_TARGET_URL",
+    Headers: map[string]string{
+      "authorization": "SECURITY_KEY",
+      "referer": "https://example.com"
+    },
+  });
+webhooks_patch_1: |-
+  client.UpdateWebhook("WEBHOOK_UUID", &meilisearch.UpdateWebhookRequest{
+    Header: map[string]string{
+      "referer": ""
+    },
+  });
+webhooks_delete_1: |-
+  client.DeleteWebhook("WEBHOOK_UUID");
