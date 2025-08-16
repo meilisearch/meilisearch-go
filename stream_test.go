@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"errors"
 	"io"
 	"net/http"
 	"strings"
@@ -219,4 +220,118 @@ func TestDecoder_CommentsAndUnknownFieldsIgnored(t *testing.T) {
 	assert.False(t, decoder.Next())
 	assert.NoError(t, decoder.Err())
 	assert.NoError(t, decoder.Close())
+}
+
+func TestRegisterDecoder_InvalidContentType(t *testing.T) {
+	// Force the fallback branch in RegisterDecoder when mime.ParseMediaType fails
+	key := "%%%INVALID%%%"
+	called := false
+	RegisterDecoder(key, func(rc io.ReadCloser) Decoder {
+		called = true
+		return newSSEDecoder(rc)
+	})
+	// The decoderTypes map should now contain the raw lower-cased key
+	_, ok := decoderTypes[strings.ToLower(key)]
+	assert.True(t, ok, "expected decoderTypes to contain fallback key")
+	// Just sanity: constructing a response with this invalid content-type won't match
+	// (NewDecoder parsing fails and defaults to SSE) so we only validate registration here.
+	assert.False(t, called, "decoder factory should not be invoked in this test")
+}
+
+func TestNewDecoder_NilResponse(t *testing.T) {
+	dec := NewDecoder(nil)
+	assert.False(t, dec.Next())
+	assert.Error(t, dec.Err())
+	assert.NoError(t, dec.Close())
+	// Validate errDecoder accessors explicitly
+	assert.Equal(t, Event{}, dec.Event())
+}
+
+func TestNewDecoder_DefaultsToSSEWhenUnregistered(t *testing.T) {
+	data := "event: msg\n" +
+		"data: {\"x\":1}\n\n"
+	// Use an unregistered (but valid) content type so NewDecoder falls back to SSE.
+	res := httpRespWithBody(t, data, "application/json")
+	dec := NewDecoder(res)
+	require.True(t, dec.Next())
+	assert.Equal(t, "msg", dec.Event().Type)
+	assert.Equal(t, []byte("{\"x\":1}"), dec.Event().Data)
+	assert.False(t, dec.Next())
+	assert.NoError(t, dec.Err())
+	assert.NoError(t, dec.Close())
+}
+
+func TestSSEDecoder_NextAfterCloseAndDoubleClose(t *testing.T) {
+	data := "event: a\n" +
+		"data: {\"k\":\"v\"}\n\n"
+	res := httpRespWithBody(t, data, "text/event-stream")
+	dec := NewDecoder(res)
+	require.True(t, dec.Next())
+	assert.NoError(t, dec.Close()) // first close
+	assert.NoError(t, dec.Close()) // second close hits early-return branch
+	assert.False(t, dec.Next(), "Next after close must be false")
+}
+
+func TestSSEDecoder_EventFieldWithoutColon(t *testing.T) {
+	// Line with just 'event' (no colon) should create an event with empty type & data
+	data := "event\n\n"
+	res := httpRespWithBody(t, data, "text/event-stream")
+	dec := NewDecoder(res)
+	require.True(t, dec.Next())
+	ev := dec.Event()
+	assert.Equal(t, "", ev.Type)
+	assert.Equal(t, 0, len(ev.Data))
+	assert.False(t, dec.Next())
+	assert.NoError(t, dec.Err())
+}
+
+func TestStream_NewStreamNilDecoder(t *testing.T) {
+	stream := NewStream[struct{}](nil, nil)
+	assert.Error(t, stream.Err())
+	assert.False(t, stream.Next())    // early return path
+	assert.NoError(t, stream.Close()) // decoder nil branch
+}
+
+// fakeDecoder lets us simulate an underlying decoder that ends with an error.
+type fakeDecoder struct {
+	events []Event
+	idx    int
+	err    error
+	cur    Event
+	closed bool
+}
+
+func (f *fakeDecoder) Next() bool {
+	if f.idx < len(f.events) {
+		f.cur = f.events[f.idx]
+		f.idx++
+		return true
+	}
+	return false
+}
+func (f *fakeDecoder) Event() Event { return f.cur }
+func (f *fakeDecoder) Err() error   { return f.err }
+func (f *fakeDecoder) Close() error { f.closed = true; return nil }
+
+func TestStream_DecoderErrorPropagatesAfterIteration(t *testing.T) {
+	sentinel := errors.New("decoder failed")
+	fd := &fakeDecoder{err: sentinel}
+	stream := NewStream[map[string]any](fd, nil)
+	assert.False(t, stream.Next()) // no events; should look at decoder.Err()
+	assert.ErrorIs(t, stream.Err(), sentinel)
+	assert.NoError(t, stream.Close())
+}
+
+func TestSSEDecoder_LeadingEmptyLinesIgnored(t *testing.T) {
+	data := "\n\nevent: message\n" +
+		"data: {\"a\":1}\n\n"
+	res := httpRespWithBody(t, data, "text/event-stream")
+	dec := NewDecoder(res)
+	// First Next should skip the leading blank lines and then parse the event.
+	require.True(t, dec.Next())
+	ev := dec.Event()
+	assert.Equal(t, "message", ev.Type)
+	assert.Equal(t, []byte("{\"a\":1}"), ev.Data)
+	assert.False(t, dec.Next())
+	assert.NoError(t, dec.Err())
 }
