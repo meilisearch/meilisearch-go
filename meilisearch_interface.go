@@ -12,6 +12,7 @@ type ServiceManager interface {
 	ChatManager
 	ChatReader
 	WebhookManager
+	NetworksManager
 
 	ServiceReader() ServiceReader
 
@@ -26,6 +27,9 @@ type ServiceManager interface {
 
 	WebhookManager() WebhookManager
 	WebhookReader() WebhookReader
+
+	NetworkManager() NetworksManager
+	NetworkReader() NetworksReader
 
 	// CreateIndex creates a new index.
 	CreateIndex(config *IndexConfig) (*TaskInfo, error)
