@@ -122,6 +122,14 @@ func cleanupWebhook(services ...meilisearch.WebhookManager) func() {
 	}
 }
 
+func cleanupNetwork(services ...meilisearch.NetworksManager) func() {
+	return func() {
+		for _, s := range services {
+			_, _ = resetNetwork(s)
+		}
+	}
+}
+
 func getPrivateKey(sv meilisearch.ServiceManager) (key string) {
 	list, err := sv.GetKeys(nil)
 	if err != nil {
@@ -162,6 +170,17 @@ func deleteAllIndexes(sv meilisearch.ServiceManager) (ok bool, err error) {
 		}
 	}
 
+	return true, nil
+}
+
+func resetNetwork(networkMgr meilisearch.NetworksManager) (ok bool, err error) {
+	_, err = networkMgr.UpdateNetwork(&meilisearch.Network{
+		Self:    nil,
+		Remotes: nil,
+	})
+	if err != nil {
+		return false, err
+	}
 	return true, nil
 }
 
