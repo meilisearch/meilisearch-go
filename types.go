@@ -14,6 +14,16 @@ const (
 	nullBody                 = "null"
 )
 
+type Network struct {
+	Self    string            `json:"self,omitempty"`
+	Remotes map[string]Remote `json:"remotes,omitempty"`
+}
+
+type Remote struct {
+	URL          string `json:"url,omitempty"`
+	SearchApiKey string `json:"searchApiKey,omitempty"`
+}
+
 type UpdateWebhookRequest struct {
 	URL     string            `json:"url,omitempty"`
 	Headers map[string]string `json:"headers,omitempty"`
