@@ -15,13 +15,13 @@ const (
 )
 
 type Network struct {
-	Self    string            `json:"self,omitempty"`
-	Remotes map[string]Remote `json:"remotes,omitempty"`
+	Self    *string            `json:"self"`
+	Remotes map[string]*Remote `json:"remotes"`
 }
 
 type Remote struct {
-	URL          string `json:"url,omitempty"`
-	SearchApiKey string `json:"searchApiKey,omitempty"`
+	URL          *string `json:"url"`
+	SearchApiKey *string `json:"searchApiKey"`
 }
 
 type UpdateWebhookRequest struct {
