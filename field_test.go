@@ -3,70 +3,48 @@ package meilisearch
 import (
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func TestInt(t *testing.T) {
-	v := int(42)
+	v := 42
 	ptr := Int(v)
-	if ptr == nil {
-		t.Fatal("Int64 returned nil pointer")
-	}
-	if *ptr != v {
-		t.Errorf("Int64 returned pointer to %d, want %d", *ptr, v)
-	}
+	assert.NotNil(t, ptr, "Int returned nil pointer")
+	assert.Equal(t, v, *ptr, "Int returned wrong value")
 }
 
 func TestInt64(t *testing.T) {
 	v := int64(42)
 	ptr := Int64(v)
-	if ptr == nil {
-		t.Fatal("Int64 returned nil pointer")
-	}
-	if *ptr != v {
-		t.Errorf("Int64 returned pointer to %d, want %d", *ptr, v)
-	}
+	assert.NotNil(t, ptr, "Int64 returned nil pointer")
+	assert.Equal(t, v, *ptr, "Int64 returned wrong value")
 }
 
 func TestBool(t *testing.T) {
 	v := true
 	ptr := Bool(v)
-	if ptr == nil {
-		t.Fatal("Bool returned nil pointer")
-	}
-	if *ptr != v {
-		t.Errorf("Bool returned pointer to %v, want %v", *ptr, v)
-	}
+	assert.NotNil(t, ptr, "Bool returned nil pointer")
+	assert.Equal(t, v, *ptr, "Bool returned wrong value")
 }
 
 func TestFloat(t *testing.T) {
 	v := 3.14
 	ptr := Float(v)
-	if ptr == nil {
-		t.Fatal("Float returned nil pointer")
-	}
-	if *ptr != v {
-		t.Errorf("Float returned pointer to %f, want %f", *ptr, v)
-	}
+	assert.NotNil(t, ptr, "Float returned nil pointer")
+	assert.Equal(t, v, *ptr, "Float returned wrong value")
 }
 
 func TestString(t *testing.T) {
 	v := "hello"
 	ptr := String(v)
-	if ptr == nil {
-		t.Fatal("String returned nil pointer")
-	}
-	if *ptr != v {
-		t.Errorf("String returned pointer to %s, want %s", *ptr, v)
-	}
+	assert.NotNil(t, ptr, "String returned nil pointer")
+	assert.Equal(t, v, *ptr, "String returned wrong value")
 }
 
 func TestTime(t *testing.T) {
 	v := time.Date(2020, 1, 2, 3, 4, 5, 6, time.UTC)
 	ptr := Time(v)
-	if ptr == nil {
-		t.Fatal("Time returned nil pointer")
-	}
-	if !ptr.Equal(v) {
-		t.Errorf("Time returned pointer to %v, want %v", *ptr, v)
-	}
+	assert.NotNil(t, ptr, "Time returned nil pointer")
+	assert.True(t, ptr.Equal(v), "Time returned wrong value")
 }
