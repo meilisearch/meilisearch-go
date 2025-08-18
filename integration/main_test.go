@@ -122,7 +122,7 @@ func cleanupWebhook(services ...meilisearch.WebhookManager) func() {
 	}
 }
 
-func cleanupNetwork(services ...meilisearch.NetworksManager) func() {
+func cleanupNetwork(services ...meilisearch.ServiceManager) func() {
 	return func() {
 		for _, s := range services {
 			_, _ = resetNetwork(s)
@@ -173,8 +173,8 @@ func deleteAllIndexes(sv meilisearch.ServiceManager) (ok bool, err error) {
 	return true, nil
 }
 
-func resetNetwork(networkMgr meilisearch.NetworksManager) (ok bool, err error) {
-	_, err = networkMgr.UpdateNetwork(&meilisearch.Network{
+func resetNetwork(sv meilisearch.ServiceManager) (ok bool, err error) {
+	_, err = sv.UpdateNetwork(&meilisearch.Network{
 		Self:    nil,
 		Remotes: nil,
 	})

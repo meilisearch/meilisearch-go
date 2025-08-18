@@ -77,10 +77,6 @@ func (m *meilisearch) KeyReader() KeyReader {
 	return m
 }
 
-func (m *meilisearch) NetworkManager() NetworksManager { return m }
-
-func (m *meilisearch) NetworkReader() NetworksReader { return m }
-
 func (m *meilisearch) WebhookManager() WebhookManager { return m }
 
 func (m *meilisearch) WebhookReader() WebhookReader { return m }

@@ -12,7 +12,6 @@ type ServiceManager interface {
 	ChatManager
 	ChatReader
 	WebhookManager
-	NetworksManager
 
 	ServiceReader() ServiceReader
 
@@ -27,9 +26,6 @@ type ServiceManager interface {
 
 	WebhookManager() WebhookManager
 	WebhookReader() WebhookReader
-
-	NetworkManager() NetworksManager
-	NetworkReader() NetworksReader
 
 	// CreateIndex creates a new index.
 	CreateIndex(config *IndexConfig) (*TaskInfo, error)
@@ -72,6 +68,14 @@ type ServiceManager interface {
 
 	// ExportWithContext transfers data from your origin instance to a remote target instance with a context for cancellation.
 	ExportWithContext(ctx context.Context, params *ExportParams) (*TaskInfo, error)
+
+	// UpdateNetwork updates the network object.
+	// Updates are partial; only the provided fields are updated.
+	UpdateNetwork(params *Network) (*Network, error)
+
+	// UpdateNetworkWithContext updates the network object with a context.
+	// Updates are partial; only the provided fields are updated.
+	UpdateNetworkWithContext(ctx context.Context, params *Network) (*Network, error)
 
 	// Close closes the connection to the Meilisearch server.
 	Close()
@@ -143,6 +147,12 @@ type ServiceReader interface {
 
 	// GetBatchWithContext retrieves a specific batch by its UID with a context for cancellation.
 	GetBatchWithContext(ctx context.Context, batchUID int) (*Batch, error)
+
+	// GetNetwork gets the current value of the instance’s network object.
+	GetNetwork() (*Network, error)
+
+	// GetNetworkWithContext gets the current value of the instance’s network object with a context.
+	GetNetworkWithContext(ctx context.Context) (*Network, error)
 }
 
 type KeyManager interface {
