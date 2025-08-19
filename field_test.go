@@ -133,8 +133,7 @@ func TestUnmarshalIncluded(t *testing.T) {
 }
 
 func TestUnmarshalNull(t *testing.T) {
-	var o Opt[string]
-	o = String("preset") // start included with non-zero value to ensure reset
+	o := String("preset") // start included with non-zero value to ensure reset
 	assert.True(t, o.Valid())
 	err := json.Unmarshal([]byte("null"), &o)
 	assert.NoError(t, err)
