@@ -1038,13 +1038,18 @@ webhooks_delete_1: |-
   client.DeleteWebhook("WEBHOOK_UUID");
 network_get: |-
   client.GetNetwork();
-network_patch: |-
-  client.UpdateNetwork(&meilisearch..Network{
+network_patch_1: |-
+  client.UpdateNetwork(&meilisearch.Network{
     Self: meilisearch.String("TEST"),
-    Remotes: map[string]*meilisearch.Remote{
-      "ms-00": {
-        URL:          meilisearch.String("https://example.com"),
+    Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
+      "ms-00": meilisearch.NewOpt(meilisearch.Remote{
+        URL:          "https://example.com",
         SearchApiKey: meilisearch.String("TEST"),
       },
     },
+  });
+network_patch_2: |-
+  client.UpdateNetwork(&meilisearch.Network{
+    Self: meilisearch.String("TEST"),
+    Remotes: meilisearch.Null[map[string]meilisearch.Opt[meilisearch.Remote]](),
   });
