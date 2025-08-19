@@ -15,13 +15,45 @@ const (
 )
 
 type Network struct {
-	Self    *string            `json:"self"`
-	Remotes map[string]*Remote `json:"remotes"`
+	Self    Opt[string]                 `json:"self,omitempty"`
+	Remotes Opt[map[string]Opt[Remote]] `json:"remotes,omitempty"`
+}
+
+func (n Network) MarshalJSON() ([]byte, error) {
+	m := make(map[string]any)
+
+	if n.Self.Valid() {
+		m["self"] = n.Self.Value
+	} else if n.Self.Null() {
+		m["self"] = nil
+	}
+
+	if n.Remotes.Valid() {
+		m["remotes"] = n.Remotes.Value
+	} else if n.Remotes.Null() {
+		m["remotes"] = nil
+	}
+
+	return json.Marshal(m)
 }
 
 type Remote struct {
-	URL          *string `json:"url"`
-	SearchApiKey *string `json:"searchApiKey"`
+	URL          string      `json:"url"`
+	SearchApiKey Opt[string] `json:"searchApiKey,omitempty"`
+}
+
+func (r Remote) MarshalJSON() ([]byte, error) {
+    m := make(map[string]any)
+
+    m["url"] = r.URL
+
+    if r.SearchApiKey.Valid() {
+        m["searchApiKey"] = r.SearchApiKey.Value
+    } else if r.SearchApiKey.Null() {
+        m["searchApiKey"] = nil
+    }
+
+    return json.Marshal(m)
 }
 
 type UpdateWebhookRequest struct {
