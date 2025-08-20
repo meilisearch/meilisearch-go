@@ -42,7 +42,7 @@ func Test_UpdateNetwork(t *testing.T) {
 				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
 					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
 						URL:          meilisearch.String("https://example.com"),
-						SearchApiKey: meilisearch.String("TEST"),
+						SearchAPIKey: meilisearch.String("TEST"),
 					}),
 				}),
 			},
@@ -50,7 +50,7 @@ func Test_UpdateNetwork(t *testing.T) {
 			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
 				"ms-00": meilisearch.NewOpt(meilisearch.Remote{
 					URL:          meilisearch.String("https://example.com"),
-					SearchApiKey: meilisearch.String("TEST"),
+					SearchAPIKey: meilisearch.String("TEST"),
 				}),
 			},
 		},
@@ -63,7 +63,7 @@ func Test_UpdateNetwork(t *testing.T) {
 			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
 				"ms-00": meilisearch.NewOpt(meilisearch.Remote{
 					URL:          meilisearch.String("https://example.com"),
-					SearchApiKey: meilisearch.String("TEST"),
+					SearchAPIKey: meilisearch.String("TEST"),
 				}),
 			},
 		},
@@ -80,7 +80,7 @@ func Test_UpdateNetwork(t *testing.T) {
 			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
 				"ms-00": meilisearch.NewOpt(meilisearch.Remote{
 					URL:          meilisearch.String("https://updated.com"),
-					SearchApiKey: meilisearch.String("TEST"), // unchanged
+					SearchAPIKey: meilisearch.String("TEST"), // unchanged
 				}),
 			},
 		},
@@ -89,7 +89,7 @@ func Test_UpdateNetwork(t *testing.T) {
 			input: &meilisearch.Network{
 				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
 					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-						SearchApiKey: meilisearch.String("UPDATED_API_KEY"),
+						SearchAPIKey: meilisearch.String("UPDATED_API_KEY"),
 					}),
 				}),
 			},
@@ -97,7 +97,7 @@ func Test_UpdateNetwork(t *testing.T) {
 			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
 				"ms-00": meilisearch.NewOpt(meilisearch.Remote{
 					URL:          meilisearch.String("https://updated.com"),
-					SearchApiKey: meilisearch.String("UPDATED_API_KEY"), // unchanged
+					SearchAPIKey: meilisearch.String("UPDATED_API_KEY"), // unchanged
 				}),
 			},
 		},
@@ -106,7 +106,7 @@ func Test_UpdateNetwork(t *testing.T) {
 			input: &meilisearch.Network{
 				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
 					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-						SearchApiKey: meilisearch.Null[string](),
+						SearchAPIKey: meilisearch.Null[string](),
 					}),
 				}),
 			},
@@ -114,7 +114,7 @@ func Test_UpdateNetwork(t *testing.T) {
 			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
 				"ms-00": meilisearch.NewOpt(meilisearch.Remote{
 					URL:          meilisearch.String("https://updated.com"),
-					SearchApiKey: meilisearch.Null[string](),
+					SearchAPIKey: meilisearch.Null[string](),
 				}),
 			},
 		},
@@ -134,7 +134,7 @@ func Test_UpdateNetwork(t *testing.T) {
 				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
 					"ms-01": meilisearch.NewOpt(meilisearch.Remote{
 						URL:          meilisearch.String("https://new-remote.com"),
-						SearchApiKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
+						SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
 					}),
 				}),
 			},
@@ -142,7 +142,7 @@ func Test_UpdateNetwork(t *testing.T) {
 			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
 				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
 					URL:          meilisearch.String("https://new-remote.com"),
-					SearchApiKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
+					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
 				}),
 			},
 		},
