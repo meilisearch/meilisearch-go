@@ -1043,7 +1043,7 @@ network_patch_1: |-
     Self: meilisearch.String("TEST"),
     Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
       "ms-00": meilisearch.NewOpt(meilisearch.Remote{
-        URL:          "https://example.com",
+        URL:          meilisearch.String("https://example.com"),
         SearchApiKey: meilisearch.String("TEST"),
       },
     },
