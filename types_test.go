@@ -116,3 +116,129 @@ func TestTimestampz_ToTime(t *testing.T) {
 		require.Equal(t, c.expected, c.input.ToTime())
 	}
 }
+
+func TestNetwork_MarshalJSON(t *testing.T) {
+	t.Parallel()
+
+	type R = Opt[Remote]
+
+	tests := []struct {
+		name     string
+		in       Network
+		wantJSON string
+	}{
+		{
+			name:     "omit all when both fields are zero value",
+			in:       Network{},
+			wantJSON: `{}`,
+		},
+		{
+			name: "self set, remotes omitted",
+			in: Network{
+				Self: String("primary-node"),
+			},
+			wantJSON: `{"self":"primary-node"}`,
+		},
+		{
+			name: "self null, remotes omitted",
+			in: Network{
+				Self: Null[string](),
+			},
+			wantJSON: `{"self":null}`,
+		},
+		{
+			name: "remotes set (one valid remote, one null), self omitted",
+			in: Network{
+				Remotes: NewOpt(map[string]R{
+					"east": NewOpt(Remote{
+						URL: String("https://east.example.com"),
+					}),
+					"west": Null[Remote](),
+				}),
+			},
+			wantJSON: `{
+				"remotes": {
+					"east": { "url": "https://east.example.com" },
+					"west": null
+				}
+			}`,
+		},
+		{
+			name: "self set and remotes set",
+			in: Network{
+				Self: String("primary"),
+				Remotes: NewOpt(map[string]R{
+					"a": NewOpt(Remote{URL: String("https://a.example.com"), SearchAPIKey: String("sek_a")}),
+					"b": NewOpt(Remote{URL: Null[string]()}),
+				}),
+			},
+			wantJSON: `{
+				"self":"primary",
+				"remotes": {
+					"a": {"url":"https://a.example.com","searchApiKey":"sek_a"},
+					"b": {"url":null}
+				}
+			}`,
+		},
+		{
+			name: "remotes explicitly null",
+			in: Network{
+				Self:    String("primary"),
+				Remotes: Null[map[string]R](),
+			},
+			wantJSON: `{"self":"primary","remotes":null}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.in.MarshalJSON()
+			require.NoError(t, err)
+			require.JSONEq(t, tt.wantJSON, string(got))
+		})
+	}
+}
+
+func TestRemote_MarshalJSON(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		in       Remote
+		wantJSON string
+	}{
+		{
+			name:     "omit all when both fields are zero value",
+			in:       Remote{},
+			wantJSON: `{}`,
+		},
+		{
+			name:     "url set, searchApiKey omitted",
+			in:       Remote{URL: String("https://east.example.com")},
+			wantJSON: `{"url":"https://east.example.com"}`,
+		},
+		{
+			name:     "url null, searchApiKey omitted",
+			in:       Remote{URL: Null[string]()},
+			wantJSON: `{"url":null}`,
+		},
+		{
+			name:     "url set, searchApiKey null",
+			in:       Remote{URL: String("https://east.example.com"), SearchAPIKey: Null[string]()},
+			wantJSON: `{"url":"https://east.example.com","searchApiKey":null}`,
+		},
+		{
+			name:     "both set",
+			in:       Remote{URL: String("https://east.example.com"), SearchAPIKey: String("sek_abc")},
+			wantJSON: `{"url":"https://east.example.com","searchApiKey":"sek_abc"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.in.MarshalJSON()
+			require.NoError(t, err)
+			require.JSONEq(t, tt.wantJSON, string(got))
+		})
+	}
+}
