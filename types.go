@@ -551,6 +551,14 @@ type MultiSearchResponse struct {
 	SemanticHitCount   int64                      `json:"semanticHitCount,omitempty"`
 	FacetDistribution  map[string]json.RawMessage `json:"facetDistribution,omitempty"`
 	FacetStats         map[string]json.RawMessage `json:"facetStats,omitempty"`
+	RemoteErrors       map[string]*RemoteError    `json:"remoteErrors,omitempty"`
+}
+
+type RemoteError struct {
+	Message string `json:"message"`
+	Code    string `json:"code"`
+	Type    string `json:"type"`
+	Link    string `json:"link"`
 }
 
 type FacetSearchRequest struct {
