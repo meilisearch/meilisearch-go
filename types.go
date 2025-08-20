@@ -38,22 +38,26 @@ func (n Network) MarshalJSON() ([]byte, error) {
 }
 
 type Remote struct {
-	URL          string      `json:"url"`
+	URL          Opt[string] `json:"url"`
 	SearchApiKey Opt[string] `json:"searchApiKey,omitempty"`
 }
 
 func (r Remote) MarshalJSON() ([]byte, error) {
-    m := make(map[string]any)
+	m := make(map[string]any)
 
-    m["url"] = r.URL
+	if r.URL.Valid() {
+		m["url"] = r.URL.Value
+	} else if r.URL.Null() {
+		m["url"] = nil
+	}
 
-    if r.SearchApiKey.Valid() {
-        m["searchApiKey"] = r.SearchApiKey.Value
-    } else if r.SearchApiKey.Null() {
-        m["searchApiKey"] = nil
-    }
+	if r.SearchApiKey.Valid() {
+		m["searchApiKey"] = r.SearchApiKey.Value
+	} else if r.SearchApiKey.Null() {
+		m["searchApiKey"] = nil
+	}
 
-    return json.Marshal(m)
+	return json.Marshal(m)
 }
 
 type UpdateWebhookRequest struct {
