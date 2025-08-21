@@ -14,6 +14,58 @@ const (
 	nullBody                 = "null"
 )
 
+// Network represents the Meilisearch network configuration.
+// Each field is wrapped in an Opt so it can be explicitly included,
+// set to JSON null, or omitted entirely.
+type Network struct {
+	Self    Opt[string]                 `json:"self,omitempty"`
+	Remotes Opt[map[string]Opt[Remote]] `json:"remotes,omitempty"`
+}
+
+func (n Network) MarshalJSON() ([]byte, error) {
+	m := make(map[string]any)
+
+	if n.Self.Valid() {
+		m["self"] = n.Self.Value
+	} else if n.Self.Null() {
+		m["self"] = nil
+	}
+
+	if n.Remotes.Valid() {
+		m["remotes"] = n.Remotes.Value
+	} else if n.Remotes.Null() {
+		m["remotes"] = nil
+	}
+
+	return json.Marshal(m)
+}
+
+// Remote describes a single remote Meilisearch node.
+// Each field is wrapped in an Opt so it can be explicitly included,
+// set to JSON null, or omitted entirely.
+type Remote struct {
+	URL          Opt[string] `json:"url"`
+	SearchAPIKey Opt[string] `json:"searchApiKey,omitempty"`
+}
+
+func (r Remote) MarshalJSON() ([]byte, error) {
+	m := make(map[string]any)
+
+	if r.URL.Valid() {
+		m["url"] = r.URL.Value
+	} else if r.URL.Null() {
+		m["url"] = nil
+	}
+
+	if r.SearchAPIKey.Valid() {
+		m["searchApiKey"] = r.SearchAPIKey.Value
+	} else if r.SearchAPIKey.Null() {
+		m["searchApiKey"] = nil
+	}
+
+	return json.Marshal(m)
+}
+
 type UpdateWebhookRequest struct {
 	URL     string            `json:"url,omitempty"`
 	Headers map[string]string `json:"headers,omitempty"`
