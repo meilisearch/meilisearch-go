@@ -98,9 +98,14 @@ func main() {
 	// 5. List all tasks with pagination
 	fmt.Println("\n5. Listing all tasks...")
 	tasks, err := client.GetTasks(&meilisearch.TasksQuery{
-		Limit:  10,
-		From:   0,
-		Statuses: []string{"succeeded", "processing", "enqueued", "failed"},
+		Limit: 10,
+		From:  0,
+		Statuses: []meilisearch.TaskStatus{
+			meilisearch.TaskStatus("succeeded"),
+			meilisearch.TaskStatus("processing"),
+			meilisearch.TaskStatus("enqueued"),
+			meilisearch.TaskStatus("failed"),
+		},
 	})
 	if err != nil {
 		log.Fatalf("Failed to get tasks: %v", err)
@@ -115,7 +120,7 @@ func main() {
 	// 6. Filter tasks by type
 	fmt.Println("\n6. Filtering tasks by type...")
 	documentTasks, err := client.GetTasks(&meilisearch.TasksQuery{
-		Types: []string{"documentAdditionOrUpdate"},
+		Types: []meilisearch.TaskType{meilisearch.TaskType("documentAdditionOrUpdate")},
 		Limit: 5,
 	})
 	if err != nil {
@@ -151,11 +156,11 @@ func main() {
 		log.Printf("Failed to wait for task: %v", err)
 	} else {
 		fmt.Printf("✅ Task #%d completed with status: %s\n", finalTask.UID, finalTask.Status)
-		if finalTask.Error != nil {
+		if finalTask.Status == meilisearch.TaskStatus("failed") {
 			fmt.Printf("   Error: %v\n", finalTask.Error)
 		}
-		if finalTask.Duration != nil {
-			fmt.Printf("   Duration: %s\n", *finalTask.Duration)
+		if finalTask.Duration != "" {
+			fmt.Printf("   Duration: %s\n", finalTask.Duration)
 		}
 	}
 
@@ -239,19 +244,16 @@ func displayTaskInfo(name string, task *meilisearch.Task) {
 	fmt.Printf("  - Status: %s\n", task.Status)
 	fmt.Printf("  - Enqueued At: %s\n", task.EnqueuedAt.Format(time.RFC3339))
 	
-	if task.StartedAt != nil {
+	if !task.StartedAt.IsZero() {
 		fmt.Printf("  - Started At: %s\n", task.StartedAt.Format(time.RFC3339))
 	}
-	
-	if task.FinishedAt != nil {
+		if !task.FinishedAt.IsZero() {
 		fmt.Printf("  - Finished At: %s\n", task.FinishedAt.Format(time.RFC3339))
 	}
-	
-	if task.Duration != nil {
-		fmt.Printf("  - Duration: %s\n", *task.Duration)
+		if task.Duration != "" {
+		fmt.Printf("  - Duration: %s\n", task.Duration)
 	}
-	
-	if task.Error != nil {
+		if task.Status == meilisearch.TaskStatus("failed") {
 		fmt.Printf("  - Error: %v\n", task.Error)
 	}
 	fmt.Println()

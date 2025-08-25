@@ -1,3 +1,5 @@
+package main
+
 import (
 	"bufio"
 	"context"
@@ -21,34 +23,59 @@ func main() {
 
 	// Test connection
 	fmt.Println("Testing connection to Meilisearch...")
+	health, err := client.Health()
+	if err != nil {
+		log.Fatalf("Failed to connect to Meilisearch: %v", err)
+	}
+	fmt.Printf("✅ Connected to Meilisearch (status: %s)\n", health.Status)
+
+	// Basic setup - ensure we have some knowledge base
+	if err := setupKnowledgeBase(client); err != nil {
 		log.Fatalf("Failed to setup knowledge base: %v", err)
 	}
 
 	// List available chat workspaces and pick the first one
-	var workspaceID string = "default"
+	workspaceID := "default"
 	fmt.Println("\nListing chat workspaces...")
 	workspaces, err := client.ListChatWorkspaces(&meilisearch.ListChatWorkSpaceQuery{
 		Limit:  10,
+		Offset: 0,
+	})
+	if err != nil {
+		log.Printf("Warning: could not list chat workspaces: %v", err)
+	} else {
 		fmt.Printf("Found %d chat workspaces\n", len(workspaces.Results))
-		for _, workspace := range workspaces.Results {
-			fmt.Printf("  - Workspace: %s\n", workspace.UID)
-			if workspaceID == "default" && workspace.UID != "" {
-				workspaceID = workspace.UID // Use first available workspace
-			}
+		for _, ws := range workspaces.Results {
+			fmt.Printf("  - Workspace: %s\n", ws.UID)
+		}
+		if len(workspaces.Results) > 0 && workspaces.Results[0].UID != "" {
+			workspaceID = workspaces.Results[0].UID
 		}
 	}
 
+	fmt.Println("\n--- Interactive Chat Session ---")
+	fmt.Println("Type your questions (or 'quit' to exit):")
+	
+	// Simple interactive loop
+	reader := bufio.NewReader(os.Stdin)
+	for {
+		fmt.Print("\nYou: ")
+		userInput, _ := reader.ReadString('\n')
+		userInput = strings.TrimSpace(userInput)
+		if userInput == "" || strings.EqualFold(userInput, "exit") || strings.EqualFold(userInput, "quit") {
+			fmt.Println("Bye!")
+			break
 		}
-
-		// Demonstrate chat streaming
 		if err := performChatStream(client, workspaceID, userInput); err != nil {
 			log.Printf("Chat stream error: %v", err)
 		}
 	}
-	return nil
 }
 
 func performChatStream(client meilisearch.ServiceManager, workspaceID string, query string) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
+	defer cancel()
+	
 	// Create a chat completion query with streaming enabled
 	chatQuery := &meilisearch.ChatCompletionQuery{
 		Model: "gpt-3.5-turbo",
@@ -65,8 +92,13 @@ func performChatStream(client meilisearch.ServiceManager, workspaceID string, qu
 		Stream: true,
 	}
 
-	// workspaceID provided by caller (picked from the listed workspaces)
-
+	// Start streaming chat completion
+	stream, err := client.ChatCompletionStreamWithContext(ctx, workspaceID, chatQuery)
+	if err != nil {
+		return fmt.Errorf("failed to start chat stream: %w", err)
+	}
+	defer stream.Close()
+	
 	fmt.Print("Assistant: ")
 	
 	for {
@@ -76,7 +108,22 @@ func performChatStream(client meilisearch.ServiceManager, workspaceID string, qu
 				break
 			}
 			return fmt.Errorf("stream error: %w", err)
+		}
+		
+		// Print the streaming content from choices
+		if chunk != nil && len(chunk.Choices) > 0 {
+			if chunk.Choices[0].Delta.Content != nil && *chunk.Choices[0].Delta.Content != "" {
+				fmt.Print(*chunk.Choices[0].Delta.Content)
+			}
+		}
+	}
 	fmt.Println() // New line after streaming response
+	return nil
+}
+
+func setupKnowledgeBase(client meilisearch.ServiceManager) error {
+	// Basic setup - this is a placeholder for actual knowledge base setup
+	// In a real scenario, you would populate indices with relevant documents
 	return nil
 }
 

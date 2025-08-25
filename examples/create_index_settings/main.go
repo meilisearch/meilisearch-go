@@ -86,7 +86,7 @@ func main() {
 		// Typo tolerance settings
 		TypoTolerance: &meilisearch.TypoTolerance{
 			Enabled: true,
-			MinWordSizeForTypos: &meilisearch.MinWordSizeForTypos{
+			MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
 				OneTypo:  5,
 				TwoTypos: 9,
 			},

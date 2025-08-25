@@ -58,6 +58,8 @@ export MEILI_HOST="http://localhost:7700"
 export MEILI_API_KEY="your-api-key"
 ```
 
+Note: Listing and filtering tasks generally requires an Admin API key (not a Search key).
+
 ## Running the Example
 
 ```bash

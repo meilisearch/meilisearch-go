@@ -51,8 +51,8 @@ func main() {
 	// Basic faceted search
 	fmt.Println("1. Basic faceted search with distribution:")
 	searchResult, err := client.Index("books").Search("fiction", &meilisearch.SearchRequest{
-		FacetsDistribution: []string{"genre", "language", "publish_year"},
-		Limit:              5,
+		Facets: []string{"genre", "language", "publish_year"},
+		Limit:  5,
 	})
 	if err != nil {
 		log.Fatalf("Faceted search failed: %v", err)
@@ -63,10 +63,10 @@ func main() {
 	// Advanced faceted search with filters
 	fmt.Println("\n2. Faceted search with filters:")
 	searchResult, err = client.Index("books").Search("", &meilisearch.SearchRequest{
-		Filter:             []string{"genre = fantasy", "publish_year > 2000"},
-		FacetsDistribution: []string{"language", "rating", "publisher"},
-		Sort:               []string{"rating:desc"},
-		Limit:              10,
+		Filter: "genre = fantasy AND publish_year > 2000",
+		Facets: []string{"language", "rating", "publisher"},
+		Sort:   []string{"rating:desc"},
+		Limit:  10,
 	})
 	if err != nil {
 		log.Fatalf("Advanced faceted search failed: %v", err)
@@ -79,7 +79,7 @@ func main() {
 	facetResult, err := client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
 		FacetName:  "genre",
 		FacetQuery: "sci",
-		Query:      "space",
+		Q:          "space",
 	})
 	if err != nil {
 		log.Fatalf("Facet search failed: %v", err)
@@ -160,10 +160,15 @@ func setupBooksIndex(client meilisearch.ServiceManager) error {
 
 func displaySearchResults(query string, result *meilisearch.SearchResponse) {
 	fmt.Printf("Search: '%s' - Found %d results\n", query, result.EstimatedTotalHits)
-	if result.FacetsDistribution != nil {
+	if len(result.FacetDistribution) > 0 {
 		fmt.Println("Facet distribution:")
-		for facet, distribution := range *result.FacetsDistribution {
-			fmt.Printf("  %s: %v\n", facet, distribution)
+		var fd map[string]map[string]int
+		if err := json.Unmarshal(result.FacetDistribution, &fd); err == nil {
+			for facet, distribution := range fd {
+				fmt.Printf("  %s: %v\n", facet, distribution)
+			}
+		} else {
+			fmt.Printf("  (failed to parse facet distribution: %v)\n", err)
 		}
 	}
 }
