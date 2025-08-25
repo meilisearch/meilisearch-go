@@ -116,6 +116,24 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 		}
 	}
 
+	// Configure filterable/sortable attributes required by the queries below
+	index := client.Index(indexUID)
+	settingsTask, err := index.UpdateSettings(&meilisearch.Settings{
+		FilterableAttributes: []string{"category", "in_stock", "price", "brand"},
+		SortableAttributes:   []string{"price"},
+	})
+	if err != nil {
+		return fmt.Errorf("failed to update settings: %w", err)
+	}
+	{
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		if _, err := client.WaitForTaskWithContext(ctx, settingsTask.TaskUID, 100*time.Millisecond); err != nil {
+			return fmt.Errorf("settings update failed: %w", err)
+		}
+	}
+
+	// Reuse index handle
 	// Add sample products
 	products := []Product{
 		{ID: 1, Name: "Gaming Laptop", Description: "High-performance laptop for gaming", Category: "electronics", Price: 1299.99, Brand: "TechBrand", Tags: []string{"gaming", "laptop", "computer"}, InStock: true},
@@ -125,7 +143,6 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 		{ID: 5, Name: "Bluetooth Headphones", Description: "Noise-canceling headphones", Category: "electronics", Price: 199.99, Brand: "AudioTech", Tags: []string{"headphones", "bluetooth", "audio"}, InStock: true},
 	}
 
-	index := client.Index(indexUID)
 	addTask, err := index.AddDocuments(products)
 	if err != nil {
 		return fmt.Errorf("failed to add documents: %w", err)

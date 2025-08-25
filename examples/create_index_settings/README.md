@@ -36,7 +36,7 @@ This example demonstrates comprehensive index creation and advanced settings con
 - **attribute**: Matches in more important attributes first
 - **sort**: Custom sorting rules
 - **exactness**: Exact matches first
-- **rating:desc**: Custom rule for rating-based ranking
+- **desc(rating)**: Custom rule for rating-based ranking
 
 ### Attributes
 - **Searchable**: title, content, author, tags

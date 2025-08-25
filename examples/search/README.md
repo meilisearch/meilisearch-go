@@ -15,6 +15,8 @@ export MEILI_API_KEY="your-api-key"
 
 ## Running the Example
 
+1. **Start the Meilisearch server:**
+   ```bash
    ./meilisearch
    ```
 
