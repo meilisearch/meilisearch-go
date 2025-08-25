@@ -1,3 +1,5 @@
+package main
+
 import (
 	"context"
 	"encoding/json"
@@ -13,26 +15,14 @@ func main() {
 	host := getenv("MEILI_HOST", "http://localhost:7700")
 	apiKey := os.Getenv("MEILI_API_KEY")
 	client := meilisearch.New(host, meilisearch.WithAPIKey(apiKey))
-	defer client.Close()
 
 	// Test connection to Meilisearch
 	fmt.Println("Testing connection to Meilisearch...")
-	}
-	fmt.Printf("Index '%s' is ready!\n", indexUID)
 
-	// Configure filterable and facet attributes
-	fmt.Println("Configuring filterable/faceted attributes...")
-	settingsTask, err := index.UpdateSettings(&meilisearch.Settings{
-		FilterableAttributes: &[]string{"year", "genres"},
-	})
-	if err == nil {
-		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-		defer cancel()
-		_, err = client.WaitForTaskWithContext(ctx, settingsTask.TaskUID, 100*time.Millisecond)
-	}
-	if err != nil {
-		log.Fatalf("Failed to apply settings: %v", err)
-	}
+	// Prepare index handle
+	indexUID := "movies"
+	index := client.Index(indexUID)
+	fmt.Printf("Using index '%s'\n", indexUID)
 
 	// Prepare sample movie data
 	movies := []Movie{
@@ -59,6 +49,21 @@ func main() {
 	}
 	fmt.Printf("✅ Indexed documents successfully! (Task ID: %d)\n", task.TaskUID)
 
+	// Configure filterable and faceted attributes (after index exists)
+	fmt.Println("Configuring filterable/faceted attributes...")
+	settingsTask, err := index.UpdateSettings(&meilisearch.Settings{
+		FilterableAttributes: []string{"year", "genres"},
+	})
+	if err == nil {
+		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+		defer cancel()
+		_, err = client.WaitForTaskWithContext(ctx, settingsTask.TaskUID, 100*time.Millisecond)
+	}
+	if err != nil {
+		log.Fatalf("Failed to apply settings: %v", err)
+	}
+	fmt.Printf("Index '%s' is ready!\n", indexUID)
+
 	// Simple search
 	fmt.Println("\n1. Simple search for 'action':")
 	searchResult, err := index.Search("action", &meilisearch.SearchRequest{
@@ -69,8 +74,6 @@ func main() {
 	}
 
 	fmt.Printf("Found %d results\n", len(searchResult.Hits))
-	for i, hit := range searchResult.Hits {
-	fmt.Printf("Found %d drama movies after 1990\n", len(searchResult.Hits))
 	for i, hit := range searchResult.Hits {
 		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, hit["title"], int(hit["year"].(float64)), hit["rating"])
 	}

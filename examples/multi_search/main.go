@@ -52,7 +52,7 @@ func main() {
 				IndexUID: "products",
 				Query:    "laptop",
 				Limit:    5,
-				Filter:   []string{"category = electronics"},
+				Filter:   []string{`category = "electronics"`},
 			},
 			{
 				IndexUID: "products", 
