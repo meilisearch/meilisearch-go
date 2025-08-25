@@ -1,66 +1,35 @@
-# Meilisearch Go SDK Examples
-
-This directory contains runnable examples demonstrating how to use the Meilisearch Go SDK for common and advanced operations.
-
 ## Available Examples
 
-### 📝 [Basic Search](./search)
-Demonstrates core search functionality including:
-- Client initialization and connection testing
-- Index creation and management
-- Document addition and indexing
-- Various search operations (basic, filtered, faceted)
-- Task management and waiting for operations
+### 📝 [Basic Search](../search)
+Basic search functionality with index creation, document management, and various search operations.
 
-### 💬 [Chat Streaming](./chat_stream)
-Shows streaming capabilities and conversational search:
-- Chat workspace management
-- Real-time streaming responses
-- Interactive chat sessions
-- Knowledge base integration
-- Context-aware responses
+### 💬 Chat Streaming
+Interactive chat experience with streaming responses and knowledge base integration.
 
-## Running Examples
-
-Each example is self-contained and can be run with:
-
-```bash
-go run ./examples/<example-name>
-```
-
-For example:
-```bash
-go run ./examples/search
-go run ./examples/chat_stream
-```
-
-## Prerequisites
-
-- Go 1.20 or higher
-- Meilisearch server running (default: http://localhost:7700)
-- Valid API key (if authentication is enabled)
+2. **Enterprise Setup**: Configure Meilisearch with LLM integration
+3. **Workspace Configuration**: Set up appropriate chat workspaces
 
 ## Configuration
 
-Before running the examples, make sure to:
-1. Update the Meilisearch server URL in each example
-2. Set the appropriate API key
-3. Ensure your Meilisearch instance has the required features enabled
+The example supports configuration via environment variables:
 
-## Code Style
+```bash
+# Set Meilisearch server URL (optional, defaults to http://localhost:7700)
+export MEILI_HOST="http://localhost:7700"
 
-All examples follow idiomatic Go style and include:
-- Comprehensive error handling
-- Clear documentation and comments
-- Realistic use cases
-- Best practices for production usage
+# Set API key (optional, but recommended for production)
+export MEILI_API_KEY="your-api-key"
+```
 
-## Contributing
+## Configuration
 
-When adding new examples:
-- Follow the established directory structure
-- Include a detailed README for each example
-- Ensure examples are self-contained and runnable
-- Add comprehensive comments explaining each step
-- Handle errors appropriately
-- Test examples against a real Meilisearch instance
+## Running the Example
+
+```bash
+# Set environment variables (optional)
+export MEILI_HOST="http://localhost:7700"
+export MEILI_API_KEY="your-api-key"
+
+# Run the example
+go run ./examples/chat_stream
+```
