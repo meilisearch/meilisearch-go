@@ -18,8 +18,9 @@ const (
 // Each field is wrapped in an Opt so it can be explicitly included,
 // set to JSON null, or omitted entirely.
 type Network struct {
-	Self    Opt[string]                 `json:"self,omitempty"`
-	Remotes Opt[map[string]Opt[Remote]] `json:"remotes,omitempty"`
+	Self     Opt[string]                 `json:"self,omitempty"`
+	Remotes  Opt[map[string]Opt[Remote]] `json:"remotes,omitempty"`
+	Sharding Opt[bool]                   `json:"sharding,omitempty"`
 }
 
 func (n Network) MarshalJSON() ([]byte, error) {
@@ -35,6 +36,12 @@ func (n Network) MarshalJSON() ([]byte, error) {
 		m["remotes"] = n.Remotes.Value
 	} else if n.Remotes.Null() {
 		m["remotes"] = nil
+	}
+
+	if n.Sharding.Valid() {
+		m["sharding"] = n.Sharding.Value
+	} else if n.Sharding.Null() {
+		m["sharding"] = nil
 	}
 
 	return json.Marshal(m)
