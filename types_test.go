@@ -246,6 +246,16 @@ func TestRemote_MarshalJSON(t *testing.T) {
 			in:       Remote{URL: String("https://east.example.com"), SearchAPIKey: String("sek_abc")},
 			wantJSON: `{"url":"https://east.example.com","searchApiKey":"sek_abc"}`,
 		},
+		{
+			name:     "writeApiKey set",
+			in:       Remote{WriteAPIKey: String("TEST-API-KEY")},
+			wantJSON: `{"writeApiKey": "TEST-API-KEY"}`,
+		},
+		{
+			name:     "writeApiKey null",
+			in:       Remote{WriteAPIKey: Null[string]()},
+			wantJSON: `{"writeApiKey": null}`,
+		},
 	}
 
 	for _, tt := range tests {
