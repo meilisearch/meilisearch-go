@@ -53,6 +53,7 @@ func (n Network) MarshalJSON() ([]byte, error) {
 type Remote struct {
 	URL          Opt[string] `json:"url"`
 	SearchAPIKey Opt[string] `json:"searchApiKey,omitempty"`
+	WriteAPIKey  Opt[string] `json:"writeApiKey,omitempty"`
 }
 
 func (r Remote) MarshalJSON() ([]byte, error) {
@@ -68,6 +69,12 @@ func (r Remote) MarshalJSON() ([]byte, error) {
 		m["searchApiKey"] = r.SearchAPIKey.Value
 	} else if r.SearchAPIKey.Null() {
 		m["searchApiKey"] = nil
+	}
+
+	if r.WriteAPIKey.Valid() {
+		m["writeApiKey"] = r.WriteAPIKey.Value
+	} else if r.WriteAPIKey.Null() {
+		m["writeApiKey"] = nil
 	}
 
 	return json.Marshal(m)
