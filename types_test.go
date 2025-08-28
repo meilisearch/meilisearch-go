@@ -188,6 +188,20 @@ func TestNetwork_MarshalJSON(t *testing.T) {
 			},
 			wantJSON: `{"self":"primary","remotes":null}`,
 		},
+		{
+			name: "sharding explicitly null",
+			in: Network{
+				Sharding: Null[bool](),
+			},
+			wantJSON: `{"sharding": null}`,
+		},
+		{
+			name: "sharding set",
+			in: Network{
+				Sharding: Bool(true),
+			},
+			wantJSON: `{"sharding": true}`,
+		},
 	}
 
 	for _, tt := range tests {
