@@ -146,6 +146,32 @@ func Test_UpdateNetwork(t *testing.T) {
 				}),
 			},
 		},
+		{
+			name: "enable sharding",
+			input: &meilisearch.Network{
+				Sharding: meilisearch.Bool(true),
+			},
+			wantSelf: "NEW-SELF",
+			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
+				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
+					URL:          meilisearch.String("https://new-remote.com"),
+					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
+				}),
+			},
+		},
+		{
+			name: "disable sharding",
+			input: &meilisearch.Network{
+				Sharding: meilisearch.Bool(false),
+			},
+			wantSelf: "NEW-SELF",
+			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
+				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
+					URL:          meilisearch.String("https://new-remote.com"),
+					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
+				}),
+			},
+		},
 	}
 
 	for _, tt := range tests {
