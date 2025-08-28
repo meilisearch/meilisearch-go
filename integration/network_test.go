@@ -164,6 +164,69 @@ func Test_UpdateNetwork(t *testing.T) {
 			},
 		},
 		{
+			name: "add writeApiKey",
+			input: &meilisearch.Network{
+				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
+					"ms-01": meilisearch.NewOpt(meilisearch.Remote{
+						URL:          meilisearch.String("https://new-remote.com"),
+						SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
+						WriteAPIKey:  meilisearch.String("WRITE-API-KEY"),
+					}),
+				}),
+			},
+			wantSelf:     "NEW-SELF",
+			wantSharding: false,
+			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
+				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
+					URL:          meilisearch.String("https://new-remote.com"),
+					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
+					WriteAPIKey:  meilisearch.String("WRITE-API-KEY"),
+				}),
+			},
+		},
+		{
+			name: "set writeApikey to empty",
+			input: &meilisearch.Network{
+				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
+					"ms-01": meilisearch.NewOpt(meilisearch.Remote{
+						URL:          meilisearch.String("https://new-remote.com"),
+						SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
+						WriteAPIKey:  meilisearch.String(""),
+					}),
+				}),
+			},
+			wantSelf:     "NEW-SELF",
+			wantSharding: false,
+			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
+				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
+					URL:          meilisearch.String("https://new-remote.com"),
+					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
+					WriteAPIKey:  meilisearch.String(""),
+				}),
+			},
+		},
+		{
+			name: "set writeApikey to null",
+			input: &meilisearch.Network{
+				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
+					"ms-01": meilisearch.NewOpt(meilisearch.Remote{
+						URL:          meilisearch.String("https://new-remote.com"),
+						SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
+						WriteAPIKey:  meilisearch.Null[string](),
+					}),
+				}),
+			},
+			wantSelf:     "NEW-SELF",
+			wantSharding: false,
+			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
+				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
+					URL:          meilisearch.String("https://new-remote.com"),
+					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
+					WriteAPIKey:  meilisearch.Null[string](),
+				}),
+			},
+		},
+		{
 			name: "enable sharding",
 			input: &meilisearch.Network{
 				Sharding: meilisearch.Bool(true),
