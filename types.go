@@ -301,18 +301,37 @@ type Stats struct {
 //
 // Documentation: https://www.meilisearch.com/docs/learn/advanced/asynchronous_operations
 type Task struct {
-	Status     TaskStatus          `json:"status"`
-	UID        int64               `json:"uid,omitempty"`
-	TaskUID    int64               `json:"taskUid,omitempty"`
-	IndexUID   string              `json:"indexUid"`
-	Type       TaskType            `json:"type"`
-	Error      meilisearchApiError `json:"error,omitempty"`
-	Duration   string              `json:"duration,omitempty"`
-	EnqueuedAt time.Time           `json:"enqueuedAt"`
-	StartedAt  time.Time           `json:"startedAt,omitempty"`
-	FinishedAt time.Time           `json:"finishedAt,omitempty"`
-	Details    Details             `json:"details,omitempty"`
-	CanceledBy int64               `json:"canceledBy,omitempty"`
+	Status      TaskStatus          `json:"status"`
+	UID         int64               `json:"uid,omitempty"`
+	TaskUID     int64               `json:"taskUid,omitempty"`
+	IndexUID    string              `json:"indexUid"`
+	Type        TaskType            `json:"type"`
+	Error       meilisearchApiError `json:"error,omitempty"`
+	TaskNetwork TaskNetwork         `json:"network,omitempty"`
+	Duration    string              `json:"duration,omitempty"`
+	EnqueuedAt  time.Time           `json:"enqueuedAt"`
+	StartedAt   time.Time           `json:"startedAt,omitempty"`
+	FinishedAt  time.Time           `json:"finishedAt,omitempty"`
+	Details     Details             `json:"details,omitempty"`
+	CanceledBy  int64               `json:"canceledBy,omitempty"`
+}
+
+// TaskNetwork indicates information about a task network
+//
+// Documentation: https://www.meilisearch.com/docs/reference/api/tasks#network
+type TaskNetwork struct {
+	Origin  *Origin                `json:"origin,omitempty"`
+	Remotes map[string]*TaskRemote `json:"remotes,omitempty"`
+}
+
+type Origin struct {
+	RemoteName string `json:"remoteName,omitempty"`
+	TaskUID    string `json:"taskUid,omitempty"`
+}
+
+type TaskRemote struct {
+	TaskUID *string `json:"task_uid,omitempty"`
+	Error   *string `json:"error,omitempty"`
 }
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
