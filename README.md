@@ -30,17 +30,18 @@
 
 ## Table of Contents
 
+- [Table of Contents](#table-of-contents)
 - [📖 Documentation](#-documentation)
-- [🔧 Installation](#-installation--120)
+- [🔧 Installation (\>= 1.20)](#-installation--120)
 - [🚀 Getting started](#-getting-started)
-  - [Add documents](#add-documents)
-  - [Basic search](#basic-search)
-  - [Custom search](#custom-search)
-  - [Custom search with filter](#custom-search-with-filters)
-  - [Customize client](#customize-client)
-  - [Make SDK Faster](#make-sdk-faster)
+    - [Add documents](#add-documents)
+    - [Basic Search](#basic-search)
+    - [Custom Search](#custom-search)
+    - [Custom Search With Filters](#custom-search-with-filters)
+    - [Customize Client](#customize-client)
+    - [Make SDK Faster](#make-sdk-faster)
 - [🤖 Compatibility with Meilisearch](#-compatibility-with-meilisearch)
-- [⚡️ Benchmark performance](#-benchmark-performance)
+- [⚡️ Benchmark Performance](#️-benchmark-performance)
 - [💡 Learn more](#-learn-more)
 - [⚙️ Contributing](#️-contributing)
 
@@ -93,7 +94,7 @@ func main() {
         { "id": 5, "title": "Moana", "genres": []string{"Fantasy", "Action"} },
         { "id": 6, "title": "Philadelphia", "genres": []string{"Drama"} },
 	}
-	task, err := index.AddDocuments(documents)
+	task, err := index.AddDocuments(documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
