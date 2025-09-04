@@ -188,6 +188,20 @@ func TestNetwork_MarshalJSON(t *testing.T) {
 			},
 			wantJSON: `{"self":"primary","remotes":null}`,
 		},
+		{
+			name: "sharding explicitly null",
+			in: Network{
+				Sharding: Null[bool](),
+			},
+			wantJSON: `{"sharding": null}`,
+		},
+		{
+			name: "sharding set",
+			in: Network{
+				Sharding: Bool(true),
+			},
+			wantJSON: `{"sharding": true}`,
+		},
 	}
 
 	for _, tt := range tests {
@@ -231,6 +245,16 @@ func TestRemote_MarshalJSON(t *testing.T) {
 			name:     "both set",
 			in:       Remote{URL: String("https://east.example.com"), SearchAPIKey: String("sek_abc")},
 			wantJSON: `{"url":"https://east.example.com","searchApiKey":"sek_abc"}`,
+		},
+		{
+			name:     "writeApiKey set",
+			in:       Remote{WriteAPIKey: String("TEST-API-KEY")},
+			wantJSON: `{"writeApiKey": "TEST-API-KEY"}`,
+		},
+		{
+			name:     "writeApiKey null",
+			in:       Remote{WriteAPIKey: Null[string]()},
+			wantJSON: `{"writeApiKey": null}`,
 		},
 	}
 
