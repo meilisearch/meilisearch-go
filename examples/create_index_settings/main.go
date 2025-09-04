@@ -116,3 +116,31 @@ func main() {
 	}
 	
 	fmt.Printf("Searchable attributes: %v\n", currentSettings.SearchableAttributes)
+	fmt.Printf("Filterable attributes: %v\n", currentSettings.FilterableAttributes)
+	fmt.Printf("Sortable attributes: %v\n", currentSettings.SortableAttributes)
+
+	fmt.Println("\nIndex creation and settings examples completed successfully! 🎉")
+}
+
+// waitForTask waits for a task to complete
+func waitForTask(client meilisearch.ServiceManager, taskUID int64) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	_, err := client.WaitForTaskWithContext(ctx, taskUID, 100*time.Millisecond)
+	return err
+}
+
+// stringPtr returns a pointer to a string
+func stringPtr(s string) *string {
+	return &s
+}
+
+// getenv returns the value of the environment variable named by the key,
+// or def if the variable is not present or empty.
+func getenv(key, def string) string {
+	if v := os.Getenv(key); v != "" {
+		return v
+	}
+	return def
+}

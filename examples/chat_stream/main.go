@@ -102,13 +102,18 @@ func performChatStream(client meilisearch.ServiceManager, workspaceID string, qu
 	fmt.Print("Assistant: ")
 	
 	for {
-		chunk, err := stream.Next()
-		if err != nil {
-			if errors.Is(err, io.EOF) {
-				break
+		hasNext := stream.Next()
+		if !hasNext {
+			// Check for any error
+			if err := stream.Err(); err != nil {
+				if !errors.Is(err, io.EOF) {
+					return fmt.Errorf("stream error: %w", err)
+				}
 			}
-			return fmt.Errorf("stream error: %w", err)
+			break
 		}
+		
+		chunk := stream.Current()
 		
 		// Print the streaming content from choices
 		if chunk != nil && len(chunk.Choices) > 0 {

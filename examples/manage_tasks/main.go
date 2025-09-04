@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"log"
 	"os"
@@ -58,7 +57,7 @@ func main() {
 		{ID: 3, Title: "Third Document", Content: "This is the third document content"},
 	}
 
-	addTask, err := index.AddDocuments(documents)
+	addTask, err := index.AddDocuments(documents, nil)
 	if err != nil {
 		log.Fatalf("Failed to add documents: %v", err)
 	}
@@ -219,7 +218,7 @@ type TaskStats struct {
 	Enqueued   int
 }
 
-func calculateTaskStats(tasks []*meilisearch.Task) TaskStats {
+func calculateTaskStats(tasks []meilisearch.Task) TaskStats {
 	stats := TaskStats{Total: len(tasks)}
 	
 	for _, task := range tasks {
