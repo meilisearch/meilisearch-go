@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -86,7 +87,7 @@ func main() {
 	}
 
 	fmt.Printf("Facet search for 'sci' in genre facet with query 'space':\n")
-	for _, facetHit := range facetResult.FacetHits {
+	for _, facetHit := range *facetResult.FacetHits {
 		fmt.Printf("  - %v (count: %v)\n", facetHit["value"], facetHit["count"])
 	}
 
@@ -144,7 +145,7 @@ func setupBooksIndex(client meilisearch.ServiceManager) error {
 		{ID: 5, Title: "Harry Potter", Author: "J.K. Rowling", Genre: "fantasy", Language: "English", PublishYear: 1997, Rating: 4.8, Pages: 309, Publisher: "Bloomsbury", Tags: []string{"magic", "school"}, InPrint: true},
 	}
 
-	addTask, err := index.AddDocuments(books)
+	addTask, err := index.AddDocuments(books, nil)
 	if err != nil {
 		return fmt.Errorf("failed to add documents: %w", err)
 	}
