@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/meilisearch/meilisearch-go"
+)
 
 func main() {
 	// Initialize the Meilisearch client with environment configuration
@@ -88,10 +89,11 @@ func main() {
 	})
 	if err != nil {
 		log.Fatalf("Failed to search with filters: %v", err)
+	}
+
 	fmt.Printf("Found %d drama movies after 1990\n", len(searchResult.Hits))
 	for i, hit := range searchResult.Hits {
 		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, hit["title"], int(hit["year"].(float64)), hit["rating"])
-	}
 	}
 
 	if len(searchResult.FacetDistribution) > 0 {
