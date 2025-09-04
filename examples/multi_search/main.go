@@ -143,7 +143,7 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 		{ID: 5, Name: "Bluetooth Headphones", Description: "Noise-canceling headphones", Category: "electronics", Price: 199.99, Brand: "AudioTech", Tags: []string{"headphones", "bluetooth", "audio"}, InStock: true},
 	}
 
-	addTask, err := index.AddDocuments(products)
+	addTask, err := index.AddDocuments(products, nil)
 	if err != nil {
 		return fmt.Errorf("failed to add documents: %w", err)
 	}
