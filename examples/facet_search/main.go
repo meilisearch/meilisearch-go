@@ -77,7 +77,7 @@ func main() {
 
 	// Facet search with specific facet query
 	fmt.Println("\n3. Facet-specific search:")
-	facetResult, err := client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
+	facetRaw, err := client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
 		FacetName:  "genre",
 		FacetQuery: "sci",
 		Q:          "space",
@@ -86,9 +86,16 @@ func main() {
 		log.Fatalf("Facet search failed: %v", err)
 	}
 
+	// Unmarshal the raw JSON response into FacetSearchResponse
+	var facetResult meilisearch.FacetSearchResponse
+	err = json.Unmarshal(*facetRaw, &facetResult)
+	if err != nil {
+		log.Fatalf("Failed to unmarshal facet search response: %v", err)
+	}
+
 	fmt.Printf("Facet search for 'sci' in genre facet with query 'space':\n")
 	for _, facetHit := range facetResult.FacetHits {
-	fmt.Printf("  - %v (count: %v)\n", facetHit["value"], facetHit["count"])
+		fmt.Printf("  - %v (count: %v)\n", facetHit["value"], facetHit["count"])
 	}
 
 	fmt.Println("\nFaceted search examples completed successfully! 🎉")
