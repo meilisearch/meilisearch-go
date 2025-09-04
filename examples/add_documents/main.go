@@ -53,7 +53,7 @@ func main() {
 		{ID: 3, Name: "Charlie Brown", Email: "charlie@example.com", Role: "moderator", Active: false, JoinDate: "2023-03-10"},
 	}
 
-	task, err := index.AddDocuments(users)
+	task, err := index.AddDocuments(users, nil)
 	if err != nil {
 		log.Fatalf("Failed to add documents: %v", err)
 	}
@@ -74,7 +74,7 @@ func main() {
 		JoinDate: "2023-04-05",
 	}
 
-	task, err = index.AddDocuments([]User{newUser})
+	task, err = index.AddDocuments([]User{newUser}, nil)
 	if err != nil {
 		log.Fatalf("Failed to add single document: %v", err)
 	}
@@ -91,7 +91,7 @@ func main() {
 		{ID: 3, Name: "Charlie Brown", Email: "charlie@example.com", Role: "moderator", Active: true, JoinDate: "2023-03-10"}, // Activating user
 	}
 
-	task, err = index.UpdateDocuments(updatedUsers)
+	task, err = index.UpdateDocuments(updatedUsers, nil)
 	if err != nil {
 		log.Fatalf("Failed to update documents: %v", err)
 	}
@@ -103,7 +103,8 @@ func main() {
 
 	// 4. Get document by ID
 	fmt.Println("\n4. Getting document by ID:")
-	doc, err := index.GetDocument("2", nil)
+	var doc User
+	err = index.GetDocument("2", nil, &doc)
 	if err != nil {
 		log.Fatalf("Failed to get document: %v", err)
 	}
@@ -111,10 +112,11 @@ func main() {
 
 	// 5. Get multiple documents
 	fmt.Println("\n5. Getting multiple documents:")
-	docs, err := index.GetDocuments(&meilisearch.DocumentsQuery{
+	var docs meilisearch.DocumentsResult
+	err = index.GetDocuments(&meilisearch.DocumentsQuery{
 		Limit:  10,
 		Offset: 0,
-	})
+	}, &docs)
 	if err != nil {
 		log.Fatalf("Failed to get documents: %v", err)
 	}
@@ -149,11 +151,12 @@ func main() {
 
 	// 8. Final document count
 	fmt.Println("\n8. Final document count:")
-	docs, err = index.GetDocuments(&meilisearch.DocumentsQuery{Limit: 100})
+	var finalDocs meilisearch.DocumentsResult
+	err = index.GetDocuments(&meilisearch.DocumentsQuery{Limit: 100}, &finalDocs)
 	if err != nil {
 		log.Fatalf("Failed to get final documents: %v", err)
 	}
-	fmt.Printf("Remaining documents: %d\n", len(docs.Results))
+	fmt.Printf("Remaining documents: %d\n", len(finalDocs.Results))
 
 	fmt.Println("\nDocument management examples completed successfully! 🎉")
 }
