@@ -18,8 +18,9 @@ const (
 // Each field is wrapped in an Opt so it can be explicitly included,
 // set to JSON null, or omitted entirely.
 type Network struct {
-	Self    Opt[string]                 `json:"self,omitempty"`
-	Remotes Opt[map[string]Opt[Remote]] `json:"remotes,omitempty"`
+	Self     Opt[string]                 `json:"self,omitempty"`
+	Remotes  Opt[map[string]Opt[Remote]] `json:"remotes,omitempty"`
+	Sharding Opt[bool]                   `json:"sharding,omitempty"`
 }
 
 func (n Network) MarshalJSON() ([]byte, error) {
@@ -37,6 +38,12 @@ func (n Network) MarshalJSON() ([]byte, error) {
 		m["remotes"] = nil
 	}
 
+	if n.Sharding.Valid() {
+		m["sharding"] = n.Sharding.Value
+	} else if n.Sharding.Null() {
+		m["sharding"] = nil
+	}
+
 	return json.Marshal(m)
 }
 
@@ -46,6 +53,7 @@ func (n Network) MarshalJSON() ([]byte, error) {
 type Remote struct {
 	URL          Opt[string] `json:"url"`
 	SearchAPIKey Opt[string] `json:"searchApiKey,omitempty"`
+	WriteAPIKey  Opt[string] `json:"writeApiKey,omitempty"`
 }
 
 func (r Remote) MarshalJSON() ([]byte, error) {
@@ -61,6 +69,12 @@ func (r Remote) MarshalJSON() ([]byte, error) {
 		m["searchApiKey"] = r.SearchAPIKey.Value
 	} else if r.SearchAPIKey.Null() {
 		m["searchApiKey"] = nil
+	}
+
+	if r.WriteAPIKey.Valid() {
+		m["writeApiKey"] = r.WriteAPIKey.Value
+	} else if r.WriteAPIKey.Null() {
+		m["writeApiKey"] = nil
 	}
 
 	return json.Marshal(m)
@@ -287,18 +301,37 @@ type Stats struct {
 //
 // Documentation: https://www.meilisearch.com/docs/learn/advanced/asynchronous_operations
 type Task struct {
-	Status     TaskStatus          `json:"status"`
-	UID        int64               `json:"uid,omitempty"`
-	TaskUID    int64               `json:"taskUid,omitempty"`
-	IndexUID   string              `json:"indexUid"`
-	Type       TaskType            `json:"type"`
-	Error      meilisearchApiError `json:"error,omitempty"`
-	Duration   string              `json:"duration,omitempty"`
-	EnqueuedAt time.Time           `json:"enqueuedAt"`
-	StartedAt  time.Time           `json:"startedAt,omitempty"`
-	FinishedAt time.Time           `json:"finishedAt,omitempty"`
-	Details    Details             `json:"details,omitempty"`
-	CanceledBy int64               `json:"canceledBy,omitempty"`
+	Status      TaskStatus          `json:"status"`
+	UID         int64               `json:"uid,omitempty"`
+	TaskUID     int64               `json:"taskUid,omitempty"`
+	IndexUID    string              `json:"indexUid"`
+	Type        TaskType            `json:"type"`
+	Error       meilisearchApiError `json:"error,omitempty"`
+	TaskNetwork TaskNetwork         `json:"network,omitempty"`
+	Duration    string              `json:"duration,omitempty"`
+	EnqueuedAt  time.Time           `json:"enqueuedAt"`
+	StartedAt   time.Time           `json:"startedAt,omitempty"`
+	FinishedAt  time.Time           `json:"finishedAt,omitempty"`
+	Details     Details             `json:"details,omitempty"`
+	CanceledBy  int64               `json:"canceledBy,omitempty"`
+}
+
+// TaskNetwork indicates information about a task network
+//
+// Documentation: https://www.meilisearch.com/docs/reference/api/tasks#network
+type TaskNetwork struct {
+	Origin  *Origin                `json:"origin,omitempty"`
+	Remotes map[string]*TaskRemote `json:"remotes,omitempty"`
+}
+
+type Origin struct {
+	RemoteName string `json:"remoteName,omitempty"`
+	TaskUID    string `json:"taskUid,omitempty"`
+}
+
+type TaskRemote struct {
+	TaskUID *string `json:"task_uid,omitempty"`
+	Error   *string `json:"error,omitempty"`
 }
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
