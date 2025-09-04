@@ -81,9 +81,18 @@ func main() {
 		var year float64
 		var rating float64
 
-		json.Unmarshal(hit["title"], &title)
-		json.Unmarshal(hit["year"], &year)
-		json.Unmarshal(hit["rating"], &rating)
+		if err := json.Unmarshal(hit["title"], &title); err != nil {
+		log.Printf("Failed to unmarshal title: %v", err)
+		title = "unknown"
+		}
+		if err := json.Unmarshal(hit["year"], &year); err != nil {
+			log.Printf("Failed to unmarshal year: %v", err)
+			year = 0
+		}
+		if err := json.Unmarshal(hit["rating"], &rating); err != nil {
+			log.Printf("Failed to unmarshal rating: %v", err)
+			rating = 0.0
+		}
 
 		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, title, int(year), rating)
 	}
@@ -107,9 +116,18 @@ func main() {
 		var year float64
 		var rating float64
 
-		json.Unmarshal(hit["title"], &title)
-		json.Unmarshal(hit["year"], &year)
-		json.Unmarshal(hit["rating"], &rating)
+		if err := json.Unmarshal(hit["title"], &title); err != nil {
+			log.Printf("Failed to unmarshal title: %v", err)
+			title = "unknown"
+		}
+		if err := json.Unmarshal(hit["year"], &year); err != nil {
+			log.Printf("Failed to unmarshal year: %v", err)
+			year = 0
+		}
+		if err := json.Unmarshal(hit["rating"], &rating); err != nil {
+			log.Printf("Failed to unmarshal rating: %v", err)
+			rating = 0.0
+		}
 
 		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, title, int(year), rating)
 	}

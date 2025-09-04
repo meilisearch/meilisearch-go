@@ -97,7 +97,7 @@ func performChatStream(client meilisearch.ServiceManager, workspaceID string, qu
 	if err != nil {
 		return fmt.Errorf("failed to start chat stream: %w", err)
 	}
-	defer stream.Close()
+	defer func() { if closeErr := stream.Close(); closeErr != nil { log.Printf("Error closing stream: %v", closeErr) } }()
 	
 	fmt.Print("Assistant: ")
 	
