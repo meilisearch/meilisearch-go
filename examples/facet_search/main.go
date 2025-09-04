@@ -87,8 +87,8 @@ func main() {
 	}
 
 	fmt.Printf("Facet search for 'sci' in genre facet with query 'space':\n")
-	for _, facetHit := range *facetResult.FacetHits {
-		fmt.Printf("  - %v (count: %v)\n", facetHit["value"], facetHit["count"])
+	for _, facetHit := range facetResult.FacetHits {
+	fmt.Printf("  - %v (count: %v)\n", facetHit["value"], facetHit["count"])
 	}
 
 	fmt.Println("\nFaceted search examples completed successfully! 🎉")

@@ -35,7 +35,7 @@ func main() {
 	}
 
 	fmt.Printf("Adding %d movies to the index...\n", len(movies))
-	task, err := index.AddDocuments(movies)
+	task, err := index.AddDocuments(movies, nil)
 	if err != nil {
 		log.Fatalf("Failed to add documents: %v", err)
 	}
@@ -76,7 +76,16 @@ func main() {
 
 	fmt.Printf("Found %d results\n", len(searchResult.Hits))
 	for i, hit := range searchResult.Hits {
-		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, hit["title"], int(hit["year"].(float64)), hit["rating"])
+		// Decode hit data properly
+		var title string
+		var year float64
+		var rating float64
+
+		json.Unmarshal(hit["title"], &title)
+		json.Unmarshal(hit["year"], &year)
+		json.Unmarshal(hit["rating"], &rating)
+
+		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, title, int(year), rating)
 	}
 
 	// Search with filters and facets
@@ -93,7 +102,16 @@ func main() {
 
 	fmt.Printf("Found %d drama movies after 1990\n", len(searchResult.Hits))
 	for i, hit := range searchResult.Hits {
-		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, hit["title"], int(hit["year"].(float64)), hit["rating"])
+		// Decode hit data properly
+		var title string
+		var year float64
+		var rating float64
+
+		json.Unmarshal(hit["title"], &title)
+		json.Unmarshal(hit["year"], &year)
+		json.Unmarshal(hit["rating"], &rating)
+
+		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, title, int(year), rating)
 	}
 
 	if len(searchResult.FacetDistribution) > 0 {
