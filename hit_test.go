@@ -3,7 +3,6 @@ package meilisearch
 import (
 	"encoding/json"
 	"errors"
-	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -176,32 +175,24 @@ type exampleBookForTest struct {
 	OptS            *string           `json:"opt_s,omitempty"`
 	Tags            []string          `json:"tags,omitempty"`
 	Attrs           map[string]string `json:"attrs,omitempty"`
-	exampleEmbedded                   // embedded, inlined
+	exampleEmbedded                   // embedded, inlined (E is promoted)
 	Renamed         string            `json:"renamed_field"`
 	unexp           string            // unexported: must remain zero
 }
 
-// --- Helpers ---
-
 func makeHitFromJSON(t *testing.T, s string) Hit {
 	t.Helper()
 	var m map[string]json.RawMessage
-	if err := json.Unmarshal([]byte(s), &m); err != nil {
-		t.Fatalf("bad test json: %v", err)
-	}
+	require.NoError(t, json.Unmarshal([]byte(s), &m), "bad test json")
 	return Hit(m)
 }
 
 func makeHitFromStruct(t *testing.T, v any) Hit {
 	t.Helper()
 	b, err := json.Marshal(v)
-	if err != nil {
-		t.Fatalf("marshal: %v", err)
-	}
+	require.NoError(t, err, "marshal")
 	var m map[string]json.RawMessage
-	if err := json.Unmarshal(b, &m); err != nil {
-		t.Fatalf("unmarshal to map: %v", err)
-	}
+	require.NoError(t, json.Unmarshal(b, &m), "unmarshal to map")
 	return Hit(m)
 }
 
@@ -219,31 +210,17 @@ func TestHitDecodeInto_Basic(t *testing.T) {
 	h := makeHitFromJSON(t, jsonStr)
 
 	var got exampleBookForTest
-	if err := h.DecodeInto(&got); err != nil {
-		t.Fatalf("DecodeInto error: %v", err)
-	}
+	require.NoError(t, h.DecodeInto(&got))
 
-	if got.ID != "bk_1" || got.Title != "Intro to Go" || got.Price != 42 {
-		t.Fatalf("basic fields mismatch: %+v", got)
-	}
-	if got.exampleEmbedded.E != "emb" {
-		t.Fatalf("embedded field not set: %+v", got)
-	}
-	if got.Renamed != "X" {
-		t.Fatalf("renamed tag not respected: %+v", got)
-	}
-	if got.unexp != "" {
-		t.Fatalf("unexported field must remain zero, got %q", got.unexp)
-	}
-	if got.OptS != nil {
-		t.Fatalf("optional pointer should be nil when not present, got %v", *got.OptS)
-	}
-	if !reflect.DeepEqual(got.Tags, []string{"a", "b"}) {
-		t.Fatalf("tags mismatch: %+v", got.Tags)
-	}
-	if !reflect.DeepEqual(got.Attrs, map[string]string{"lang": "en"}) {
-		t.Fatalf("attrs mismatch: %+v", got.Attrs)
-	}
+	assert.Equal(t, "bk_1", got.ID)
+	assert.Equal(t, "Intro to Go", got.Title)
+	assert.Equal(t, 42, got.Price)
+	assert.Equal(t, "emb", got.E, "embedded field should be promoted")
+	assert.Equal(t, "X", got.Renamed)
+	assert.Empty(t, got.unexp, "unexported field must remain zero")
+	assert.Nil(t, got.OptS, "optional pointer should be nil when not present")
+	assert.Equal(t, []string{"a", "b"}, got.Tags)
+	assert.Equal(t, map[string]string{"lang": "en"}, got.Attrs)
 }
 
 func TestHitDecodeInto_NullAndMissing(t *testing.T) {
@@ -258,46 +235,32 @@ func TestHitDecodeInto_NullAndMissing(t *testing.T) {
 	h := makeHitFromJSON(t, jsonStr)
 
 	var got exampleBookForTest
-	if err := h.DecodeInto(&got); err != nil {
-		t.Fatalf("DecodeInto error: %v", err)
-	}
+	require.NoError(t, h.DecodeInto(&got))
 
 	// nulls should zero the fields
-	if got.Title != "" || got.Price != 0 || got.OptS != nil || got.exampleEmbedded.E != "" || got.Renamed != "" {
-		t.Fatalf("nulls not treated as zero values: %+v", got)
-	}
+	assert.Equal(t, "", got.Title)
+	assert.Equal(t, 0, got.Price)
+	assert.Nil(t, got.OptS)
+	assert.Equal(t, "", got.E)
+	assert.Equal(t, "", got.Renamed)
 
-	// missing fields: zero values (ID is present above; test missing behavior too)
+	// Missing fields → zero value struct
 	h2 := makeHitFromJSON(t, `{}`)
 	var got2 exampleBookForTest
-	if err := h2.DecodeInto(&got2); err != nil {
-		t.Fatalf("DecodeInto error: %v", err)
-	}
-	var zero exampleBookForTest
-	if !reflect.DeepEqual(got2, zero) {
-		t.Fatalf("missing fields should yield zero value struct: %+v", got2)
-	}
+	require.NoError(t, h2.DecodeInto(&got2))
+	assert.Equal(t, exampleBookForTest{}, got2)
 }
 
 func TestHitDecodeInto_Errors(t *testing.T) {
 	h := makeHitFromJSON(t, `{"id":"x"}`)
 
-	// nil
-	if err := h.DecodeInto(nil); err == nil {
-		t.Fatalf("expected error for nil target")
-	}
+	assert.Error(t, h.DecodeInto(nil))
 
-	// non-pointer
 	var notPtr exampleBookForTest
-	if err := h.DecodeInto(notPtr); err == nil {
-		t.Fatalf("expected error for non-pointer")
-	}
+	assert.Error(t, h.DecodeInto(notPtr))
 
-	// pointer to non-struct
 	var x int
-	if err := h.DecodeInto(&x); err == nil {
-		t.Fatalf("expected error for pointer to non-struct")
-	}
+	assert.Error(t, h.DecodeInto(&x))
 }
 
 func TestHitsDecodeInto_StructSlice(t *testing.T) {
@@ -311,17 +274,15 @@ func TestHitsDecodeInto_StructSlice(t *testing.T) {
 	hs := Hits{h, h, h}
 
 	var out []exampleBookForTest
-	if err := hs.DecodeInto(&out); err != nil {
-		t.Fatalf("DecodeInto (slice) error: %v", err)
-	}
+	require.NoError(t, hs.DecodeInto(&out))
+	require.Len(t, out, 3)
 
-	if len(out) != 3 {
-		t.Fatalf("len mismatch: %d", len(out))
-	}
 	for i, b := range out {
-		if b.ID != "bk_3" || b.Title != "T" || b.Price != 7 || b.exampleEmbedded.E != "e" || b.Renamed != "R" {
-			t.Fatalf("element %d mismatch: %+v", i, b)
-		}
+		assert.Equalf(t, "bk_3", b.ID, "idx=%d", i)
+		assert.Equalf(t, "T", b.Title, "idx=%d", i)
+		assert.Equalf(t, 7, b.Price, "idx=%d", i)
+		assert.Equalf(t, "e", b.E, "idx=%d", i) // promoted embedded field
+		assert.Equalf(t, "R", b.Renamed, "idx=%d", i)
 	}
 }
 
@@ -330,15 +291,13 @@ func TestHitsDecodeInto_PtrSlice(t *testing.T) {
 	hs := Hits{h, h}
 
 	var out []*exampleBookForTest
-	if err := hs.DecodeInto(&out); err != nil {
-		t.Fatalf("DecodeInto (ptr slice) error: %v", err)
-	}
-	if len(out) != 2 {
-		t.Fatalf("len mismatch: %d", len(out))
-	}
+	require.NoError(t, hs.DecodeInto(&out))
+	require.Len(t, out, 2)
+
 	for i, p := range out {
-		if p == nil || p.ID != "bk_4" || p.Title != "Ptr" {
-			t.Fatalf("element %d mismatch: %+v", i, p)
+		if assert.NotNilf(t, p, "idx=%d", i) {
+			assert.Equalf(t, "bk_4", p.ID, "idx=%d", i)
+			assert.Equalf(t, "Ptr", p.Title, "idx=%d", i)
 		}
 	}
 }
@@ -346,12 +305,8 @@ func TestHitsDecodeInto_PtrSlice(t *testing.T) {
 func TestHitsDecodeInto_EmptyInput(t *testing.T) {
 	var hs Hits
 	var out []exampleBookForTest
-	if err := hs.DecodeInto(&out); err != nil {
-		t.Fatalf("DecodeInto error on empty input: %v", err)
-	}
-	if len(out) != 0 {
-		t.Fatalf("expected empty output slice, got %d", len(out))
-	}
+	require.NoError(t, hs.DecodeInto(&out))
+	assert.Len(t, out, 0)
 }
 
 func TestHitsDecodeInto_NullFields(t *testing.T) {
@@ -367,72 +322,42 @@ func TestHitsDecodeInto_NullFields(t *testing.T) {
 	hs := Hits{h}
 
 	var out []exampleBookForTest
-	if err := hs.DecodeInto(&out); err != nil {
-		t.Fatalf("DecodeInto error: %v", err)
-	}
-	if len(out) != 1 {
-		t.Fatalf("len mismatch: %d", len(out))
-	}
+	require.NoError(t, hs.DecodeInto(&out))
+	require.Len(t, out, 1)
+
 	got := out[0]
-	if got.ID != "bk_5" || got.Title != "ok" || got.exampleEmbedded.E != "E" {
-		t.Fatalf("values mismatch: %+v", got)
-	}
-	// null → zero
-	if got.OptS != nil || got.Tags != nil || got.Attrs != nil {
-		t.Fatalf("null should zero pointer/map/slice fields: %+v", got)
-	}
+	assert.Equal(t, "bk_5", got.ID)
+	assert.Equal(t, "ok", got.Title)
+	assert.Equal(t, "E", got.E)
+	assert.Nil(t, got.OptS)
+	assert.Nil(t, got.Tags)
+	assert.Nil(t, got.Attrs)
 }
 
 func TestHitsDecodeInto_Errors(t *testing.T) {
 	h := makeHitFromJSON(t, `{"id":"bk_6"}`)
 	hs := Hits{h}
 
-	// nil
-	if err := hs.DecodeInto(nil); err == nil {
-		t.Fatalf("expected error for nil")
-	}
+	assert.Error(t, hs.DecodeInto(nil))
 
-	// non-pointer
 	var notPtr []exampleBookForTest
-	if err := hs.DecodeInto(notPtr); err == nil {
-		t.Fatalf("expected error for non-pointer")
-	}
+	assert.Error(t, hs.DecodeInto(notPtr))
 
-	// pointer to non-slice
 	var x int
-	if err := hs.DecodeInto(&x); err == nil {
-		t.Fatalf("expected error for pointer to non-slice")
-	}
+	assert.Error(t, hs.DecodeInto(&x))
 
-	// slice of non-struct element
 	var bad1 []int
-	if err := hs.DecodeInto(&bad1); err == nil {
-		t.Fatalf("expected error for slice element not struct/*struct")
-	}
+	assert.Error(t, hs.DecodeInto(&bad1))
 
-	// slice of pointer to non-struct
 	var bad2 []*int
-	if err := hs.DecodeInto(&bad2); err == nil {
-		t.Fatalf("expected error for slice element pointer to non-struct")
-	}
-
-	// ensure error text is informative (optional assert on substring)
-	var out []exampleBookForTest
-	err := hs.DecodeInto(&out)
-	if err != nil && !errors.Is(err, nil) {
-		// no-op: just compile-time reference to errors package to avoid lint noise
-	}
+	assert.Error(t, hs.DecodeInto(&bad2))
 }
 
 func TestHitDecodeInto_IgnoresUnknownFields(t *testing.T) {
 	h := makeHitFromJSON(t, `{"id":"bk_7","unknown":123}`)
 	var b exampleBookForTest
-	if err := h.DecodeInto(&b); err != nil {
-		t.Fatalf("unexpected error: %v", err)
-	}
-	if b.ID != "bk_7" {
-		t.Fatalf("id mismatch: %+v", b)
-	}
+	require.NoError(t, h.DecodeInto(&b))
+	assert.Equal(t, "bk_7", b.ID)
 }
 
 type BookSmall struct {
