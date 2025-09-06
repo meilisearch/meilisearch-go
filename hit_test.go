@@ -360,6 +360,91 @@ func TestHitDecodeInto_IgnoresUnknownFields(t *testing.T) {
 	assert.Equal(t, "bk_7", b.ID)
 }
 
+func TestHitDecodeInto_NestedStruct(t *testing.T) {
+	type Child struct {
+		X int `json:"x"`
+	}
+	type Parent struct {
+		Child Child `json:"child"`
+	}
+	h := makeHitFromJSON(t, `{"child":{"x":7}}`)
+	var p Parent
+	require.NoError(t, h.DecodeInto(&p))
+	assert.Equal(t, 7, p.Child.X)
+}
+
+func TestHitDecodeInto_NestedSlice(t *testing.T) {
+	type Child struct {
+		X int `json:"x"`
+	}
+	type Parent struct {
+		Children []Child `json:"children"`
+	}
+	h := makeHitFromJSON(t, `{"children":[{"x":1},{"x":2}]}`)
+	var p Parent
+	require.NoError(t, h.DecodeInto(&p))
+	require.Len(t, p.Children, 2)
+	assert.Equal(t, 1, p.Children[0].X)
+	assert.Equal(t, 2, p.Children[1].X)
+}
+
+func TestHitDecodeInto_MapOfStruct(t *testing.T) {
+	type Child struct {
+		X int `json:"x"`
+	}
+	type Parent struct {
+		M map[string]Child `json:"m"`
+	}
+	h := makeHitFromJSON(t, `{"m":{"a":{"x":10},"b":{"x":20}}}`)
+	var p Parent
+	require.NoError(t, h.DecodeInto(&p))
+	assert.Equal(t, 10, p.M["a"].X)
+	assert.Equal(t, 20, p.M["b"].X)
+}
+
+func TestHitDecodeInto_PointerNested(t *testing.T) {
+	type Child struct {
+		X int `json:"x"`
+	}
+	type Parent struct {
+		Child *Child `json:"child"`
+	}
+	h := makeHitFromJSON(t, `{"child":{"x":11}}`)
+	var p Parent
+	require.NoError(t, h.DecodeInto(&p))
+	require.NotNil(t, p.Child)
+	assert.Equal(t, 11, p.Child.X)
+}
+
+func TestHitDecodeInto_EmbeddedWithTag_AsNestedObject(t *testing.T) {
+	type Embedded struct {
+		E string `json:"e"`
+	}
+	type Parent struct {
+		Embedded `json:"embedded"` // anonymous but tagged => NOT promoted; nested object
+	}
+	h := makeHitFromJSON(t, `{"embedded":{"e":"ok"}}`)
+	var p Parent
+	require.NoError(t, h.DecodeInto(&p))
+	assert.Equal(t, "ok", p.Embedded.E)
+}
+
+func TestHitsDecodeInto_NestedSliceBatch(t *testing.T) {
+	type Child struct {
+		X int `json:"x"`
+	}
+	type Parent struct {
+		Children []Child `json:"children"`
+	}
+	h := makeHitFromJSON(t, `{"children":[{"x":1},{"x":2},{"x":3}]}`)
+	hs := Hits{h, h}
+	var out []Parent
+	require.NoError(t, hs.DecodeInto(&out))
+	require.Len(t, out, 2)
+	assert.Equal(t, 3, len(out[0].Children))
+	assert.Equal(t, 2, out[1].Children[1].X)
+}
+
 type BookSmall struct {
 	ID    string `json:"id"`
 	Title string `json:"title"`
