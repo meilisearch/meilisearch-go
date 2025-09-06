@@ -426,7 +426,7 @@ func TestHitDecodeInto_EmbeddedWithTag_AsNestedObject(t *testing.T) {
 	h := makeHitFromJSON(t, `{"embedded":{"e":"ok"}}`)
 	var p Parent
 	require.NoError(t, h.DecodeInto(&p))
-	assert.Equal(t, "ok", p.Embedded.E)
+	assert.Equal(t, "ok", p.E)
 }
 
 func TestHitsDecodeInto_NestedSliceBatch(t *testing.T) {
