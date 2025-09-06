@@ -209,16 +209,19 @@ func (h Hits) DecodeInto(vSlicePtr interface{}) error {
 				out = reflect.Append(out, elemPtr.Convert(elemType))
 			}
 		case reflect.Map:
+			// *** FIX 1: use et (map type), not elemType (pointer type)
 			if et.Key().Kind() != reflect.String {
 				return fmt.Errorf("slice element must be map with string key, got %s", et)
 			}
 			for i := range h {
-				// allocate *map[K]V
+				// allocate *map[string]V and initialize the map
 				mPtr := reflect.New(et)              // *map[string]V
-				mPtr.Elem().Set(reflect.MakeMap(et)) // ensure non-nil map value
+				mPtr.Elem().Set(reflect.MakeMap(et)) // init
+				// decode into *map
 				if err := h[i].DecodeInto(mPtr.Interface()); err != nil {
 					return fmt.Errorf("decode hits[%d]: %w", i, err)
 				}
+				// append the pointer as required by [] *map[string]V
 				out = reflect.Append(out, mPtr.Convert(elemType))
 			}
 		default:
@@ -230,12 +233,15 @@ func (h Hits) DecodeInto(vSlicePtr interface{}) error {
 			return fmt.Errorf("slice element must be map with string key, got %s", elemType)
 		}
 		for i := range h {
-			m := reflect.MakeMap(elemType)
-			// Pass pointer to map to fill it
-			if err := h[i].DecodeInto(m.Addr().Interface()); err != nil {
+			// allocate *map[string]V and initialize
+			mPtr := reflect.New(elemType)              // *map[string]V
+			mPtr.Elem().Set(reflect.MakeMap(elemType)) // init
+			// decode into *map
+			if err := h[i].DecodeInto(mPtr.Interface()); err != nil {
 				return fmt.Errorf("decode hits[%d]: %w", i, err)
 			}
-			out = reflect.Append(out, m)
+			// append the map value (dereferenced)
+			out = reflect.Append(out, mPtr.Elem())
 		}
 
 	default:
