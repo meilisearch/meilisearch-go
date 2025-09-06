@@ -39,54 +39,73 @@ func (h Hit) DecodeInto(out any) error {
 		return errors.New("out must be a non-nil pointer")
 	}
 	rv = rv.Elem()
-	if rv.Kind() != reflect.Struct {
-		return fmt.Errorf("out must point to a struct, got %T", out)
-	}
 
-	ti := getTypeInfo(rv.Type())
-
-	// iterate only present json keys in the hit
-	for key, raw := range h {
-		if len(raw) == 0 {
-			continue
-		}
-		idx, ok := ti.byNameIndex[key]
-		if !ok {
-			// unknown field: ignore (or collect for a Strict mode)
-			continue
-		}
-		f := ti.fields[idx]
-
-		// Walk to field allocating intermediate *struct as needed.
-		fv, ok := fieldByIndexPathAlloc(rv, f.indexPath)
-		if !ok {
-			continue
-		}
-
-		// explicit null → zero value (matches encoding/json)
-		if isJSONNull(raw) {
-			if fv.CanSet() {
-				fv.Set(reflect.Zero(fv.Type()))
+	switch rv.Kind() {
+	case reflect.Struct:
+		// existing struct path (keep your current implementation) ...
+		ti := getTypeInfo(rv.Type())
+		for key, raw := range h {
+			if len(raw) == 0 {
+				continue
 			}
-			continue
-		}
-
-		// Preserve json:",string" behavior by delegating to struct-level Unmarshal.
-		if f.hasString {
-			if err := unmarshalSingleField(rv.Addr().Interface(), f.jsonName, raw); err != nil {
+			idx, ok := ti.byNameIndex[key]
+			if !ok {
+				continue
+			}
+			f := ti.fields[idx]
+			fv, ok := fieldByIndexPathAlloc(rv, f.indexPath)
+			if !ok {
+				continue
+			}
+			if isJSONNull(raw) {
+				if fv.CanSet() {
+					fv.Set(reflect.Zero(fv.Type()))
+				}
+				continue
+			}
+			if f.hasString {
+				if err := unmarshalSingleField(rv.Addr().Interface(), f.jsonName, raw); err != nil {
+					return fmt.Errorf("decode field %q: %w", key, err)
+				}
+				continue
+			}
+			if !fv.CanAddr() {
+				continue
+			}
+			if err := json.Unmarshal(raw, fv.Addr().Interface()); err != nil {
 				return fmt.Errorf("decode field %q: %w", key, err)
 			}
-			continue
 		}
+		return nil
 
-		if !fv.CanAddr() {
-			continue
+	case reflect.Map:
+		// NEW: map[string]T support
+		if rv.Type().Key().Kind() != reflect.String {
+			return fmt.Errorf("map key must be string, got %s", rv.Type().Key())
 		}
-		if err := json.Unmarshal(raw, fv.Addr().Interface()); err != nil {
-			return fmt.Errorf("decode field %q: %w", key, err)
+		if rv.IsNil() {
+			rv.Set(reflect.MakeMapWithSize(rv.Type(), len(h)))
 		}
+		elemT := rv.Type().Elem()
+		for k, raw := range h {
+			// For null values, set zero (nil for pointer/slice/map/interface, 0 for numbers/bool)
+			if isJSONNull(raw) {
+				rv.SetMapIndex(reflect.ValueOf(k), reflect.Zero(elemT))
+				continue
+			}
+			elemV := reflect.New(elemT) // *elemT
+			// If elemT is interface{}, this is *interface{} and is fine.
+			if err := json.Unmarshal(raw, elemV.Interface()); err != nil {
+				return fmt.Errorf("decode map value for key %q: %w", k, err)
+			}
+			// Store the concrete elem (dereference)
+			rv.SetMapIndex(reflect.ValueOf(k), elemV.Elem())
+		}
+		return nil
+
+	default:
+		return fmt.Errorf("out must point to a struct or map, got %T", out)
 	}
-	return nil
 }
 
 // DecodeWith decodes a Hit into the provided struct using the provided marshal and unmarshal functions.
@@ -156,12 +175,10 @@ func (h Hits) DecodeInto(vSlicePtr interface{}) error {
 	if vSlicePtr == nil {
 		return fmt.Errorf("vSlicePtr must be a non-nil pointer to a slice")
 	}
-
 	rv := reflect.ValueOf(vSlicePtr)
 	if rv.Kind() != reflect.Ptr || rv.IsNil() {
 		return fmt.Errorf("vSlicePtr must be a non-nil pointer, got %T", vSlicePtr)
 	}
-
 	sv := rv.Elem()
 	if sv.Kind() != reflect.Slice {
 		return fmt.Errorf("vSlicePtr must point to a slice, got %s", sv.Kind())
@@ -172,30 +189,57 @@ func (h Hits) DecodeInto(vSlicePtr interface{}) error {
 
 	switch elemType.Kind() {
 	case reflect.Struct:
-		// Target is []S
 		for i := range h {
-			elemPtr := reflect.New(elemType) // *S
+			elemPtr := reflect.New(elemType)
 			if err := h[i].DecodeInto(elemPtr.Interface()); err != nil {
 				return fmt.Errorf("decode hits[%d]: %w", i, err)
 			}
-			out = reflect.Append(out, elemPtr.Elem()) // S
+			out = reflect.Append(out, elemPtr.Elem())
 		}
 
 	case reflect.Ptr:
-		// Target is []*S
-		if elemType.Elem().Kind() != reflect.Struct {
-			return fmt.Errorf("slice element must be struct or *struct, got %s", elemType)
+		et := elemType.Elem()
+		switch et.Kind() {
+		case reflect.Struct:
+			for i := range h {
+				elemPtr := reflect.New(et)
+				if err := h[i].DecodeInto(elemPtr.Interface()); err != nil {
+					return fmt.Errorf("decode hits[%d]: %w", i, err)
+				}
+				out = reflect.Append(out, elemPtr.Convert(elemType))
+			}
+		case reflect.Map:
+			if et.Key().Kind() != reflect.String {
+				return fmt.Errorf("slice element must be map with string key, got %s", et)
+			}
+			for i := range h {
+				// allocate *map[K]V
+				mPtr := reflect.New(et)              // *map[string]V
+				mPtr.Elem().Set(reflect.MakeMap(et)) // ensure non-nil map value
+				if err := h[i].DecodeInto(mPtr.Interface()); err != nil {
+					return fmt.Errorf("decode hits[%d]: %w", i, err)
+				}
+				out = reflect.Append(out, mPtr.Convert(elemType))
+			}
+		default:
+			return fmt.Errorf("slice element must be struct, *struct, or *map[string]T, got %s", elemType)
+		}
+
+	case reflect.Map:
+		if elemType.Key().Kind() != reflect.String {
+			return fmt.Errorf("slice element must be map with string key, got %s", elemType)
 		}
 		for i := range h {
-			elemPtr := reflect.New(elemType.Elem()) // *S
-			if err := h[i].DecodeInto(elemPtr.Interface()); err != nil {
+			m := reflect.MakeMap(elemType)
+			// Pass pointer to map to fill it
+			if err := h[i].DecodeInto(m.Addr().Interface()); err != nil {
 				return fmt.Errorf("decode hits[%d]: %w", i, err)
 			}
-			out = reflect.Append(out, elemPtr.Convert(elemType)) // *S
+			out = reflect.Append(out, m)
 		}
 
 	default:
-		return fmt.Errorf("slice element must be struct or *struct, got %s", elemType)
+		return fmt.Errorf("slice element must be struct, *struct, map[string]T, or *map[string]T, got %s", elemType)
 	}
 
 	sv.Set(out)
