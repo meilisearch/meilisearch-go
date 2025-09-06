@@ -479,9 +479,6 @@ type helperOuter struct {
 	Boxed embeddedA `json:"boxed"`
 	// Anonymous but renamed (NOT promoted) => nested under "renamed"
 	embeddedRenamed `json:"renamed"`
-
-	// Unexported skip
-	private string
 }
 
 func TestGetTypeInfoAndCollectFields(t *testing.T) {
