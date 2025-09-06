@@ -3,6 +3,7 @@ package meilisearch
 import (
 	"encoding/json"
 	"errors"
+	"reflect"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -445,167 +446,238 @@ func TestHitsDecodeInto_NestedSliceBatch(t *testing.T) {
 	assert.Equal(t, 2, out[1].Children[1].X)
 }
 
-type BookSmall struct {
-	ID    string `json:"id"`
-	Title string `json:"title"`
-	Price int    `json:"price"`
+type embeddedA struct {
+	EmbStr string `json:"emb_str"`
 }
 
-type BookLarge struct {
-	ID      string            `json:"id"`
-	Title   string            `json:"title"`
-	Author  string            `json:"author"`
-	Price   float64           `json:"price"`
-	InStock bool              `json:"in_stock"`
-	Tags    []string          `json:"tags"`
-	Ratings []float64         `json:"ratings"`
-	Attrs   map[string]string `json:"attrs"`
-	Nested  struct {
-		ISBN      string   `json:"isbn"`
-		PageCount int      `json:"page_count"`
-		Editions  []string `json:"editions"`
-	} `json:"nested"`
+type embeddedPtr struct {
+	EmbNum int `json:"emb_num,string"`
 }
 
-func makeHit(v any) Hit {
-	b, err := json.Marshal(v)
-	if err != nil {
-		panic(err)
-	}
-	var m map[string]json.RawMessage
-	if err := json.Unmarshal(b, &m); err != nil {
-		panic(err)
-	}
-	return Hit(m)
+type embeddedRenamed struct {
+	R string `json:"r"`
 }
 
-func makeHitsSmall(n int) Hits {
-	h := makeHit(BookSmall{ID: "bk_001", Title: "Intro to Go", Price: 42})
-	hs := make(Hits, n)
-	for i := range hs {
-		hs[i] = h
-	}
-	return hs
+type helperOuter struct {
+	// Basic fields + tag variants
+	ID        string  `json:"id"`
+	Count     int     `json:"count"`
+	CountStr  int     `json:"count_str,string"`
+	Price     float64 `json:"price"`
+	PriceStr  float64 `json:"price_str,string"`
+	Active    bool    `json:"active"`
+	ActiveStr bool    `json:"active_str,string"`
+	Note      string  `json:"note"`
+	// Containers
+	Tags  []string          `json:"tags"`
+	Attrs map[string]string `json:"attrs"`
+	// Anonymous embedded (promoted)
+	embeddedA
+	// Anonymous pointer-embedded (promoted)
+	*embeddedPtr
+	// Named field (NOT embedded) => nested under "boxed"
+	Boxed embeddedA `json:"boxed"`
+	// Anonymous but renamed (NOT promoted) => nested under "renamed"
+	embeddedRenamed `json:"renamed"`
+
+	// Unexported skip
+	private string
 }
 
-func sampleLarge() BookLarge {
-	return BookLarge{
-		ID:      "bk_999",
-		Title:   "The Complete Guide to High-Perf Go",
-		Author:  "Gopher",
-		Price:   129.99,
-		InStock: true,
-		Tags:    []string{"go", "performance", "concurrency", "json", "sdk"},
-		Ratings: []float64{4.8, 4.9, 5.0, 4.7, 4.95, 4.85, 4.9},
-		Attrs: map[string]string{
-			"lang":   "en",
-			"cover":  "hard",
-			"series": "pro",
-			"sku":    "GO-PERF-129",
-		},
-		Nested: struct {
-			ISBN      string   `json:"isbn"`
-			PageCount int      `json:"page_count"`
-			Editions  []string `json:"editions"`
-		}{
-			ISBN:      "978-1-23456-789-7",
-			PageCount: 864,
-			Editions:  []string{"first", "second", "revised"},
-		},
+func TestGetTypeInfoAndCollectFields(t *testing.T) {
+	rt := reflect.TypeOf(helperOuter{})
+
+	// First call builds and caches
+	ti1 := getTypeInfo(rt)
+	require.NotNil(t, ti1)
+	require.NotEmpty(t, ti1.fields)
+	require.NotEmpty(t, ti1.byNameIndex)
+
+	// Expected top-level keys
+	expectNames := []string{
+		"id", "count", "count_str", "price", "price_str", "active", "active_str",
+		"note", "tags", "attrs",
+		"emb_str", // promoted from embeddedA
+		"emb_num", // promoted from *embeddedPtr
+		"boxed",   // named field (nested)
+		"renamed", // anonymous but tagged => nested under "renamed"
 	}
+	for _, name := range expectNames {
+		_, ok := ti1.byNameIndex[name]
+		assert.Truef(t, ok, "expected byNameIndex to contain %q", name)
+	}
+
+	// Ensure hasString is set for string-tagged fields
+	var fmCountStr, fmPriceStr, fmActiveStr fieldMeta
+	{
+		idx := ti1.byNameIndex["count_str"]
+		fmCountStr = ti1.fields[idx]
+		idx = ti1.byNameIndex["price_str"]
+		fmPriceStr = ti1.fields[idx]
+		idx = ti1.byNameIndex["active_str"]
+		fmActiveStr = ti1.fields[idx]
+	}
+	assert.True(t, fmCountStr.hasString, "count_str should have hasString")
+	assert.True(t, fmPriceStr.hasString, "price_str should have hasString")
+	assert.True(t, fmActiveStr.hasString, "active_str should have hasString")
+
+	// Promoted embedded keys must exist
+	_, ok := ti1.byNameIndex["emb_str"]
+	assert.True(t, ok, "embedded field emb_str should be promoted")
+	_, ok = ti1.byNameIndex["emb_num"]
+	assert.True(t, ok, "pointer-embedded field emb_num should be promoted")
+
+	// Named nested keys must exist
+	_, ok = ti1.byNameIndex["boxed"]
+	assert.True(t, ok, "boxed should be present as named field")
+	_, ok = ti1.byNameIndex["renamed"]
+	assert.True(t, ok, "renamed should be present as named field (anonymous + tag)")
+
+	// Second call hits cache (pointer equality)
+	ti2 := getTypeInfo(rt)
+	require.NotNil(t, ti2)
+	assert.Equal(t, ti1, ti2, "expected getTypeInfo to return cached pointer")
 }
 
-func makeHitsLarge(n int) Hits {
-	h := makeHit(sampleLarge())
-	hs := make(Hits, n)
-	for i := range hs {
-		hs[i] = h
-	}
-	return hs
+func TestIndexByte(t *testing.T) {
+	assert.Equal(t, 0, indexByte("abc", 'a'))
+	assert.Equal(t, 1, indexByte("abc", 'b'))
+	assert.Equal(t, 2, indexByte("abc", 'c'))
+	assert.Equal(t, -1, indexByte("abc", 'z'))
+	assert.Equal(t, -1, indexByte("", 'x'))
 }
 
-func BenchmarkHitsDecode_Small_1(b *testing.B)    { benchHitsDecodeSmall(b, 1, false) }
-func BenchmarkHitsDecode_Small_100(b *testing.B)  { benchHitsDecodeSmall(b, 100, false) }
-func BenchmarkHitsDecode_Small_1000(b *testing.B) { benchHitsDecodeSmall(b, 1000, false) }
-
-func BenchmarkHitsDecodeInto_Small_1(b *testing.B)    { benchHitsDecodeSmall(b, 1, true) }
-func BenchmarkHitsDecodeInto_Small_100(b *testing.B)  { benchHitsDecodeSmall(b, 100, true) }
-func BenchmarkHitsDecodeInto_Small_1000(b *testing.B) { benchHitsDecodeSmall(b, 1000, true) }
-
-func benchHitsDecodeSmall(b *testing.B, n int, fast bool) {
-	hits := makeHitsSmall(n)
-	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var out []BookSmall
-		if fast {
-			if err := hits.DecodeInto(&out); err != nil {
-				b.Fatal(err)
-			}
-		} else {
-			if err := hits.Decode(&out); err != nil {
-				b.Fatal(err)
-			}
-		}
-		_ = out
-	}
-	// per-element metric (ns/op per hit)
-	if n > 0 {
-		b.SetBytes(int64(n)) // treat 1 "byte" == 1 element; useful to get ns/element in -benchmem output viewers
-	}
+func TestHasJSONTagOption(t *testing.T) {
+	assert.True(t, hasJSONTagOption("omitempty,string", "string"))
+	assert.True(t, hasJSONTagOption("string,foo,bar", "string"))
+	assert.True(t, hasJSONTagOption("foo,string", "string"))
+	assert.False(t, hasJSONTagOption("omitempty", "string"))
+	assert.False(t, hasJSONTagOption("", "string"))
+	assert.False(t, hasJSONTagOption("strings", "string")) // substring should not match
 }
 
-func BenchmarkHitsDecode_Large_1(b *testing.B)    { benchHitsDecodeLarge(b, 1, false) }
-func BenchmarkHitsDecode_Large_100(b *testing.B)  { benchHitsDecodeLarge(b, 100, false) }
-func BenchmarkHitsDecode_Large_1000(b *testing.B) { benchHitsDecodeLarge(b, 1000, false) }
-
-func BenchmarkHitsDecodeInto_Large_1(b *testing.B)    { benchHitsDecodeLarge(b, 1, true) }
-func BenchmarkHitsDecodeInto_Large_100(b *testing.B)  { benchHitsDecodeLarge(b, 100, true) }
-func BenchmarkHitsDecodeInto_Large_1000(b *testing.B) { benchHitsDecodeLarge(b, 1000, true) }
-
-func benchHitsDecodeLarge(b *testing.B, n int, fast bool) {
-	hits := makeHitsLarge(n)
-	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var out []BookLarge
-		if fast {
-			if err := hits.DecodeInto(&out); err != nil {
-				b.Fatal(err)
-			}
-		} else {
-			if err := hits.Decode(&out); err != nil {
-				b.Fatal(err)
-			}
-		}
-		_ = out
+func TestFieldByIndexPathAlloc_Simple(t *testing.T) {
+	type Leaf struct {
+		X int
 	}
-	if n > 0 {
-		b.SetBytes(int64(n)) // see note above
+	type Mid struct {
+		Leaf Leaf
 	}
+	type Root struct {
+		Mid Mid
+	}
+
+	var r Root
+	rv := reflect.ValueOf(&r).Elem()
+	// index path: Root.Mid.Leaf.X => [0,0,0]
+	fv, ok := fieldByIndexPathAlloc(rv, []int{0, 0, 0})
+	require.True(t, ok)
+	require.True(t, fv.CanAddr())
+	// Set X via reflect
+	require.True(t, fv.CanSet())
+	fv.SetInt(42)
+	assert.Equal(t, 42, r.Mid.Leaf.X)
 }
 
-func BenchmarkHitsDecodePtr_Small_1000(b *testing.B)     { benchHitsDecodePtrSmall(b, 1000, false) }
-func BenchmarkHitsDecodeIntoPtr_Small_1000(b *testing.B) { benchHitsDecodePtrSmall(b, 1000, true) }
+func TestFieldByIndexPathAlloc_AllocatesIntermediatePointers(t *testing.T) {
+	type Leaf struct {
+		S string
+	}
+	type Mid struct {
+		L *Leaf
+	}
+	type Root struct {
+		M *Mid
+	}
 
-func benchHitsDecodePtrSmall(b *testing.B, n int, fast bool) {
-	hits := makeHitsSmall(n)
-	b.ReportAllocs()
-	b.ResetTimer()
-	for i := 0; i < b.N; i++ {
-		var out []*BookSmall
-		if fast {
-			if err := hits.DecodeInto(&out); err != nil {
-				b.Fatal(err)
-			}
-		} else {
-			if err := hits.Decode(&out); err != nil {
-				b.Fatal(err)
-			}
-		}
-		_ = out
+	var r Root // r.M == nil; r.M.L == nil
+	rv := reflect.ValueOf(&r).Elem()
+	// Path: Root.M (idx 0) -> *Mid.L (idx 0) -> *Leaf.S (idx 0)
+	fv, ok := fieldByIndexPathAlloc(rv, []int{0, 0, 0})
+	require.True(t, ok, "should allocate intermediate *struct pointers")
+	require.True(t, fv.CanSet())
+	fv.SetString("hi")
+
+	// Ensure allocations occurred
+	require.NotNil(t, r.M)
+	require.NotNil(t, r.M.L)
+	assert.Equal(t, "hi", r.M.L.S)
+}
+
+func TestFieldByIndexPathAlloc_FailsOnNonStructChain(t *testing.T) {
+	type Bad struct {
+		N int
 	}
-	if n > 0 {
-		b.SetBytes(int64(n))
+	type Root struct {
+		B *Bad
 	}
+	var r Root
+	rv := reflect.ValueOf(&r).Elem()
+	// Path: Root.B (pointer to Bad) -> field index 1 (invalid: Bad has only field index 0)
+	_, ok := fieldByIndexPathAlloc(rv, []int{0, 1})
+	assert.False(t, ok, "accessing invalid index should fail")
+}
+
+func TestFieldByIndexPathAlloc_LeafPtrAlloc(t *testing.T) {
+	type Leaf struct {
+		X int
+	}
+	type Root struct {
+		P *Leaf
+	}
+	var r Root
+	rv := reflect.ValueOf(&r).Elem()
+	// Path to P: [0]
+	fv, ok := fieldByIndexPathAlloc(rv, []int{0})
+	require.True(t, ok)
+	require.NotNil(t, fv)
+	// Because leaf is *Leaf and nil, helper will allocate it (since it’s a pointer to struct)
+	require.NotNil(t, r.P)
+	// You can now set subfields through the pointer
+	r.P.X = 7
+	assert.Equal(t, 7, r.P.X)
+}
+
+func TestUnmarshalSingleField_StringOptionParity(t *testing.T) {
+	type S struct {
+		I  int     `json:"i,string"`
+		F  float64 `json:"f,string"`
+		B  bool    `json:"b,string"`
+		T  string  `json:"t"`  // NOTE: no ,string here (it's invalid on string)
+		I2 int     `json:"i2"` // no ,string
+	}
+
+	var s S
+	require.NoError(t, unmarshalSingleField(&s, "i", []byte(`"123"`)))
+	require.NoError(t, unmarshalSingleField(&s, "f", []byte(`"5.5"`)))
+	require.NoError(t, unmarshalSingleField(&s, "b", []byte(`"true"`)))
+	require.NoError(t, unmarshalSingleField(&s, "t", []byte(`"hello"`)))
+	require.NoError(t, unmarshalSingleField(&s, "i2", []byte(`456`)))
+
+	assert.Equal(t, 123, s.I)
+	assert.InDelta(t, 5.5, s.F, 1e-9)
+	assert.True(t, s.B)
+	assert.Equal(t, "hello", s.T)
+	assert.Equal(t, 456, s.I2)
+}
+
+func TestUnmarshalSingleField_Errors(t *testing.T) {
+	type S struct {
+		I int `json:"i,string"` // expects quoted number
+	}
+	var s S
+	// invalid quoted int
+	err := unmarshalSingleField(&s, "i", []byte(`"abc"`))
+	assert.Error(t, err)
+	// malformed JSON for the mini-object
+	err = unmarshalSingleField(&s, "i", []byte(`"123"`)) // ok
+	assert.NoError(t, err)
+}
+
+func TestIsJSONNull(t *testing.T) {
+	assert.True(t, isJSONNull([]byte("null")))
+	assert.False(t, isJSONNull([]byte("nul")))
+	assert.False(t, isJSONNull([]byte("NULL")))
+	assert.False(t, isJSONNull([]byte(`"null"`)))
+	assert.False(t, isJSONNull(nil))
 }
