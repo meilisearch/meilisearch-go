@@ -333,6 +333,11 @@ func fieldByIndexPathAlloc(rv reflect.Value, indexPath []int) (reflect.Value, bo
 		if cur.Kind() != reflect.Struct {
 			return reflect.Value{}, false
 		}
+
+		if idx < 0 || idx >= cur.NumField() {
+			return reflect.Value{}, false
+		}
+
 		cur = cur.Field(idx)
 	}
 	if cur.Kind() == reflect.Ptr && cur.IsNil() {
