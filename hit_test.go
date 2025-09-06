@@ -678,3 +678,326 @@ func TestIsJSONNull(t *testing.T) {
 	assert.False(t, isJSONNull([]byte(`"null"`)))
 	assert.False(t, isJSONNull(nil))
 }
+
+func rm(v any) json.RawMessage {
+	b, _ := json.Marshal(v)
+	return json.RawMessage(b)
+}
+
+type covStringOpt struct {
+	N  int `json:"n"`
+	SN int `json:"sn,string"` // triggers f.hasString branch
+}
+
+type covBadType struct {
+	Count int `json:"count"` // we will feed an object here to force field-level unmarshal error
+}
+
+func TestHitDecodeInto_Struct_SkipEmptyRaw(t *testing.T) {
+	h := Hit{
+		"n":  json.RawMessage{}, // len(raw) == 0 => skip
+		"sn": rm("123"),         // ,string branch should set 123
+	}
+	var out covStringOpt
+	require.NoError(t, h.DecodeInto(&out))
+	assert.Equal(t, 0, out.N)    // untouched (skipped)
+	assert.Equal(t, 123, out.SN) // set via unmarshalSingleField
+}
+
+func TestHitDecodeInto_Struct_UnmarshalErrorOnField(t *testing.T) {
+	h := Hit{
+		"count": rm(map[string]int{"oops": 1}), // object into int => error
+	}
+	var out covBadType
+	err := h.DecodeInto(&out)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), `decode field "count"`)
+	assert.Contains(t, err.Error(), "cannot unmarshal object")
+}
+
+func TestHitDecodeInto_Map_StringKeyRequired(t *testing.T) {
+	h := Hit{
+		"a": rm(1),
+	}
+	var bad map[int]int
+	err := h.DecodeInto(&bad)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "map key must be string")
+}
+
+func TestHitDecodeInto_Map_NullZeroAndValueErrors(t *testing.T) {
+	// null → zero value of elem type.
+	// also force a value-unmarshal error on key "err".
+	h := Hit{
+		"ok":  rm(7),
+		"nil": json.RawMessage("null"),
+		"err": rm(map[string]int{"x": 1}), // object into int => error
+	}
+
+	// First, map[string]any: null -> nil interface{}
+	var m1 map[string]any
+	require.NoError(t, h.DecodeInto(&m1))
+	assert.Equal(t, float64(7), m1["ok"]) // numbers into interface{} become float64
+	assert.Nil(t, m1["nil"])
+	// We didn't touch "err" yet because we returned early above; to test error path,
+	// try a typed map where we decode all keys and catch the error.
+
+	// Now, map[string]int: null -> 0; "err" should fail
+	var m2 map[string]int
+	err := h.DecodeInto(&m2)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), `decode map value for key "err"`)
+	assert.Contains(t, err.Error(), "cannot unmarshal object")
+}
+
+func TestHitsDecodeInto_SliceOfMap_InterfaceHappy(t *testing.T) {
+	h1 := Hit{"a": rm(1), "b": rm("x")}
+	h2 := Hit{"a": rm(2), "b": rm("y")}
+	hs := Hits{h1, h2}
+
+	var out []map[string]any
+	require.NoError(t, hs.DecodeInto(&out))
+	require.Len(t, out, 2)
+	assert.Equal(t, float64(1), out[0]["a"])
+	assert.Equal(t, "x", out[0]["b"])
+	assert.Equal(t, float64(2), out[1]["a"])
+	assert.Equal(t, "y", out[1]["b"])
+}
+
+func TestHitsDecodeInto_SliceOfPtrMap_InterfaceHappy(t *testing.T) {
+	h1 := Hit{"a": rm(1)}
+	h2 := Hit{"a": rm(2)}
+	hs := Hits{h1, h2}
+
+	var out []*map[string]any
+	require.NoError(t, hs.DecodeInto(&out))
+	require.Len(t, out, 2)
+	require.NotNil(t, out[0])
+	require.NotNil(t, out[1])
+	assert.Equal(t, float64(1), (*out[0])["a"])
+	assert.Equal(t, float64(2), (*out[1])["a"])
+}
+
+type covElem struct {
+	V int `json:"v"`
+}
+
+func TestHitsDecodeInto_ErrorIndex_PropagatesForStruct(t *testing.T) {
+	// First ok, second bad (object into int)
+	ok := Hit{"v": rm(1)}
+	bad := Hit{"v": rm(map[string]int{"x": 1})}
+	hs := Hits{ok, bad}
+
+	var out []covElem
+	err := hs.DecodeInto(&out)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "decode hits[1]") // index included
+	assert.Contains(t, err.Error(), "decode field \"v\"")
+}
+
+func TestHitsDecodeInto_ErrorIndex_PropagatesForMap(t *testing.T) {
+	// First ok, second bad for typed map[string]int
+	ok := Hit{"k": rm(5)}
+	bad := Hit{"k": rm(map[string]int{"x": 1})}
+	hs := Hits{ok, bad}
+
+	var out []map[string]int
+	err := hs.DecodeInto(&out)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "decode hits[1]")
+	assert.Contains(t, err.Error(), `decode map value for key "k"`)
+}
+
+func TestHitsDecodeInto_SliceElemPtrMap_NonStringKeyError(t *testing.T) {
+	hs := Hits{Hit{"k": rm(1)}}
+	var out []*map[int]int
+	err := hs.DecodeInto(&out)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "slice element must be map with string key")
+}
+
+func TestHitsDecodeInto_SliceElemMap_NonStringKeyError(t *testing.T) {
+	hs := Hits{Hit{"k": rm(1)}}
+	var out []map[int]int
+	err := hs.DecodeInto(&out)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "slice element must be map with string key")
+}
+
+func TestHitsDecodeInto_SliceElemPtrStruct_Happy(t *testing.T) {
+	hs := Hits{
+		{"v": rm(10)},
+		{"v": rm(20)},
+	}
+	var out []*covElem
+	require.NoError(t, hs.DecodeInto(&out))
+	require.Len(t, out, 2)
+	assert.Equal(t, 10, out[0].V)
+	assert.Equal(t, 20, out[1].V)
+}
+
+func TestHitsDecodeInto_SliceElemStruct_Happy(t *testing.T) {
+	hs := Hits{
+		{"v": rm(3)},
+		{"v": rm(4)},
+	}
+	var out []covElem
+	require.NoError(t, hs.DecodeInto(&out))
+	require.Len(t, out, 2)
+	assert.Equal(t, 3, out[0].V)
+	assert.Equal(t, 4, out[1].V)
+}
+
+func TestHitDecodeInto_Struct_StringTagBranch(t *testing.T) {
+	h := Hit{"sn": rm("42")}
+	var out covStringOpt
+	require.NoError(t, h.DecodeInto(&out))
+	assert.Equal(t, 42, out.SN)
+}
+
+func TestHitDecodeInto_Map_NullToZero_TypedInt(t *testing.T) {
+	h := Hit{
+		"x": rm(9),
+		"z": json.RawMessage("null"),
+	}
+	var m map[string]int
+	require.NoError(t, h.DecodeInto(&m))
+	assert.Equal(t, 9, m["x"])
+	assert.Equal(t, 0, m["z"]) // zero value for int
+}
+
+func TestHitDecodeInto_DispatchError(t *testing.T) {
+	var s string
+	err := Hit{"x": rm(1)}.DecodeInto(&s)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "struct or map")
+}
+
+func TestHitDecodeInto_EmptyRawUnknownKey_NoCrash(t *testing.T) {
+	type S struct {
+		A int `json:"a"`
+	}
+	h := Hit{
+		"zzz": json.RawMessage{}, // unknown + empty
+		"a":   rm(5),
+	}
+	var s S
+	require.NoError(t, h.DecodeInto(&s))
+	assert.Equal(t, 5, s.A)
+}
+
+func TestHitDecodeInto_Map_InterfaceTypes(t *testing.T) {
+	h := Hit{
+		"n": rm(1),
+		"s": rm("str"),
+		"o": rm(map[string]any{"k": 2}),
+		"a": rm([]any{1, "x"}),
+	}
+	var m map[string]any
+	require.NoError(t, h.DecodeInto(&m))
+	assert.Equal(t, float64(1), m["n"])
+	assert.Equal(t, "str", m["s"])
+	assert.Equal(t, map[string]any{"k": float64(2)}, m["o"])
+	assert.Equal(t, []any{float64(1), "x"}, m["a"])
+
+	// Double-check types match what encoding/json would produce
+	b, _ := json.Marshal(h) // {"n":1,"s":"str","o":{"k":2},"a":[1,"x"]}
+	var std map[string]any
+	require.NoError(t, json.Unmarshal(b, &std))
+	assert.Equal(t, std, m)
+}
+
+func TestHitDecodeInto_Map_PreserveAndOverwrite(t *testing.T) {
+	h := Hit{
+		"a": rm(10),
+		"b": rm(20),
+	}
+	m := map[string]int{"a": 1} // pre-populated
+	require.NoError(t, h.DecodeInto(&m))
+	// "a" should be overwritten, "b" added
+	assert.Equal(t, 10, m["a"])
+	assert.Equal(t, 20, m["b"])
+}
+
+func TestHitsDecodeInto_SliceElemInvalidKind(t *testing.T) {
+	hs := Hits{{"x": rm(1)}}
+	var out []int
+	err := hs.DecodeInto(&out)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "slice element must be struct, *struct, map[string]T, or *map[string]T")
+}
+
+func TestHitsDecodeInto_NonSlicePointer(t *testing.T) {
+	hs := Hits{}
+	var x int
+	err := hs.DecodeInto(&x)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "must point to a slice")
+}
+
+func TestHitsDecodeInto_BadPtr(t *testing.T) {
+	var hs Hits
+	err := hs.DecodeInto(nil)
+	require.Error(t, err)
+
+	var notPtr []map[string]any
+	err = hs.DecodeInto(notPtr)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "non-nil pointer")
+}
+
+func TestHitDecodeInto_BadKinds(t *testing.T) {
+	h := Hit{}
+	var ch chan int
+	err := h.DecodeInto(&ch)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "struct or map")
+
+	// Not pointer
+	var s covStringOpt
+	err = h.DecodeInto(s)
+	require.Error(t, err)
+	assert.Contains(t, err.Error(), "non-nil pointer")
+}
+
+func TestHitDecodeInto_Map_CreatesMapIfNil(t *testing.T) {
+	h := Hit{"x": rm(1)}
+	var m map[string]any // nil
+	require.NoError(t, h.DecodeInto(&m))
+	require.NotNil(t, m)
+	assert.Equal(t, float64(1), m["x"])
+}
+
+func TestHitsDecodeInto_PtrMap_AllocAndFill(t *testing.T) {
+	hs := Hits{
+		{"x": rm(1)},
+		{"y": rm(2)},
+	}
+	var out []*map[string]any
+	require.NoError(t, hs.DecodeInto(&out))
+	require.Len(t, out, 2)
+	assert.Equal(t, float64(1), (*out[0])["x"])
+	assert.Equal(t, float64(2), (*out[1])["y"])
+}
+
+func TestHitDecodeInto_Struct_PointerEmbeddedAlloc(t *testing.T) {
+	type Inner struct {
+		Z int `json:"z"`
+	}
+	type Wrap struct{ *Inner }
+	h := Hit{"z": rm(9)}
+	var w Wrap
+	require.NoError(t, h.DecodeInto(&w))
+	require.NotNil(t, w.Inner)
+	assert.Equal(t, 9, w.Z)
+}
+
+func TestHitDecodeInto_Struct_UnknownKeysIgnored(t *testing.T) {
+	type S struct {
+		A int `json:"a"`
+	}
+	h := Hit{"xxx": rm(1), "a": rm(2)}
+	var s S
+	require.NoError(t, h.DecodeInto(&s))
+	assert.Equal(t, 2, s.A)
+}
