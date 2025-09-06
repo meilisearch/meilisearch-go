@@ -3,8 +3,9 @@ package integration
 import (
 	"crypto/tls"
 	"encoding/json"
-	"github.com/meilisearch/meilisearch-go"
 	"testing"
+
+	"github.com/meilisearch/meilisearch-go"
 
 	"github.com/stretchr/testify/require"
 )
@@ -941,7 +942,7 @@ func TestIndex_SearchWithShowRankingScore(t *testing.T) {
 
 	// Convert to a structured format and verify _rankingScore presence
 	var result map[string]json.RawMessage
-	err = got.Hits[0].Decode(&result)
+	err = got.Hits[0].DecodeInto(&result)
 	require.NoError(t, err)
 	require.Contains(t, got.Hits[0], "_rankingScore")
 }
@@ -978,7 +979,7 @@ func TestIndex_SearchWithShowRankingScoreDetails(t *testing.T) {
 
 	// Convert first hit to structured format and check for _rankingScoreDetails
 	var result map[string]json.RawMessage
-	err = got.Hits[0].Decode(&result)
+	err = got.Hits[0].DecodeInto(&result)
 	require.NoError(t, err)
 	require.Contains(t, result, "_rankingScoreDetails", "expected _rankingScoreDetails to be present in the search result")
 }
@@ -1023,7 +1024,7 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 
 			for _, hit := range got.Hits {
 				var hitMap map[string]json.RawMessage
-				err := hit.Decode(&hitMap)
+				err := hit.DecodeInto(&hitMap)
 				require.NoError(t, err)
 				require.Contains(t, hitMap, "_vectors", "expected _vectors field in search result")
 			}

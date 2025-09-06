@@ -2330,10 +2330,10 @@ func TestClient_MultiSearch(t *testing.T) {
 						gots  map[string]interface{}
 					)
 
-					err := tt.want.Hits[i].Decode(&wants)
+					err := tt.want.Hits[i].DecodeInto(&wants)
 					require.NoError(t, err)
 
-					err = got.Hits[i].Decode(&gots)
+					err = got.Hits[i].DecodeInto(&gots)
 					require.NoError(t, err)
 
 					for k, v := range wants {
