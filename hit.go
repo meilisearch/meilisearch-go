@@ -47,7 +47,7 @@ func (h Hit) DecodeInto(out any) error {
 
 	// iterate only present json keys in the hit
 	for key, raw := range h {
-		if len(raw) == 0 || isJSONNull(raw) {
+		if len(raw) == 0 {
 			continue
 		}
 		idx, ok := ti.byNameIndex[key]
@@ -56,7 +56,29 @@ func (h Hit) DecodeInto(out any) error {
 			continue
 		}
 		f := ti.fields[idx]
-		fv := rv.FieldByIndex(f.indexPath)
+
+		// Walk to field allocating intermediate *struct as needed.
+		fv, ok := fieldByIndexPathAlloc(rv, f.indexPath)
+		if !ok {
+			continue
+		}
+
+		// explicit null → zero value (matches encoding/json)
+		if isJSONNull(raw) {
+			if fv.CanSet() {
+				fv.Set(reflect.Zero(fv.Type()))
+			}
+			continue
+		}
+
+		// Preserve json:",string" behavior by delegating to struct-level Unmarshal.
+		if f.hasString {
+			if err := unmarshalSingleField(rv.Addr().Interface(), f.jsonName, raw); err != nil {
+				return fmt.Errorf("decode field %q: %w", key, err)
+			}
+			continue
+		}
+
 		if !fv.CanAddr() {
 			continue
 		}
@@ -183,6 +205,7 @@ func (h Hits) DecodeInto(vSlicePtr interface{}) error {
 type fieldMeta struct {
 	jsonName  string
 	indexPath []int
+	hasString bool
 }
 
 type typeInfo struct {
@@ -225,26 +248,40 @@ func collectFields(t reflect.Type, prefix []int) []fieldMeta {
 			continue
 		}
 		name := sf.Name
+		hasString := false
 		if tag != "" {
-			// take first token before comma
+			// split first token (name) and options
 			if c := indexByte(tag, ','); c >= 0 {
-				tag = tag[:c]
-			}
-			if tag != "" {
+				nameToken := tag[:c]
+				if nameToken != "" {
+					name = nameToken
+				}
+				if hasJSONTagOption(tag[c+1:], "string") {
+					hasString = true
+				}
+			} else {
+				// tag without options
 				name = tag
 			}
 		}
 		idx := append(append([]int(nil), prefix...), i)
 
-		if sf.Anonymous && sf.Type.Kind() == reflect.Struct && name == sf.Name {
-			// inline embedded struct fields (respect tags if present)
-			out = append(out, collectFields(sf.Type, idx)...)
-			continue
+		// Inline embedded struct or *struct (pointer-embedded) when not renamed.
+		if sf.Anonymous && name == sf.Name {
+			u := sf.Type
+			if u.Kind() == reflect.Ptr {
+				u = u.Elem()
+			}
+			if u.Kind() == reflect.Struct {
+				out = append(out, collectFields(u, idx)...)
+				continue
+			}
 		}
 
 		out = append(out, fieldMeta{
 			jsonName:  name,
 			indexPath: idx,
+			hasString: hasString,
 		})
 	}
 	return out
@@ -258,6 +295,64 @@ func indexByte(s string, c byte) int {
 		}
 	}
 	return -1
+}
+
+// hasJSONTagOption reports whether the comma-separated tag options contain opt.
+func hasJSONTagOption(opts, opt string) bool {
+	// opts like: "omitempty,string"
+	start := 0
+	for i := 0; i <= len(opts); i++ {
+		if i == len(opts) || opts[i] == ',' {
+			if opts[start:i] == opt {
+				return true
+			}
+			start = i + 1
+		}
+	}
+	return false
+}
+
+// fieldByIndexPathAlloc walks from the addressable struct value rv to the field
+// indicated by indexPath, allocating intermediate *struct fields if needed.
+// Returns the leaf field value and whether it is usable (addressable/settable).
+func fieldByIndexPathAlloc(rv reflect.Value, indexPath []int) (reflect.Value, bool) {
+	cur := rv
+	for _, idx := range indexPath {
+		if cur.Kind() == reflect.Ptr {
+			if cur.IsNil() {
+				if !cur.CanSet() {
+					return reflect.Value{}, false
+				}
+				if cur.Type().Elem().Kind() != reflect.Struct {
+					return reflect.Value{}, false
+				}
+				cur.Set(reflect.New(cur.Type().Elem()))
+			}
+			cur = cur.Elem()
+		}
+		if cur.Kind() != reflect.Struct {
+			return reflect.Value{}, false
+		}
+		cur = cur.Field(idx)
+	}
+	if cur.Kind() == reflect.Ptr && cur.IsNil() {
+		if cur.CanSet() && cur.Type().Elem().Kind() == reflect.Struct {
+			cur.Set(reflect.New(cur.Type().Elem()))
+		}
+	}
+	return cur, cur.CanAddr() || cur.CanSet()
+}
+
+// unmarshalSingleField unmarshals a single field into dst (pointer to struct)
+// by constructing a minimal {"name": raw} object and delegating to encoding/json.
+// This preserves stdlib behaviors such as json:",string".
+func unmarshalSingleField(dst any, name string, raw []byte) error {
+	tmp := map[string]json.RawMessage{name: json.RawMessage(raw)}
+	b, err := json.Marshal(tmp)
+	if err != nil {
+		return err
+	}
+	return json.Unmarshal(b, dst)
 }
 
 func isJSONNull(b []byte) bool {
