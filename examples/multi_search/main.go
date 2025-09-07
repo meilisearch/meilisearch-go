@@ -55,7 +55,7 @@ func main() {
 				Filter:   []string{`category = "electronics"`},
 			},
 			{
-				IndexUID: "products", 
+				IndexUID: "products",
 				Query:    "coffee",
 				Limit:    3,
 				Filter:   []string{"in_stock = true"},
@@ -78,16 +78,23 @@ func main() {
 
 	// Display results for each query
 	fmt.Printf("📊 Executed %d search queries simultaneously:\n\n", len(results.Results))
-	
+
 	for i, result := range results.Results {
 		query := multiSearchRequest.Queries[i]
 		fmt.Printf("Query %d: '%s' in %s\n", i+1, query.Query, query.IndexUID)
 		fmt.Printf("Filter: %v\n", query.Filter)
 		fmt.Printf("Found %d results:\n", result.EstimatedTotalHits)
-		
-		for j, hit := range result.Hits {
-			fmt.Printf("  %d. %v\n", j+1, hit)
+
+		products := make([]Product, 0)
+		if err := result.Hits.DecodeInto(&products); err != nil {
+			log.Printf("Failed to decode results: %v", err)
+			continue
 		}
+
+		for j, product := range products {
+			fmt.Printf("  %d. %s (ID: %d) - $%.2f\n", j+1, product.Name, product.ID, product.Price)
+		}
+
 		fmt.Println()
 	}
 
@@ -96,9 +103,9 @@ func main() {
 
 func setupProductsIndex(client meilisearch.ServiceManager) error {
 	fmt.Println("Setting up products index...")
-	
+
 	indexUID := "products"
-	
+
 	// Create index
 	task, err := client.CreateIndex(&meilisearch.IndexConfig{
 		Uid:        indexUID,
@@ -109,7 +116,7 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 	} else {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		
+
 		_, err = client.WaitForTaskWithContext(ctx, task.TaskUID, 100*time.Millisecond)
 		if err != nil {
 			return fmt.Errorf("index creation failed: %w", err)
@@ -150,7 +157,7 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	
+
 	_, err = client.WaitForTaskWithContext(ctx, addTask.TaskUID, 100*time.Millisecond)
 	if err != nil {
 		return fmt.Errorf("failed to wait for document addition: %w", err)
