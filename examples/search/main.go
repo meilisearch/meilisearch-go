@@ -35,7 +35,7 @@ func main() {
 	}
 
 	fmt.Printf("Adding %d movies to the index...\n", len(movies))
-	task, err := index.AddDocuments(movies, nil)
+	task, err := index.AddDocuments(movies, meilisearch.StringPtr("id"))
 	if err != nil {
 		log.Fatalf("Failed to add documents: %v", err)
 	}
@@ -74,27 +74,15 @@ func main() {
 		log.Fatalf("Failed to search: %v", err)
 	}
 
+	movieHits := make([]Movie, 0)
+
 	fmt.Printf("Found %d results\n", len(searchResult.Hits))
-	for i, hit := range searchResult.Hits {
-		// Decode hit data properly
-		var title string
-		var year float64
-		var rating float64
+	if err := searchResult.Hits.DecodeInto(&movieHits); err != nil {
+		log.Fatalf("Failed to decode search results: %v", err)
+	}
 
-		if err := json.Unmarshal(hit["title"], &title); err != nil {
-		log.Printf("Failed to unmarshal title: %v", err)
-		title = "unknown"
-		}
-		if err := json.Unmarshal(hit["year"], &year); err != nil {
-			log.Printf("Failed to unmarshal year: %v", err)
-			year = 0
-		}
-		if err := json.Unmarshal(hit["rating"], &rating); err != nil {
-			log.Printf("Failed to unmarshal rating: %v", err)
-			rating = 0.0
-		}
-
-		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, title, int(year), rating)
+	for i, movie := range movieHits {
+		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, movie.Title, movie.Year, movie.Rating)
 	}
 
 	// Search with filters and facets
@@ -110,26 +98,14 @@ func main() {
 	}
 
 	fmt.Printf("Found %d drama movies after 1990\n", len(searchResult.Hits))
-	for i, hit := range searchResult.Hits {
-		// Decode hit data properly
-		var title string
-		var year float64
-		var rating float64
 
-		if err := json.Unmarshal(hit["title"], &title); err != nil {
-			log.Printf("Failed to unmarshal title: %v", err)
-			title = "unknown"
-		}
-		if err := json.Unmarshal(hit["year"], &year); err != nil {
-			log.Printf("Failed to unmarshal year: %v", err)
-			year = 0
-		}
-		if err := json.Unmarshal(hit["rating"], &rating); err != nil {
-			log.Printf("Failed to unmarshal rating: %v", err)
-			rating = 0.0
-		}
+	searchHits := make([]Movie, 0)
+	if err := searchResult.Hits.DecodeInto(&searchHits); err != nil {
+		log.Fatalf("Failed to decode search results: %v", err)
+	}
 
-		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, title, int(year), rating)
+	for i, movie := range searchHits {
+		fmt.Printf("  %d. %s (%d) - Rating: %.1f\n", i+1, movie.Title, movie.Year, movie.Rating)
 	}
 
 	if len(searchResult.FacetDistribution) > 0 {
