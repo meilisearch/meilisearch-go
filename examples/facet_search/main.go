@@ -94,8 +94,14 @@ func main() {
 	}
 
 	fmt.Printf("Facet search for 'sci' in genre facet with query 'space':\n")
-	for _, facetHit := range facetResult.FacetHits {
-		fmt.Printf("  - %v (count: %v)\n", facetHit["value"], facetHit["count"])
+
+	results := make([]Book, 0)
+	if err := facetResult.FacetHits.DecodeInto(&results); err != nil {
+		log.Fatalf("Facet search failed: %v", err)
+	}
+
+	for _, result := range results {
+		fmt.Printf(" - %s by %s (%d)\n", result.Title, result.Author, result.PublishYear)
 	}
 
 	fmt.Println("\nFaceted search examples completed successfully! 🎉")
@@ -103,9 +109,9 @@ func main() {
 
 func setupBooksIndex(client meilisearch.ServiceManager) error {
 	fmt.Println("Setting up books index with facetable attributes...")
-	
+
 	indexUID := "books"
-	
+
 	// Create index
 	task, err := client.CreateIndex(&meilisearch.IndexConfig{
 		Uid:        indexUID,
@@ -116,7 +122,7 @@ func setupBooksIndex(client meilisearch.ServiceManager) error {
 	} else {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		
+
 		_, err = client.WaitForTaskWithContext(ctx, task.TaskUID, 100*time.Millisecond)
 		if err != nil {
 			return fmt.Errorf("index creation failed: %w", err)
@@ -137,7 +143,7 @@ func setupBooksIndex(client meilisearch.ServiceManager) error {
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	
+
 	_, err = client.WaitForTaskWithContext(ctx, settingsTask.TaskUID, 100*time.Millisecond)
 	if err != nil {
 		return fmt.Errorf("failed to wait for settings update: %w", err)
