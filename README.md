@@ -67,6 +67,8 @@ go get github.com/meilisearch/meilisearch-go
 
 ## 🚀 Getting started
 
+You can use the [examples](./examples) to get started quickly or follow the steps below.
+
 #### Add documents
 
 ```go
