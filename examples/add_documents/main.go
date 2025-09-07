@@ -53,11 +53,11 @@ func main() {
 		{ID: 3, Name: "Charlie Brown", Email: "charlie@example.com", Role: "moderator", Active: false, JoinDate: "2023-03-10"},
 	}
 
-	task, err := index.AddDocuments(users, nil)
+	task, err := index.AddDocuments(users, meilisearch.StringPtr("id"))
 	if err != nil {
 		log.Fatalf("Failed to add documents: %v", err)
 	}
-	
+
 	if err := waitForTask(client, task.TaskUID); err != nil {
 		log.Fatalf("Failed to wait for add task: %v", err)
 	}
@@ -78,7 +78,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to add single document: %v", err)
 	}
-	
+
 	if err := waitForTask(client, task.TaskUID); err != nil {
 		log.Fatalf("Failed to wait for add task: %v", err)
 	}
@@ -95,7 +95,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to update documents: %v", err)
 	}
-	
+
 	if err := waitForTask(client, task.TaskUID); err != nil {
 		log.Fatalf("Failed to wait for update task: %v", err)
 	}
@@ -131,7 +131,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to delete document: %v", err)
 	}
-	
+
 	if err := waitForTask(client, task.TaskUID); err != nil {
 		log.Fatalf("Failed to wait for delete task: %v", err)
 	}
@@ -143,7 +143,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to delete documents: %v", err)
 	}
-	
+
 	if err := waitForTask(client, task.TaskUID); err != nil {
 		log.Fatalf("Failed to wait for delete task: %v", err)
 	}
@@ -163,7 +163,7 @@ func main() {
 
 func createIndex(client meilisearch.ServiceManager, indexUID string) error {
 	fmt.Printf("Creating index '%s'...\n", indexUID)
-	
+
 	task, err := client.CreateIndex(&meilisearch.IndexConfig{
 		Uid:        indexUID,
 		PrimaryKey: "id",
@@ -172,14 +172,14 @@ func createIndex(client meilisearch.ServiceManager, indexUID string) error {
 		log.Printf("Index might already exist: %v", err)
 		return nil // Continue if index exists
 	}
-	
+
 	return waitForTask(client, task.TaskUID)
 }
 
 func waitForTask(client meilisearch.ServiceManager, taskUID int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
-	
+
 	_, err := client.WaitForTaskWithContext(ctx, taskUID, 100*time.Millisecond)
 	return err
 }
