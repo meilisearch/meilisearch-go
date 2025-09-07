@@ -36,7 +36,7 @@ func main() {
 	// 1. Create an index to generate tasks
 	indexUID := "task_demo"
 	fmt.Println("1. Creating index to generate tasks...")
-	
+
 	createTask, err := client.CreateIndex(&meilisearch.IndexConfig{
 		Uid:        indexUID,
 		PrimaryKey: "id",
@@ -50,7 +50,7 @@ func main() {
 	// 2. Add documents to generate more tasks
 	fmt.Println("\n2. Adding documents to generate more tasks...")
 	index := client.Index(indexUID)
-	
+
 	documents := []Document{
 		{ID: 1, Title: "First Document", Content: "This is the first document content"},
 		{ID: 2, Title: "Second Document", Content: "This is the second document content"},
@@ -100,10 +100,10 @@ func main() {
 		Limit: 10,
 		From:  0,
 		Statuses: []meilisearch.TaskStatus{
-			meilisearch.TaskStatus("succeeded"),
-			meilisearch.TaskStatus("processing"),
-			meilisearch.TaskStatus("enqueued"),
-			meilisearch.TaskStatus("failed"),
+			"succeeded",
+			"processing",
+			"enqueued",
+			"failed",
 		},
 	})
 	if err != nil {
@@ -112,7 +112,7 @@ func main() {
 
 	fmt.Printf("Found %d tasks (showing up to 10):\n", tasks.Total)
 	for i, task := range tasks.Results {
-		fmt.Printf("  %d. Task #%d - %s - %s (%s)\n", 
+		fmt.Printf("  %d. Task #%d - %s - %s (%s)\n",
 			i+1, task.UID, task.Type, task.Status, task.EnqueuedAt.Format("15:04:05"))
 	}
 
@@ -149,7 +149,7 @@ func main() {
 	// 8. Wait for specific task completion
 	fmt.Println("\n8. Waiting for task completion...")
 	fmt.Printf("Waiting for document addition task #%d to complete...\n", addTask.TaskUID)
-	
+
 	finalTask, err := client.WaitForTask(addTask.TaskUID, 100*time.Millisecond)
 	if err != nil {
 		log.Printf("Failed to wait for task: %v", err)
@@ -176,7 +176,7 @@ func main() {
 			log.Printf("Failed to get task %d: %v", taskUID, err)
 			continue
 		}
-		
+
 		status := "⏳"
 		switch task.Status {
 		case "succeeded":
@@ -186,7 +186,7 @@ func main() {
 		case "processing":
 			status = "🔄"
 		}
-		
+
 		fmt.Printf("  %s Task #%d (%s): %s\n", status, task.UID, task.Type, task.Status)
 	}
 
@@ -220,7 +220,7 @@ type TaskStats struct {
 
 func calculateTaskStats(tasks []meilisearch.Task) TaskStats {
 	stats := TaskStats{Total: len(tasks)}
-	
+
 	for _, task := range tasks {
 		switch task.Status {
 		case "succeeded":
@@ -233,7 +233,7 @@ func calculateTaskStats(tasks []meilisearch.Task) TaskStats {
 			stats.Enqueued++
 		}
 	}
-	
+
 	return stats
 }
 
@@ -242,17 +242,17 @@ func displayTaskInfo(name string, task *meilisearch.Task) {
 	fmt.Printf("  - Type: %s\n", task.Type)
 	fmt.Printf("  - Status: %s\n", task.Status)
 	fmt.Printf("  - Enqueued At: %s\n", task.EnqueuedAt.Format(time.RFC3339))
-	
+
 	if !task.StartedAt.IsZero() {
 		fmt.Printf("  - Started At: %s\n", task.StartedAt.Format(time.RFC3339))
 	}
-		if !task.FinishedAt.IsZero() {
+	if !task.FinishedAt.IsZero() {
 		fmt.Printf("  - Finished At: %s\n", task.FinishedAt.Format(time.RFC3339))
 	}
-		if task.Duration != "" {
+	if task.Duration != "" {
 		fmt.Printf("  - Duration: %s\n", task.Duration)
 	}
-		if task.Status == meilisearch.TaskStatus("failed") {
+	if task.Status == meilisearch.TaskStatus("failed") {
 		fmt.Printf("  - Error: %v\n", task.Error)
 	}
 	fmt.Println()
