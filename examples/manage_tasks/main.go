@@ -119,7 +119,7 @@ func main() {
 	// 6. Filter tasks by type
 	fmt.Println("\n6. Filtering tasks by type...")
 	documentTasks, err := client.GetTasks(&meilisearch.TasksQuery{
-		Types: []meilisearch.TaskType{meilisearch.TaskType("documentAdditionOrUpdate")},
+		Types: []meilisearch.TaskType{"documentAdditionOrUpdate"},
 		Limit: 5,
 	})
 	if err != nil {
@@ -155,7 +155,7 @@ func main() {
 		log.Printf("Failed to wait for task: %v", err)
 	} else {
 		fmt.Printf("✅ Task #%d completed with status: %s\n", finalTask.UID, finalTask.Status)
-		if finalTask.Status == meilisearch.TaskStatus("failed") {
+		if finalTask.Status == ("failed") {
 			fmt.Printf("   Error: %v\n", finalTask.Error)
 		}
 		if finalTask.Duration != "" {
