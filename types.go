@@ -702,10 +702,10 @@ type Health struct {
 	Status string `json:"status"`
 }
 
-// UpdateIndexRequest is the request body for update Index primary key
+// UpdateIndexRequest is the request body for update Index primary key and renaming IndexUid
 type UpdateIndexRequestParams struct {
 	PrimaryKey string `json:"primaryKey,omitempty"`
-	IndexUID   string `json:"indexUid,omitempty"`
+	UID        string `json:"uid,omitempty"`
 }
 
 func (s *SearchRequest) validate() {

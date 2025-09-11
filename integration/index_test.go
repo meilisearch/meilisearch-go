@@ -2,9 +2,10 @@ package integration
 
 import (
 	"crypto/tls"
+	"testing"
+
 	"github.com/meilisearch/meilisearch-go"
 	"github.com/stretchr/testify/require"
-	"testing"
 )
 
 func TestIndex_Delete(t *testing.T) {
@@ -340,9 +341,9 @@ func TestIndex_UpdateIndex(t *testing.T) {
 	}))
 
 	type args struct {
-		primaryKey string
-		config     meilisearch.IndexConfig
-		client     meilisearch.ServiceManager
+		params *meilisearch.UpdateIndexRequestParams
+		config meilisearch.IndexConfig
+		client meilisearch.ServiceManager
 	}
 	tests := []struct {
 		name     string
@@ -356,7 +357,9 @@ func TestIndex_UpdateIndex(t *testing.T) {
 				config: meilisearch.IndexConfig{
 					Uid: "indexUID",
 				},
-				primaryKey: "book_id",
+				params: &meilisearch.UpdateIndexRequestParams{
+					PrimaryKey: "book_id",
+				},
 			},
 			wantResp: &meilisearch.IndexResult{
 				UID:        "indexUID",
@@ -370,11 +373,29 @@ func TestIndex_UpdateIndex(t *testing.T) {
 				config: meilisearch.IndexConfig{
 					Uid: "indexUID",
 				},
-				primaryKey: "book_id",
+				params: &meilisearch.UpdateIndexRequestParams{
+					PrimaryKey: "book_id",
+				},
 			},
 			wantResp: &meilisearch.IndexResult{
 				UID:        "indexUID",
 				PrimaryKey: "book_id",
+			},
+		},
+		{
+			name: "TestIndexUpdateRenameIndex",
+			args: args{
+				client: customSv,
+				config: meilisearch.IndexConfig{
+					Uid: "indexUID",
+				},
+				params: &meilisearch.UpdateIndexRequestParams{
+					UID: "RenamedIndexUID",
+				},
+			},
+			wantResp: &meilisearch.IndexResult{
+				UID:        "indexUID",
+				PrimaryKey: "",
 			},
 		},
 	}
@@ -390,7 +411,7 @@ func TestIndex_UpdateIndex(t *testing.T) {
 			createdAt := i.CreatedAt
 			updatedAt := i.UpdatedAt
 
-			gotResp, err := i.UpdateIndex(tt.args.primaryKey)
+			gotResp, err := i.UpdateIndex(tt.args.params)
 			require.NoError(t, err)
 
 			_, err = c.WaitForTask(gotResp.TaskUID, 0)
@@ -399,7 +420,14 @@ func TestIndex_UpdateIndex(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp.UID, gotResp.IndexUID)
 
-			gotIndex, err := c.GetIndex(tt.args.config.Uid)
+			var indexUID string
+			indexRenamed := tt.args.params.UID != ""
+			if indexRenamed { 
+				indexUID = tt.args.params.UID
+			} else {	
+				indexUID = tt.args.config.Uid
+			}
+			gotIndex, err := c.GetIndex(indexUID)
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp.PrimaryKey, gotIndex.PrimaryKey)
 			// Make sure that timestamps were correctly updated as well
