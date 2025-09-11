@@ -84,30 +84,30 @@ func (i *index) FetchPrimaryKeyWithContext(ctx context.Context) (*string, error)
 	return &idx.PrimaryKey, nil
 }
 
-func (i *index) UpdateIndex(primaryKey string) (*TaskInfo, error) {
-	return i.UpdateIndexWithContext(context.Background(), primaryKey)
+func (i *index) UpdateIndex(params *UpdateIndexRequestParams) (*TaskInfo, error) {
+	return i.UpdateIndexWithContext(context.Background(), params)
 }
 
-func (i *index) UpdateIndexWithContext(ctx context.Context, primaryKey string) (*TaskInfo, error) {
-	request := &UpdateIndexRequest{
-		PrimaryKey: primaryKey,
+func (i *index) UpdateIndexWithContext(ctx context.Context, params *UpdateIndexRequestParams) (*TaskInfo, error) {
+	if params.PrimaryKey != "" {
+		i.primaryKey = params.PrimaryKey
 	}
-	i.primaryKey = primaryKey
 	resp := new(TaskInfo)
 
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid,
 		method:              http.MethodPatch,
 		contentType:         contentTypeJSON,
-		withRequest:         request,
+		withRequest:         params,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateIndex",
 	}
+
 	if err := i.client.executeRequest(ctx, req); err != nil {
 		return nil, err
 	}
-	i.primaryKey = primaryKey
+
 	return resp, nil
 }
 
