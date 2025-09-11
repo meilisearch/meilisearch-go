@@ -22,10 +22,10 @@ type IndexManager interface {
 	GetSearch() SearchReader
 
 	// UpdateIndex updates the primary key of the index.
-	UpdateIndex(primaryKey string) (*TaskInfo, error)
+	UpdateIndex(params *UpdateIndexRequestParams) (*TaskInfo, error)
 
 	// UpdateIndexWithContext updates the primary key of the index using the provided context for cancellation.
-	UpdateIndexWithContext(ctx context.Context, primaryKey string) (*TaskInfo, error)
+	UpdateIndexWithContext(ctx context.Context, params *UpdateIndexRequestParams) (*TaskInfo, error)
 
 	// Delete removes the index identified by the given UID.
 	Delete(uid string) (bool, error)
