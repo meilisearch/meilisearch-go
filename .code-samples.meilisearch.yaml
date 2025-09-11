@@ -33,6 +33,11 @@ swap_indexes_1: |-
     {Indexes: []string{"indexA", "indexB"}},
     {Indexes: []string{"indexX", "indexY"}},
   })
+swap_indexes_2: |-
+  client.SwapIndexes([]SwapIndexesParams{
+    {Indexes: []string{"indexA", "indexB"}, Rename: true},
+    {Indexes: []string{"indexX", "indexY"}, Rename: true},
+  })
 get_one_document_1: |-
   var a interface{}
   client.Index("movies").GetDocument("25684",&meilisearch.DocumentQuery{
