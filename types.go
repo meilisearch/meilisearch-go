@@ -572,6 +572,7 @@ type SearchResponse struct {
 	TotalPages         int64           `json:"totalPages,omitempty"`
 	FacetStats         json.RawMessage `json:"facetStats,omitempty"`
 	IndexUID           string          `json:"indexUid,omitempty"`
+	QueryVector        *[]float32      `json:"queryVector,omitempty"`
 }
 
 type MultiSearchResponse struct {
