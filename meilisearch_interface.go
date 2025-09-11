@@ -39,10 +39,10 @@ type ServiceManager interface {
 	// DeleteIndexWithContext deletes a specific index with a context for cancellation.
 	DeleteIndexWithContext(ctx context.Context, uid string) (*TaskInfo, error)
 
-	// SwapIndexes swaps the positions of two indexes.
+	// SwapIndexes swaps two existing indexes if rename is false; use rename: true if the second index does not exist.
 	SwapIndexes(param []*SwapIndexesParams) (*TaskInfo, error)
 
-	// SwapIndexesWithContext swaps the positions of two indexes with a context for cancellation.
+	// SwapIndexesWithContext swaps two existing indexes with a context if rename is false; use rename: true if the second index does not exist.
 	SwapIndexesWithContext(ctx context.Context, param []*SwapIndexesParams) (*TaskInfo, error)
 
 	// GenerateTenantToken generates a tenant token for multi-tenancy.
