@@ -693,6 +693,7 @@ type ExperimentalFeaturesResult struct {
 
 type SwapIndexesParams struct {
 	Indexes []string `json:"indexes"`
+	Rename  bool     `json:"rename"`
 }
 
 // Health is the request body for set meilisearch health
