@@ -89,9 +89,6 @@ func (i *index) UpdateIndex(params *UpdateIndexRequestParams) (*TaskInfo, error)
 }
 
 func (i *index) UpdateIndexWithContext(ctx context.Context, params *UpdateIndexRequestParams) (*TaskInfo, error) {
-	if params.PrimaryKey != "" {
-		i.primaryKey = params.PrimaryKey
-	}
 	resp := new(TaskInfo)
 
 	req := &internalRequest{
@@ -106,6 +103,14 @@ func (i *index) UpdateIndexWithContext(ctx context.Context, params *UpdateIndexR
 
 	if err := i.client.executeRequest(ctx, req); err != nil {
 		return nil, err
+	}
+
+	if params.PrimaryKey != "" {
+		i.primaryKey = params.PrimaryKey
+	}
+
+	if params.UID != "" {
+		i.uid = params.UID
 	}
 
 	return resp, nil
