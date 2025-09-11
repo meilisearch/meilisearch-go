@@ -1497,13 +1497,53 @@ func Test_SwapIndexes(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "TestSwapIndexesWithRenameTrue",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				query: []*meilisearch.SwapIndexesParams{
+					{
+						Indexes: []string{"indexA", "indexB"},
+						Rename:  true,
+					},
+				},
+			},
+		},
+		{
+			name: "TestSwapIndexesWithMultipleIndexesRenameTrue",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				query: []*meilisearch.SwapIndexesParams{
+					{
+						Indexes: []string{"indexA", "indexB"},
+						Rename:  true,
+					},
+					{
+						Indexes: []string{"index1", "index2"},
+						Rename:  true,
+					},
+				},
+			},
+		},
 	}
+
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
 			for _, params := range tt.args.query {
+				if params.Rename { // just create the first index
+					taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{
+						Uid: params.Indexes[0],
+					})
+					require.NoError(t, err)
+					_, err = c.WaitForTask(taskInfo.TaskUID, 0)
+					require.NoError(t, err)
+					continue
+				}
 				for _, idx := range params.Indexes {
 					taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{
 						Uid: idx,
