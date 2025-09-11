@@ -17,7 +17,13 @@ create_an_index_1: |-
     PrimaryKey: "id",
   })
 update_an_index_1: |-
-  client.Index("movies").UpdateIndex("id")
+  client.Index("movies").UpdateIndex(&meilisearch.UpdateIndexRequestParams{
+    PrimaryKey: "id",
+  })
+update_an_index_2: |-
+  client.Index("movies").UpdateIndex(&meilisearch.UpdateIndexRequestParams{
+    UID: "movies_index_rename",
+  })
 delete_an_index_1: |-
   client.DeleteIndex("movies")
   // OR
@@ -819,7 +825,9 @@ primary_field_guide_add_document_primary_key: |-
   refrenceNumber := "reference_number"
   client.Index("books").AddDocuments(documents, &refrenceNumber)
 primary_field_guide_update_document_primary_key: |-
-  client.Index("books").UpdateIndex("title")
+  client.Index("books").UpdateIndex(&meilisearch.UpdateIndexRequestParams{
+    PrimaryKey: "title",
+  })
 security_guide_search_key_1: |-
   client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
   client.Index("patient_medical_records").Search();
