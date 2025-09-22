@@ -24,7 +24,7 @@ jobs:
     name: integration-tests-against-rc (go ${{ matrix.tag }} version)
     steps:
       - name: Set up Go ${{ matrix.go }}
-        uses: actions/setup-go@v5
+        uses: actions/setup-go@v6
         with:
           go-version: ${{ matrix.go }}
 
