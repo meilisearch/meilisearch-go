@@ -177,16 +177,16 @@ type LocalizedAttributes struct {
 // TypoTolerance is the type that represents the typo tolerance setting in meilisearch
 type TypoTolerance struct {
 	Enabled             bool                `json:"enabled"`
-	MinWordSizeForTypos MinWordSizeForTypos `json:"minWordSizeForTypos,omitempty"`
-	DisableOnWords      []string            `json:"disableOnWords,omitempty"`
-	DisableOnAttributes []string            `json:"disableOnAttributes,omitempty"`
-	DisableOnNumbers    bool                `json:"disableOnNumbers,omitempty"`
+	MinWordSizeForTypos MinWordSizeForTypos `json:"minWordSizeForTypos"`
+	DisableOnWords      []string            `json:"disableOnWords"`
+	DisableOnAttributes []string            `json:"disableOnAttributes"`
+	DisableOnNumbers    bool                `json:"disableOnNumbers"`
 }
 
 // MinWordSizeForTypos is the type that represents the minWordSizeForTypos setting in the typo tolerance setting in meilisearch
 type MinWordSizeForTypos struct {
-	OneTypo  int64 `json:"oneTypo,omitempty"`
-	TwoTypos int64 `json:"twoTypos,omitempty"`
+	OneTypo  int64 `json:"oneTypo"`
+	TwoTypos int64 `json:"twoTypos"`
 }
 
 // Pagination is the type that represents the pagination setting in meilisearch
