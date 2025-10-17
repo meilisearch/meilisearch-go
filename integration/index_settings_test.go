@@ -3354,6 +3354,8 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
 	}))
+	t.Cleanup(cleanup(meili))
+	t.Cleanup(cleanup(customMeili))
 
 	type args struct {
 		UID     string
@@ -3520,13 +3522,42 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 				DisableOnNumbers:    false,
 			},
 		},
+		{
+			name: "TestIndexZeroMinWordSizeForTypos",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: meilisearch.TypoTolerance{
+					Enabled: true,
+					MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
+						OneTypo:  0,
+						TwoTypos: 0,
+					},
+					DisableOnWords:      []string{},
+					DisableOnAttributes: []string{},
+					DisableOnNumbers:    true,
+				},
+			},
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &meilisearch.TypoTolerance{
+				Enabled: true,
+				MinWordSizeForTypos: meilisearch.MinWordSizeForTypos{
+					OneTypo:  0,
+					TwoTypos: 0,
+				},
+				DisableOnWords:      []string{},
+				DisableOnAttributes: []string{},
+				DisableOnNumbers:    true,
+			},
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			setUpIndexForFaceting(tt.args.client)
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
-			t.Cleanup(cleanup(c))
 
 			gotTask, err := i.UpdateTypoTolerance(&tt.args.request)
 			require.NoError(t, err)
