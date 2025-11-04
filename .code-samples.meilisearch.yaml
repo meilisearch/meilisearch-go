@@ -1066,3 +1066,5 @@ network_patch_2: |-
     Self: meilisearch.String("TEST"),
     Remotes: meilisearch.Null[map[string]meilisearch.Opt[meilisearch.Remote]](),
   });
+index_compact_1: |-
+  client.Index("INDEX_UID").Compact();
