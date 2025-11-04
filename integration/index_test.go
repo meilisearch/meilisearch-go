@@ -422,9 +422,9 @@ func TestIndex_UpdateIndex(t *testing.T) {
 
 			var indexUID string
 			indexRenamed := tt.args.params.UID != ""
-			if indexRenamed { 
+			if indexRenamed {
 				indexUID = tt.args.params.UID
-			} else {	
+			} else {
 				indexUID = tt.args.config.Uid
 			}
 			gotIndex, err := c.GetIndex(indexUID)
@@ -448,4 +448,43 @@ func TestIndexManagerAndReaders(t *testing.T) {
 	require.NotNil(t, idx.GetSearch())
 	require.NotNil(t, idx.GetDocumentManager())
 	require.NotNil(t, idx.GetDocumentReader())
+}
+
+func TestIndex_Compact(t *testing.T) {
+	sv := setup(t, "")
+	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
+	tests := []struct {
+		name     string
+		client   meilisearch.ServiceManager
+		wantTask *meilisearch.TaskInfo
+	}{
+		{
+			name:   "TestIndexCompact",
+			client: sv,
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+		},
+		{
+			name:   "TestIndexCompactWithCustomClient",
+			client: customSv,
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			t.Cleanup(cleanup(tt.client))
+			idx := setupMovieIndex(t, tt.client, "movies")
+			gotTask, err := idx.Compact()
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
+			testWaitForTask(t, idx, gotTask)
+		})
+	}
 }
