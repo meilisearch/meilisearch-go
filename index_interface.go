@@ -32,6 +32,12 @@ type IndexManager interface {
 
 	// DeleteWithContext removes the index identified by the given UID using the provided context for cancellation.
 	DeleteWithContext(ctx context.Context, uid string) (bool, error)
+
+	// Compact compacts the index.
+	Compact() (*TaskInfo, error)
+
+	// CompactWithContext compacts the index using the provided context for cancellation.
+	CompactWithContext(ctx context.Context) (*TaskInfo, error)
 }
 
 type IndexReader interface {
