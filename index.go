@@ -157,3 +157,24 @@ func (i *index) GetStatsWithContext(ctx context.Context) (*StatsIndex, error) {
 	}
 	return resp, nil
 }
+
+func (i *index) Compact() (*TaskInfo, error) {
+	return i.CompactWithContext(context.Background())
+}
+
+func (i *index) CompactWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/compact",
+		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "Compact",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
