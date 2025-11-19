@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"context"
 	"encoding/csv"
-	"encoding/json"
 	"fmt"
 	"net/url"
 	"regexp"
@@ -104,10 +103,25 @@ func transformStringToMap(primaryKey *string) (options map[string]string) {
 }
 
 func transformCsvDocumentsQueryToMap(options *CsvDocumentsQuery) map[string]string {
-	var optionsMap map[string]string
-	data, _ := json.Marshal(options)
-	_ = json.Unmarshal(data, &optionsMap)
-	return optionsMap
+	if options == nil {
+		return nil
+	}
+
+	m := make(map[string]string)
+
+	if options.PrimaryKey != "" {
+		m["primaryKey"] = options.PrimaryKey
+	}
+
+	if options.CsvDelimiter != "" {
+		m["csvDelimiter"] = options.CsvDelimiter
+	}
+
+	if options.TaskCustomMetadata != "" {
+		m["customMetadata"] = options.TaskCustomMetadata
+	}
+
+	return m
 }
 
 func generateQueryForOptions(options map[string]string) (urlQuery string) {
@@ -152,4 +166,23 @@ func joinString(vals []string) string {
 	}
 
 	return strings.Join(vals, ",")
+}
+func transformDocumentOptionsToMap(opts *DocumentOptions) map[string]string {
+	if opts == nil {
+		return nil
+	}
+
+	m := make(map[string]string)
+
+	// Handle Primary Key
+	if opts.PrimaryKey != nil {
+		m["primaryKey"] = *opts.PrimaryKey
+	}
+
+	// Handle Custom Metadata (This works even with `json:"-"`)
+	if opts.TaskCustomMetadata != "" {
+		m["customMetadata"] = opts.TaskCustomMetadata
+	}
+
+	return m
 }

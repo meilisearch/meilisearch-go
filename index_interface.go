@@ -64,16 +64,16 @@ type DocumentManager interface {
 	DocumentReader
 
 	// AddDocuments adds multiple documents to the index.
-	AddDocuments(documentsPtr interface{}, primaryKey *string) (*TaskInfo, error)
+	AddDocuments(documentsPtr interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// AddDocumentsWithContext adds multiple documents to the index using the provided context for cancellation.
-	AddDocumentsWithContext(ctx context.Context, documentsPtr interface{}, primaryKey *string) (*TaskInfo, error)
+	AddDocumentsWithContext(ctx context.Context, documentsPtr interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// AddDocumentsInBatches adds documents to the index in batches of specified size.
-	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey *string) ([]TaskInfo, error)
+	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsInBatchesWithContext adds documents to the index in batches of specified size using the provided context for cancellation.
-	AddDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, primaryKey *string) ([]TaskInfo, error)
+	AddDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsCsv adds documents from a CSV byte array to the index.
 	AddDocumentsCsv(documents []byte, options *CsvDocumentsQuery) (*TaskInfo, error)
@@ -100,40 +100,40 @@ type DocumentManager interface {
 	AddDocumentsCsvFromReaderWithContext(ctx context.Context, documents io.Reader, options *CsvDocumentsQuery) (*TaskInfo, error)
 
 	// AddDocumentsNdjson adds documents from a NDJSON byte array to the index.
-	AddDocumentsNdjson(documents []byte, primaryKey *string) (*TaskInfo, error)
+	AddDocumentsNdjson(documents []byte, opts *DocumentOptions) (*TaskInfo, error)
 
 	// AddDocumentsNdjsonWithContext adds documents from a NDJSON byte array to the index using the provided context for cancellation.
-	AddDocumentsNdjsonWithContext(ctx context.Context, documents []byte, primaryKey *string) (*TaskInfo, error)
+	AddDocumentsNdjsonWithContext(ctx context.Context, documents []byte, opts *DocumentOptions) (*TaskInfo, error)
 
 	// AddDocumentsNdjsonInBatches adds documents from a NDJSON byte array to the index in batches of specified size.
-	AddDocumentsNdjsonInBatches(documents []byte, batchSize int, primaryKey *string) ([]TaskInfo, error)
+	AddDocumentsNdjsonInBatches(documents []byte, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsNdjsonInBatchesWithContext adds documents from a NDJSON byte array to the index in batches of specified size using the provided context for cancellation.
-	AddDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchSize int, primaryKey *string) ([]TaskInfo, error)
+	AddDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsNdjsonFromReader adds documents from a NDJSON reader to the index.
-	AddDocumentsNdjsonFromReader(documents io.Reader, primaryKey *string) (*TaskInfo, error)
+	AddDocumentsNdjsonFromReader(documents io.Reader, opts *DocumentOptions) (*TaskInfo, error)
 
 	// AddDocumentsNdjsonFromReaderWithContext adds documents from a NDJSON reader to the index using the provided context for cancellation.
-	AddDocumentsNdjsonFromReaderWithContext(ctx context.Context, documents io.Reader, primaryKey *string) (*TaskInfo, error)
+	AddDocumentsNdjsonFromReaderWithContext(ctx context.Context, documents io.Reader, opts *DocumentOptions) (*TaskInfo, error)
 
 	// AddDocumentsNdjsonFromReaderInBatches adds documents from a NDJSON reader to the index in batches of specified size.
-	AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchSize int, primaryKey *string) ([]TaskInfo, error)
+	AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsNdjsonFromReaderInBatchesWithContext adds documents from a NDJSON reader to the index in batches of specified size using the provided context for cancellation.
-	AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx context.Context, documents io.Reader, batchSize int, primaryKey *string) ([]TaskInfo, error)
+	AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx context.Context, documents io.Reader, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// UpdateDocuments updates multiple documents in the index.
-	UpdateDocuments(documentsPtr interface{}, primaryKey *string) (*TaskInfo, error)
+	UpdateDocuments(documentsPtr interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// UpdateDocumentsWithContext updates multiple documents in the index using the provided context for cancellation.
-	UpdateDocumentsWithContext(ctx context.Context, documentsPtr interface{}, primaryKey *string) (*TaskInfo, error)
+	UpdateDocumentsWithContext(ctx context.Context, documentsPtr interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// UpdateDocumentsInBatches updates documents in the index in batches of specified size.
-	UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, primaryKey *string) ([]TaskInfo, error)
+	UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// UpdateDocumentsInBatchesWithContext updates documents in the index in batches of specified size using the provided context for cancellation.
-	UpdateDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, primaryKey *string) ([]TaskInfo, error)
+	UpdateDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// UpdateDocumentsCsv updates documents in the index from a CSV byte array.
 	UpdateDocumentsCsv(documents []byte, options *CsvDocumentsQuery) (*TaskInfo, error)
@@ -148,16 +148,16 @@ type DocumentManager interface {
 	UpdateDocumentsCsvInBatchesWithContext(ctx context.Context, documents []byte, batchsize int, options *CsvDocumentsQuery) ([]TaskInfo, error)
 
 	// UpdateDocumentsNdjson updates documents in the index from a NDJSON byte array.
-	UpdateDocumentsNdjson(documents []byte, primaryKey *string) (*TaskInfo, error)
+	UpdateDocumentsNdjson(documents []byte, opts *DocumentOptions) (*TaskInfo, error)
 
 	// UpdateDocumentsNdjsonWithContext updates documents in the index from a NDJSON byte array using the provided context for cancellation.
-	UpdateDocumentsNdjsonWithContext(ctx context.Context, documents []byte, primaryKey *string) (*TaskInfo, error)
+	UpdateDocumentsNdjsonWithContext(ctx context.Context, documents []byte, opts *DocumentOptions) (*TaskInfo, error)
 
 	// UpdateDocumentsNdjsonInBatches updates documents in the index from a NDJSON byte array in batches of specified size.
-	UpdateDocumentsNdjsonInBatches(documents []byte, batchsize int, primaryKey *string) ([]TaskInfo, error)
+	UpdateDocumentsNdjsonInBatches(documents []byte, batchsize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// UpdateDocumentsNdjsonInBatchesWithContext updates documents in the index from a NDJSON byte array in batches of specified size using the provided context for cancellation.
-	UpdateDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchsize int, primaryKey *string) ([]TaskInfo, error)
+	UpdateDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchsize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// UpdateDocumentsByFunction update documents by using function
 	UpdateDocumentsByFunction(req *UpdateDocumentByFunctionRequest) (*TaskInfo, error)
@@ -166,28 +166,28 @@ type DocumentManager interface {
 	UpdateDocumentsByFunctionWithContext(ctx context.Context, req *UpdateDocumentByFunctionRequest) (*TaskInfo, error)
 
 	// DeleteDocument deletes a single document from the index by identifier.
-	DeleteDocument(identifier string) (*TaskInfo, error)
+	DeleteDocument(identifier string, opts *DocumentOptions) (*TaskInfo, error)
 
 	// DeleteDocumentWithContext deletes a single document from the index by identifier using the provided context for cancellation.
-	DeleteDocumentWithContext(ctx context.Context, identifier string) (*TaskInfo, error)
+	DeleteDocumentWithContext(ctx context.Context, identifier string, opts *DocumentOptions) (*TaskInfo, error)
 
 	// DeleteDocuments deletes multiple documents from the index by identifiers.
-	DeleteDocuments(identifiers []string) (*TaskInfo, error)
+	DeleteDocuments(identifiers []string, opts *DocumentOptions) (*TaskInfo, error)
 
 	// DeleteDocumentsWithContext deletes multiple documents from the index by identifiers using the provided context for cancellation.
-	DeleteDocumentsWithContext(ctx context.Context, identifiers []string) (*TaskInfo, error)
+	DeleteDocumentsWithContext(ctx context.Context, identifiers []string, opts *DocumentOptions) (*TaskInfo, error)
 
 	// DeleteDocumentsByFilter deletes documents from the index by filter.
-	DeleteDocumentsByFilter(filter interface{}) (*TaskInfo, error)
+	DeleteDocumentsByFilter(filter interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// DeleteDocumentsByFilterWithContext deletes documents from the index by filter using the provided context for cancellation.
-	DeleteDocumentsByFilterWithContext(ctx context.Context, filter interface{}) (*TaskInfo, error)
+	DeleteDocumentsByFilterWithContext(ctx context.Context, filter interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// DeleteAllDocuments deletes all documents from the index.
-	DeleteAllDocuments() (*TaskInfo, error)
+	DeleteAllDocuments(opts *DocumentOptions) (*TaskInfo, error)
 
 	// DeleteAllDocumentsWithContext deletes all documents from the index using the provided context for cancellation.
-	DeleteAllDocumentsWithContext(ctx context.Context) (*TaskInfo, error)
+	DeleteAllDocumentsWithContext(ctx context.Context, opts *DocumentOptions) (*TaskInfo, error)
 }
 
 type DocumentReader interface {

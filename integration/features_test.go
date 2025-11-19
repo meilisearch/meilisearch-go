@@ -69,7 +69,7 @@ func TestUpdate_ExperimentalFeatures(t *testing.T) {
 			ef.SetCompositeEmbedders(true)
 			ef.SetChatCompletions(true)
 			ef.SetMultiModal(true)
-			
+
 			gotResp, err := ef.Update()
 			require.NoError(t, err)
 

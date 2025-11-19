@@ -55,7 +55,7 @@ func main() {
 
 	fmt.Println("\n--- Interactive Chat Session ---")
 	fmt.Println("Type your questions (or 'quit' to exit):")
-	
+
 	// Simple interactive loop
 	reader := bufio.NewReader(os.Stdin)
 	for {
@@ -75,7 +75,7 @@ func main() {
 func performChatStream(client meilisearch.ServiceManager, workspaceID string, query string) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 60*time.Second)
 	defer cancel()
-	
+
 	// Create a chat completion query with streaming enabled
 	chatQuery := &meilisearch.ChatCompletionQuery{
 		Model: "gpt-3.5-turbo",
@@ -97,10 +97,14 @@ func performChatStream(client meilisearch.ServiceManager, workspaceID string, qu
 	if err != nil {
 		return fmt.Errorf("failed to start chat stream: %w", err)
 	}
-	defer func() { if closeErr := stream.Close(); closeErr != nil { log.Printf("Error closing stream: %v", closeErr) } }()
-	
+	defer func() {
+		if closeErr := stream.Close(); closeErr != nil {
+			log.Printf("Error closing stream: %v", closeErr)
+		}
+	}()
+
 	fmt.Print("Assistant: ")
-	
+
 	for {
 		hasNext := stream.Next()
 		if !hasNext {
@@ -112,9 +116,9 @@ func performChatStream(client meilisearch.ServiceManager, workspaceID string, qu
 			}
 			break
 		}
-		
+
 		chunk := stream.Current()
-		
+
 		// Print the streaming content from choices
 		if chunk != nil && len(chunk.Choices) > 0 {
 			if chunk.Choices[0].Delta.Content != nil && *chunk.Choices[0].Delta.Content != "" {

@@ -50,39 +50,39 @@ func main() {
 	settings := &meilisearch.Settings{
 		// Searchable attributes - fields that are searched
 		SearchableAttributes: []string{"title", "content", "author", "tags"},
-		
+
 		// Displayed attributes - fields returned in search results
 		DisplayedAttributes: []string{"id", "title", "author", "publish_date", "category", "summary"},
-		
+
 		// Filterable attributes - fields that can be used in filters
 		FilterableAttributes: []string{"category", "author", "publish_date", "status", "featured"},
-		
+
 		// Sortable attributes - fields that can be used for sorting
 		SortableAttributes: []string{"publish_date", "title", "author"},
-		
+
 		// Ranking rules - control result relevance
 		RankingRules: []string{
 			"words",
-			"typo", 
+			"typo",
 			"proximity",
 			"attribute",
 			"sort",
 			"exactness",
 		},
-		
+
 		// Stop words - words ignored during search
 		StopWords: []string{"the", "a", "an", "and", "or", "but", "in", "on", "at", "to", "for", "of", "with", "by"},
-		
+
 		// Synonyms - alternative words
 		Synonyms: map[string][]string{
 			"programming": {"coding", "development"},
 			"javascript":  {"js", "ecmascript"},
 			"golang":      {"go"},
 		},
-		
+
 		// Distinct attribute - deduplicate results
 		DistinctAttribute: stringPtr("title"),
-		
+
 		// Typo tolerance settings
 		TypoTolerance: &meilisearch.TypoTolerance{
 			Enabled: true,
@@ -91,7 +91,7 @@ func main() {
 				TwoTypos: 9,
 			},
 		},
-		
+
 		// Pagination settings
 		Pagination: &meilisearch.Pagination{
 			MaxTotalHits: 1000,
@@ -102,7 +102,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to update settings: %v", err)
 	}
-	
+
 	if err := waitForTask(client, settingsTask.TaskUID); err != nil {
 		log.Fatalf("Failed to wait for settings update: %v", err)
 	}
@@ -114,7 +114,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to get settings: %v", err)
 	}
-	
+
 	fmt.Printf("Searchable attributes: %v\n", currentSettings.SearchableAttributes)
 	fmt.Printf("Filterable attributes: %v\n", currentSettings.FilterableAttributes)
 	fmt.Printf("Sortable attributes: %v\n", currentSettings.SortableAttributes)

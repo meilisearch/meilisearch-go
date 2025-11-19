@@ -35,7 +35,7 @@ func main() {
 	}
 
 	fmt.Printf("Adding %d movies to the index...\n", len(movies))
-	task, err := index.AddDocuments(movies, meilisearch.StringPtr("id"))
+	task, err := index.AddDocuments(movies, &meilisearch.DocumentOptions{PrimaryKey: meilisearch.StringPtr("id")})
 	if err != nil {
 		log.Fatalf("Failed to add documents: %v", err)
 	}
