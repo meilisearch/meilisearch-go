@@ -516,7 +516,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocuments(tt.args.documentsPtr, &tt.args.primaryKey)
+			gotResp, err := i.AddDocuments(tt.args.documentsPtr, &meilisearch.DocumentOptions{PrimaryKey: &tt.args.primaryKey})
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
 			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
@@ -668,7 +668,7 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, &tt.args.primaryKey)
+			gotResp, err := i.AddDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, &meilisearch.DocumentOptions{PrimaryKey: &tt.args.primaryKey})
 
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
@@ -1261,7 +1261,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			setUpBasicIndex(tt.args.client, tt.args.UID)
-			gotResp, err := i.DeleteAllDocuments()
+			gotResp, err := i.DeleteAllDocuments(&meilisearch.DocumentOptions{})
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 			require.Equal(t, tt.wantResp.Status, gotResp.Status)
@@ -1409,7 +1409,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 
 			testWaitForTask(t, i, gotAddResp)
 
-			gotResp, err := i.DeleteDocument(tt.args.identifier)
+			gotResp, err := i.DeleteDocument(tt.args.identifier, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 			require.Equal(t, tt.wantResp.Status, gotResp.Status)
@@ -1523,7 +1523,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 
 			testWaitForTask(t, i, gotAddResp)
 
-			gotResp, err := i.DeleteDocuments(tt.args.identifier)
+			gotResp, err := i.DeleteDocuments(tt.args.identifier, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 			require.Equal(t, tt.wantResp.Status, gotResp.Status)
@@ -1721,7 +1721,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 				testWaitForTask(t, i, gotTask)
 			}
 
-			gotResp, err := i.DeleteDocumentsByFilter(tt.args.filterToDelete)
+			gotResp, err := i.DeleteDocumentsByFilter(tt.args.filterToDelete, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 			require.Equal(t, tt.wantResp.Status, gotResp.Status)
@@ -1768,5 +1768,178 @@ func TestIndex_UpdateDocumentsByFunction(t *testing.T) {
 		})
 		require.NoError(t, err)
 		testWaitForTask(t, idx, task)
+	})
+}
+func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
+	sv := setup(t, "")
+	t.Cleanup(cleanup(sv))
+
+	// Setup a basic index
+	indexUID := "TestCustomMetadata"
+	_, err := sv.CreateIndex(&meilisearch.IndexConfig{Uid: indexUID, PrimaryKey: "id"})
+	require.NoError(t, err)
+	i := sv.Index(indexUID)
+
+	filterableAttributes := []interface{}{"id"}
+
+	task, err := i.UpdateFilterableAttributes(&filterableAttributes)
+	require.NoError(t, err)
+	testWaitForTask(t, i, task)
+
+	// Define common test data
+	documents := []map[string]interface{}{
+		{"id": "1", "title": "Document 1"},
+		{"id": "2", "title": "Document 2"},
+	}
+
+	tests := []struct {
+		name           string
+		action         func(t *testing.T) *meilisearch.TaskInfo
+		expectMetadata string
+	}{
+		{
+			name: "AddDocuments with Metadata",
+			action: func(t *testing.T) *meilisearch.TaskInfo {
+				meta := "meta-add-docs"
+				task, err := i.AddDocuments(documents, &meilisearch.DocumentOptions{
+					TaskCustomMetadata: meta,
+				})
+				require.NoError(t, err)
+				return task
+			},
+			expectMetadata: "meta-add-docs",
+		},
+		{
+			name: "UpdateDocuments with Metadata",
+			action: func(t *testing.T) *meilisearch.TaskInfo {
+				meta := "meta-update-docs"
+				updateDocs := []map[string]interface{}{
+					{"id": "1", "title": "Updated Document 1"},
+				}
+				task, err := i.UpdateDocuments(updateDocs, &meilisearch.DocumentOptions{
+					TaskCustomMetadata: meta,
+				})
+				require.NoError(t, err)
+				return task
+			},
+			expectMetadata: "meta-update-docs",
+		},
+		{
+			name: "DeleteDocument (Single) with Metadata",
+			action: func(t *testing.T) *meilisearch.TaskInfo {
+				meta := "meta-delete-one"
+				task, err := i.DeleteDocument("1", &meilisearch.DocumentOptions{
+					TaskCustomMetadata: meta,
+				})
+				require.NoError(t, err)
+				return task
+			},
+			expectMetadata: "meta-delete-one",
+		},
+		{
+			name: "DeleteDocuments (Batch) with Metadata",
+			action: func(t *testing.T) *meilisearch.TaskInfo {
+				meta := "meta-delete-batch"
+				task, err := i.DeleteDocuments([]string{"2"}, &meilisearch.DocumentOptions{
+					TaskCustomMetadata: meta,
+				})
+				require.NoError(t, err)
+				return task
+			},
+			expectMetadata: "meta-delete-batch",
+		},
+		{
+			name: "AddDocumentsNdjson with Metadata",
+			action: func(t *testing.T) *meilisearch.TaskInfo {
+				meta := "meta-ndjson"
+				ndjson := []byte(`{"id": "3", "title": "Ndjson Doc"}`)
+				task, err := i.AddDocumentsNdjson(ndjson, &meilisearch.DocumentOptions{
+					TaskCustomMetadata: meta,
+				})
+				require.NoError(t, err)
+				return task
+			},
+			expectMetadata: "meta-ndjson",
+		},
+		{
+			name: "DeleteAllDocuments with Metadata",
+			action: func(t *testing.T) *meilisearch.TaskInfo {
+				meta := "meta-delete-all"
+				task, err := i.DeleteAllDocuments(&meilisearch.DocumentOptions{
+					TaskCustomMetadata: meta,
+				})
+				require.NoError(t, err)
+				return task
+			},
+			expectMetadata: "meta-delete-all",
+		},
+	}
+
+	// Run Standard Document Option Tests
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// 1. Execute Action
+			taskInfo := tt.action(t)
+
+			// 2. Wait for task to be processed (ensures storage)
+			testWaitForTask(t, i, taskInfo)
+
+			// 3. Fetch the full task details from the engine
+			task, err := sv.GetTask(taskInfo.TaskUID)
+			require.NoError(t, err)
+
+			// 4. Verify the metadata matches
+			require.Equal(t, tt.expectMetadata, task.CustomMetadata, "CustomMetadata should be persisted and retrievable from the Task object")
+		})
+	}
+
+	// Special Case: UpdateDocumentsByFunction
+	t.Run("UpdateDocumentsByFunction with Metadata", func(t *testing.T) {
+		// Ensure we have a doc to update
+		setupTask, _ := i.AddDocuments([]map[string]interface{}{{"id": "99", "title": "Function Doc"}}, nil)
+		testWaitForTask(t, i, setupTask)
+
+		meta := "meta-function-update"
+
+		// Enable feature
+		exp := sv.ExperimentalFeatures()
+		exp.SetEditDocumentsByFunction(true)
+		_, err := exp.Update()
+		require.NoError(t, err)
+
+		// Perform Update
+		taskInfo, err := i.UpdateDocumentsByFunction(&meilisearch.UpdateDocumentByFunctionRequest{
+			Filter:             "id = 99",
+			Function:           "doc.title = \"Updated Function\"",
+			TaskCustomMetadata: meta,
+		})
+		require.NoError(t, err)
+
+		// Wait and Verify
+		testWaitForTask(t, i, taskInfo)
+
+		task, err := sv.GetTask(taskInfo.TaskUID)
+		require.NoError(t, err)
+		require.Equal(t, meta, task.CustomMetadata)
+	})
+
+	// Special Case: DeleteDocumentsByFilter
+	t.Run("DeleteDocumentsByFilter with Metadata", func(t *testing.T) {
+		// Ensure we have a doc to delete
+		setupTask, _ := i.AddDocuments([]map[string]interface{}{{"id": "99", "title": "Filter Doc"}}, nil)
+		testWaitForTask(t, i, setupTask)
+
+		meta := "meta-delete-filter"
+		// Note: "id" was made filterable at the top of the test function
+		taskInfo, err := i.DeleteDocumentsByFilter("id = 99", &meilisearch.DocumentOptions{
+			TaskCustomMetadata: meta,
+		})
+		require.NoError(t, err)
+
+		testWaitForTask(t, i, taskInfo)
+
+		task, err := sv.GetTask(taskInfo.TaskUID)
+		require.NoError(t, err)
+		require.Equal(t, meta, task.CustomMetadata)
 	})
 }

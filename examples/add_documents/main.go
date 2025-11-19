@@ -53,7 +53,7 @@ func main() {
 		{ID: 3, Name: "Charlie Brown", Email: "charlie@example.com", Role: "moderator", Active: false, JoinDate: "2023-03-10"},
 	}
 
-	task, err := index.AddDocuments(users, meilisearch.StringPtr("id"))
+	task, err := index.AddDocuments(users, &meilisearch.DocumentOptions{PrimaryKey: meilisearch.StringPtr("id")})
 	if err != nil {
 		log.Fatalf("Failed to add documents: %v", err)
 	}
@@ -127,7 +127,7 @@ func main() {
 
 	// 6. Delete documents
 	fmt.Println("\n6. Deleting documents:")
-	task, err = index.DeleteDocument("4")
+	task, err = index.DeleteDocument("4", nil)
 	if err != nil {
 		log.Fatalf("Failed to delete document: %v", err)
 	}
@@ -139,7 +139,7 @@ func main() {
 
 	// 7. Delete multiple documents
 	fmt.Println("\n7. Deleting multiple documents:")
-	task, err = index.DeleteDocuments([]string{"1", "3"})
+	task, err = index.DeleteDocuments([]string{"1", "3"}, nil)
 	if err != nil {
 		log.Fatalf("Failed to delete documents: %v", err)
 	}
