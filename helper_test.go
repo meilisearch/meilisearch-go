@@ -1,12 +1,13 @@
 package meilisearch
 
 import (
-	"github.com/stretchr/testify/assert"
 	"net/url"
 	"reflect"
 	"strconv"
 	"testing"
 	"time"
+
+	"github.com/stretchr/testify/assert"
 )
 
 func (req *internalRequest) init() {
@@ -151,6 +152,127 @@ func TestJoinString(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got := joinString(tt.input)
 			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+func TestTransformDocumentOptionsToMap(t *testing.T) {
+	primaryKey := "id"
+	tests := []struct {
+		name     string
+		input    *DocumentOptions
+		expected map[string]string
+	}{
+		{
+			name:     "Nil input",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name:     "Empty input",
+			input:    &DocumentOptions{},
+			expected: map[string]string{},
+		},
+		{
+			name: "With PrimaryKey",
+			input: &DocumentOptions{
+				PrimaryKey: &primaryKey,
+			},
+			expected: map[string]string{
+				"primaryKey": "id",
+			},
+		},
+		{
+			name: "With TaskCustomMetadata",
+			input: &DocumentOptions{
+				TaskCustomMetadata: "meta-123",
+			},
+			expected: map[string]string{
+				"customMetadata": "meta-123",
+			},
+		},
+		{
+			name: "With Both",
+			input: &DocumentOptions{
+				PrimaryKey:         &primaryKey,
+				TaskCustomMetadata: "meta-123",
+			},
+			expected: map[string]string{
+				"primaryKey":     "id",
+				"customMetadata": "meta-123",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := transformDocumentOptionsToMap(tt.input)
+			assert.Equal(t, tt.expected, got)
+		})
+	}
+}
+
+func TestTransformCsvDocumentsQueryToMap(t *testing.T) {
+	tests := []struct {
+		name     string
+		input    *CsvDocumentsQuery
+		expected map[string]string
+	}{
+		{
+			name:     "Nil input",
+			input:    nil,
+			expected: nil,
+		},
+		{
+			name:     "Empty input",
+			input:    &CsvDocumentsQuery{},
+			expected: map[string]string{},
+		},
+		{
+			name: "With PrimaryKey",
+			input: &CsvDocumentsQuery{
+				PrimaryKey: "id",
+			},
+			expected: map[string]string{
+				"primaryKey": "id",
+			},
+		},
+		{
+			name: "With CsvDelimiter",
+			input: &CsvDocumentsQuery{
+				CsvDelimiter: ",",
+			},
+			expected: map[string]string{
+				"csvDelimiter": ",",
+			},
+		},
+		{
+			name: "With TaskCustomMetadata",
+			input: &CsvDocumentsQuery{
+				TaskCustomMetadata: "meta-csv",
+			},
+			expected: map[string]string{
+				"customMetadata": "meta-csv",
+			},
+		},
+		{
+			name: "With All",
+			input: &CsvDocumentsQuery{
+				PrimaryKey:         "id",
+				CsvDelimiter:       ";",
+				TaskCustomMetadata: "meta-csv-all",
+			},
+			expected: map[string]string{
+				"primaryKey":     "id",
+				"csvDelimiter":   ";",
+				"customMetadata": "meta-csv-all",
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := transformCsvDocumentsQueryToMap(tt.input)
+			assert.Equal(t, tt.expected, got)
 		})
 	}
 }
