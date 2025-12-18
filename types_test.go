@@ -189,18 +189,32 @@ func TestNetwork_MarshalJSON(t *testing.T) {
 			wantJSON: `{"self":"primary","remotes":null}`,
 		},
 		{
-			name: "sharding explicitly null",
+			name: "leader explicitly null",
 			in: Network{
-				Sharding: Null[bool](),
+				Leader: Null[string](),
 			},
-			wantJSON: `{"sharding": null}`,
+			wantJSON: `{"leader": null}`,
 		},
 		{
-			name: "sharding set",
+			name: "leader set",
 			in: Network{
-				Sharding: Bool(true),
+				Leader: String("leader"),
 			},
-			wantJSON: `{"sharding": true}`,
+			wantJSON: `{"leader": "leader"}`,
+		},
+		{
+			name: "version set",
+			in: Network{
+				Version: String("uuid"),
+			},
+			wantJSON: `{"version": "uuid"}`,
+		},
+		{
+			name: "leader explicitly null",
+			in: Network{
+				Version: Null[string](),
+			},
+			wantJSON: `{"version": null}`,
 		},
 	}
 
