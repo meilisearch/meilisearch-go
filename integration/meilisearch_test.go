@@ -2016,7 +2016,7 @@ func Test_GenerateTenantToken(t *testing.T) {
 				if tt.wantFilter {
 					gotTask, err := c.Index(tt.args.IndexUIDS).UpdateFilterableAttributes(&tt.args.filter)
 					require.NoError(t, err, "UpdateFilterableAttributes() in TestGenerateTenantToken meilisearch.Error should be nil")
-					testWaitForTask(t, c.Index(tt.args.IndexUIDS), gotTask)
+					testWaitForIndexTask(t, c.Index(tt.args.IndexUIDS), gotTask)
 				} else {
 					_, err := setUpEmptyIndex(sv, &meilisearch.IndexConfig{Uid: tt.args.IndexUIDS})
 					require.NoError(t, err, "CreateIndex() in TestGenerateTenantToken meilisearch.Error should be nil")
@@ -2589,7 +2589,7 @@ func Test_CreateSnapshot(t *testing.T) {
 	c := setup(t, "")
 	taskInfo, err := c.CreateSnapshot()
 	require.NoError(t, err)
-	testWaitForTask(t, c.Index("indexUID"), taskInfo)
+	testWaitForIndexTask(t, c.Index("indexUID"), taskInfo)
 }
 
 func TestGetServiceManagerAndReaders(t *testing.T) {

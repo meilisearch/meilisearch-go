@@ -176,6 +176,7 @@ func deleteAllIndexes(sv meilisearch.ServiceManager) (ok bool, err error) {
 func resetNetwork(sv meilisearch.ServiceManager) (ok bool, err error) {
 	_, err = sv.UpdateNetwork(&meilisearch.UpdateNetworkRequest{
 		Self:    meilisearch.Null[string](),
+		Leader:  meilisearch.Null[string](),
 		Remotes: meilisearch.Null[map[string]meilisearch.Opt[meilisearch.UpdateRemote]](),
 	})
 	if err != nil {
@@ -242,11 +243,23 @@ func getenv(key, fallback string) string {
 	return value
 }
 
-func testWaitForTask(t *testing.T, i meilisearch.IndexManager, u *meilisearch.TaskInfo) {
+func testWaitForIndexTask(t *testing.T, i meilisearch.IndexManager, u *meilisearch.TaskInfo) {
 	t.Helper()
 	r, err := i.WaitForTask(u.TaskUID, 0)
 	require.NoError(t, err)
-	require.Equal(t, meilisearch.TaskStatusSucceeded, r.Status, fmt.Sprintf("Task failed: %#+v", r))
+	assertSuccessTask(t, r)
+}
+
+func testWaitForTask(t *testing.T, sv meilisearch.ServiceManager, u *meilisearch.Task) {
+	t.Helper()
+	r, err := sv.WaitForTask(u.TaskUID, 0)
+	require.NoError(t, err)
+	assertSuccessTask(t, r)
+}
+
+func assertSuccessTask(t *testing.T, u *meilisearch.Task) {
+	t.Helper()
+	require.Equal(t, meilisearch.TaskStatusSucceeded, u.Status, fmt.Sprintf("Task failed: %#+v", u))
 }
 
 func testWaitForBatchTask(t *testing.T, i meilisearch.IndexManager, u []meilisearch.TaskInfo) {
@@ -311,11 +324,11 @@ func setupMovieIndex(t *testing.T, client meilisearch.ServiceManager, uid string
 
 	task, err := idx.AddDocuments(tests, nil)
 	require.NoError(t, err)
-	testWaitForTask(t, idx, task)
+	testWaitForIndexTask(t, idx, task)
 
 	task, err = idx.UpdateFilterableAttributes(&[]interface{}{"id", "title", "overview"})
 	require.NoError(t, err)
-	testWaitForTask(t, idx, task)
+	testWaitForIndexTask(t, idx, task)
 
 	return idx
 }
@@ -337,11 +350,11 @@ func setupComicIndex(t *testing.T, client meilisearch.ServiceManager, uid string
 
 	task, err := idx.AddDocuments(tests, nil)
 	require.NoError(t, err)
-	testWaitForTask(t, idx, task)
+	testWaitForIndexTask(t, idx, task)
 
 	task, err = idx.UpdateFilterableAttributes(&[]interface{}{"id", "title", "overview"})
 	require.NoError(t, err)
-	testWaitForTask(t, idx, task)
+	testWaitForIndexTask(t, idx, task)
 
 	return idx
 }

@@ -133,7 +133,7 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			filterableAttrs := []interface{}{"tag"}
 			task, err := i.UpdateFilterableAttributes(&filterableAttrs)
 			require.NoError(t, err)
-			testWaitForTask(t, i, task)
+			testWaitForIndexTask(t, i, task)
 
 			gotJson, err = i.FacetSearch(tt.FacetRequest)
 			require.NoError(t, err)
@@ -483,7 +483,7 @@ func TestIndex_SearchFacets(t *testing.T) {
 
 			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
 			require.NoError(t, err)
-			testWaitForTask(t, i, updateFilter)
+			testWaitForIndexTask(t, i, updateFilter)
 
 			got, err := i.Search(tt.args.query, tt.args.request)
 			if tt.wantErr {
@@ -585,7 +585,7 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 
 			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
 			require.NoError(t, err)
-			testWaitForTask(t, i, updateFilter)
+			testWaitForIndexTask(t, i, updateFilter)
 
 			got, err := i.Search(tt.args.query, tt.args.request)
 			if tt.wantErr {
@@ -666,7 +666,7 @@ func TestIndex_SearchWithSort(t *testing.T) {
 
 			updateFilter, err := i.UpdateSortableAttributes(&tt.args.sortableAttributes)
 			require.NoError(t, err)
-			testWaitForTask(t, i, updateFilter)
+			testWaitForIndexTask(t, i, updateFilter)
 
 			got, err := i.Search(tt.args.query, tt.args.request)
 			if tt.wantErr {
@@ -747,13 +747,13 @@ func TestIndex_SearchOnNestedFields(t *testing.T) {
 			if tt.args.searchableAttribute != nil {
 				gotTask, err := i.UpdateSearchableAttributes(&tt.args.searchableAttribute)
 				require.NoError(t, err)
-				testWaitForTask(t, i, gotTask)
+				testWaitForIndexTask(t, i, gotTask)
 			}
 
 			if tt.args.sortableAttribute != nil {
 				gotTask, err := i.UpdateSortableAttributes(&tt.args.sortableAttribute)
 				require.NoError(t, err)
-				testWaitForTask(t, i, gotTask)
+				testWaitForIndexTask(t, i, gotTask)
 			}
 
 			got, err := i.Search(tt.args.query, tt.args.request)
@@ -1204,7 +1204,7 @@ func TestIndex_FacetSearch(t *testing.T) {
 			if len(tt.args.filterableAttributes) > 0 {
 				updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
 				require.NoError(t, err)
-				testWaitForTask(t, i, updateFilter)
+				testWaitForIndexTask(t, i, updateFilter)
 			}
 
 			gotRaw, err := i.FacetSearch(tt.args.request)
