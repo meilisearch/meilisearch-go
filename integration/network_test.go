@@ -72,7 +72,7 @@ func Test_UpdateNetwork(t *testing.T) {
 				require.NoError(t, err)
 				task, ok := value.(*meilisearch.Task)
 				if !ok {
-					require.Fail(t, "expected task to be returned but got %T", value)
+					require.Failf(t, "unexpected type returned", "got %T", value)
 				}
 				testWaitForTask(t, sv, task)
 			},
@@ -144,7 +144,7 @@ func Test_UpdateNetwork(t *testing.T) {
 				require.Equal(t, tt.want.Leader, network.Leader)
 				require.Equal(t, tt.want.Remotes, network.Remotes)
 			} else {
-				require.Fail(t, "unexpected type returned: %T", value)
+				require.Failf(t, "unexpected type returned", "got %T", value)
 			}
 		})
 	}
