@@ -199,7 +199,7 @@ func Test_newIndex(t *testing.T) {
 			task, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: tt.args.uid})
 			require.NoError(t, err)
 
-			testWaitForTask(t, gotIdx, task)
+			testWaitForIndexTask(t, gotIdx, task)
 
 			gotIdxResult, err := gotIdx.FetchInfo()
 			require.NoError(t, err)
@@ -484,7 +484,7 @@ func TestIndex_Compact(t *testing.T) {
 			gotTask, err := idx.Compact()
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
-			testWaitForTask(t, idx, gotTask)
+			testWaitForIndexTask(t, idx, gotTask)
 		})
 	}
 }
