@@ -29,143 +29,79 @@ func Test_UpdateNetwork(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, experimentalFeatures.Network)
 
+	// Initial network setup
+	initialNetwork := &meilisearch.Network{
+		Self: meilisearch.String("TEST"),
+		Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
+			"ms-00": meilisearch.NewOpt(meilisearch.Remote{
+				URL:          meilisearch.String("https://example.com"),
+				SearchAPIKey: meilisearch.String("TEST"),
+			}),
+		}),
+	}
+
+	network, err := sv.UpdateNetwork(initialNetwork)
+	require.NoError(t, err)
+	require.Equal(t, "TEST", network.Self.Value)
+	require.Equal(t, "", network.Leader.Value)
+
 	tests := []struct {
-		name         string
-		input        *meilisearch.Network
-		wantSelf     string
-		wantSharding bool
-		wantRemotes  map[string]meilisearch.Opt[meilisearch.Remote]
+		name    string
+		update  *meilisearch.Network
+		want    *meilisearch.Network
 	}{
 		{
-			name: "set initial network",
-			input: &meilisearch.Network{
-				Self: meilisearch.String("TEST"),
+			name: "update self only",
+			update: &meilisearch.Network{
+				Self: meilisearch.NewOpt("NEW-SELF"),
+			},
+			want: &meilisearch.Network{
+				Self: meilisearch.NewOpt("NEW-SELF"),
 				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
 					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
 						URL:          meilisearch.String("https://example.com"),
 						SearchAPIKey: meilisearch.String("TEST"),
+						WriteAPIKey:  meilisearch.Null[string](),
 					}),
-				}),
-			},
-			wantSelf:     "TEST",
-			wantSharding: false,
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://example.com"),
-					SearchAPIKey: meilisearch.String("TEST"),
-					WriteAPIKey:  meilisearch.Null[string](),
 				}),
 			},
 		},
 		{
-			name: "update self only (remotes omitted)",
-			input: &meilisearch.Network{
+			name: "update remote url and search API key",
+			update: &meilisearch.Network{
+				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
+					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
+						URL:          meilisearch.String("https://updated.com"),
+						SearchAPIKey: meilisearch.String("UPDATED_API_KEY"),
+					}),
+				}),
+			},
+			want: &meilisearch.Network{
 				Self: meilisearch.NewOpt("NEW-SELF"),
-			},
-			wantSelf:     "NEW-SELF",
-			wantSharding: false,
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://example.com"),
-					SearchAPIKey: meilisearch.String("TEST"),
-					WriteAPIKey:  meilisearch.Null[string](),
-				}),
-			},
-		},
-		{
-			name: "update remote url only",
-			input: &meilisearch.Network{
 				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
 					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-						URL:         meilisearch.String("https://updated.com"),
-						WriteAPIKey: meilisearch.Null[string](),
-					}),
-				}),
-			},
-			wantSelf:     "NEW-SELF",
-			wantSharding: false,
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://updated.com"),
-					SearchAPIKey: meilisearch.String("TEST"), // unchanged
-					WriteAPIKey:  meilisearch.Null[string](),
-				}),
-			},
-		},
-		{
-			name: "update remote searchApiKey only",
-			input: &meilisearch.Network{
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
+						URL:          meilisearch.String("https://updated.com"),
 						SearchAPIKey: meilisearch.String("UPDATED_API_KEY"),
 						WriteAPIKey:  meilisearch.Null[string](),
 					}),
 				}),
 			},
-			wantSelf:     "NEW-SELF",
-			wantSharding: false,
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://updated.com"),
-					SearchAPIKey: meilisearch.String("UPDATED_API_KEY"), // unchanged
-					WriteAPIKey:  meilisearch.Null[string](),
-				}),
-			},
-		},
-		{
-			name: "remove searchApiKey",
-			input: &meilisearch.Network{
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-						SearchAPIKey: meilisearch.Null[string](),
-						WriteAPIKey:  meilisearch.Null[string](),
-					}),
-				}),
-			},
-			wantSelf:     "NEW-SELF",
-			wantSharding: false,
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://updated.com"),
-					SearchAPIKey: meilisearch.Null[string](),
-					WriteAPIKey:  meilisearch.Null[string](),
-				}),
-			},
 		},
 		{
 			name: "remove remote",
-			input: &meilisearch.Network{
+			update: &meilisearch.Network{
 				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
 					"ms-00": meilisearch.Null[meilisearch.Remote](),
 				}),
 			},
-			wantSharding: false,
-			wantSelf:     "NEW-SELF",
-			wantRemotes:  map[string]meilisearch.Opt[meilisearch.Remote]{},
-		},
-		{
-			name: "add new remote",
-			input: &meilisearch.Network{
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-					"ms-01": meilisearch.NewOpt(meilisearch.Remote{
-						URL:          meilisearch.String("https://new-remote.com"),
-						SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
-					}),
-				}),
-			},
-			wantSelf:     "NEW-SELF",
-			wantSharding: false,
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://new-remote.com"),
-					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
-					WriteAPIKey:  meilisearch.Null[string](),
-				}),
+			want: &meilisearch.Network{
+				Self:    meilisearch.NewOpt("NEW-SELF"),
+				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{}),
 			},
 		},
 		{
-			name: "add writeApiKey",
-			input: &meilisearch.Network{
+			name: "add new remote with keys",
+			update: &meilisearch.Network{
 				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
 					"ms-01": meilisearch.NewOpt(meilisearch.Remote{
 						URL:          meilisearch.String("https://new-remote.com"),
@@ -174,85 +110,14 @@ func Test_UpdateNetwork(t *testing.T) {
 					}),
 				}),
 			},
-			wantSelf:     "NEW-SELF",
-			wantSharding: false,
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://new-remote.com"),
-					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
-					WriteAPIKey:  meilisearch.String("WRITE-API-KEY"),
-				}),
-			},
-		},
-		{
-			name: "set writeApikey to empty",
-			input: &meilisearch.Network{
+			want: &meilisearch.Network{
+				Self: meilisearch.NewOpt("NEW-SELF"),
 				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
 					"ms-01": meilisearch.NewOpt(meilisearch.Remote{
 						URL:          meilisearch.String("https://new-remote.com"),
 						SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
-						WriteAPIKey:  meilisearch.String(""),
+						WriteAPIKey:  meilisearch.String("WRITE-API-KEY"),
 					}),
-				}),
-			},
-			wantSelf:     "NEW-SELF",
-			wantSharding: false,
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://new-remote.com"),
-					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
-					WriteAPIKey:  meilisearch.String(""),
-				}),
-			},
-		},
-		{
-			name: "set writeApikey to null",
-			input: &meilisearch.Network{
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-					"ms-01": meilisearch.NewOpt(meilisearch.Remote{
-						URL:          meilisearch.String("https://new-remote.com"),
-						SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
-						WriteAPIKey:  meilisearch.Null[string](),
-					}),
-				}),
-			},
-			wantSelf:     "NEW-SELF",
-			wantSharding: false,
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://new-remote.com"),
-					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
-					WriteAPIKey:  meilisearch.Null[string](),
-				}),
-			},
-		},
-		{
-			name: "enable sharding",
-			input: &meilisearch.Network{
-				Sharding: meilisearch.Bool(true),
-			},
-			wantSelf:     "NEW-SELF",
-			wantSharding: true,
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://new-remote.com"),
-					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
-					WriteAPIKey:  meilisearch.Null[string](),
-				}),
-			},
-		},
-		{
-			name: "disable sharding",
-			input: &meilisearch.Network{
-				Sharding: meilisearch.Bool(false),
-			},
-			wantSharding: false,
-			wantSelf:     "NEW-SELF",
-			wantRemotes: map[string]meilisearch.Opt[meilisearch.Remote]{
-				"ms-01": meilisearch.NewOpt(meilisearch.Remote{
-					URL:          meilisearch.String("https://new-remote.com"),
-					SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
-					WriteAPIKey:  meilisearch.Null[string](),
 				}),
 			},
 		},
@@ -260,12 +125,11 @@ func Test_UpdateNetwork(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			network, err := sv.UpdateNetwork(tt.input)
+			network, err := sv.UpdateNetwork(tt.update)
 			require.NoError(t, err)
-
-			require.Equal(t, tt.wantSelf, network.Self.Value)
-			require.Equal(t, tt.wantRemotes, network.Remotes.Value)
-			require.Equal(t, tt.wantSharding, network.Sharding.Value)
+			require.Equal(t, tt.want.Self.Value, network.Self.Value)
+			require.Equal(t, tt.want.Leader.Value, network.Leader.Value)
+			require.Equal(t, tt.want.Remotes.Value, network.Remotes.Value)
 		})
 	}
 }
