@@ -17,8 +17,10 @@ func Test_GetNetwork(t *testing.T) {
 
 	network, err := sv.GetNetwork()
 	require.NoError(t, err)
-	require.True(t, network.Remotes.Valid())
-	require.True(t, network.Self.Null())
+	require.NotEmpty(t, network.Version)
+	require.Empty(t, network.Remotes)
+	require.Empty(t, network.Self)
+	require.Empty(t, network.Leader)
 }
 
 func Test_UpdateNetwork(t *testing.T) {
@@ -29,81 +31,79 @@ func Test_UpdateNetwork(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, experimentalFeatures.Network)
 
-	// Initial network setup
-	initialNetwork := &meilisearch.Network{
+	initialNetwork := &meilisearch.UpdateNetworkRequest{
 		Self: meilisearch.String("TEST"),
-		Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-			"ms-00": meilisearch.NewOpt(meilisearch.Remote{
+		Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemote]{
+			"ms-00": meilisearch.NewOpt(meilisearch.UpdateRemote{
 				URL:          meilisearch.String("https://example.com"),
 				SearchAPIKey: meilisearch.String("TEST"),
 			}),
 		}),
 	}
-
 	network, err := sv.UpdateNetwork(initialNetwork)
 	require.NoError(t, err)
-	require.Equal(t, "TEST", network.Self.Value)
-	require.Equal(t, "", network.Leader.Value)
+	require.Equal(t, "TEST", network.Self)
+	require.Empty(t, network.Leader)
 
 	tests := []struct {
-		name    string
-		update  *meilisearch.Network
-		want    *meilisearch.Network
+		name   string
+		update *meilisearch.UpdateNetworkRequest
+		want   *meilisearch.Network
 	}{
 		{
 			name: "update self only",
-			update: &meilisearch.Network{
+			update: &meilisearch.UpdateNetworkRequest{
 				Self: meilisearch.NewOpt("NEW-SELF"),
 			},
 			want: &meilisearch.Network{
-				Self: meilisearch.NewOpt("NEW-SELF"),
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-						URL:          meilisearch.String("https://example.com"),
-						SearchAPIKey: meilisearch.String("TEST"),
-						WriteAPIKey:  meilisearch.Null[string](),
-					}),
-				}),
+				Self: "NEW-SELF",
+				Remotes: map[string]meilisearch.Remote{
+					"ms-00": {
+						URL:          "https://example.com",
+						SearchAPIKey: "TEST",
+						WriteAPIKey:  "",
+					},
+				},
 			},
 		},
 		{
 			name: "update remote url and search API key",
-			update: &meilisearch.Network{
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
+			update: &meilisearch.UpdateNetworkRequest{
+				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemote]{
+					"ms-00": meilisearch.NewOpt(meilisearch.UpdateRemote{
 						URL:          meilisearch.String("https://updated.com"),
 						SearchAPIKey: meilisearch.String("UPDATED_API_KEY"),
 					}),
 				}),
 			},
 			want: &meilisearch.Network{
-				Self: meilisearch.NewOpt("NEW-SELF"),
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-					"ms-00": meilisearch.NewOpt(meilisearch.Remote{
-						URL:          meilisearch.String("https://updated.com"),
-						SearchAPIKey: meilisearch.String("UPDATED_API_KEY"),
-						WriteAPIKey:  meilisearch.Null[string](),
-					}),
-				}),
+				Self: "NEW-SELF",
+				Remotes: map[string]meilisearch.Remote{
+					"ms-00": {
+						URL:          "https://updated.com",
+						SearchAPIKey: "UPDATED_API_KEY",
+						WriteAPIKey:  "",
+					},
+				},
 			},
 		},
 		{
 			name: "remove remote",
-			update: &meilisearch.Network{
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-					"ms-00": meilisearch.Null[meilisearch.Remote](),
+			update: &meilisearch.UpdateNetworkRequest{
+				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemote]{
+					"ms-00": meilisearch.Null[meilisearch.UpdateRemote](),
 				}),
 			},
 			want: &meilisearch.Network{
-				Self:    meilisearch.NewOpt("NEW-SELF"),
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{}),
+				Self:    "NEW-SELF",
+				Remotes: map[string]meilisearch.Remote{},
 			},
 		},
 		{
 			name: "add new remote with keys",
-			update: &meilisearch.Network{
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-					"ms-01": meilisearch.NewOpt(meilisearch.Remote{
+			update: &meilisearch.UpdateNetworkRequest{
+				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemote]{
+					"ms-01": meilisearch.NewOpt(meilisearch.UpdateRemote{
 						URL:          meilisearch.String("https://new-remote.com"),
 						SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
 						WriteAPIKey:  meilisearch.String("WRITE-API-KEY"),
@@ -111,25 +111,26 @@ func Test_UpdateNetwork(t *testing.T) {
 				}),
 			},
 			want: &meilisearch.Network{
-				Self: meilisearch.NewOpt("NEW-SELF"),
-				Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-					"ms-01": meilisearch.NewOpt(meilisearch.Remote{
-						URL:          meilisearch.String("https://new-remote.com"),
-						SearchAPIKey: meilisearch.NewOpt("NEW-REMOTE-KEY"),
-						WriteAPIKey:  meilisearch.String("WRITE-API-KEY"),
-					}),
-				}),
+				Self: "NEW-SELF",
+				Remotes: map[string]meilisearch.Remote{
+					"ms-01": {
+						URL:          "https://new-remote.com",
+						SearchAPIKey: "NEW-REMOTE-KEY",
+						WriteAPIKey:  "WRITE-API-KEY",
+					},
+				},
 			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			network, err := sv.UpdateNetwork(tt.update)
+			got, err := sv.UpdateNetwork(tt.update)
 			require.NoError(t, err)
-			require.Equal(t, tt.want.Self.Value, network.Self.Value)
-			require.Equal(t, tt.want.Leader.Value, network.Leader.Value)
-			require.Equal(t, tt.want.Remotes.Value, network.Remotes.Value)
+
+			require.Equal(t, tt.want.Self, got.Self)
+			require.Equal(t, tt.want.Leader, got.Leader)
+			require.Equal(t, tt.want.Remotes, got.Remotes)
 		})
 	}
 }

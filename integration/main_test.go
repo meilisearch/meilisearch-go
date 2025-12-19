@@ -174,9 +174,9 @@ func deleteAllIndexes(sv meilisearch.ServiceManager) (ok bool, err error) {
 }
 
 func resetNetwork(sv meilisearch.ServiceManager) (ok bool, err error) {
-	_, err = sv.UpdateNetwork(&meilisearch.Network{
+	_, err = sv.UpdateNetwork(&meilisearch.UpdateNetworkRequest{
 		Self:    meilisearch.Null[string](),
-		Remotes: meilisearch.Null[map[string]meilisearch.Opt[meilisearch.Remote]](),
+		Remotes: meilisearch.Null[map[string]meilisearch.Opt[meilisearch.UpdateRemote]](),
 	})
 	if err != nil {
 		return false, err

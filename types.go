@@ -15,16 +15,30 @@ const (
 )
 
 // Network represents the Meilisearch network configuration.
-// Each field is wrapped in an Opt so it can be explicitly included,
-// set to JSON null, or omitted entirely.
 type Network struct {
-	Self    Opt[string]                 `json:"self,omitempty"`
-	Leader  Opt[string]                 `json:"leader,omitempty"`
-	Remotes Opt[map[string]Opt[Remote]] `json:"remotes,omitempty"`
-	Version Opt[string]                 `json:"version,omitempty"`
+	Self    string            `json:"self,omitempty"`
+	Leader  string            `json:"leader,omitempty"`
+	Remotes map[string]Remote `json:"remotes,omitempty"`
+	Version string            `json:"version,omitempty"`
 }
 
-func (n Network) MarshalJSON() ([]byte, error) {
+// Remote describes a single remote Meilisearch node.
+type Remote struct {
+	URL          string `json:"url"`
+	SearchAPIKey string `json:"searchApiKey"`
+	WriteAPIKey  string `json:"writeApiKey"`
+}
+
+// UpdateNetworkRequest represents the Meilisearch network configuration update without leader.
+// Each field is wrapped in an Opt so it can be explicitly included,
+// set to JSON null, or omitted entirely.
+type UpdateNetworkRequest struct {
+	Self    Opt[string]                       `json:"self,omitempty"`
+	Remotes Opt[map[string]Opt[UpdateRemote]] `json:"remotes,omitempty"`
+	Version Opt[string]                       `json:"version,omitempty"`
+}
+
+func (n UpdateNetworkRequest) MarshalJSON() ([]byte, error) {
 	m := make(map[string]any)
 
 	if n.Self.Valid() {
@@ -39,12 +53,6 @@ func (n Network) MarshalJSON() ([]byte, error) {
 		m["remotes"] = nil
 	}
 
-	if n.Leader.Valid() {
-		m["leader"] = n.Leader.Value
-	} else if n.Leader.Null() {
-		m["leader"] = nil
-	}
-
 	if n.Version.Valid() {
 		m["version"] = n.Version.Value
 	} else if n.Version.Null() {
@@ -54,16 +62,16 @@ func (n Network) MarshalJSON() ([]byte, error) {
 	return json.Marshal(m)
 }
 
-// Remote describes a single remote Meilisearch node.
+// UpdateRemote describes a single remote Meilisearch node.
 // Each field is wrapped in an Opt so it can be explicitly included,
 // set to JSON null, or omitted entirely.
-type Remote struct {
+type UpdateRemote struct {
 	URL          Opt[string] `json:"url"`
 	SearchAPIKey Opt[string] `json:"searchApiKey,omitempty"`
 	WriteAPIKey  Opt[string] `json:"writeApiKey,omitempty"`
 }
 
-func (r Remote) MarshalJSON() ([]byte, error) {
+func (r UpdateRemote) MarshalJSON() ([]byte, error) {
 	m := make(map[string]any)
 
 	if r.URL.Valid() {

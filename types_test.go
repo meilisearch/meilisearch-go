@@ -117,43 +117,43 @@ func TestTimestampz_ToTime(t *testing.T) {
 	}
 }
 
-func TestNetwork_MarshalJSON(t *testing.T) {
+func TestUpdateNetwork_MarshalJSON(t *testing.T) {
 	t.Parallel()
 
-	type R = Opt[Remote]
+	type R = Opt[UpdateRemote]
 
 	tests := []struct {
 		name     string
-		in       Network
+		in       UpdateNetworkRequest
 		wantJSON string
 	}{
 		{
 			name:     "omit all when both fields are zero value",
-			in:       Network{},
+			in:       UpdateNetworkRequest{},
 			wantJSON: `{}`,
 		},
 		{
 			name: "self set, remotes omitted",
-			in: Network{
+			in: UpdateNetworkRequest{
 				Self: String("primary-node"),
 			},
 			wantJSON: `{"self":"primary-node"}`,
 		},
 		{
 			name: "self null, remotes omitted",
-			in: Network{
+			in: UpdateNetworkRequest{
 				Self: Null[string](),
 			},
 			wantJSON: `{"self":null}`,
 		},
 		{
 			name: "remotes set (one valid remote, one null), self omitted",
-			in: Network{
+			in: UpdateNetworkRequest{
 				Remotes: NewOpt(map[string]R{
-					"east": NewOpt(Remote{
+					"east": NewOpt(UpdateRemote{
 						URL: String("https://east.example.com"),
 					}),
-					"west": Null[Remote](),
+					"west": Null[UpdateRemote](),
 				}),
 			},
 			wantJSON: `{
@@ -165,11 +165,11 @@ func TestNetwork_MarshalJSON(t *testing.T) {
 		},
 		{
 			name: "self set and remotes set",
-			in: Network{
+			in: UpdateNetworkRequest{
 				Self: String("primary"),
 				Remotes: NewOpt(map[string]R{
-					"a": NewOpt(Remote{URL: String("https://a.example.com"), SearchAPIKey: String("sek_a")}),
-					"b": NewOpt(Remote{URL: Null[string]()}),
+					"a": NewOpt(UpdateRemote{URL: String("https://a.example.com"), SearchAPIKey: String("sek_a")}),
+					"b": NewOpt(UpdateRemote{URL: Null[string]()}),
 				}),
 			},
 			wantJSON: `{
@@ -182,36 +182,22 @@ func TestNetwork_MarshalJSON(t *testing.T) {
 		},
 		{
 			name: "remotes explicitly null",
-			in: Network{
+			in: UpdateNetworkRequest{
 				Self:    String("primary"),
 				Remotes: Null[map[string]R](),
 			},
 			wantJSON: `{"self":"primary","remotes":null}`,
 		},
 		{
-			name: "leader explicitly null",
-			in: Network{
-				Leader: Null[string](),
-			},
-			wantJSON: `{"leader": null}`,
-		},
-		{
-			name: "leader set",
-			in: Network{
-				Leader: String("leader"),
-			},
-			wantJSON: `{"leader": "leader"}`,
-		},
-		{
 			name: "version set",
-			in: Network{
+			in: UpdateNetworkRequest{
 				Version: String("uuid"),
 			},
 			wantJSON: `{"version": "uuid"}`,
 		},
 		{
 			name: "leader explicitly null",
-			in: Network{
+			in: UpdateNetworkRequest{
 				Version: Null[string](),
 			},
 			wantJSON: `{"version": null}`,
@@ -232,42 +218,42 @@ func TestRemote_MarshalJSON(t *testing.T) {
 
 	tests := []struct {
 		name     string
-		in       Remote
+		in       UpdateRemote
 		wantJSON string
 	}{
 		{
 			name:     "omit all when both fields are zero value",
-			in:       Remote{},
+			in:       UpdateRemote{},
 			wantJSON: `{}`,
 		},
 		{
 			name:     "url set, searchApiKey omitted",
-			in:       Remote{URL: String("https://east.example.com")},
+			in:       UpdateRemote{URL: String("https://east.example.com")},
 			wantJSON: `{"url":"https://east.example.com"}`,
 		},
 		{
 			name:     "url null, searchApiKey omitted",
-			in:       Remote{URL: Null[string]()},
+			in:       UpdateRemote{URL: Null[string]()},
 			wantJSON: `{"url":null}`,
 		},
 		{
 			name:     "url set, searchApiKey null",
-			in:       Remote{URL: String("https://east.example.com"), SearchAPIKey: Null[string]()},
+			in:       UpdateRemote{URL: String("https://east.example.com"), SearchAPIKey: Null[string]()},
 			wantJSON: `{"url":"https://east.example.com","searchApiKey":null}`,
 		},
 		{
 			name:     "both set",
-			in:       Remote{URL: String("https://east.example.com"), SearchAPIKey: String("sek_abc")},
+			in:       UpdateRemote{URL: String("https://east.example.com"), SearchAPIKey: String("sek_abc")},
 			wantJSON: `{"url":"https://east.example.com","searchApiKey":"sek_abc"}`,
 		},
 		{
 			name:     "writeApiKey set",
-			in:       Remote{WriteAPIKey: String("TEST-API-KEY")},
+			in:       UpdateRemote{WriteAPIKey: String("TEST-API-KEY")},
 			wantJSON: `{"writeApiKey": "TEST-API-KEY"}`,
 		},
 		{
 			name:     "writeApiKey null",
-			in:       Remote{WriteAPIKey: Null[string]()},
+			in:       UpdateRemote{WriteAPIKey: Null[string]()},
 			wantJSON: `{"writeApiKey": null}`,
 		},
 	}
