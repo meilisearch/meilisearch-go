@@ -5,19 +5,24 @@ import (
 	"net/http"
 )
 
-func (m *meilisearch) UpdateNetwork(params *UpdateNetworkRequest) (*Network, error) {
+func (m *meilisearch) UpdateNetwork(params *UpdateNetworkRequest) (any, error) {
 	return m.UpdateNetworkWithContext(context.Background(), params)
 }
 
-func (m *meilisearch) UpdateNetworkWithContext(ctx context.Context, params *UpdateNetworkRequest) (*Network, error) {
-	resp := new(Network)
+func (m *meilisearch) UpdateNetworkWithContext(ctx context.Context, params *UpdateNetworkRequest) (any, error) {
+	var resp any
+	if params.Leader.Valid() {
+		resp = new(Task)
+	} else {
+		resp = new(Network)
+	}
 	req := &internalRequest{
 		endpoint:            "/network",
 		method:              http.MethodPatch,
 		contentType:         contentTypeJSON,
 		withRequest:         params,
 		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusOK},
+		acceptedStatusCodes: []int{http.StatusOK, http.StatusAccepted},
 		functionName:        "UpdateNetwork",
 	}
 	if err := m.client.executeRequest(ctx, req); err != nil {

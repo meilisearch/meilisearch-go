@@ -34,6 +34,7 @@ type Remote struct {
 // set to JSON null, or omitted entirely.
 type UpdateNetworkRequest struct {
 	Self    Opt[string]                       `json:"self,omitempty"`
+	Leader  Opt[string]                       `json:"leader,omitempty"`
 	Remotes Opt[map[string]Opt[UpdateRemote]] `json:"remotes,omitempty"`
 	Version Opt[string]                       `json:"version,omitempty"`
 }
@@ -51,6 +52,12 @@ func (n UpdateNetworkRequest) MarshalJSON() ([]byte, error) {
 		m["remotes"] = n.Remotes.Value
 	} else if n.Remotes.Null() {
 		m["remotes"] = nil
+	}
+
+	if n.Leader.Valid() {
+		m["leader"] = n.Leader.Value
+	} else if n.Leader.Null() {
+		m["leader"] = nil
 	}
 
 	if n.Version.Valid() {

@@ -70,12 +70,16 @@ type ServiceManager interface {
 	ExportWithContext(ctx context.Context, params *ExportParams) (*TaskInfo, error)
 
 	// UpdateNetwork updates the network object.
+	// If leader is set to a value then UpdateNetwork will return *Task object.
+	// If leader is not set or explicitely set to null it will return *Network object.
 	// Updates are partial; only the provided fields are updated.
-	UpdateNetwork(params *UpdateNetworkRequest) (*Network, error)
+	UpdateNetwork(params *UpdateNetworkRequest) (any, error)
 
 	// UpdateNetworkWithContext updates the network object with a context.
+	// If leader is set to a value then UpdateNetwork will return *Task object.
+	// If leader is not set or explicitely set to null it will return *Network object.
 	// Updates are partial; only the provided fields are updated.
-	UpdateNetworkWithContext(ctx context.Context, params *UpdateNetworkRequest) (*Network, error)
+	UpdateNetworkWithContext(ctx context.Context, params *UpdateNetworkRequest) (any, error)
 
 	// Close closes the connection to the Meilisearch server.
 	Close()

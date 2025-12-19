@@ -189,6 +189,20 @@ func TestUpdateNetwork_MarshalJSON(t *testing.T) {
 			wantJSON: `{"self":"primary","remotes":null}`,
 		},
 		{
+			name: "leader set",
+			in: UpdateNetworkRequest{
+				Leader: String("uuid"),
+			},
+			wantJSON: `{"leader": "uuid"}`,
+		},
+		{
+			name: "leader explicitly null",
+			in: UpdateNetworkRequest{
+				Leader: Null[string](),
+			},
+			wantJSON: `{"leader": null}`,
+		},
+		{
 			name: "version set",
 			in: UpdateNetworkRequest{
 				Version: String("uuid"),
@@ -196,7 +210,7 @@ func TestUpdateNetwork_MarshalJSON(t *testing.T) {
 			wantJSON: `{"version": "uuid"}`,
 		},
 		{
-			name: "leader explicitly null",
+			name: "version explicitly null",
 			in: UpdateNetworkRequest{
 				Version: Null[string](),
 			},
