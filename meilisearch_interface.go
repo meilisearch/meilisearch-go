@@ -71,13 +71,13 @@ type ServiceManager interface {
 
 	// UpdateNetwork updates the network object.
 	// If leader is set to a value then UpdateNetwork will return *Task object.
-	// If leader is not set or explicitely set to null it will return *Network object.
+	// If leader is not set or explicitly set to null it will return *Network object.
 	// Updates are partial; only the provided fields are updated.
 	UpdateNetwork(params *UpdateNetworkRequest) (any, error)
 
 	// UpdateNetworkWithContext updates the network object with a context.
 	// If leader is set to a value then UpdateNetwork will return *Task object.
-	// If leader is not set or explicitely set to null it will return *Network object.
+	// If leader is not set or explicitly set to null it will return *Network object.
 	// Updates are partial; only the provided fields are updated.
 	UpdateNetworkWithContext(ctx context.Context, params *UpdateNetworkRequest) (any, error)
 
