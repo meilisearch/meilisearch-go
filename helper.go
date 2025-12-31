@@ -113,6 +113,10 @@ func transformCsvDocumentsQueryToMap(options *CsvDocumentsQuery) map[string]stri
 		m["primaryKey"] = options.PrimaryKey
 	}
 
+	if options.SkipCreation {
+		m["skipCreation"] = strconv.FormatBool(options.SkipCreation)
+	}
+
 	if options.CsvDelimiter != "" {
 		m["csvDelimiter"] = options.CsvDelimiter
 	}
@@ -177,6 +181,10 @@ func transformDocumentOptionsToMap(opts *DocumentOptions) map[string]string {
 	// Handle Primary Key
 	if opts.PrimaryKey != nil {
 		m["primaryKey"] = *opts.PrimaryKey
+	}
+
+	if opts.SkipCreation {
+		m["skipCreation"] = strconv.FormatBool(opts.SkipCreation)
 	}
 
 	// Handle Custom Metadata (This works even with `json:"-"`)

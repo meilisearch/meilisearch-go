@@ -677,7 +677,8 @@ type SimilarDocumentResult struct {
 // DocumentOptions is the options struct for adding or updating documents (JSON/NDJSON)
 // and deleting documents.
 type DocumentOptions struct {
-	PrimaryKey *string `json:"primaryKey,omitempty"`
+	PrimaryKey   *string `json:"primaryKey,omitempty"`
+	SkipCreation bool    `json:"skipCreation,omitempty"`
 	// TaskCustomMetadata is the custom metadata to add to the task.
 	// This string will be associated with the task and visible in the task details.
 	// It is optional.
@@ -687,6 +688,7 @@ type DocumentOptions struct {
 type CsvDocumentsQuery struct {
 	PrimaryKey   string `json:"primaryKey,omitempty"`
 	CsvDelimiter string `json:"csvDelimiter,omitempty"`
+	SkipCreation bool   `json:"skipCreation,omitempty"`
 	// TaskCustomMetadata is the custom metadata to add to the task.
 	// This string will be associated with the task and visible in the task details.
 	// It is optional.
