@@ -67,7 +67,8 @@ add_or_replace_documents_1: |-
       "release_date": "2019-03-23",
     },
   }
-  client.Index("movies").AddDocuments(documents, nil)
+  options := &meilisearch.DocumentOptions{SkipCreation: false}
+  client.Index("movies").AddDocuments(documents, options)
 add_or_update_documents_1: |-
   documents := []map[string]interface{}{
     {
@@ -76,7 +77,8 @@ add_or_update_documents_1: |-
       "genres": "comedy",
     },
   }
-  client.Index("movies").UpdateDocuments(documents, nil)
+  options := &meilisearch.DocumentOptions{SkipCreation: true}
+  client.Index("movies").UpdateDocuments(documents, options)
 delete_all_documents_1: |-
   client.Index("movies").DeleteAllDocuments()
 delete_one_document_1: |-
