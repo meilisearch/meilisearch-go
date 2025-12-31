@@ -191,13 +191,31 @@ func TestTransformDocumentOptionsToMap(t *testing.T) {
 			},
 		},
 		{
-			name: "With Both",
+			name: "With SkipCreation true",
 			input: &DocumentOptions{
+				SkipCreation: true,
+			},
+			expected: map[string]string{
+				"skipCreation": "true",
+			},
+		},
+		{
+			name: "With SkipCreation false",
+			input: &DocumentOptions{
+				SkipCreation: false,
+			},
+			expected: map[string]string{},
+		},
+		{
+			name: "With All",
+			input: &DocumentOptions{
+				SkipCreation:       true,
 				PrimaryKey:         &primaryKey,
 				TaskCustomMetadata: "meta-123",
 			},
 			expected: map[string]string{
 				"primaryKey":     "id",
+				"skipCreation":   "true",
 				"customMetadata": "meta-123",
 			},
 		},
@@ -255,15 +273,33 @@ func TestTransformCsvDocumentsQueryToMap(t *testing.T) {
 			},
 		},
 		{
+			name: "With SkipCreation true",
+			input: &CsvDocumentsQuery{
+				SkipCreation: true,
+			},
+			expected: map[string]string{
+				"skipCreation": "true",
+			},
+		},
+		{
+			name: "With SkipCreation false",
+			input: &CsvDocumentsQuery{
+				SkipCreation: false,
+			},
+			expected: map[string]string{},
+		},
+		{
 			name: "With All",
 			input: &CsvDocumentsQuery{
 				PrimaryKey:         "id",
 				CsvDelimiter:       ";",
+				SkipCreation:       true,
 				TaskCustomMetadata: "meta-csv-all",
 			},
 			expected: map[string]string{
 				"primaryKey":     "id",
 				"csvDelimiter":   ";",
+				"skipCreation":   "true",
 				"customMetadata": "meta-csv-all",
 			},
 		},

@@ -343,6 +343,7 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 	type args struct {
 		UID          string
 		client       meilisearch.ServiceManager
+		options      *meilisearch.DocumentOptions
 		documentsPtr interface{}
 	}
 	type resp struct {
@@ -404,6 +405,33 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "TestIndexAddDocumentsWithSkipCreation",
+			args: args{
+				UID:    "TestIndexAddDocumentsWithSkipCreation",
+				client: sv,
+				options: &meilisearch.DocumentOptions{
+					SkipCreation: true,
+				},
+				documentsPtr: []map[string]interface{}{
+					{"BookID": 123, "Title": "Go Crazy"},
+					{"BookID": 124, "Title": "Hacking APIs"},
+				},
+			},
+			resp: resp{
+				wantResp: &meilisearch.TaskInfo{
+					TaskUID: 0,
+					Status:  "enqueued",
+					Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
+				},
+				documentsRes: meilisearch.DocumentsResult{
+					Results: meilisearch.Hits{},
+					Limit:   3,
+					Offset:  0,
+					Total:   0,
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -412,7 +440,7 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocuments(tt.args.documentsPtr, nil)
+			gotResp, err := i.AddDocuments(tt.args.documentsPtr, tt.args.options)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
 			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
@@ -427,7 +455,7 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 			require.NoError(t, err)
 			require.Equal(t, tt.resp.documentsRes, documents)
 
-			gotResp, err = i.UpdateDocuments(tt.args.documentsPtr, nil)
+			gotResp, err = i.UpdateDocuments(tt.args.documentsPtr, tt.args.options)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
 			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
@@ -1047,6 +1075,22 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 				Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
 			},
 		},
+		{
+			name: "TestIndexBasicAddDocumentsCsvWithSkipCreation",
+			args: args{
+				UID:       "csv",
+				client:    sv,
+				documents: testCsvDocuments,
+				options: &meilisearch.CsvDocumentsQuery{
+					SkipCreation: true,
+				},
+			},
+			wantResp: &meilisearch.TaskInfo{
+				TaskUID: 0,
+				Status:  "enqueued",
+				Type:    meilisearch.TaskTypeDocumentAdditionOrUpdate,
+			},
+		},
 	}
 
 	testAddDocumentsCsv := func(t *testing.T, tt testData, testReader bool) {
@@ -1067,7 +1111,10 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 			i := c.Index(uid)
 			t.Cleanup(cleanup(c))
 
-			wantDocs := testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
+			var wantDocs []map[string]interface{}
+			if !tt.args.options.SkipCreation {
+				wantDocs = testParseCsvDocuments(t, bytes.NewReader(tt.args.documents))
+			}
 
 			var (
 				gotResp *meilisearch.TaskInfo
