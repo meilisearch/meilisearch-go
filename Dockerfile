@@ -1,6 +1,8 @@
-FROM golang:1.20-buster
+FROM golang:1.21-bookworm
 
 WORKDIR /home/package
+
+RUN git config --global --add safe.directory /home/package
 
 COPY go.mod .
 COPY go.sum .
