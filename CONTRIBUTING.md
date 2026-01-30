@@ -54,6 +54,15 @@ You can run integration test and linter check by command:
 make test
 ```
 
+### Generate Mocks for new features <!-- omit in TOC -->
+
+If you modify an interface or create a new one, you need to update the mocks.
+You can run the following command to generate the mocks:
+
+```shell
+make mock
+```
+
 ## Git Guidelines
 
 ### Git Branches <!-- omit in TOC -->
