@@ -15,4 +15,4 @@ template-schema: '{{.Template}}.schema.json'
 packages:
   github.com/meilisearch/meilisearch-go:
     config:
-      all: true
+      include-interface-regex: '^[A-Z].*'
