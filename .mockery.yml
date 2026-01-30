@@ -1,6 +1,6 @@
 all: false
 dir: 'mocks'
-filename: '{{.SrcPackageName}}{{.InterfaceName | snakecase}}_mock.go'
+filename: '{{.SrcPackageName}}_{{.InterfaceName | snakecase}}_mock.go'
 force-file-write: true
 formatter: goimports
 generate: true
