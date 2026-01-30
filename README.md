@@ -40,6 +40,8 @@
     - [Custom Search With Filters](#custom-search-with-filters)
     - [Customize Client](#customize-client)
     - [Make SDK Faster](#make-sdk-faster)
+    - [Using mocks for testing](#using-mocks-for-testing)
+      - [Available Mocks](#available-mocks)
 - [🤖 Compatibility with Meilisearch](#-compatibility-with-meilisearch)
 - [⚡️ Benchmark Performance](#️-benchmark-performance)
 - [💡 Learn more](#-learn-more)
@@ -287,6 +289,73 @@ func main() {
     )
 }
 ```
+
+## Using Mocks for Testing
+
+This SDK provides generated mocks to facilitate unit testing of your
+applications. These mocks are located in the `mocks` package and are generated
+using [mockery](https://github.com/vektra/mockery), utilizing
+[testify/mock](https://github.com/stretchr/testify) under the hood.
+
+### Example
+
+Here is an example demonstrating how to test a function that depends on
+`meilisearch.ServiceManager`.
+
+Suppose you have a function `CreateMyIndex` that interacts with the
+Meilisearch client:
+
+```go
+func CreateMyIndex(client meilisearch.ServiceManager, uid string) error {
+	_, err := client.CreateIndex(&meilisearch.IndexConfig{Uid: uid, PrimaryKey: "id"})
+	return err
+}
+```
+
+You can write a unit test for this function using the generated mock:
+
+```go
+package main
+
+import (
+	"testing"
+
+	"github.com/meilisearch/meilisearch-go"
+	"github.com/meilisearch/meilisearch-go/mocks"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestCreateMyIndex(t *testing.T) {
+	// Create the mock object
+	// The naming convention is Mock + PackageName + InterfaceName
+	mockClient := mocks.NewMockmeilisearchServiceManager(t)
+
+	// Set up expectations
+	// Expect CreateIndex to be called with a specific config, and return a successful TaskInfo and nil error
+	expectedConfig := &meilisearch.IndexConfig{Uid: "movies", PrimaryKey: "id"}
+	mockClient.On("CreateIndex", expectedConfig).
+		Return(&meilisearch.TaskInfo{TaskUID: 1}, nil)
+
+	// Call the code under test
+	err := CreateMyIndex(mockClient, "movies")
+
+	// Assertions
+	assert.NoError(t, err)
+
+	// Verify that the expectations were met
+	mockClient.AssertExpectations(t)
+}
+```
+
+### Available Mocks
+
+All interfaces in the `meilisearch` package have corresponding mocks in the `mocks` directory. Some common ones include:
+
+- `ServiceManager`: `mocks.NewMockmeilisearchServiceManager(t)`
+- `IndexManager`: `mocks.NewMockmeilisearchIndexManager(t)`
+- `DocumentManager`: `mocks.NewMockmeilisearchDocumentManager(t)`
+
+Ensure you add `github.com/stretchr/testify` to your test dependencies.
 
 ## 🤖 Compatibility with Meilisearch
 
