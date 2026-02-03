@@ -56,7 +56,7 @@ jobs:
         run: go mod download
 
       - name: Meilisearch setup (latest version) with Docker
-        run: docker run -d -p 7700:7700 getmeili/meilisearch-enterprise:latest meilisearch --master-key=masterKey --no-analytics
+        run: docker run -d -p 7700:7700 getmeili/meilisearch-enterprise:latest meilisearch --master-key=masterKey --no-analytics --experimental-allowed-ip-networks=any
 
       - name: Run unit tests
         run: |
