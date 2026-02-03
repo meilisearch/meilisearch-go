@@ -624,7 +624,7 @@ type FacetSearchRequest struct {
 	FacetName            string   `json:"facetName,omitempty"`
 	FacetQuery           string   `json:"facetQuery,omitempty"`
 	Q                    string   `json:"q,omitempty"`
-	Filter               string   `json:"filter,omitempty"`
+	Filter               interface{} `json:"filter,omitempty"`
 	MatchingStrategy     string   `json:"matchingStrategy,omitempty"`
 	AttributesToSearchOn []string `json:"attributesToSearchOn,omitempty"`
 	ExhaustiveFacetCount bool     `json:"exhaustiveFacetCount,omitempty"`
