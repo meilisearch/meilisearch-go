@@ -538,6 +538,7 @@ type SearchRequest struct {
 	ShowMatchesPosition     bool                     `json:"showMatchesPosition,omitempty"`
 	ShowRankingScore        bool                     `json:"showRankingScore,omitempty"`
 	ShowRankingScoreDetails bool                     `json:"showRankingScoreDetails,omitempty"`
+	ShowPerformanceDetails  bool                     `json:"showPerformanceDetails,omitempty"`
 	Facets                  []string                 `json:"facets,omitempty"`
 	Sort                    []string                 `json:"sort,omitempty"`
 	Vector                  []float32                `json:"vector,omitempty"`
@@ -596,6 +597,7 @@ type SearchResponse struct {
 	FacetStats         json.RawMessage `json:"facetStats,omitempty"`
 	IndexUID           string          `json:"indexUid,omitempty"`
 	QueryVector        *[]float32      `json:"queryVector,omitempty"`
+	PerformanceDetails json.RawMessage `json:"performanceDetails,omitempty"`
 }
 
 type MultiSearchResponse struct {
@@ -661,6 +663,7 @@ type SimilarDocumentQuery struct {
 	Filter                  string      `json:"filter,omitempty"`
 	ShowRankingScore        bool        `json:"showRankingScore,omitempty"`
 	ShowRankingScoreDetails bool        `json:"showRankingScoreDetails,omitempty"`
+	ShowPerformanceDetails  bool        `json:"showPerformanceDetails,omitempty"`
 	RankingScoreThreshold   float64     `json:"rankingScoreThreshold,omitempty"`
 	RetrieveVectors         bool        `json:"retrieveVectors,omitempty"`
 }
