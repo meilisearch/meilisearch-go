@@ -669,12 +669,13 @@ type SimilarDocumentQuery struct {
 }
 
 type SimilarDocumentResult struct {
-	Hits               Hits   `json:"hits,omitempty"`
-	ID                 string `json:"id,omitempty"`
-	ProcessingTimeMS   int64  `json:"processingTimeMs,omitempty"`
-	Limit              int64  `json:"limit,omitempty"`
-	Offset             int64  `json:"offset,omitempty"`
-	EstimatedTotalHits int64  `json:"estimatedTotalHits,omitempty"`
+	Hits               Hits                   `json:"hits,omitempty"`
+	ID                 string                 `json:"id,omitempty"`
+	ProcessingTimeMS   int64                  `json:"processingTimeMs,omitempty"`
+	Limit              int64                  `json:"limit,omitempty"`
+	Offset             int64                  `json:"offset,omitempty"`
+	EstimatedTotalHits int64                  `json:"estimatedTotalHits,omitempty"`
+	PerformanceDetails map[string]interface{} `json:"performanceDetails,omitempty"`
 }
 
 // DocumentOptions is the options struct for adding or updating documents (JSON/NDJSON)

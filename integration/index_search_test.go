@@ -1,4 +1,4 @@
-package integration
+﻿package integration
 
 import (
 	"crypto/tls"
@@ -294,7 +294,7 @@ func TestIndex_Search(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: sv,
-				query:  "王子",
+				query:  "çŽ‹å­",
 				request: &meilisearch.SearchRequest{
 					Locales: []string{"jpn"},
 				},
@@ -302,7 +302,7 @@ func TestIndex_Search(t *testing.T) {
 			want: &meilisearch.SearchResponse{
 				Hits: meilisearch.Hits{
 					map[string]json.RawMessage{
-						"book_id": toRawMessage(float64(1050)), "title": toRawMessage("星の王子さま"),
+						"book_id": toRawMessage(float64(1050)), "title": toRawMessage("æ˜Ÿã®çŽ‹å­ã•ã¾"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1234,6 +1234,56 @@ func TestIndex_FacetSearch(t *testing.T) {
 			}
 
 			require.Equal(t, tt.want.FacetQuery, got.FacetQuery)
+		})
+	}
+}
+
+func TestIndex_SearchWithPerformanceDetails(t *testing.T) {
+	sv := setup(t, "")
+
+	type args struct {
+		UID        string
+		PrimaryKey string
+		client     meilisearch.ServiceManager
+		query      string
+		request    *meilisearch.SearchRequest
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "TestIndexSearchWithPerformanceDetails",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				query:  "prince",
+				request: &meilisearch.SearchRequest{
+					ShowPerformanceDetails: true,
+				},
+			},
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpIndexForFaceting(tt.args.client)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			got, err := i.Search(tt.args.query, tt.args.request)
+
+			if tt.wantErr {
+				require.Error(t, err)
+				return
+			}
+
+			require.NoError(t, err)
+			require.NotNil(t, got.PerformanceDetails)
+			require.NotEmpty(t, got.PerformanceDetails)
 		})
 	}
 }
