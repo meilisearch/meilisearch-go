@@ -1,0 +1,18 @@
+all: false
+dir: 'mocks'
+filename: '{{.SrcPackageName}}_{{.InterfaceName | snakecase}}_mock.go'
+force-file-write: true
+formatter: goimports
+generate: true
+include-auto-generated: false
+log-level: info
+structname: '{{.Mock}}{{.SrcPackageName}}{{.InterfaceName}}'
+pkgname: 'mocks'
+recursive: true
+require-template-schema-exists: true
+template: testify
+template-schema: '{{.Template}}.schema.json'
+packages:
+  github.com/meilisearch/meilisearch-go:
+    config:
+      include-interface-regex: '^[A-Z].*'
