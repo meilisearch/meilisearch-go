@@ -1088,7 +1088,18 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			UID:    "indexUID",
+			UID:    "indexUIDPerformance",
+			client: sv,
+			request: &meilisearch.SimilarDocumentQuery{
+				Id:                     "123",
+				Embedder:               "default",
+				ShowPerformanceDetails: true,
+			},
+			resp:    new(meilisearch.SimilarDocumentResult),
+			wantErr: false,
+		},
+		{
+			UID:    "indexUIDError",
 			client: sv,
 			request: &meilisearch.SimilarDocumentQuery{
 				Embedder: "default",
@@ -1113,6 +1124,12 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 
 			require.NoError(t, err)
 			require.NotNil(t, tt.resp)
+
+			if tt.request.ShowPerformanceDetails {
+				require.NotNil(t, tt.resp.PerformanceDetails)
+				require.NotEmpty(t, tt.resp.PerformanceDetails)
+				require.Contains(t, tt.resp.PerformanceDetails, "executionTimeMs")
+			}
 		})
 	}
 }
@@ -1283,7 +1300,14 @@ func TestIndex_SearchWithPerformanceDetails(t *testing.T) {
 
 			require.NoError(t, err)
 			require.NotNil(t, got.PerformanceDetails)
-			require.NotEmpty(t, got.PerformanceDetails)
+
+			var performanceDetails map[string]interface{}
+			err = json.Unmarshal(got.PerformanceDetails, &performanceDetails)
+			require.NoError(t, err)
+			require.NotEmpty(t, performanceDetails)
+
+			// Ensure typical performance fields are present
+			require.Contains(t, performanceDetails, "executionTimeMs")
 		})
 	}
 }
