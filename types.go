@@ -675,7 +675,7 @@ type SimilarDocumentResult struct {
 	Limit              int64                  `json:"limit,omitempty"`
 	Offset             int64                  `json:"offset,omitempty"`
 	EstimatedTotalHits int64                  `json:"estimatedTotalHits,omitempty"`
-	PerformanceDetails map[string]interface{} `json:"performanceDetails,omitempty"`
+	PerformanceDetails json.RawMessage        `json:"performanceDetails,omitempty"`
 }
 
 // DocumentOptions is the options struct for adding or updating documents (JSON/NDJSON)

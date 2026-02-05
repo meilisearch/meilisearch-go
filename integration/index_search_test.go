@@ -294,7 +294,7 @@ func TestIndex_Search(t *testing.T) {
 			args: args{
 				UID:    "indexUID",
 				client: sv,
-				query:  "çŽ‹å­",
+				query:  "王子",
 				request: &meilisearch.SearchRequest{
 					Locales: []string{"jpn"},
 				},
@@ -302,7 +302,7 @@ func TestIndex_Search(t *testing.T) {
 			want: &meilisearch.SearchResponse{
 				Hits: meilisearch.Hits{
 					map[string]json.RawMessage{
-						"book_id": toRawMessage(float64(1050)), "title": toRawMessage("æ˜Ÿã®çŽ‹å­ã•ã¾"),
+						"book_id": toRawMessage(float64(1050)), "title": toRawMessage("星の王子さま"),
 					},
 				},
 				EstimatedTotalHits: 1,
@@ -1128,7 +1128,11 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 			if tt.request.ShowPerformanceDetails {
 				require.NotNil(t, tt.resp.PerformanceDetails)
 				require.NotEmpty(t, tt.resp.PerformanceDetails)
-				require.Contains(t, tt.resp.PerformanceDetails, "executionTimeMs")
+
+				var performanceDetails map[string]interface{}
+				err = json.Unmarshal(tt.resp.PerformanceDetails, &performanceDetails)
+				require.NoError(t, err)
+				require.Contains(t, performanceDetails, "executionTimeMs")
 			}
 		})
 	}
