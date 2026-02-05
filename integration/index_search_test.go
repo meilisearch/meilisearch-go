@@ -1213,6 +1213,26 @@ func TestIndex_FacetSearch(t *testing.T) {
 			},
 			wantErr: false,
 		},
+		{
+			name: "TestIndexFacetSearchWithFilterArray",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				request: &meilisearch.FacetSearchRequest{
+					FacetName:  "tag",
+					FacetQuery: "Novel",
+					Filter:     []string{"tag = Novel"},
+				},
+				filterableAttributes: []interface{}{"tag"},
+			},
+			want: &meilisearch.FacetSearchResponse{
+				FacetHits: meilisearch.Hits{
+					{"value": toRawMessage("Novel"), "count": toRawMessage(5)},
+				},
+				FacetQuery: "Novel",
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
