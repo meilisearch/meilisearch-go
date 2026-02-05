@@ -1,4 +1,4 @@
-package integration
+﻿package integration
 
 import (
 	"crypto/tls"
@@ -1088,7 +1088,18 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			UID:    "indexUID",
+			UID:    "indexUIDPerformance",
+			client: sv,
+			request: &meilisearch.SimilarDocumentQuery{
+				Id:                     "123",
+				Embedder:               "default",
+				ShowPerformanceDetails: true,
+			},
+			resp:    new(meilisearch.SimilarDocumentResult),
+			wantErr: false,
+		},
+		{
+			UID:    "indexUIDError",
 			client: sv,
 			request: &meilisearch.SimilarDocumentQuery{
 				Embedder: "default",
@@ -1113,6 +1124,16 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 
 			require.NoError(t, err)
 			require.NotNil(t, tt.resp)
+
+			if tt.request.ShowPerformanceDetails {
+				require.NotNil(t, tt.resp.PerformanceDetails)
+				require.NotEmpty(t, tt.resp.PerformanceDetails)
+
+				var performanceDetails map[string]interface{}
+				err = json.Unmarshal(tt.resp.PerformanceDetails, &performanceDetails)
+				require.NoError(t, err)
+				require.Contains(t, performanceDetails, "executionTimeMs")
+			}
 		})
 	}
 }
@@ -1254,6 +1275,63 @@ func TestIndex_FacetSearch(t *testing.T) {
 			}
 
 			require.Equal(t, tt.want.FacetQuery, got.FacetQuery)
+		})
+	}
+}
+
+func TestIndex_SearchWithPerformanceDetails(t *testing.T) {
+	sv := setup(t, "")
+
+	type args struct {
+		UID        string
+		PrimaryKey string
+		client     meilisearch.ServiceManager
+		query      string
+		request    *meilisearch.SearchRequest
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantErr bool
+	}{
+		{
+			name: "TestIndexSearchWithPerformanceDetails",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				query:  "prince",
+				request: &meilisearch.SearchRequest{
+					ShowPerformanceDetails: true,
+				},
+			},
+			wantErr: false,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpIndexForFaceting(tt.args.client)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			got, err := i.Search(tt.args.query, tt.args.request)
+
+			if tt.wantErr {
+				require.Error(t, err)
+				return
+			}
+
+			require.NoError(t, err)
+			require.NotNil(t, got.PerformanceDetails)
+
+			var performanceDetails map[string]interface{}
+			err = json.Unmarshal(got.PerformanceDetails, &performanceDetails)
+			require.NoError(t, err)
+			require.NotEmpty(t, performanceDetails)
+
+			// Ensure typical performance fields are present
+			require.Contains(t, performanceDetails, "executionTimeMs")
 		})
 	}
 }

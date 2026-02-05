@@ -3,6 +3,7 @@ package integration
 import (
 	"context"
 	"crypto/tls"
+	"encoding/json"
 	"errors"
 	"math"
 	"strings"
@@ -2083,6 +2084,37 @@ func TestClient_MultiSearch(t *testing.T) {
 			setup: "books",
 		},
 		{
+			name: "TestClientMultiSearchWithPerformanceDetails",
+			args: args{
+				client: sv,
+				queries: &meilisearch.MultiSearchRequest{
+					Queries: []*meilisearch.SearchRequest{
+						{
+							IndexUID:               "TestClientMultiSearchWithPerformanceDetails",
+							Query:                  "wonder",
+							ShowPerformanceDetails: true,
+						},
+					},
+				},
+				UIDS: []string{"TestClientMultiSearchWithPerformanceDetails"},
+			},
+			want: &meilisearch.MultiSearchResponse{
+				Results: []meilisearch.SearchResponse{
+					{
+						Hits: meilisearch.Hits{
+							{"book_id": toRawMessage(1), "title": toRawMessage("Alice In Wonderland")},
+						},
+						EstimatedTotalHits: 1,
+						Offset:             0,
+						Limit:              20,
+						Query:              "wonder",
+						IndexUID:           "TestClientMultiSearchWithPerformanceDetails",
+					},
+				},
+			},
+			setup: "books",
+		},
+		{
 			name: "TestClientMultiSearchOnTwoIndexes",
 			args: args{
 				client: sv,
@@ -2355,7 +2387,20 @@ func TestClient_MultiSearch(t *testing.T) {
 				require.NotNil(t, got)
 				got.ProcessingTimeMs = 0 // Can vary.
 
-				// Compare results while ignoring ProcessingTimeMs
+				for i := range got.Results {
+					got.Results[i].ProcessingTimeMs = 0 // Can vary.
+					if tt.args.queries.Queries[i].ShowPerformanceDetails {
+						require.NotNil(t, got.Results[i].PerformanceDetails)
+						var performanceDetails map[string]interface{}
+						err = json.Unmarshal(got.Results[i].PerformanceDetails, &performanceDetails)
+						require.NoError(t, err)
+						require.NotEmpty(t, performanceDetails)
+						require.Contains(t, performanceDetails, "executionTimeMs")
+						got.Results[i].PerformanceDetails = nil // Zero out for comparison
+					}
+				}
+
+				// Compare results while ignoring non-deterministic fields
 				require.Equal(t, tt.want.Results, got.Results)
 				require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
 				require.Equal(t, tt.want.SemanticHitCount, got.SemanticHitCount)
