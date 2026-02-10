@@ -1097,6 +1097,17 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 			resp:    new(meilisearch.SimilarDocumentResult),
 			wantErr: true,
 		},
+		{
+			UID:    "indexUID",
+			client: sv,
+			request: &meilisearch.SimilarDocumentQuery{
+				Id:                     "123",
+				Embedder:               "default",
+				ShowPerformanceDetails: true,
+			},
+			resp:    new(meilisearch.SimilarDocumentResult),
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {
@@ -1114,6 +1125,10 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 
 			require.NoError(t, err)
 			require.NotNil(t, tt.resp)
+
+			if tt.request.ShowPerformanceDetails {
+				require.NotNil(t, tt.resp.PerformanceDetails)
+			}
 		})
 	}
 }
