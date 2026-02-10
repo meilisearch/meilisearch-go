@@ -852,3 +852,5 @@ update_network_1: |-
       },
     },
   });
+compact_index_1: |-
+  client.Index("INDEX_UID").Compact();
