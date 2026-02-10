@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/meilisearch/meilisearch-go"
+	"github.com/stretchr/testify/assert"
 
 	"github.com/stretchr/testify/require"
 )
@@ -1256,4 +1257,20 @@ func TestIndex_FacetSearch(t *testing.T) {
 			require.Equal(t, tt.want.FacetQuery, got.FacetQuery)
 		})
 	}
+}
+
+func TestIndex_ShowPerformanceDetails(t *testing.T) {
+	sv := setup(t, "")
+	t.Cleanup(cleanup(sv))
+
+	setUpIndexForFaceting(sv)
+
+	idx := sv.Index("indexUID")
+
+	resp, err := idx.Search("Pride", &meilisearch.SearchRequest{
+		ShowPerformanceDetails: true,
+	})
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	assert.NotNil(t, resp.PerformanceDetails)
 }
