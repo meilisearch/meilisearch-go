@@ -695,6 +695,21 @@ primary_field_guide_update_document_primary_key: |-
 authorization_header_1: |-
   client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
   client.GetKeys(nil);
+tenant_token_guide_generate_sdk_1: |-
+  searchRules := map[string]interface{}{
+    "patient_medical_records": map[string]string{
+      "filter": "user_id = 1",
+    },
+  }
+  options := &meilisearch.TenantTokenOptions{
+    APIKey: "B5KdX2MY2jV6EXfUs6scSfmC...",
+    ExpiresAt: time.Date(2025, time.December, 20, 0, 0, 0, 0, time.UTC),
+  }
+
+  token, err := client.GenerateTenantToken(searchRules, options);
+tenant_token_guide_search_sdk_1: |-
+  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
+  client.Index("patient_medical_records").Search("blood test", &meilisearch.SearchRequest{});
 synonyms_guide_1: |-
   synonyms := map[string][]string{
     "great":      []string{"fantastic"},
