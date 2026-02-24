@@ -17,7 +17,7 @@ import (
 var (
 	masterKey           = "masterKey"
 	defaultRankingRules = []string{
-		"words", "typo", "proximity", "attribute", "sort", "exactness",
+		"words", "typo", "proximity", "attributeRank", "sort", "wordPosition", "exactness",
 	}
 	defaultTypoTolerance = meilisearch.TypoTolerance{
 		Enabled: true,
