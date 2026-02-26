@@ -549,7 +549,7 @@ getting_started_add_documents: |-
   )
 
   func main() {
-    client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
+    client := meilisearch.New("MEILISEARCH_URL", meilisearch.WithAPIKey("masterKey"))
 
     jsonFile, _ := os.Open("movies.json")
     defer jsonFile.Close()
@@ -693,7 +693,7 @@ primary_field_guide_update_document_primary_key: |-
     PrimaryKey: "title",
   })
 authorization_header_1: |-
-  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
+  client := meilisearch.New("MEILISEARCH_URL", meilisearch.WithAPIKey("masterKey"))
   client.GetKeys(nil);
 tenant_token_guide_generate_sdk_1: |-
   searchRules := map[string]interface{}{
@@ -708,7 +708,7 @@ tenant_token_guide_generate_sdk_1: |-
 
   token, err := client.GenerateTenantToken(searchRules, options);
 tenant_token_guide_search_sdk_1: |-
-  client := meilisearch.New("http://localhost:7700", meilisearch.WithAPIKey("masterKey"))
+  client := meilisearch.New("MEILISEARCH_URL", meilisearch.WithAPIKey("masterKey"))
   client.Index("patient_medical_records").Search("blood test", &meilisearch.SearchRequest{});
 synonyms_guide_1: |-
   synonyms := map[string][]string{
