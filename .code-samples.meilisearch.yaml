@@ -422,83 +422,9 @@ filtering_guide_nested_1: |-
   resp, err := client.Index("movie_ratings").Search("thriller", &meilisearch.SearchRequest{
     Filter: "rating.users >= 90",
   })
-search_parameter_guide_query_1: |-
-  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{})
-search_parameter_guide_offset_1: |-
-  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
-    Offset: 1,
-  })
-search_parameter_guide_limit_1: |-
-  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
-    Limit: 2,
-  })
-search_parameter_guide_retrieve_1: |-
-  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
-    AttributesToRetrieve: []string{"overview", "title"},
-  })
-search_parameter_guide_crop_1: |-
-  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
-    AttributesToCrop: []string{"overview"},
-    CropLength:       5,
-  })
-search_parameter_guide_crop_marker_1: |-
-  resp, err := client.Index("movies").Search("shifu", &meilisearch.SearchRequest{
-    AttributesToCrop: []string{"overview"},
-    CropMarker:       "[…]",
-  })
-search_parameter_guide_highlight_1: |-
-  resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
-    AttributesToHighlight: []string{"overview"},
-  })
-search_parameter_guide_highlight_tag_1: |-
-  resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
-    AttributesToHighlight: []string{"overview"},
-    HighlightPreTag: "<span class=\"highlight\">",
-    HighlightPostTag: "</span>",
-  })
-search_parameter_guide_show_matches_position_1: |-
-  resp, err := client.Index("movies").Search("winter feast", &meilisearch.SearchRequest{
-    ShowMatchesPosition:    true,
-  })
-search_parameter_guide_show_ranking_score_1: |-
-  resp, err := client.Index("movies").Search("dragon", &meilisearch.SearchRequest{
-    showRankingScore:    true,
-  })
 search_parameter_guide_show_ranking_score_details_1: |-
   resp, err := client.Index("movies").Search("dragon", &meilisearch.SearchRequest{
     showRankingScoreDetails:    true,
-  })
-search_parameter_guide_matching_strategy_1: |-
-  resp, err := client.Index("movies").Search("big fat liar", &meilisearch.SearchRequest{
-    MatchingStrategy:    Last,
-  })
-search_parameter_guide_matching_strategy_2: |-
-  resp, err := client.Index("movies").Search("big fat liar", &meilisearch.SearchRequest{
-    MatchingStrategy:    All,
-  })
-search_parameter_guide_matching_strategy_3: |-
-  client.Index("movies").Search("white shirt", &meilisearch.SearchRequest{
-    MatchingStrategy: Frequency,
-  })
-
-search_parameter_guide_hitsperpage_1: |-
-  client.Index("movies").Search("", &meilisearch.SearchRequest{
-    HitsPerPage: 15,
-  })
-search_parameter_guide_page_1: |-
-  client.Index("movies").Search("", &meilisearch.SearchRequest{
-    Page: 2,
-  })
-search_parameter_guide_facet_stats_1: |-
-  client.Index("movie_ratings").Search("Batman", &meilisearch.SearchRequest{
-    Facets: []string{
-      "genres",
-      "rating",
-    },
-  })
-search_parameter_guide_attributes_to_search_on_1: |-
-  resp, err := client.Index("movies").Search("adventure", &meilisearch.SearchRequest{
-    AttributesToSearchOn: []string{"overview"},
   })
 typo_tolerance_guide_1: |-
   client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
@@ -570,13 +496,6 @@ filtering_update_settings_1: |-
     "director",
     "genres",
   })
-faceted_search_walkthrough_filter_1: |-
-  resp, err := client.Index("movies").Search("thriller", &meilisearch.SearchRequest{
-    Filter: [][]string{
-      []string{"genres = Horror", "genres = Mystery"},
-      []string{"director = \"Jordan Peele\""},
-    },
-  })
 faceted_search_update_settings_1: |-
   filterableAttributes := []interface{}{
     "genres",
@@ -594,8 +513,6 @@ faceted_search_1: |-
   })
 post_dump_1: |-
   resp, err := client.CreateDump()
-phrase_search_1: |-
-  resp, err := client.Index("movies").Search("\"african american\" horror", &meilisearch.SearchRequest{})
 sorting_guide_update_sortable_attributes_1: |-
   sortableAttributes := []string{
     "author",
@@ -628,12 +545,6 @@ sorting_guide_sort_nested_1: |-
   resp, err := client.Index("books").Search("science fiction", &meilisearch.SearchRequest{
     Sort: []string{
       "rating.users:asc",
-    },
-  })
-search_parameter_guide_sort_1: |-
-  resp, err := client.Index("books").Search("science fiction", &meilisearch.SearchRequest{
-    Sort: []string{
-      "price:asc",
     },
   })
 geosearch_guide_filter_settings_1: |-
@@ -741,10 +652,6 @@ date_guide_sort_1: |-
       "release_timestamp:desc",
     },
   })
-search_parameter_reference_distinct_1: |-
-  client.Index("INDEX_NAME").Search("QUERY TERMS", &meilisearch.SearchRequest{
-    Distinct: "ATTRIBUTE_A",
-  })
 distinct_attribute_guide_distinct_parameter_1: |-
   client.Index("products").Search("white shirt", &meilisearch.SearchRequest{
     Distinct: "sku",
@@ -762,10 +669,6 @@ get_similar_post_1: |-
     Id: "TARGET_DOCUMENT_ID",
     Embedder: "default",
   }, resp)
-search_parameter_reference_ranking_score_threshold_1: |-
-  client.Index("INDEX_NAME").Search("badman", &meilisearch.SearchRequest{
-    RankingScoreThreshold: 0.2,
-  })
 get_search_cutoff_1: |-
   client.Index("movies").GetSearchCutoffMs()
 update_search_cutoff_1: |-
@@ -805,10 +708,6 @@ update_proximity_precision_settings_1: |-
   client.Index("books").UpdateProximityPrecision(ByAttribute)
 reset_proximity_precision_settings_1: |-
   client.Index("books").ResetProximityPrecision()
-search_parameter_reference_locales_1: |-
-  client.index("INDEX_NAME").Search("QUERY TEXT IN JAPANESE", &meilisearch.SearchRequest{
-      Locales: []string{"jpn"}
-  })
 get_localized_attribute_settings_1: |-
   client.index("INDEX_NAME").GetLocalizedAttributes()
 update_localized_attribute_settings_1: |-
