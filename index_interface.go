@@ -22,29 +22,45 @@ type IndexManager interface {
 	GetSearch() SearchReader
 
 	// UpdateIndex updates the primary key of the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/indexes/update-index
 	UpdateIndex(params *UpdateIndexRequestParams) (*TaskInfo, error)
 
 	// UpdateIndexWithContext updates the primary key of the index using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/indexes/update-index
 	UpdateIndexWithContext(ctx context.Context, params *UpdateIndexRequestParams) (*TaskInfo, error)
 
 	// Delete removes the index identified by the given UID.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/indexes/delete-index
 	Delete(uid string) (bool, error)
 
 	// DeleteWithContext removes the index identified by the given UID using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/indexes/delete-index
 	DeleteWithContext(ctx context.Context, uid string) (bool, error)
 
 	// Compact compacts the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/indexes/compact-index
 	Compact() (*TaskInfo, error)
 
 	// CompactWithContext compacts the index using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/indexes/compact-index
 	CompactWithContext(ctx context.Context) (*TaskInfo, error)
 }
 
 type IndexReader interface {
 	// FetchInfo retrieves information about the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/indexes/get-index
 	FetchInfo() (*IndexResult, error)
 
 	// FetchInfoWithContext retrieves information about the index using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/indexes/get-index
 	FetchInfoWithContext(ctx context.Context) (*IndexResult, error)
 
 	// FetchPrimaryKey retrieves the primary key of the index.
@@ -54,9 +70,13 @@ type IndexReader interface {
 	FetchPrimaryKeyWithContext(ctx context.Context) (*string, error)
 
 	// GetStats retrieves statistical information about the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/stats/get-stats-of-index
 	GetStats() (*StatsIndex, error)
 
 	// GetStatsWithContext retrieves statistical information about the index using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/stats/get-stats-of-index
 	GetStatsWithContext(ctx context.Context) (*StatsIndex, error)
 }
 
@@ -64,15 +84,23 @@ type DocumentManager interface {
 	DocumentReader
 
 	// AddDocuments adds multiple documents to the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
 	AddDocuments(documentsPtr interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// AddDocumentsWithContext adds multiple documents to the index using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
 	AddDocumentsWithContext(ctx context.Context, documentsPtr interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// AddDocumentsInBatches adds documents to the index in batches of specified size.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsInBatchesWithContext adds documents to the index in batches of specified size using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsCsv adds documents from a CSV byte array to the index.
@@ -192,41 +220,65 @@ type DocumentManager interface {
 
 type DocumentReader interface {
 	// GetDocument retrieves a single document from the index by identifier.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/get-document
 	GetDocument(identifier string, request *DocumentQuery, documentPtr interface{}) error
 
 	// GetDocumentWithContext retrieves a single document from the index by identifier using the provided context for cancellation.
+	//
+	// docs: docs: https://www.meilisearch.com/docs/reference/api/documents/get-document
 	GetDocumentWithContext(ctx context.Context, identifier string, request *DocumentQuery, documentPtr interface{}) error
 
 	// GetDocuments retrieves multiple documents from the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/list-documents-with-get
 	GetDocuments(param *DocumentsQuery, resp *DocumentsResult) error
 
 	// GetDocumentsWithContext retrieves multiple documents from the index using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/list-documents-with-get
 	GetDocumentsWithContext(ctx context.Context, param *DocumentsQuery, resp *DocumentsResult) error
 }
 
 type SearchReader interface {
 	// Search performs a search query on the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/search/search-with-get
 	Search(query string, request *SearchRequest) (*SearchResponse, error)
 
 	// SearchWithContext performs a search query on the index using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/search/search-with-get
 	SearchWithContext(ctx context.Context, query string, request *SearchRequest) (*SearchResponse, error)
 
 	// SearchRaw performs a raw search query on the index, returning a JSON response.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/search/search-with-get
 	SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error)
 
 	// SearchRawWithContext performs a raw search query on the index using the provided context for cancellation, returning a JSON response.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/search/search-with-get
 	SearchRawWithContext(ctx context.Context, query string, request *SearchRequest) (*json.RawMessage, error)
 
 	// FacetSearch performs a facet search query on the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/facet-search/search-in-facets
 	FacetSearch(request *FacetSearchRequest) (*json.RawMessage, error)
 
 	// FacetSearchWithContext performs a facet search query on the index using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/facet-search/search-in-facets
 	FacetSearchWithContext(ctx context.Context, request *FacetSearchRequest) (*json.RawMessage, error)
 
 	// SearchSimilarDocuments performs a search for similar documents.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/similar-documents/get-similar-documents-with-get
 	SearchSimilarDocuments(param *SimilarDocumentQuery, resp *SimilarDocumentResult) error
 
 	// SearchSimilarDocumentsWithContext performs a search for similar documents using the provided context for cancellation.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/similar-documents/get-similar-documents-with-get
 	SearchSimilarDocumentsWithContext(ctx context.Context, param *SimilarDocumentQuery, resp *SimilarDocumentResult) error
 }
 
@@ -402,19 +454,23 @@ type SettingsManager interface {
 	ResetSearchCutoffMsWithContext(ctx context.Context) (*TaskInfo, error)
 
 	// UpdateSeparatorTokens update separator tokens
-	// https://www.meilisearch.com/docs/reference/api/settings#update-separator-tokens
+	//
+	// https://www.meilisearch.com/docs/reference/api/settings/update-separatortokens
 	UpdateSeparatorTokens(tokens []string) (*TaskInfo, error)
 
 	// UpdateSeparatorTokensWithContext update separator tokens and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#update-separator-tokens
+	//
+	// https://www.meilisearch.com/docs/reference/api/settings/update-separatortokens
 	UpdateSeparatorTokensWithContext(ctx context.Context, tokens []string) (*TaskInfo, error)
 
 	// ResetSeparatorTokens reset separator tokens
-	// https://www.meilisearch.com/docs/reference/api/settings#reset-separator-tokens
+	//
+	// https://www.meilisearch.com/docs/reference/api/settings/reset-separatortokens
 	ResetSeparatorTokens() (*TaskInfo, error)
 
 	// ResetSeparatorTokensWithContext reset separator tokens and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#reset-separator-tokens
+	//
+	// https://www.meilisearch.com/docs/reference/api/settings/reset-separatortokens
 	ResetSeparatorTokensWithContext(ctx context.Context) (*TaskInfo, error)
 
 	// UpdateNonSeparatorTokens update non-separator tokens
