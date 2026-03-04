@@ -95,12 +95,12 @@ type DocumentManager interface {
 
 	// AddDocumentsInBatches adds documents to the index in batches of specified size.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
 	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsInBatchesWithContext adds documents to the index in batches of specified size using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
 	AddDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsCsv adds documents from a CSV byte array to the index.
@@ -226,7 +226,7 @@ type DocumentReader interface {
 
 	// GetDocumentWithContext retrieves a single document from the index by identifier using the provided context for cancellation.
 	//
-	// docs: docs: https://www.meilisearch.com/docs/reference/api/documents/get-document
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/get-document
 	GetDocumentWithContext(ctx context.Context, identifier string, request *DocumentQuery, documentPtr interface{}) error
 
 	// GetDocuments retrieves multiple documents from the index.
