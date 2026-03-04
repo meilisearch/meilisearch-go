@@ -85,22 +85,22 @@ type DocumentManager interface {
 
 	// AddDocuments adds multiple documents to the index.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocuments(documentsPtr interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// AddDocumentsWithContext adds multiple documents to the index using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsWithContext(ctx context.Context, documentsPtr interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// AddDocumentsInBatches adds documents to the index in batches of specified size.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsInBatches(documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsInBatchesWithContext adds documents to the index in batches of specified size using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsCsv adds documents from a CSV byte array to the index.
@@ -115,22 +115,22 @@ type DocumentManager interface {
 
 	// AddDocumentsCsvInBatches adds documents from a CSV byte array to the index in batches of specified size.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsCsvInBatches(documents []byte, batchSize int, options *CsvDocumentsQuery) ([]TaskInfo, error)
 
 	// AddDocumentsCsvInBatchesWithContext adds documents from a CSV byte array to the index in batches of specified size using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsCsvInBatchesWithContext(ctx context.Context, documents []byte, batchSize int, options *CsvDocumentsQuery) ([]TaskInfo, error)
 
 	// AddDocumentsCsvFromReaderInBatches adds documents from a CSV reader to the index in batches of specified size.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsCsvFromReaderInBatches(documents io.Reader, batchSize int, options *CsvDocumentsQuery) ([]TaskInfo, error)
 
 	// AddDocumentsCsvFromReaderInBatchesWithContext adds documents from a CSV reader to the index in batches of specified size using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsCsvFromReaderInBatchesWithContext(ctx context.Context, documents io.Reader, batchSize int, options *CsvDocumentsQuery) ([]TaskInfo, error)
 
 	// AddDocumentsCsvFromReader adds documents from a CSV reader to the index.
@@ -155,12 +155,12 @@ type DocumentManager interface {
 
 	// AddDocumentsNdjsonInBatches adds documents from a NDJSON byte array to the index in batches of specified size.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsNdjsonInBatches(documents []byte, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsNdjsonInBatchesWithContext adds documents from a NDJSON byte array to the index in batches of specified size using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsNdjsonFromReader adds documents from a NDJSON reader to the index.
@@ -175,82 +175,82 @@ type DocumentManager interface {
 
 	// AddDocumentsNdjsonFromReaderInBatches adds documents from a NDJSON reader to the index in batches of specified size.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsNdjsonFromReaderInBatches(documents io.Reader, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// AddDocumentsNdjsonFromReaderInBatchesWithContext adds documents from a NDJSON reader to the index in batches of specified size using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx context.Context, documents io.Reader, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// UpdateDocuments updates multiple documents in the index.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocuments(documentsPtr interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// UpdateDocumentsWithContext updates multiple documents in the index using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsWithContext(ctx context.Context, documentsPtr interface{}, opts *DocumentOptions) (*TaskInfo, error)
 
 	// UpdateDocumentsInBatches updates documents in the index in batches of specified size.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsInBatches(documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// UpdateDocumentsInBatchesWithContext updates documents in the index in batches of specified size using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsInBatchesWithContext(ctx context.Context, documentsPtr interface{}, batchSize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// UpdateDocumentsCsv updates documents in the index from a CSV byte array.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsCsv(documents []byte, options *CsvDocumentsQuery) (*TaskInfo, error)
 
 	// UpdateDocumentsCsvWithContext updates documents in the index from a CSV byte array using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsCsvWithContext(ctx context.Context, documents []byte, options *CsvDocumentsQuery) (*TaskInfo, error)
 
 	// UpdateDocumentsCsvInBatches updates documents in the index from a CSV byte array in batches of specified size.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsCsvInBatches(documents []byte, batchsize int, options *CsvDocumentsQuery) ([]TaskInfo, error)
 
 	// UpdateDocumentsCsvInBatchesWithContext updates documents in the index from a CSV byte array in batches of specified size using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsCsvInBatchesWithContext(ctx context.Context, documents []byte, batchsize int, options *CsvDocumentsQuery) ([]TaskInfo, error)
 
 	// UpdateDocumentsNdjson updates documents in the index from a NDJSON byte array.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsNdjson(documents []byte, opts *DocumentOptions) (*TaskInfo, error)
 
 	// UpdateDocumentsNdjsonWithContext updates documents in the index from a NDJSON byte array using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsNdjsonWithContext(ctx context.Context, documents []byte, opts *DocumentOptions) (*TaskInfo, error)
 
 	// UpdateDocumentsNdjsonInBatches updates documents in the index from a NDJSON byte array in batches of specified size.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsNdjsonInBatches(documents []byte, batchsize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// UpdateDocumentsNdjsonInBatchesWithContext updates documents in the index from a NDJSON byte array in batches of specified size using the provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsNdjsonInBatchesWithContext(ctx context.Context, documents []byte, batchsize int, opts *DocumentOptions) ([]TaskInfo, error)
 
 	// UpdateDocumentsByFunction update documents by using function
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsByFunction(req *UpdateDocumentByFunctionRequest) (*TaskInfo, error)
 
 	// UpdateDocumentsByFunctionWithContext update documents by using function then provided context for cancellation.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-update-documents
+	// docs: https://www.meilisearch.com/docs/reference/api/documents/add-or-replace-documents
 	UpdateDocumentsByFunctionWithContext(ctx context.Context, req *UpdateDocumentByFunctionRequest) (*TaskInfo, error)
 
 	// DeleteDocument deletes a single document from the index by identifier.
@@ -989,7 +989,7 @@ type SettingsReader interface {
 
 	// GetPrefixSearch retrieves the prefix search setting of the index.
 	//
-	// https://www.meilisearch.com/docs/reference/api/settings/get-prefixsearch
+	// docs: https://www.meilisearch.com/docs/reference/api/settings/get-prefixsearch
 	GetPrefixSearch() (*string, error)
 
 	// GetPrefixSearchWithContext retrieves the prefix search setting of the index using the provided context for cancellation.
