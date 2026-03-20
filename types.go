@@ -242,7 +242,7 @@ type SearchParameters struct {
 
 // Embedder represents a unified configuration for various embedder types.
 //
-// Specs: https://www.meilisearch.com/docs/reference/api/settings#body-21
+// Specs: https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#body-21
 type Embedder struct {
 	Source EmbedderSource `json:"source"` // The type of embedder: "openAi", "huggingFace", "userProvided", "rest", "ollama"
 	// URL Meilisearch queries url to generate vector embeddings for queries and documents.
@@ -321,7 +321,7 @@ type Stats struct {
 
 // Task indicates information about a task resource
 //
-// Documentation: https://www.meilisearch.com/docs/learn/advanced/asynchronous_operations
+// Documentation: https://www.meilisearch.com/docs/learn/async/asynchronous_operations
 type Task struct {
 	Status         TaskStatus          `json:"status"`
 	UID            int64               `json:"uid,omitempty"`
@@ -341,7 +341,7 @@ type Task struct {
 
 // TaskNetwork indicates information about a task network
 //
-// Documentation: https://www.meilisearch.com/docs/reference/api/tasks#network
+// Documentation: https://www.meilisearch.com/docs/reference/api/async-task-management/list-tasks#network
 type TaskNetwork struct {
 	Origin  *Origin                `json:"origin,omitempty"`
 	Remotes map[string]*TaskRemote `json:"remotes,omitempty"`
@@ -359,7 +359,7 @@ type TaskRemote struct {
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
 //
-// Documentation: https://www.meilisearch.com/docs/reference/api/tasks#tasks
+// Documentation: https://www.meilisearch.com/docs/reference/api/async-task-management/list-tasks#tasks
 type TaskInfo struct {
 	Status     TaskStatus `json:"status"`
 	TaskUID    int64      `json:"taskUid"`
@@ -449,7 +449,7 @@ type TaskResult struct {
 
 // Key allow the user to connect to the meilisearch instance
 //
-// Documentation: https://www.meilisearch.com/docs/learn/security/master_api_keys#protecting-a-meilisearch-instance
+// Documentation: https://www.meilisearch.com/docs/learn/security/basic_security#protecting-a-meilisearch-instance
 type Key struct {
 	Name        string    `json:"name"`
 	Description string    `json:"description"`
@@ -521,7 +521,7 @@ type CreateIndexRequest struct {
 // SearchRequest is the request url param needed for a search query.
 // This struct will be converted to url param before sent.
 //
-// Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
+// Documentation: https://www.meilisearch.com/docs/reference/api/search/search-with-post#search-parameters
 type SearchRequest struct {
 	Offset                  int64                    `json:"offset,omitempty"`
 	Limit                   int64                    `json:"limit,omitempty"`

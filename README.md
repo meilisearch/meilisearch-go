@@ -11,7 +11,7 @@
   <a href="https://discord.meilisearch.com">Discord</a> |
   <a href="https://roadmap.meilisearch.com/tabs/1-under-consideration">Roadmap</a> |
   <a href="https://www.meilisearch.com">Website</a> |
-  <a href="https://www.meilisearch.com/docs/faq">FAQ</a>
+  <a href="https://www.meilisearch.com/docs/learn/resources/faq">FAQ</a>
 </h4>
 
 <p align="center">
@@ -108,7 +108,7 @@ func main() {
 }
 ```
 
-With the `taskUID`, you can check the status (`enqueued`, `canceled`, `processing`, `succeeded` or `failed`) of your documents addition using the [task endpoint](https://www.meilisearch.com/docs/reference/api/tasks).
+With the `taskUID`, you can check the status (`enqueued`, `canceled`, `processing`, `succeeded` or `failed`) of your documents addition using the [task endpoint](https://www.meilisearch.com/docs/reference/api/async-task-management/list-tasks).
 
 #### Basic Search
 
@@ -154,7 +154,7 @@ JSON output:
 
 #### Custom Search
 
-All the supported options are described in the [search parameters](https://www.meilisearch.com/docs/reference/api/search#search-parameters) section of the documentation.
+All the supported options are described in the [search parameters](https://www.meilisearch.com/docs/reference/api/search/search-with-post#search-parameters) section of the documentation.
 
 ```go
 func main() {
@@ -202,7 +202,7 @@ task, err := index.UpdateFilterableAttributes(&[]string{"id", "genres"})
 
 You only need to perform this operation once.
 
-Note that Meilisearch will rebuild your index whenever you update `filterableAttributes`. Depending on the size of your dataset, this might take time. You can track the process using the [task status](https://www.meilisearch.com/docs/learn/advanced/asynchronous_operations).
+Note that Meilisearch will rebuild your index whenever you update `filterableAttributes`. Depending on the size of your dataset, this might take time. You can track the process using the [task status](https://www.meilisearch.com/docs/learn/async/asynchronous_operations).
 
 Then, you can perform the search:
 
@@ -236,8 +236,8 @@ The client supports many customization options:
 
 - `WithCustomClient` sets a custom `http.Client`.
 - `WithCustomClientWithTLS` enables TLS for the HTTP client.
-- `WithAPIKey` sets the API key or master [key](https://www.meilisearch.com/docs/reference/api/keys).
-- `WithContentEncoding` configures [content encoding](https://www.meilisearch.com/docs/reference/api/overview#content-encoding) for requests and responses. Currently, gzip, deflate, and brotli are supported.
+- `WithAPIKey` sets the API key or master [key](https://www.meilisearch.com/docs/reference/api/keys/list-api-keys).
+- `WithContentEncoding` configures [content encoding](https://www.meilisearch.com/docs/reference/api/authorization#content-encoding) for requests and responses. Currently, gzip, deflate, and brotli are supported.
 - `WithCustomRetries` customizes retry behavior based on specific HTTP status codes (`retryOnStatus`, defaults to 502, 503, and 504) and allows setting the maximum number of retries.
 - `DisableRetries` disables the retry logic. By default, retries are enabled.
 
@@ -384,10 +384,10 @@ Benchmark_ExecuteRequestWithoutRetries-16    	       1	3002787257 ns/op	   56528
 
 The following sections in our main documentation website may interest you:
 
-- **Manipulate documents**: see the [API references](https://www.meilisearch.com/docs/reference/api/documents) or read more about [documents](https://www.meilisearch.com/docs/learn/core_concepts/documents).
-- **Search**: see the [API references](https://www.meilisearch.com/docs/reference/api/search) or follow our guide on [search parameters](https://www.meilisearch.com/docs/reference/api/search#search-parameters).
-- **Manage the indexes**: see the [API references](https://www.meilisearch.com/docs/reference/api/indexes) or read more about [indexes](https://www.meilisearch.com/docs/learn/core_concepts/indexes).
-- **ClientConfigure the index settings**: see the [API references](https://www.meilisearch.com/docs/reference/api/settings) or follow our guide on [settings parameters](https://www.meilisearch.com/docs/reference/api/settings#settings_parameters).
+- **Manipulate documents**: see the [API references](https://www.meilisearch.com/docs/reference/api/documents/list-documents-with-get) or read more about [documents](https://www.meilisearch.com/docs/learn/getting_started/documents).
+- **Search**: see the [API references](https://www.meilisearch.com/docs/reference/api/search/search-with-post) or follow our guide on [search parameters](https://www.meilisearch.com/docs/reference/api/search/search-with-post#search-parameters).
+- **Manage the indexes**: see the [API references](https://www.meilisearch.com/docs/reference/api/indexes/list-all-indexes) or read more about [indexes](https://www.meilisearch.com/docs/learn/getting_started/indexes).
+- **ClientConfigure the index settings**: see the [API references](https://www.meilisearch.com/docs/reference/api/settings/list-all-settings) or follow our guide on [settings parameters](https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#settings_parameters).
 
 ## ⚙️ Contributing
 

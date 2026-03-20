@@ -402,75 +402,75 @@ type SettingsManager interface {
 	ResetSearchCutoffMsWithContext(ctx context.Context) (*TaskInfo, error)
 
 	// UpdateSeparatorTokens update separator tokens
-	// https://www.meilisearch.com/docs/reference/api/settings#update-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#update-separator-tokens
 	UpdateSeparatorTokens(tokens []string) (*TaskInfo, error)
 
 	// UpdateSeparatorTokensWithContext update separator tokens and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#update-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#update-separator-tokens
 	UpdateSeparatorTokensWithContext(ctx context.Context, tokens []string) (*TaskInfo, error)
 
 	// ResetSeparatorTokens reset separator tokens
-	// https://www.meilisearch.com/docs/reference/api/settings#reset-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#reset-separator-tokens
 	ResetSeparatorTokens() (*TaskInfo, error)
 
 	// ResetSeparatorTokensWithContext reset separator tokens and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#reset-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#reset-separator-tokens
 	ResetSeparatorTokensWithContext(ctx context.Context) (*TaskInfo, error)
 
 	// UpdateNonSeparatorTokens update non-separator tokens
-	// https://www.meilisearch.com/docs/reference/api/settings#update-non-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#update-non-separator-tokens
 	UpdateNonSeparatorTokens(tokens []string) (*TaskInfo, error)
 
 	// UpdateNonSeparatorTokensWithContext update non-separator tokens and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#update-non-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#update-non-separator-tokens
 	UpdateNonSeparatorTokensWithContext(ctx context.Context, tokens []string) (*TaskInfo, error)
 
 	// ResetNonSeparatorTokens reset non-separator tokens
-	// https://www.meilisearch.com/docs/reference/api/settings#reset-non-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#reset-non-separator-tokens
 	ResetNonSeparatorTokens() (*TaskInfo, error)
 
 	// ResetNonSeparatorTokensWithContext reset non-separator tokens and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#reset-non-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#reset-non-separator-tokens
 	ResetNonSeparatorTokensWithContext(ctx context.Context) (*TaskInfo, error)
 
 	// UpdateDictionary update user dictionary
-	// https://www.meilisearch.com/docs/reference/api/settings#update-dictionary
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#update-dictionary
 	UpdateDictionary(words []string) (*TaskInfo, error)
 
 	// UpdateDictionaryWithContext update user dictionary and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#update-dictionary
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#update-dictionary
 	UpdateDictionaryWithContext(ctx context.Context, words []string) (*TaskInfo, error)
 
 	// ResetDictionary reset user dictionary
-	// https://www.meilisearch.com/docs/reference/api/settings#reset-dictionary
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#reset-dictionary
 	ResetDictionary() (*TaskInfo, error)
 
 	// ResetDictionaryWithContext reset user dictionary and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#reset-dictionary
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#reset-dictionary
 	ResetDictionaryWithContext(ctx context.Context) (*TaskInfo, error)
 
 	// UpdateProximityPrecision set ProximityPrecision value ByWord or ByAttribute
-	// https://www.meilisearch.com/docs/reference/api/settings#update-proximity-precision-settings
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#update-proximity-precision-settings
 	UpdateProximityPrecision(proximityType ProximityPrecisionType) (*TaskInfo, error)
 
 	// UpdateProximityPrecisionWithContext set ProximityPrecision value ByWord or ByAttribute and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#update-proximity-precision-settings
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#update-proximity-precision-settings
 	UpdateProximityPrecisionWithContext(ctx context.Context, proximityType ProximityPrecisionType) (*TaskInfo, error)
 
 	// ResetProximityPrecision reset ProximityPrecision to default ByWord
-	// https://www.meilisearch.com/docs/reference/api/settings#reset-proximity-precision-settings
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#reset-proximity-precision-settings
 	ResetProximityPrecision() (*TaskInfo, error)
 
 	// ResetProximityPrecisionWithContext reset ProximityPrecision to default ByWord and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#reset-proximity-precision-settings
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#reset-proximity-precision-settings
 	ResetProximityPrecisionWithContext(ctx context.Context) (*TaskInfo, error)
 
 	// UpdateLocalizedAttributes update the localized attributes settings of an index
-	// https://www.meilisearch.com/docs/reference/api/settings#update-localized-attribute-settings
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#update-localized-attribute-settings
 	UpdateLocalizedAttributes(request []*LocalizedAttributes) (*TaskInfo, error)
 
 	// UpdateLocalizedAttributesWithContext update the localized attributes settings of an index using the provided context for cancellation
-	// https://www.meilisearch.com/docs/reference/api/settings#update-localized-attribute-settings
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#update-localized-attribute-settings
 	UpdateLocalizedAttributesWithContext(ctx context.Context, request []*LocalizedAttributes) (*TaskInfo, error)
 
 	// ResetLocalizedAttributes reset the localized attributes settings
@@ -590,19 +590,19 @@ type SettingsReader interface {
 	GetSearchCutoffMsWithContext(ctx context.Context) (int64, error)
 
 	// GetSeparatorTokens returns separators tokens
-	// https://www.meilisearch.com/docs/reference/api/settings#get-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#get-separator-tokens
 	GetSeparatorTokens() ([]string, error)
 
 	// GetSeparatorTokensWithContext returns separator tokens and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#get-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#get-separator-tokens
 	GetSeparatorTokensWithContext(ctx context.Context) ([]string, error)
 
 	// GetNonSeparatorTokens returns non-separator tokens
-	// https://www.meilisearch.com/docs/reference/api/settings#get-non-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#get-non-separator-tokens
 	GetNonSeparatorTokens() ([]string, error)
 
 	// GetNonSeparatorTokensWithContext returns non-separator tokens and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#get-non-separator-tokens
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#get-non-separator-tokens
 	GetNonSeparatorTokensWithContext(ctx context.Context) ([]string, error)
 
 	// GetDictionary returns user dictionary
@@ -614,7 +614,7 @@ type SettingsReader interface {
 	//Custom dictionaries are also useful in a few use-cases for space-separated languages,
 	//such as datasets with names such as "J. R. R. Tolkien" and "W. E. B. Du Bois".
 	//
-	// https://www.meilisearch.com/docs/reference/api/settings#get-dictionary
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#get-dictionary
 	GetDictionary() ([]string, error)
 
 	// GetDictionaryWithContext returns user dictionary and support parent context
@@ -626,23 +626,23 @@ type SettingsReader interface {
 	//Custom dictionaries are also useful in a few use-cases for space-separated languages,
 	//such as datasets with names such as "J. R. R. Tolkien" and "W. E. B. Du Bois".
 	//
-	// https://www.meilisearch.com/docs/reference/api/settings#get-dictionary
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#get-dictionary
 	GetDictionaryWithContext(ctx context.Context) ([]string, error)
 
 	// GetProximityPrecision returns ProximityPrecision configuration value
-	// https://www.meilisearch.com/docs/reference/api/settings#get-proximity-precision-settings
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#get-proximity-precision-settings
 	GetProximityPrecision() (ProximityPrecisionType, error)
 
 	// GetProximityPrecisionWithContext returns ProximityPrecision configuration value and support parent context
-	// https://www.meilisearch.com/docs/reference/api/settings#get-proximity-precision-settings
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#get-proximity-precision-settings
 	GetProximityPrecisionWithContext(ctx context.Context) (ProximityPrecisionType, error)
 
 	// GetLocalizedAttributes get the localized attributes settings of an index
-	// https://www.meilisearch.com/docs/reference/api/settings#get-localized-attributes-settings
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#get-localized-attributes-settings
 	GetLocalizedAttributes() ([]*LocalizedAttributes, error)
 
 	// GetLocalizedAttributesWithContext get the localized attributes settings of an index using the provided context for cancellation
-	// https://www.meilisearch.com/docs/reference/api/settings#get-localized-attributes-settings
+	// https://www.meilisearch.com/docs/reference/api/settings/list-all-settings#get-localized-attributes-settings
 	GetLocalizedAttributesWithContext(ctx context.Context) ([]*LocalizedAttributes, error)
 
 	// GetPrefixSearch retrieves the prefix search setting of the index.
