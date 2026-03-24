@@ -575,6 +575,7 @@ type MultiSearchFederation struct {
 	Limit         int64                             `json:"limit,omitempty"`
 	FacetsByIndex map[string][]string               `json:"facetsByIndex,omitempty"`
 	MergeFacets   *MultiSearchFederationMergeFacets `json:"mergeFacets,omitempty"`
+	Distinct      string                            `json:"distinct,omitempty"`
 }
 
 type MultiSearchFederationMergeFacets struct {
