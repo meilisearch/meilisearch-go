@@ -72,6 +72,6 @@ jobs:
           gocovmerge unit_coverage.txt integration_coverage.txt > coverage.txt
 
       - name: Upload coverage report
-        uses: codecov/codecov-action@v5
+        uses: codecov/codecov-action@v6
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
