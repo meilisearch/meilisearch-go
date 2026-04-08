@@ -19,6 +19,7 @@ type Network struct {
 	Self    string            `json:"self,omitempty"`
 	Leader  string            `json:"leader,omitempty"`
 	Remotes map[string]Remote `json:"remotes,omitempty"`
+	Shards  map[string]Shard  `json:"shards,omitempty"`
 	Version string            `json:"version,omitempty"`
 }
 
@@ -29,14 +30,21 @@ type Remote struct {
 	WriteAPIKey  string `json:"writeApiKey"`
 }
 
+// Shard describes a named shard in the network topology.
+// Documents are distributed among the various declared shards.
+type Shard struct {
+	Remotes []string `json:"remotes,omitempty"`
+}
+
 // UpdateNetworkRequest represents the Meilisearch network configuration update without leader.
 // Each field is wrapped in an Opt so it can be explicitly included,
 // set to JSON null, or omitted entirely.
 type UpdateNetworkRequest struct {
-	Self    Opt[string]                       `json:"self,omitempty"`
-	Leader  Opt[string]                       `json:"leader,omitempty"`
-	Remotes Opt[map[string]Opt[UpdateRemote]] `json:"remotes,omitempty"`
-	Version Opt[string]                       `json:"version,omitempty"`
+	Self    Opt[string]                                    `json:"self,omitempty"`
+	Leader  Opt[string]                                    `json:"leader,omitempty"`
+	Remotes Opt[map[string]Opt[UpdateRemote]]              `json:"remotes,omitempty"`
+	Shards  Opt[map[string]Opt[UpdateShard]]               `json:"shards,omitempty"`
+	Version Opt[string]                                    `json:"version,omitempty"`
 }
 
 func (n UpdateNetworkRequest) MarshalJSON() ([]byte, error) {
@@ -58,6 +66,12 @@ func (n UpdateNetworkRequest) MarshalJSON() ([]byte, error) {
 		m["leader"] = n.Leader.Value
 	} else if n.Leader.Null() {
 		m["leader"] = nil
+	}
+
+	if n.Shards.Valid() {
+		m["shards"] = n.Shards.Value
+	} else if n.Shards.Null() {
+		m["shards"] = nil
 	}
 
 	if n.Version.Valid() {
@@ -97,6 +111,39 @@ func (r UpdateRemote) MarshalJSON() ([]byte, error) {
 		m["writeApiKey"] = r.WriteAPIKey.Value
 	} else if r.WriteAPIKey.Null() {
 		m["writeApiKey"] = nil
+	}
+
+	return json.Marshal(m)
+}
+
+// UpdateShard describes a named shard update in the network topology.
+// Each field is wrapped in an Opt so it can be explicitly included,
+// set to JSON null, or omitted entirely.
+type UpdateShard struct {
+	Remotes       Opt[[]string] `json:"remotes,omitempty"`
+	AddRemotes    Opt[[]string] `json:"addRemotes,omitempty"`
+	RemoveRemotes Opt[[]string] `json:"removeRemotes,omitempty"`
+}
+
+func (s UpdateShard) MarshalJSON() ([]byte, error) {
+	m := make(map[string]any)
+
+	if s.Remotes.Valid() {
+		m["remotes"] = s.Remotes.Value
+	} else if s.Remotes.Null() {
+		m["remotes"] = nil
+	}
+
+	if s.AddRemotes.Valid() {
+		m["addRemotes"] = s.AddRemotes.Value
+	} else if s.AddRemotes.Null() {
+		m["addRemotes"] = nil
+	}
+
+	if s.RemoveRemotes.Valid() {
+		m["removeRemotes"] = s.RemoveRemotes.Value
+	} else if s.RemoveRemotes.Null() {
+		m["removeRemotes"] = nil
 	}
 
 	return json.Marshal(m)

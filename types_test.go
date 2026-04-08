@@ -227,6 +227,59 @@ func TestUpdateNetwork_MarshalJSON(t *testing.T) {
 	}
 }
 
+func TestUpdateShard_MarshalJSON(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		in       UpdateShard
+		wantJSON string
+	}{
+		{
+			name:     "omit all when all fields are zero value",
+			in:       UpdateShard{},
+			wantJSON: `{}`,
+		},
+		{
+			name:     "remotes set",
+			in:       UpdateShard{Remotes: NewOpt([]string{"ms-00", "ms-01"})},
+			wantJSON: `{"remotes":["ms-00","ms-01"]}`,
+		},
+		{
+			name:     "remotes null",
+			in:       UpdateShard{Remotes: Null[[]string]()},
+			wantJSON: `{"remotes":null}`,
+		},
+		{
+			name:     "addRemotes set",
+			in:       UpdateShard{AddRemotes: NewOpt([]string{"ms-02"})},
+			wantJSON: `{"addRemotes":["ms-02"]}`,
+		},
+		{
+			name:     "removeRemotes set",
+			in:       UpdateShard{RemoveRemotes: NewOpt([]string{"ms-01"})},
+			wantJSON: `{"removeRemotes":["ms-01"]}`,
+		},
+		{
+			name: "all fields set",
+			in: UpdateShard{
+				Remotes:       NewOpt([]string{"ms-00"}),
+				AddRemotes:    NewOpt([]string{"ms-01"}),
+				RemoveRemotes: NewOpt([]string{"ms-02"}),
+			},
+			wantJSON: `{"remotes":["ms-00"],"addRemotes":["ms-01"],"removeRemotes":["ms-02"]}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.in.MarshalJSON()
+			require.NoError(t, err)
+			require.JSONEq(t, tt.wantJSON, string(got))
+		})
+	}
+}
+
 func TestRemote_MarshalJSON(t *testing.T) {
 	t.Parallel()
 

@@ -42,6 +42,11 @@ func Test_UpdateNetwork(t *testing.T) {
 						WriteAPIKey:  meilisearch.String(masterKey),
 					}),
 				}),
+				Shards: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateShard]{
+					"shard-00": meilisearch.NewOpt(meilisearch.UpdateShard{
+						Remotes: meilisearch.NewOpt([]string{"ms-00"}),
+					}),
+				}),
 			},
 			want: &meilisearch.Network{
 				Self:   "ms-00",
@@ -51,6 +56,11 @@ func Test_UpdateNetwork(t *testing.T) {
 						URL:          getDefaultHost(),
 						SearchAPIKey: masterKey,
 						WriteAPIKey:  masterKey,
+					},
+				},
+				Shards: map[string]meilisearch.Shard{
+					"shard-00": {
+						Remotes: []string{"ms-00"},
 					},
 				},
 			},
@@ -68,6 +78,11 @@ func Test_UpdateNetwork(t *testing.T) {
 							WriteAPIKey:  meilisearch.String(masterKey),
 						}),
 					}),
+					Shards: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateShard]{
+						"shard-00": meilisearch.NewOpt(meilisearch.UpdateShard{
+							Remotes: meilisearch.NewOpt([]string{"ms-00"}),
+						}),
+					}),
 				})
 				require.NoError(t, err)
 				task, ok := value.(*meilisearch.Task)
@@ -80,11 +95,13 @@ func Test_UpdateNetwork(t *testing.T) {
 				Self:    meilisearch.String("new-self"),
 				Leader:  meilisearch.Null[string](),
 				Remotes: meilisearch.Null[map[string]meilisearch.Opt[meilisearch.UpdateRemote]](),
+				Shards:  meilisearch.Null[map[string]meilisearch.Opt[meilisearch.UpdateShard]](),
 			},
 			want: &meilisearch.Network{
 				Self:    "new-self",
 				Leader:  "",
 				Remotes: map[string]meilisearch.Remote{},
+				Shards:  map[string]meilisearch.Shard{},
 			},
 		},
 		{
