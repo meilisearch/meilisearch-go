@@ -19,6 +19,7 @@ type Network struct {
 	Self    string            `json:"self,omitempty"`
 	Leader  string            `json:"leader,omitempty"`
 	Remotes map[string]Remote `json:"remotes,omitempty"`
+	Shards  map[string]Shard  `json:"shards,omitempty"`
 	Version string            `json:"version,omitempty"`
 }
 
@@ -29,14 +30,20 @@ type Remote struct {
 	WriteAPIKey  string `json:"writeApiKey"`
 }
 
+// Shard represents a shard in the network
+type Shard struct {
+	Remotes []string `json:"remotes"`
+}
+
 // UpdateNetworkRequest represents the Meilisearch network configuration update without leader.
 // Each field is wrapped in an Opt so it can be explicitly included,
 // set to JSON null, or omitted entirely.
 type UpdateNetworkRequest struct {
-	Self    Opt[string]                       `json:"self,omitempty"`
-	Leader  Opt[string]                       `json:"leader,omitempty"`
-	Remotes Opt[map[string]Opt[UpdateRemote]] `json:"remotes,omitempty"`
-	Version Opt[string]                       `json:"version,omitempty"`
+	Self    Opt[string]                            `json:"self,omitempty"`
+	Leader  Opt[string]                            `json:"leader,omitempty"`
+	Remotes Opt[map[string]Opt[UpdateRemote]]      `json:"remotes,omitempty"`
+	Shards  Opt[map[string]Opt[UpdateRemoteShard]] `json:"shards,omitempty"` // FIXED
+	Version Opt[string]                            `json:"version,omitempty"`
 }
 
 func (n UpdateNetworkRequest) MarshalJSON() ([]byte, error) {
@@ -58,6 +65,12 @@ func (n UpdateNetworkRequest) MarshalJSON() ([]byte, error) {
 		m["leader"] = n.Leader.Value
 	} else if n.Leader.Null() {
 		m["leader"] = nil
+	}
+
+	if n.Shards.Valid() {
+		m["shards"] = n.Shards.Value
+	} else if n.Shards.Null() {
+		m["shards"] = nil
 	}
 
 	if n.Version.Valid() {
@@ -97,6 +110,37 @@ func (r UpdateRemote) MarshalJSON() ([]byte, error) {
 		m["writeApiKey"] = r.WriteAPIKey.Value
 	} else if r.WriteAPIKey.Null() {
 		m["writeApiKey"] = nil
+	}
+
+	return json.Marshal(m)
+}
+
+// UpdateRemoteShard represents a shard update request
+type UpdateRemoteShard struct {
+	Remotes       Opt[[]string] `json:"remotes,omitempty"`
+	AddRemotes    Opt[[]string] `json:"addRemotes,omitempty"`
+	RemoveRemotes Opt[[]string] `json:"removeRemotes,omitempty"`
+}
+
+func (u UpdateRemoteShard) MarshalJSON() ([]byte, error) {
+	m := make(map[string]any)
+
+	if u.Remotes.Valid() {
+		m["remotes"] = u.Remotes.Value
+	} else if u.Remotes.Null() {
+		m["remotes"] = nil
+	}
+
+	if u.AddRemotes.Valid() {
+		m["addRemotes"] = u.AddRemotes.Value
+	} else if u.AddRemotes.Null() {
+		m["addRemotes"] = nil
+	}
+
+	if u.RemoveRemotes.Valid() {
+		m["removeRemotes"] = u.RemoveRemotes.Value
+	} else if u.RemoveRemotes.Null() {
+		m["removeRemotes"] = nil
 	}
 
 	return json.Marshal(m)
