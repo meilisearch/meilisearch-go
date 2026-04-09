@@ -758,13 +758,18 @@ update_network_1: |-
   client.UpdateNetwork(&meilisearch.UpdateNetworkRequest{
     Self: meilisearch.String("ms-00"),
     Leader: meilisearch.String("ms-00"),
-    Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.Remote]{
-      "ms-00": meilisearch.NewOpt(meilisearch.Remote{
+    Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemote]{
+      "ms-00": meilisearch.NewOpt(meilisearch.UpdateRemote{
         URL:          meilisearch.String("https://meilisearch.com"),
         SearchAPIKey: meilisearch.String("ReadKey"),
-        WriteAPIKey: meilisearch.String("WriteKey"),
-      },
-    },
-  });
+        WriteAPIKey:  meilisearch.String("WriteKey"),
+      }),
+    }),
+    Shards: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemoteShard]{
+      "ms-00": meilisearch.NewOpt(meilisearch.UpdateRemoteShard{
+        Remotes: meilisearch.NewOpt([]string{"ms-00"}),
+      }),
+    }),
+  })
 compact_index_1: |-
   client.Index("INDEX_UID").Compact();
