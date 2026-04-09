@@ -391,13 +391,6 @@ get_version_1: |-
   client.GetVersion()
 distinct_attribute_guide_1: |-
   client.Index("jackets").UpdateDistinctAttribute("product_id")
-field_properties_guide_searchable_1: |-
-  searchableAttributes := []string{
-    "title",
-    "overview",
-    "genres",
-  }
-  client.Index("movies").UpdateSearchableAttributes(&searchableAttributes)
 field_properties_guide_displayed_1: |-
   displayedAttributes := []string{
     "title",
@@ -421,10 +414,6 @@ filtering_guide_3: |-
 filtering_guide_nested_1: |-
   resp, err := client.Index("movie_ratings").Search("thriller", &meilisearch.SearchRequest{
     Filter: "rating.users >= 90",
-  })
-search_parameter_guide_show_ranking_score_details_1: |-
-  resp, err := client.Index("movies").Search("dragon", &meilisearch.SearchRequest{
-    showRankingScoreDetails:    true,
   })
 typo_tolerance_guide_1: |-
   client.Index("movies").UpdateTypoTolerance(&meilisearch.TypoTolerance{
