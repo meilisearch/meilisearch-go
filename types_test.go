@@ -280,3 +280,287 @@ func TestRemote_MarshalJSON(t *testing.T) {
 		})
 	}
 }
+
+func TestUpdateRemoteShard_MarshalJSON(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		in       UpdateRemoteShard
+		wantJSON string
+	}{
+		{
+			name:     "omit all when all fields are zero value",
+			in:       UpdateRemoteShard{},
+			wantJSON: `{}`,
+		},
+		{
+			name:     "remotes set",
+			in:       UpdateRemoteShard{Remotes: NewOpt([]string{"remote1", "remote2"})},
+			wantJSON: `{"remotes":["remote1","remote2"]}`,
+		},
+		{
+			name:     "remotes null",
+			in:       UpdateRemoteShard{Remotes: Null[[]string]()},
+			wantJSON: `{"remotes":null}`,
+		},
+		{
+			name:     "addRemotes set",
+			in:       UpdateRemoteShard{AddRemotes: NewOpt([]string{"remote3"})},
+			wantJSON: `{"addRemotes":["remote3"]}`,
+		},
+		{
+			name:     "addRemotes null",
+			in:       UpdateRemoteShard{AddRemotes: Null[[]string]()},
+			wantJSON: `{"addRemotes":null}`,
+		},
+		{
+			name:     "removeRemotes set",
+			in:       UpdateRemoteShard{RemoveRemotes: NewOpt([]string{"remote1"})},
+			wantJSON: `{"removeRemotes":["remote1"]}`,
+		},
+		{
+			name:     "removeRemotes null",
+			in:       UpdateRemoteShard{RemoveRemotes: Null[[]string]()},
+			wantJSON: `{"removeRemotes":null}`,
+		},
+		{
+			name: "all fields set",
+			in: UpdateRemoteShard{
+				Remotes:       NewOpt([]string{"remote1", "remote2"}),
+				AddRemotes:    NewOpt([]string{"remote3"}),
+				RemoveRemotes: NewOpt([]string{"remote4"}),
+			},
+			wantJSON: `{"remotes":["remote1","remote2"],"addRemotes":["remote3"],"removeRemotes":["remote4"]}`,
+		},
+		{
+			name: "mixed null and set",
+			in: UpdateRemoteShard{
+				Remotes:       Null[[]string](),
+				AddRemotes:    NewOpt([]string{"remote1"}),
+				RemoveRemotes: Null[[]string](),
+			},
+			wantJSON: `{"remotes":null,"addRemotes":["remote1"],"removeRemotes":null}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.in.MarshalJSON()
+			require.NoError(t, err)
+			require.JSONEq(t, tt.wantJSON, string(got))
+		})
+	}
+}
+
+func TestUpdateNetwork_MarshalJSON_Shards(t *testing.T) {
+	t.Parallel()
+
+	type R = Opt[UpdateRemoteShard]
+
+	tests := []struct {
+		name     string
+		in       UpdateNetworkRequest
+		wantJSON string
+	}{
+		{
+			name: "shards set with one shard",
+			in: UpdateNetworkRequest{
+				Shards: NewOpt(map[string]R{
+					"shard1": NewOpt(UpdateRemoteShard{
+						Remotes: NewOpt([]string{"remote1", "remote2"}),
+					}),
+				}),
+			},
+			wantJSON: `{"shards":{"shard1":{"remotes":["remote1","remote2"]}}}`,
+		},
+		{
+			name: "shards set with multiple shards",
+			in: UpdateNetworkRequest{
+				Shards: NewOpt(map[string]R{
+					"shard1": NewOpt(UpdateRemoteShard{
+						Remotes: NewOpt([]string{"remote1"}),
+					}),
+					"shard2": NewOpt(UpdateRemoteShard{
+						AddRemotes: NewOpt([]string{"remote2"}),
+					}),
+				}),
+			},
+			wantJSON: `{"shards":{"shard1":{"remotes":["remote1"]},"shard2":{"addRemotes":["remote2"]}}}`,
+		},
+		{
+			name: "shards null",
+			in: UpdateNetworkRequest{
+				Shards: Null[map[string]R](),
+			},
+			wantJSON: `{"shards":null}`,
+		},
+		{
+			name: "shards with null shard",
+			in: UpdateNetworkRequest{
+				Shards: NewOpt(map[string]R{
+					"shard1": Null[UpdateRemoteShard](),
+				}),
+			},
+			wantJSON: `{"shards":{"shard1":null}}`,
+		},
+		{
+			name: "all fields including shards",
+			in: UpdateNetworkRequest{
+				Self:    String("primary"),
+				Leader:  String("leader-uuid"),
+				Version: String("v1"),
+				Remotes: NewOpt(map[string]Opt[UpdateRemote]{
+					"remote1": NewOpt(UpdateRemote{URL: String("https://remote1.example.com")}),
+				}),
+				Shards: NewOpt(map[string]R{
+					"shard1": NewOpt(UpdateRemoteShard{
+						Remotes: NewOpt([]string{"remote1"}),
+					}),
+				}),
+			},
+			wantJSON: `{
+				"self":"primary",
+				"leader":"leader-uuid",
+				"remotes":{"remote1":{"url":"https://remote1.example.com"}},
+				"shards":{"shard1":{"remotes":["remote1"]}},
+				"version":"v1"
+			}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := tt.in.MarshalJSON()
+			require.NoError(t, err)
+			require.JSONEq(t, tt.wantJSON, string(got))
+		})
+	}
+}
+
+func TestTimestampz_EdgeCases(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name           string
+		input          Timestampz
+		expectedString string
+		expectedTime   time.Time
+	}{
+		{
+			name:           "positive timestamp",
+			input:          1609459200, // 2021-01-01 00:00:00 UTC
+			expectedString: "2021-01-01T00:00:00Z",
+			expectedTime:   time.Unix(1609459200, 0).UTC(),
+		},
+		{
+			name:           "large timestamp",
+			input:          2147483647, // max int32
+			expectedString: "2038-01-19T03:14:07Z",
+			expectedTime:   time.Unix(2147483647, 0).UTC(),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			require.Equal(t, tt.expectedString, tt.input.String())
+			require.Equal(t, tt.expectedTime, tt.input.ToTime())
+		})
+	}
+}
+
+func TestSearchRequest_ValidateEdgeCases(t *testing.T) {
+	t.Parallel()
+
+	t.Run("Hybrid embedder already set to custom value", func(t *testing.T) {
+		sr := &SearchRequest{
+			Hybrid: &SearchRequestHybrid{
+				Embedder:      "custom-embedder",
+				SemanticRatio: 0.5,
+			},
+		}
+		sr.validate()
+		require.NotNil(t, sr.Hybrid)
+		require.Equal(t, "custom-embedder", sr.Hybrid.Embedder)
+		require.Equal(t, 0.5, sr.Hybrid.SemanticRatio)
+	})
+
+	t.Run("SearchRequest with no hybrid", func(t *testing.T) {
+		sr := &SearchRequest{
+			Query: "test query",
+			Limit: 10,
+		}
+		sr.validate()
+		require.Nil(t, sr.Hybrid)
+	})
+}
+
+func TestUpdateNetworkRequest_RoundTrip(t *testing.T) {
+	t.Parallel()
+
+	original := UpdateNetworkRequest{
+		Self:    String("primary-node"),
+		Leader:  String("leader-uuid"),
+		Version: String("v1.2.3"),
+		Remotes: NewOpt(map[string]Opt[UpdateRemote]{
+			"east": NewOpt(UpdateRemote{
+				URL:          String("https://east.example.com"),
+				SearchAPIKey: String("sek_east"),
+				WriteAPIKey:  String("wek_east"),
+			}),
+			"west": NewOpt(UpdateRemote{
+				URL:          String("https://west.example.com"),
+				SearchAPIKey: Null[string](),
+			}),
+		}),
+		Shards: NewOpt(map[string]Opt[UpdateRemoteShard]{
+			"shard1": NewOpt(UpdateRemoteShard{
+				Remotes: NewOpt([]string{"east", "west"}),
+			}),
+		}),
+	}
+
+	// Marshal
+	data, err := original.MarshalJSON()
+	require.NoError(t, err)
+
+	// Verify JSON structure
+	var result map[string]interface{}
+	err = json.Unmarshal(data, &result)
+	require.NoError(t, err)
+
+	// Check top-level fields
+	require.Equal(t, "primary-node", result["self"])
+	require.Equal(t, "leader-uuid", result["leader"])
+	require.Equal(t, "v1.2.3", result["version"])
+	require.Contains(t, result, "remotes")
+	require.Contains(t, result, "shards")
+}
+
+func TestUpdateRemote_AllFieldsNull(t *testing.T) {
+	t.Parallel()
+
+	remote := UpdateRemote{
+		URL:          Null[string](),
+		SearchAPIKey: Null[string](),
+		WriteAPIKey:  Null[string](),
+	}
+
+	data, err := remote.MarshalJSON()
+	require.NoError(t, err)
+	require.JSONEq(t, `{"url":null,"searchApiKey":null,"writeApiKey":null}`, string(data))
+}
+
+func TestUpdateRemoteShard_EmptySlices(t *testing.T) {
+	t.Parallel()
+
+	shard := UpdateRemoteShard{
+		Remotes:       NewOpt([]string{}),
+		AddRemotes:    NewOpt([]string{}),
+		RemoveRemotes: NewOpt([]string{}),
+	}
+
+	data, err := shard.MarshalJSON()
+	require.NoError(t, err)
+	require.JSONEq(t, `{"remotes":[],"addRemotes":[],"removeRemotes":[]}`, string(data))
+}
