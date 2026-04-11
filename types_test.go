@@ -564,3 +564,43 @@ func TestUpdateRemoteShard_EmptySlices(t *testing.T) {
 	require.NoError(t, err)
 	require.JSONEq(t, `{"remotes":[],"addRemotes":[],"removeRemotes":[]}`, string(data))
 }
+
+func TestMultiSearchFederation_Distinct(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name     string
+		in       MultiSearchFederation
+		wantJSON string
+	}{
+		{
+			name:     "distinct omitted when empty",
+			in:       MultiSearchFederation{},
+			wantJSON: `{}`,
+		},
+		{
+			name: "distinct set to attribute name",
+			in: MultiSearchFederation{
+				Distinct: "product_id",
+			},
+			wantJSON: `{"distinct":"product_id"}`,
+		},
+		{
+			name: "distinct set alongside other federation options",
+			in: MultiSearchFederation{
+				Offset:   0,
+				Limit:    20,
+				Distinct: "sku",
+			},
+			wantJSON: `{"limit":20,"distinct":"sku"}`,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got, err := json.Marshal(tt.in)
+			require.NoError(t, err)
+			require.JSONEq(t, tt.wantJSON, string(got))
+		})
+	}
+}
