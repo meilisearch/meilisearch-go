@@ -2312,6 +2312,40 @@ func TestClient_MultiSearch(t *testing.T) {
 			setup: "movies",
 		},
 		{
+			name: "TestClientMultiSearchWithFederationDistinct",
+			args: args{
+				client: sv,
+				queries: &meilisearch.MultiSearchRequest{
+					Queries: []*meilisearch.SearchRequest{
+						{
+							IndexUID: "TestClientMultiSearchWithFederationDistinct",
+							Query:    "wonder",
+						},
+					},
+					Federation: &meilisearch.MultiSearchFederation{
+						Distinct: "book_id",
+					},
+				},
+				UIDS: []string{"TestClientMultiSearchWithFederationDistinct"},
+			},
+			want: &meilisearch.MultiSearchResponse{
+				Results: nil,
+				Hits: meilisearch.Hits{
+					{
+						"_federation": toRawMessage(map[string]interface{}{
+							"indexUid": "TestClientMultiSearchWithFederationDistinct", "queriesPosition": 0.0, "weightedRankingScore": 1.0,
+						}),
+						"book_id": toRawMessage(1), "title": toRawMessage("Alice In Wonderland"),
+					},
+				},
+				Offset:             0,
+				Limit:              20,
+				EstimatedTotalHits: 1,
+				SemanticHitCount:   0,
+			},
+			setup: "books",
+		},
+		{
 			name: "TestClientMultiSearchNoIndex",
 			args: args{
 				client: sv,

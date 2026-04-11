@@ -617,6 +617,7 @@ type MultiSearchRequest struct {
 type MultiSearchFederation struct {
 	Offset        int64                             `json:"offset,omitempty"`
 	Limit         int64                             `json:"limit,omitempty"`
+	Distinct      string                            `json:"distinct,omitempty"`
 	FacetsByIndex map[string][]string               `json:"facetsByIndex,omitempty"`
 	MergeFacets   *MultiSearchFederationMergeFacets `json:"mergeFacets,omitempty"`
 }
