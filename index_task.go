@@ -70,6 +70,41 @@ func (i *index) GetTasksWithContext(ctx context.Context, param *TasksQuery) (*Ta
 	return resp, nil
 }
 
+func (i *index) GetTaskDocuments(taskUID int64, param *DocumentsQuery) (*DocumentsResult, error) {
+	return i.GetTaskDocumentsWithContext(context.Background(), taskUID, param)
+}
+
+func (i *index) GetTaskDocumentsWithContext(ctx context.Context, taskUID int64, param *DocumentsQuery) (*DocumentsResult, error) {
+	resp := new(DocumentsResult)
+	req := &internalRequest{
+		endpoint:            "/tasks/" + strconv.FormatInt(taskUID, 10) + "/documents",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		withQueryParams:     map[string]string{},
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetTaskDocuments",
+	}
+	if param != nil {
+		if param.Offset != 0 {
+			req.withQueryParams["offset"] = strconv.FormatInt(param.Offset, 10)
+		}
+		if param.Limit != 0 {
+			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+		}
+		if len(param.Fields) != 0 {
+			req.withQueryParams["fields"] = strings.Join(param.Fields, ",")
+		}
+		if param.RetrieveVectors {
+			req.withQueryParams["retrieveVectors"] = "true"
+		}
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (i *index) WaitForTask(taskUID int64, interval time.Duration) (*Task, error) {
 	return waitForTask(context.Background(), i.client, taskUID, interval)
 }
