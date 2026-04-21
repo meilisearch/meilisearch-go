@@ -280,3 +280,27 @@ func TestIndex_WaitForTask(t *testing.T) {
 		})
 	}
 }
+
+func TestGetTaskDocuments(t *testing.T) {
+	sv := setup(t, "")
+	t.Cleanup(cleanup(sv))
+
+	uid := "TestGetTaskDocuments"
+	i := sv.Index(uid)
+
+	documents := []docTest{
+		{ID: "1", Name: "Alice"},
+		{ID: "2", Name: "Bob"},
+	}
+
+	task, err := i.AddDocuments(documents, nil)
+	require.NoError(t, err)
+
+	_, err = sv.WaitForTask(task.TaskUID, 0)
+	require.NoError(t, err)
+
+	result, err := sv.GetTaskDocuments(task.TaskUID, nil)
+	require.NoError(t, err)
+	require.NotNil(t, result)
+	require.NotEmpty(t, result.Results)
+}

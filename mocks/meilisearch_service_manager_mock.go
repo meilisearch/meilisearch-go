@@ -3704,6 +3704,148 @@ func (_c *MockmeilisearchServiceManager_GetTasksWithContext_Call) RunAndReturn(r
 	return _c
 }
 
+// GetTaskDocuments provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) GetTaskDocuments(taskUID int64, param *meilisearch.DocumentsQuery) (*meilisearch.DocumentsResult, error) {
+	ret := _mock.Called(taskUID, param)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetTaskDocuments")
+	}
+
+	var r0 *meilisearch.DocumentsResult
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(int64, *meilisearch.DocumentsQuery) (*meilisearch.DocumentsResult, error)); ok {
+		return returnFunc(taskUID, param)
+	}
+	if returnFunc, ok := ret.Get(0).(func(int64, *meilisearch.DocumentsQuery) *meilisearch.DocumentsResult); ok {
+		r0 = returnFunc(taskUID, param)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.DocumentsResult)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(int64, *meilisearch.DocumentsQuery) error); ok {
+		r1 = returnFunc(taskUID, param)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchServiceManager_GetTaskDocuments_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTaskDocuments'
+type MockmeilisearchServiceManager_GetTaskDocuments_Call struct {
+	*mock.Call
+}
+
+// GetTaskDocuments is a helper method to define mock.On call
+//   - taskUID int64
+//   - param *meilisearch.DocumentsQuery
+func (_e *MockmeilisearchServiceManager_Expecter) GetTaskDocuments(taskUID interface{}, param interface{}) *MockmeilisearchServiceManager_GetTaskDocuments_Call {
+	return &MockmeilisearchServiceManager_GetTaskDocuments_Call{Call: _e.mock.On("GetTaskDocuments", taskUID, param)}
+}
+
+func (_c *MockmeilisearchServiceManager_GetTaskDocuments_Call) Run(run func(taskUID int64, param *meilisearch.DocumentsQuery)) *MockmeilisearchServiceManager_GetTaskDocuments_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 int64
+		if args[0] != nil {
+			arg0 = args[0].(int64)
+		}
+		var arg1 *meilisearch.DocumentsQuery
+		if args[1] != nil {
+			arg1 = args[1].(*meilisearch.DocumentsQuery)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_GetTaskDocuments_Call) Return(documentsResult *meilisearch.DocumentsResult, err error) *MockmeilisearchServiceManager_GetTaskDocuments_Call {
+	_c.Call.Return(documentsResult, err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_GetTaskDocuments_Call) RunAndReturn(run func(taskUID int64, param *meilisearch.DocumentsQuery) (*meilisearch.DocumentsResult, error)) *MockmeilisearchServiceManager_GetTaskDocuments_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetTaskDocumentsWithContext provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) GetTaskDocumentsWithContext(ctx context.Context, taskUID int64, param *meilisearch.DocumentsQuery) (*meilisearch.DocumentsResult, error) {
+	ret := _mock.Called(ctx, taskUID, param)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetTaskDocumentsWithContext")
+	}
+
+	var r0 *meilisearch.DocumentsResult
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int64, *meilisearch.DocumentsQuery) (*meilisearch.DocumentsResult, error)); ok {
+		return returnFunc(ctx, taskUID, param)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int64, *meilisearch.DocumentsQuery) *meilisearch.DocumentsResult); ok {
+		r0 = returnFunc(ctx, taskUID, param)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.DocumentsResult)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, int64, *meilisearch.DocumentsQuery) error); ok {
+		r1 = returnFunc(ctx, taskUID, param)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTaskDocumentsWithContext'
+type MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call struct {
+	*mock.Call
+}
+
+// GetTaskDocumentsWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+//   - taskUID int64
+//   - param *meilisearch.DocumentsQuery
+func (_e *MockmeilisearchServiceManager_Expecter) GetTaskDocumentsWithContext(ctx interface{}, taskUID interface{}, param interface{}) *MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call {
+	return &MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call{Call: _e.mock.On("GetTaskDocumentsWithContext", ctx, taskUID, param)}
+}
+
+func (_c *MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call) Run(run func(ctx context.Context, taskUID int64, param *meilisearch.DocumentsQuery)) *MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 int64
+		if args[1] != nil {
+			arg1 = args[1].(int64)
+		}
+		var arg2 *meilisearch.DocumentsQuery
+		if args[2] != nil {
+			arg2 = args[2].(*meilisearch.DocumentsQuery)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call) Return(documentsResult *meilisearch.DocumentsResult, err error) *MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call {
+	_c.Call.Return(documentsResult, err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call) RunAndReturn(run func(ctx context.Context, taskUID int64, param *meilisearch.DocumentsQuery) (*meilisearch.DocumentsResult, error)) *MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetWebhook provides a mock function for the type MockmeilisearchServiceManager
 func (_mock *MockmeilisearchServiceManager) GetWebhook(uuid string) (*meilisearch.Webhook, error) {
 	ret := _mock.Called(uuid)

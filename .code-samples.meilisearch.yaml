@@ -130,6 +130,8 @@ cancel_tasks_1: |-
   });
 get_task_1: |-
   client.GetTask(1);
+get_task_documents_1: |-
+  client.GetTaskDocuments(1, nil);
 get_all_tasks_1: |-
   client.GetTasks(nil);
 get_all_tasks_paginating_1: |-

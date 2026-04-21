@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/golang-jwt/jwt/v5"
@@ -388,6 +389,41 @@ func (m *meilisearch) GetTasksWithContext(ctx context.Context, param *TasksQuery
 	}
 	if param != nil {
 		encodeTasksQuery(param, req)
+	}
+	if err := m.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (m *meilisearch) GetTaskDocuments(taskUID int64, param *DocumentsQuery) (*DocumentsResult, error) {
+	return m.GetTaskDocumentsWithContext(context.Background(), taskUID, param)
+}
+
+func (m *meilisearch) GetTaskDocumentsWithContext(ctx context.Context, taskUID int64, param *DocumentsQuery) (*DocumentsResult, error) {
+	resp := new(DocumentsResult)
+	req := &internalRequest{
+		endpoint:            "/tasks/" + strconv.FormatInt(taskUID, 10) + "/documents",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		withQueryParams:     map[string]string{},
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetTaskDocuments",
+	}
+	if param != nil {
+		if param.Offset != 0 {
+			req.withQueryParams["offset"] = strconv.FormatInt(param.Offset, 10)
+		}
+		if param.Limit != 0 {
+			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
+		}
+		if len(param.Fields) != 0 {
+			req.withQueryParams["fields"] = strings.Join(param.Fields, ",")
+		}
+		if param.RetrieveVectors {
+			req.withQueryParams["retrieveVectors"] = "true"
+		}
 	}
 	if err := m.client.executeRequest(ctx, req); err != nil {
 		return nil, err
