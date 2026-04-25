@@ -14,6 +14,14 @@ const (
 	nullBody                 = "null"
 )
 
+type SearchRulesRequest struct {
+	Description string      `json:"description,omitempty"`
+	Priority    int         `json:"priority,omitempty"`
+	Active      *bool       `json:"active"`
+	Conditions  []Condition `json:"conditions"`
+	Actions     []Action    `json:"actions"`
+}
+
 type SearchRulesResults struct {
 	Results []SearchRule `json:"results"`
 	Offset  int          `json:"offset"`

@@ -4,6 +4,15 @@ import "context"
 
 type SearchRulesManager interface {
 	SearchRulesReader
+	// Update update a dynamic search rule or create a new one if it doesn't exist.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/update-a-dynamic-search-rule-or-create-a-new-one-if-it-doesnt-exist#body-priority-one-of-0
+	Update(uid string, params *SearchRulesRequest) (*SearchRule, error)
+
+	// UpdateWithContext update a dynamic search rule or create a new one if it doesn't exist with a context.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/update-a-dynamic-search-rule-or-create-a-new-one-if-it-doesnt-exist#body-priority-one-of-0
+	UpdateWithContext(ctx context.Context, uid string, params *SearchRulesRequest) (*SearchRule, error)
 
 	// Delete deletes a dynamic search rule by its unique identifier.
 	//
