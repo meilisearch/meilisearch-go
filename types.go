@@ -24,14 +24,14 @@ type SearchRulesRequest struct {
 
 type SearchRulesResults struct {
 	Results []SearchRule `json:"results"`
-	Offset  int          `json:"offset"`
-	Limit   int          `json:"limit"`
+	Offset  int64        `json:"offset"`
+	Limit   int64        `json:"limit"`
 	Total   int64        `json:"total"`
 }
 
 type SearchRulesParams struct {
-	Offset int                `json:"offset"`
-	Limit  int                `json:"limit"`
+	Offset int64              `json:"offset"`
+	Limit  int64              `json:"limit"`
 	Filter *SearchRulesFilter `json:"filter,omitempty"`
 }
 
