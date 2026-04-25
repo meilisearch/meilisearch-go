@@ -12,6 +12,7 @@ type ServiceManager interface {
 	ChatManager
 	ChatReader
 	WebhookManager
+	SearchRulesManager
 
 	ServiceReader() ServiceReader
 
@@ -20,6 +21,9 @@ type ServiceManager interface {
 
 	KeyManager() KeyManager
 	KeyReader() KeyReader
+
+	SearchRulesManager() SearchRulesManager
+	SearchRulesReader() SearchRulesReader
 
 	ChatManager() ChatManager
 	ChatReader() ChatReader
