@@ -26,7 +26,7 @@ type SearchRulesResults struct {
 	Results []SearchRule `json:"results"`
 	Offset  int          `json:"offset"`
 	Limit   int          `json:"limit"`
-	Total   int          `json:"total"`
+	Total   int64        `json:"total"`
 }
 
 type SearchRulesParams struct {
@@ -36,12 +36,8 @@ type SearchRulesParams struct {
 }
 
 type SearchRulesFilter struct {
-	AttributePatterns AttributePatterns `json:"attribute_patterns"`
-	Active            *bool             `json:"active"`
-}
-
-type AttributePatterns struct {
-	Patterns []string `json:"patterns"`
+	AttributePatterns []string `json:"attributePatterns,omitempty"`
+	Active            *bool    `json:"active"`
 }
 
 type SearchRule struct {
@@ -54,10 +50,10 @@ type SearchRule struct {
 }
 
 type Condition struct {
-	Scope   string    `json:"scope"`
-	IsEmpty bool      `json:"isEmpty"`
-	Start   time.Time `json:"start"`
-	End     time.Time `json:"end"`
+	Scope   string     `json:"scope"`
+	IsEmpty *bool      `json:"isEmpty"`
+	Start   *time.Time `json:"start,omitempty"`
+	End     *time.Time `json:"end,omitempty"`
 }
 
 type Action struct {
@@ -832,6 +828,7 @@ type ExperimentalFeaturesBase struct {
 	CompositeEmbedders      *bool `json:"compositeEmbedders,omitempty"`
 	ChatCompletions         *bool `json:"chatCompletions,omitempty"`
 	MultiModal              *bool `json:"multimodal,omitempty"`
+	DynamicSearchRules      *bool `json:"dynamicSearchRules,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -843,6 +840,7 @@ type ExperimentalFeaturesResult struct {
 	CompositeEmbedders      bool `json:"compositeEmbedders"`
 	ChatCompletions         bool `json:"chatCompletions"`
 	MultiModal              bool `json:"multimodal,omitempty"`
+	DynamicSearchRules      bool `json:"dynamicSearchRules"`
 }
 
 type SwapIndexesParams struct {

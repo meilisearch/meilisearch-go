@@ -4594,7 +4594,7 @@ func TestIndex_GetFacetSearch(t *testing.T) {
 				UID:    "indexUID",
 				client: meili,
 			},
-			wantResp: boolPtr(true),
+			wantResp: true,
 		},
 		{
 			name: "TestIndexGetFacetSearchWithCustomClient",
@@ -4602,7 +4602,7 @@ func TestIndex_GetFacetSearch(t *testing.T) {
 				UID:    "indexUID",
 				client: customMeili,
 			},
-			wantResp: boolPtr(true),
+			wantResp: true,
 		},
 	}
 	for _, tt := range tests {
@@ -4644,7 +4644,7 @@ func TestIndex_UpdateFacetSearch(t *testing.T) {
 				request: false,
 			},
 			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
-			wantResp: boolPtr(false),
+			wantResp: false,
 		},
 		{
 			name: "TestIndexUpdateFacetSearchWithCustomClient",
@@ -4654,7 +4654,7 @@ func TestIndex_UpdateFacetSearch(t *testing.T) {
 				request: false,
 			},
 			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
-			wantResp: boolPtr(false),
+			wantResp: false,
 		},
 	}
 	for _, tt := range tests {
@@ -4699,7 +4699,7 @@ func TestIndex_ResetFacetSearch(t *testing.T) {
 				client: meili,
 			},
 			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
-			wantResp: boolPtr(true),
+			wantResp: true,
 		},
 		{
 			name: "TestIndexResetFacetSearchWithCustomClient",
@@ -4708,7 +4708,7 @@ func TestIndex_ResetFacetSearch(t *testing.T) {
 				client: customMeili,
 			},
 			wantTask: &meilisearch.TaskInfo{TaskUID: 1},
-			wantResp: boolPtr(true),
+			wantResp: true,
 		},
 	}
 	for _, tt := range tests {
@@ -4739,6 +4739,6 @@ func stringPtr(s string) *string {
 	return &s
 }
 
-func boolPtr(b bool) bool {
-	return b
+func boolPtr(b bool) *bool {
+	return &b
 }

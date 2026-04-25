@@ -6,19 +6,20 @@ import (
 	"net/http"
 )
 
-func (m *meilisearch) Update(uid string, params *SearchRulesRequest) (*SearchRule, error) {
-	return m.UpdateWithContext(context.Background(), uid, params)
+func (m *meilisearch) UpdateSearchRule(uid string, params *SearchRulesRequest) (*SearchRule, error) {
+	return m.UpdateSearchRuleWithContext(context.Background(), uid, params)
 }
 
-func (m *meilisearch) UpdateWithContext(ctx context.Context, uid string, params *SearchRulesRequest) (*SearchRule, error) {
+func (m *meilisearch) UpdateSearchRuleWithContext(ctx context.Context, uid string, params *SearchRulesRequest) (*SearchRule, error) {
 	resp := new(SearchRule)
 
 	req := &internalRequest{
 		endpoint:            fmt.Sprintf("/dynamic-search-rules/%s", uid),
 		method:              http.MethodPatch,
+		contentType:         contentTypeJSON,
 		withRequest:         params,
 		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusOK},
+		acceptedStatusCodes: []int{http.StatusCreated, http.StatusOK},
 		functionName:        "UpdateSearchRule",
 	}
 
@@ -29,16 +30,17 @@ func (m *meilisearch) UpdateWithContext(ctx context.Context, uid string, params 
 	return resp, nil
 }
 
-func (m *meilisearch) List(params *SearchRulesParams) (*SearchRulesResults, error) {
-	return m.ListWithContext(context.Background(), params)
+func (m *meilisearch) ListSearchRules(params *SearchRulesParams) (*SearchRulesResults, error) {
+	return m.ListSearchRulesWithContext(context.Background(), params)
 }
 
-func (m *meilisearch) ListWithContext(ctx context.Context, params *SearchRulesParams) (*SearchRulesResults, error) {
+func (m *meilisearch) ListSearchRulesWithContext(ctx context.Context, params *SearchRulesParams) (*SearchRulesResults, error) {
 	resp := new(SearchRulesResults)
 
 	req := &internalRequest{
 		endpoint:            "/dynamic-search-rules",
 		method:              http.MethodPost,
+		contentType:         contentTypeJSON,
 		withRequest:         params,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
@@ -52,11 +54,11 @@ func (m *meilisearch) ListWithContext(ctx context.Context, params *SearchRulesPa
 	return resp, nil
 }
 
-func (m *meilisearch) Get(uid string) (*SearchRule, error) {
-	return m.GetWithContext(context.Background(), uid)
+func (m *meilisearch) GetSearchRule(uid string) (*SearchRule, error) {
+	return m.GetSearchRuleWithContext(context.Background(), uid)
 }
 
-func (m *meilisearch) GetWithContext(ctx context.Context, uid string) (*SearchRule, error) {
+func (m *meilisearch) GetSearchRuleWithContext(ctx context.Context, uid string) (*SearchRule, error) {
 	resp := new(SearchRule)
 
 	req := &internalRequest{
@@ -75,11 +77,11 @@ func (m *meilisearch) GetWithContext(ctx context.Context, uid string) (*SearchRu
 	return resp, nil
 }
 
-func (m *meilisearch) Delete(uid string) error {
-	return m.DeleteWithContext(context.Background(), uid)
+func (m *meilisearch) DeleteSearchRule(uid string) error {
+	return m.DeleteSearchRuleWithContext(context.Background(), uid)
 }
 
-func (m *meilisearch) DeleteWithContext(ctx context.Context, uid string) error {
+func (m *meilisearch) DeleteSearchRuleWithContext(ctx context.Context, uid string) error {
 	req := &internalRequest{
 		endpoint:            fmt.Sprintf("/dynamic-search-rules/%s", uid),
 		method:              http.MethodDelete,
