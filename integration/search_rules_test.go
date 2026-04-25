@@ -64,8 +64,8 @@ func Test_ListSearchRule(t *testing.T) {
 		assert.NotNil(t, results)
 
 		assert.Equal(t, results.Total, int64(len(uids)))
-		assert.Equal(t, 0, results.Offset)
-		assert.Equal(t, 20, results.Limit)
+		assert.Equal(t, int64(0), results.Offset)
+		assert.Equal(t, int64(20), results.Limit)
 		assert.Len(t, results.Results, len(uids))
 
 		// Verify results contain expected UIDs
