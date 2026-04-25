@@ -14,6 +14,11 @@ func (m *meilisearch) ExperimentalFeatures() *ExperimentalFeatures {
 	return &ExperimentalFeatures{client: m.client}
 }
 
+func (ef *ExperimentalFeatures) SetDynamicSearchRules(dynamicSearchRule bool) *ExperimentalFeatures {
+	ef.DynamicSearchRules = &dynamicSearchRule
+	return ef
+}
+
 func (ef *ExperimentalFeatures) SetLogsRoute(logsRoute bool) *ExperimentalFeatures {
 	ef.LogsRoute = &logsRoute
 	return ef
@@ -91,6 +96,7 @@ func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*Experim
 		CompositeEmbedders:      ef.CompositeEmbedders,
 		ChatCompletions:         ef.ChatCompletions,
 		MultiModal:              ef.MultiModal,
+		DynamicSearchRules:      ef.DynamicSearchRules,
 	}
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{
