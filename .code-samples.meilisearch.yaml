@@ -762,3 +762,43 @@ update_network_1: |-
   })
 compact_index_1: |-
   client.Index("INDEX_UID").Compact();
+list_dynamic_search_rules_1: |-
+  client.ListSearchRules(&meilisearch.SearchRulesParams{})
+get_dynamic_search_rule_1: |-
+  client.GetSearchRule("black-friday")
+patch_dynamic_search_rule_1: |-
+  active := true
+  isEmpty := true
+  startTime, _ := time.Parse(time.RFC3339, "2025-11-28T00:00:00Z")
+  endTime, _ := time.Parse(time.RFC3339, "2025-11-28T23:59:59Z")
+  
+  client.UpdateSearchRule("black-friday", &meilisearch.SearchRulesRequest{
+    Description: "Black Friday 2025 rules",
+    Priority: 10,
+    Active: &active,
+    Conditions: []meilisearch.Condition{
+      {
+        Scope:   "query",
+        IsEmpty: &isEmpty,
+      },
+      {
+        Scope: "time",
+        Start: &startTime,
+        End:   &endTime,
+      },
+    },
+    Actions: []meilisearch.Action{
+      {
+        Selector: meilisearch.Selector{
+          IndexUid: "products",
+          ID:       "123",
+        },
+        Action: meilisearch.ActionDef{
+          Type:     "pin",
+          Position: 1,
+        },
+      },
+    },
+  })
+delete_dynamic_search_rule_1: |-
+  client.DeleteSearchRule("black-friday")
