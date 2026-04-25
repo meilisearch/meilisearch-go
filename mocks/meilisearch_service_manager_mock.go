@@ -1316,6 +1316,114 @@ func (_c *MockmeilisearchServiceManager_DeleteKeyWithContext_Call) RunAndReturn(
 	return _c
 }
 
+// DeleteSearchRule provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) DeleteSearchRule(uid string) error {
+	ret := _mock.Called(uid)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteSearchRule")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(string) error); ok {
+		r0 = returnFunc(uid)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockmeilisearchServiceManager_DeleteSearchRule_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteSearchRule'
+type MockmeilisearchServiceManager_DeleteSearchRule_Call struct {
+	*mock.Call
+}
+
+// DeleteSearchRule is a helper method to define mock.On call
+//   - uid string
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteSearchRule(uid interface{}) *MockmeilisearchServiceManager_DeleteSearchRule_Call {
+	return &MockmeilisearchServiceManager_DeleteSearchRule_Call{Call: _e.mock.On("DeleteSearchRule", uid)}
+}
+
+func (_c *MockmeilisearchServiceManager_DeleteSearchRule_Call) Run(run func(uid string)) *MockmeilisearchServiceManager_DeleteSearchRule_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_DeleteSearchRule_Call) Return(err error) *MockmeilisearchServiceManager_DeleteSearchRule_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_DeleteSearchRule_Call) RunAndReturn(run func(uid string) error) *MockmeilisearchServiceManager_DeleteSearchRule_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// DeleteSearchRuleWithContext provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) DeleteSearchRuleWithContext(ctx context.Context, uid string) error {
+	ret := _mock.Called(ctx, uid)
+
+	if len(ret) == 0 {
+		panic("no return value specified for DeleteSearchRuleWithContext")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) error); ok {
+		r0 = returnFunc(ctx, uid)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteSearchRuleWithContext'
+type MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call struct {
+	*mock.Call
+}
+
+// DeleteSearchRuleWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+//   - uid string
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteSearchRuleWithContext(ctx interface{}, uid interface{}) *MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call {
+	return &MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call{Call: _e.mock.On("DeleteSearchRuleWithContext", ctx, uid)}
+}
+
+func (_c *MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call) Run(run func(ctx context.Context, uid string)) *MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call) Return(err error) *MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call) RunAndReturn(run func(ctx context.Context, uid string) error) *MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // DeleteTasks provides a mock function for the type MockmeilisearchServiceManager
 func (_mock *MockmeilisearchServiceManager) DeleteTasks(param *meilisearch.DeleteTasksQuery) (*meilisearch.TaskInfo, error) {
 	ret := _mock.Called(param)
@@ -3089,6 +3197,136 @@ func (_c *MockmeilisearchServiceManager_GetRawIndexesWithContext_Call) RunAndRet
 	return _c
 }
 
+// GetSearchRule provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) GetSearchRule(uid string) (*meilisearch.SearchRule, error) {
+	ret := _mock.Called(uid)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetSearchRule")
+	}
+
+	var r0 *meilisearch.SearchRule
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string) (*meilisearch.SearchRule, error)); ok {
+		return returnFunc(uid)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string) *meilisearch.SearchRule); ok {
+		r0 = returnFunc(uid)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.SearchRule)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
+		r1 = returnFunc(uid)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchServiceManager_GetSearchRule_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchRule'
+type MockmeilisearchServiceManager_GetSearchRule_Call struct {
+	*mock.Call
+}
+
+// GetSearchRule is a helper method to define mock.On call
+//   - uid string
+func (_e *MockmeilisearchServiceManager_Expecter) GetSearchRule(uid interface{}) *MockmeilisearchServiceManager_GetSearchRule_Call {
+	return &MockmeilisearchServiceManager_GetSearchRule_Call{Call: _e.mock.On("GetSearchRule", uid)}
+}
+
+func (_c *MockmeilisearchServiceManager_GetSearchRule_Call) Run(run func(uid string)) *MockmeilisearchServiceManager_GetSearchRule_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_GetSearchRule_Call) Return(searchRule *meilisearch.SearchRule, err error) *MockmeilisearchServiceManager_GetSearchRule_Call {
+	_c.Call.Return(searchRule, err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_GetSearchRule_Call) RunAndReturn(run func(uid string) (*meilisearch.SearchRule, error)) *MockmeilisearchServiceManager_GetSearchRule_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetSearchRuleWithContext provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) GetSearchRuleWithContext(ctx context.Context, uid string) (*meilisearch.SearchRule, error) {
+	ret := _mock.Called(ctx, uid)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetSearchRuleWithContext")
+	}
+
+	var r0 *meilisearch.SearchRule
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (*meilisearch.SearchRule, error)); ok {
+		return returnFunc(ctx, uid)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) *meilisearch.SearchRule); ok {
+		r0 = returnFunc(ctx, uid)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.SearchRule)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, uid)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchServiceManager_GetSearchRuleWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchRuleWithContext'
+type MockmeilisearchServiceManager_GetSearchRuleWithContext_Call struct {
+	*mock.Call
+}
+
+// GetSearchRuleWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+//   - uid string
+func (_e *MockmeilisearchServiceManager_Expecter) GetSearchRuleWithContext(ctx interface{}, uid interface{}) *MockmeilisearchServiceManager_GetSearchRuleWithContext_Call {
+	return &MockmeilisearchServiceManager_GetSearchRuleWithContext_Call{Call: _e.mock.On("GetSearchRuleWithContext", ctx, uid)}
+}
+
+func (_c *MockmeilisearchServiceManager_GetSearchRuleWithContext_Call) Run(run func(ctx context.Context, uid string)) *MockmeilisearchServiceManager_GetSearchRuleWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_GetSearchRuleWithContext_Call) Return(searchRule *meilisearch.SearchRule, err error) *MockmeilisearchServiceManager_GetSearchRuleWithContext_Call {
+	_c.Call.Return(searchRule, err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_GetSearchRuleWithContext_Call) RunAndReturn(run func(ctx context.Context, uid string) (*meilisearch.SearchRule, error)) *MockmeilisearchServiceManager_GetSearchRuleWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetStats provides a mock function for the type MockmeilisearchServiceManager
 func (_mock *MockmeilisearchServiceManager) GetStats() (*meilisearch.Stats, error) {
 	ret := _mock.Called()
@@ -4162,6 +4400,136 @@ func (_c *MockmeilisearchServiceManager_ListIndexesWithContext_Call) RunAndRetur
 	return _c
 }
 
+// ListSearchRules provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) ListSearchRules(params *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error) {
+	ret := _mock.Called(params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListSearchRules")
+	}
+
+	var r0 *meilisearch.SearchRulesResults
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(*meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error)); ok {
+		return returnFunc(params)
+	}
+	if returnFunc, ok := ret.Get(0).(func(*meilisearch.SearchRulesParams) *meilisearch.SearchRulesResults); ok {
+		r0 = returnFunc(params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.SearchRulesResults)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(*meilisearch.SearchRulesParams) error); ok {
+		r1 = returnFunc(params)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchServiceManager_ListSearchRules_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListSearchRules'
+type MockmeilisearchServiceManager_ListSearchRules_Call struct {
+	*mock.Call
+}
+
+// ListSearchRules is a helper method to define mock.On call
+//   - params *meilisearch.SearchRulesParams
+func (_e *MockmeilisearchServiceManager_Expecter) ListSearchRules(params interface{}) *MockmeilisearchServiceManager_ListSearchRules_Call {
+	return &MockmeilisearchServiceManager_ListSearchRules_Call{Call: _e.mock.On("ListSearchRules", params)}
+}
+
+func (_c *MockmeilisearchServiceManager_ListSearchRules_Call) Run(run func(params *meilisearch.SearchRulesParams)) *MockmeilisearchServiceManager_ListSearchRules_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 *meilisearch.SearchRulesParams
+		if args[0] != nil {
+			arg0 = args[0].(*meilisearch.SearchRulesParams)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_ListSearchRules_Call) Return(searchRulesResults *meilisearch.SearchRulesResults, err error) *MockmeilisearchServiceManager_ListSearchRules_Call {
+	_c.Call.Return(searchRulesResults, err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_ListSearchRules_Call) RunAndReturn(run func(params *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error)) *MockmeilisearchServiceManager_ListSearchRules_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ListSearchRulesWithContext provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) ListSearchRulesWithContext(ctx context.Context, params *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error) {
+	ret := _mock.Called(ctx, params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListSearchRulesWithContext")
+	}
+
+	var r0 *meilisearch.SearchRulesResults
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error)); ok {
+		return returnFunc(ctx, params)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.SearchRulesParams) *meilisearch.SearchRulesResults); ok {
+		r0 = returnFunc(ctx, params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.SearchRulesResults)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *meilisearch.SearchRulesParams) error); ok {
+		r1 = returnFunc(ctx, params)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchServiceManager_ListSearchRulesWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListSearchRulesWithContext'
+type MockmeilisearchServiceManager_ListSearchRulesWithContext_Call struct {
+	*mock.Call
+}
+
+// ListSearchRulesWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params *meilisearch.SearchRulesParams
+func (_e *MockmeilisearchServiceManager_Expecter) ListSearchRulesWithContext(ctx interface{}, params interface{}) *MockmeilisearchServiceManager_ListSearchRulesWithContext_Call {
+	return &MockmeilisearchServiceManager_ListSearchRulesWithContext_Call{Call: _e.mock.On("ListSearchRulesWithContext", ctx, params)}
+}
+
+func (_c *MockmeilisearchServiceManager_ListSearchRulesWithContext_Call) Run(run func(ctx context.Context, params *meilisearch.SearchRulesParams)) *MockmeilisearchServiceManager_ListSearchRulesWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 *meilisearch.SearchRulesParams
+		if args[1] != nil {
+			arg1 = args[1].(*meilisearch.SearchRulesParams)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_ListSearchRulesWithContext_Call) Return(searchRulesResults *meilisearch.SearchRulesResults, err error) *MockmeilisearchServiceManager_ListSearchRulesWithContext_Call {
+	_c.Call.Return(searchRulesResults, err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_ListSearchRulesWithContext_Call) RunAndReturn(run func(ctx context.Context, params *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error)) *MockmeilisearchServiceManager_ListSearchRulesWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ListWebhooks provides a mock function for the type MockmeilisearchServiceManager
 func (_mock *MockmeilisearchServiceManager) ListWebhooks() (*meilisearch.WebhookResults, error) {
 	ret := _mock.Called()
@@ -4535,6 +4903,98 @@ func (_c *MockmeilisearchServiceManager_ResetChatWorkspaceWithContext_Call) Retu
 }
 
 func (_c *MockmeilisearchServiceManager_ResetChatWorkspaceWithContext_Call) RunAndReturn(run func(ctx context.Context, uid string) (*meilisearch.ChatWorkspaceSettings, error)) *MockmeilisearchServiceManager_ResetChatWorkspaceWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SearchRulesManager provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) SearchRulesManager() meilisearch.SearchRulesManager {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for SearchRulesManager")
+	}
+
+	var r0 meilisearch.SearchRulesManager
+	if returnFunc, ok := ret.Get(0).(func() meilisearch.SearchRulesManager); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(meilisearch.SearchRulesManager)
+		}
+	}
+	return r0
+}
+
+// MockmeilisearchServiceManager_SearchRulesManager_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchRulesManager'
+type MockmeilisearchServiceManager_SearchRulesManager_Call struct {
+	*mock.Call
+}
+
+// SearchRulesManager is a helper method to define mock.On call
+func (_e *MockmeilisearchServiceManager_Expecter) SearchRulesManager() *MockmeilisearchServiceManager_SearchRulesManager_Call {
+	return &MockmeilisearchServiceManager_SearchRulesManager_Call{Call: _e.mock.On("SearchRulesManager")}
+}
+
+func (_c *MockmeilisearchServiceManager_SearchRulesManager_Call) Run(run func()) *MockmeilisearchServiceManager_SearchRulesManager_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_SearchRulesManager_Call) Return(searchRulesManager meilisearch.SearchRulesManager) *MockmeilisearchServiceManager_SearchRulesManager_Call {
+	_c.Call.Return(searchRulesManager)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_SearchRulesManager_Call) RunAndReturn(run func() meilisearch.SearchRulesManager) *MockmeilisearchServiceManager_SearchRulesManager_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SearchRulesReader provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) SearchRulesReader() meilisearch.SearchRulesReader {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for SearchRulesReader")
+	}
+
+	var r0 meilisearch.SearchRulesReader
+	if returnFunc, ok := ret.Get(0).(func() meilisearch.SearchRulesReader); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(meilisearch.SearchRulesReader)
+		}
+	}
+	return r0
+}
+
+// MockmeilisearchServiceManager_SearchRulesReader_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchRulesReader'
+type MockmeilisearchServiceManager_SearchRulesReader_Call struct {
+	*mock.Call
+}
+
+// SearchRulesReader is a helper method to define mock.On call
+func (_e *MockmeilisearchServiceManager_Expecter) SearchRulesReader() *MockmeilisearchServiceManager_SearchRulesReader_Call {
+	return &MockmeilisearchServiceManager_SearchRulesReader_Call{Call: _e.mock.On("SearchRulesReader")}
+}
+
+func (_c *MockmeilisearchServiceManager_SearchRulesReader_Call) Run(run func()) *MockmeilisearchServiceManager_SearchRulesReader_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_SearchRulesReader_Call) Return(searchRulesReader meilisearch.SearchRulesReader) *MockmeilisearchServiceManager_SearchRulesReader_Call {
+	_c.Call.Return(searchRulesReader)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_SearchRulesReader_Call) RunAndReturn(run func() meilisearch.SearchRulesReader) *MockmeilisearchServiceManager_SearchRulesReader_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -5217,6 +5677,148 @@ func (_c *MockmeilisearchServiceManager_UpdateNetworkWithContext_Call) Return(v 
 }
 
 func (_c *MockmeilisearchServiceManager_UpdateNetworkWithContext_Call) RunAndReturn(run func(ctx context.Context, params *meilisearch.UpdateNetworkRequest) (any, error)) *MockmeilisearchServiceManager_UpdateNetworkWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateSearchRule provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) UpdateSearchRule(uid string, params *meilisearch.SearchRulesRequest) (*meilisearch.SearchRule, error) {
+	ret := _mock.Called(uid, params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateSearchRule")
+	}
+
+	var r0 *meilisearch.SearchRule
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.SearchRulesRequest) (*meilisearch.SearchRule, error)); ok {
+		return returnFunc(uid, params)
+	}
+	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.SearchRulesRequest) *meilisearch.SearchRule); ok {
+		r0 = returnFunc(uid, params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.SearchRule)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(string, *meilisearch.SearchRulesRequest) error); ok {
+		r1 = returnFunc(uid, params)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchServiceManager_UpdateSearchRule_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateSearchRule'
+type MockmeilisearchServiceManager_UpdateSearchRule_Call struct {
+	*mock.Call
+}
+
+// UpdateSearchRule is a helper method to define mock.On call
+//   - uid string
+//   - params *meilisearch.SearchRulesRequest
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateSearchRule(uid interface{}, params interface{}) *MockmeilisearchServiceManager_UpdateSearchRule_Call {
+	return &MockmeilisearchServiceManager_UpdateSearchRule_Call{Call: _e.mock.On("UpdateSearchRule", uid, params)}
+}
+
+func (_c *MockmeilisearchServiceManager_UpdateSearchRule_Call) Run(run func(uid string, params *meilisearch.SearchRulesRequest)) *MockmeilisearchServiceManager_UpdateSearchRule_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 string
+		if args[0] != nil {
+			arg0 = args[0].(string)
+		}
+		var arg1 *meilisearch.SearchRulesRequest
+		if args[1] != nil {
+			arg1 = args[1].(*meilisearch.SearchRulesRequest)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_UpdateSearchRule_Call) Return(searchRule *meilisearch.SearchRule, err error) *MockmeilisearchServiceManager_UpdateSearchRule_Call {
+	_c.Call.Return(searchRule, err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_UpdateSearchRule_Call) RunAndReturn(run func(uid string, params *meilisearch.SearchRulesRequest) (*meilisearch.SearchRule, error)) *MockmeilisearchServiceManager_UpdateSearchRule_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateSearchRuleWithContext provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) UpdateSearchRuleWithContext(ctx context.Context, uid string, params *meilisearch.SearchRulesRequest) (*meilisearch.SearchRule, error) {
+	ret := _mock.Called(ctx, uid, params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateSearchRuleWithContext")
+	}
+
+	var r0 *meilisearch.SearchRule
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, *meilisearch.SearchRulesRequest) (*meilisearch.SearchRule, error)); ok {
+		return returnFunc(ctx, uid, params)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, *meilisearch.SearchRulesRequest) *meilisearch.SearchRule); ok {
+		r0 = returnFunc(ctx, uid, params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.SearchRule)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string, *meilisearch.SearchRulesRequest) error); ok {
+		r1 = returnFunc(ctx, uid, params)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateSearchRuleWithContext'
+type MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call struct {
+	*mock.Call
+}
+
+// UpdateSearchRuleWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+//   - uid string
+//   - params *meilisearch.SearchRulesRequest
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateSearchRuleWithContext(ctx interface{}, uid interface{}, params interface{}) *MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call {
+	return &MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call{Call: _e.mock.On("UpdateSearchRuleWithContext", ctx, uid, params)}
+}
+
+func (_c *MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call) Run(run func(ctx context.Context, uid string, params *meilisearch.SearchRulesRequest)) *MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		var arg2 *meilisearch.SearchRulesRequest
+		if args[2] != nil {
+			arg2 = args[2].(*meilisearch.SearchRulesRequest)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call) Return(searchRule *meilisearch.SearchRule, err error) *MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call {
+	_c.Call.Return(searchRule, err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call) RunAndReturn(run func(ctx context.Context, uid string, params *meilisearch.SearchRulesRequest) (*meilisearch.SearchRule, error)) *MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call {
 	_c.Call.Return(run)
 	return _c
 }
