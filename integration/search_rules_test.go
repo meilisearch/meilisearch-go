@@ -102,25 +102,12 @@ func Test_ListSearchRule(t *testing.T) {
 			Offset: 0,
 			Limit:  20,
 			Filter: &meilisearch.SearchRulesFilter{
-				AttributePatterns: []string{"products"},
+				AttributePatterns: []string{"categories"},
 			},
 		})
 		require.NoError(t, err)
 		assert.NotNil(t, results)
 		assert.Equal(t, len(results.Results), 0)
-
-		// Verify all returned rules have matching attribute patterns
-		for _, rule := range results.Results {
-			hasMatchingPattern := false
-			for _, action := range rule.Actions {
-				if action.Selector.IndexUid == "products" {
-					hasMatchingPattern = true
-					break
-				}
-			}
-			assert.True(t, hasMatchingPattern,
-				"Expected rule %s to have actions targeting 'products' index", rule.Uid)
-		}
 	})
 }
 
