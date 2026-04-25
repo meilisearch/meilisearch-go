@@ -17,6 +17,16 @@ type SearchRulesManager interface {
 }
 
 type SearchRulesReader interface {
+	// List returns all dynamic search rules configured on the instance.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/list-dynamic-search-rules
+	List(params *SearchRulesParams) (*SearchRulesResults, error)
+
+	// ListWithContext returns all dynamic search rules configured on the instance with a context.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/list-dynamic-search-rules
+	ListWithContext(ctx context.Context, params *SearchRulesParams) (*SearchRulesResults, error)
+
 	// Get retrieve a single dynamic search rule by its unique identifier.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/get-a-dynamic-search-rule

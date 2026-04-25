@@ -14,6 +14,28 @@ const (
 	nullBody                 = "null"
 )
 
+type SearchRulesResults struct {
+	Results []SearchRule `json:"results"`
+	Offset  int          `json:"offset"`
+	Limit   int          `json:"limit"`
+	Total   int          `json:"total"`
+}
+
+type SearchRulesParams struct {
+	Offset int                `json:"offset"`
+	Limit  int                `json:"limit"`
+	Filter *SearchRulesFilter `json:"filter,omitempty"`
+}
+
+type SearchRulesFilter struct {
+	AttributePatterns AttributePatterns `json:"attribute_patterns"`
+	Active            *bool             `json:"active"`
+}
+
+type AttributePatterns struct {
+	Patterns []string `json:"patterns"`
+}
+
 type SearchRule struct {
 	Uid         string      `json:"uid"`
 	Description string      `json:"description"`
