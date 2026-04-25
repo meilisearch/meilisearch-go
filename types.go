@@ -14,6 +14,37 @@ const (
 	nullBody                 = "null"
 )
 
+type SearchRule struct {
+	Uid         string      `json:"uid"`
+	Description string      `json:"description"`
+	Priority    int         `json:"priority"`
+	Active      bool        `json:"active"`
+	Conditions  []Condition `json:"conditions"`
+	Actions     []Action    `json:"actions"`
+}
+
+type Condition struct {
+	Scope   string    `json:"scope"`
+	IsEmpty bool      `json:"isEmpty"`
+	Start   time.Time `json:"start"`
+	End     time.Time `json:"end"`
+}
+
+type Action struct {
+	Selector Selector  `json:"selector"`
+	Action   ActionDef `json:"action"`
+}
+
+type Selector struct {
+	IndexUid string `json:"indexUid"`
+	ID       string `json:"id"`
+}
+
+type ActionDef struct {
+	Type     string `json:"type"`
+	Position int    `json:"position"`
+}
+
 // Network represents the Meilisearch network configuration.
 type Network struct {
 	Self    string            `json:"self,omitempty"`
@@ -982,5 +1013,3 @@ func (t Timestampz) String() string {
 func (t Timestampz) ToTime() time.Time {
 	return time.Unix(int64(t), 0).UTC()
 }
-
-
