@@ -20,13 +20,13 @@ func Test_ListSearchRule(t *testing.T) {
 	require.True(t, resp.DynamicSearchRules)
 
 	uids := []string{"black-friday", "christmas-sale", "summer-deals"}
-	start := time.Now()
+	start := time.Now().UTC().Truncate(time.Second)
 	end := start.Add(time.Hour * 24)
 
 	for i, uid := range uids {
 		_, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
 			Description: fmt.Sprintf("Rule %d for %s", i, uid),
-			Priority:    i + 1,
+			Priority:    intPtr(i + 1),
 			Active:      boolPtr(true),
 			Conditions: []meilisearch.Condition{
 				{
@@ -62,7 +62,8 @@ func Test_ListSearchRule(t *testing.T) {
 		})
 		require.NoError(t, err)
 		assert.NotNil(t, results)
-		assert.GreaterOrEqual(t, results.Total, int64(len(uids)))
+
+		assert.Equal(t, results.Total, int64(len(uids)))
 		assert.Equal(t, 0, results.Offset)
 		assert.Equal(t, 20, results.Limit)
 		assert.Len(t, results.Results, len(uids))
@@ -106,7 +107,7 @@ func Test_ListSearchRule(t *testing.T) {
 		})
 		require.NoError(t, err)
 		assert.NotNil(t, results)
-		assert.GreaterOrEqual(t, len(results.Results), 0)
+		assert.Equal(t, len(results.Results), 0)
 
 		// Verify all returned rules have matching attribute patterns
 		for _, rule := range results.Results {
@@ -139,7 +140,7 @@ func Test_UpdateSearchRule(t *testing.T) {
 	t.Run("create new rule", func(t *testing.T) {
 		rule, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
 			Description: "Promotional campaign rules",
-			Priority:    10,
+			Priority:    intPtr(10),
 			Active:      boolPtr(true),
 			Conditions: []meilisearch.Condition{
 				{
@@ -178,7 +179,7 @@ func Test_UpdateSearchRule(t *testing.T) {
 	t.Run("update existing rule", func(t *testing.T) {
 		updatedRule, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
 			Description: "Updated promotional campaign rules",
-			Priority:    8,
+			Priority:    intPtr(8),
 			Active:      boolPtr(false),
 			Conditions: []meilisearch.Condition{
 				{
@@ -239,10 +240,10 @@ func Test_GetSearchRule(t *testing.T) {
 	uid := "black-friday"
 	start := time.Now()
 	end := start.Add(time.Hour * 1)
-	
+
 	want, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
 		Description: "Black Friday 2025 rules",
-		Priority:    5,
+		Priority:    intPtr(5),
 		Active:      boolPtr(true),
 		Conditions: []meilisearch.Condition{
 			{
@@ -289,7 +290,7 @@ func Test_DeleteSearchRule(t *testing.T) {
 	end := start.Add(time.Hour * 1)
 	_, err = sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
 		Description: "Black Friday 2025 rules",
-		Priority:    5,
+		Priority:    intPtr(5),
 		Active:      boolPtr(true),
 		Conditions: []meilisearch.Condition{
 			{
@@ -323,4 +324,8 @@ func Test_DeleteSearchRule(t *testing.T) {
 	got, err := sv.GetSearchRule(uid)
 	require.Error(t, err)
 	assert.Nil(t, got)
+}
+
+func intPtr(i int) *int {
+	return &i
 }

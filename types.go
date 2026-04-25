@@ -16,10 +16,10 @@ const (
 
 type SearchRulesRequest struct {
 	Description string      `json:"description,omitempty"`
-	Priority    int         `json:"priority,omitempty"`
-	Active      *bool       `json:"active"`
-	Conditions  []Condition `json:"conditions"`
-	Actions     []Action    `json:"actions"`
+	Priority    *int        `json:"priority,omitempty"`
+	Active      *bool       `json:"active,omitempty"`
+	Conditions  []Condition `json:"conditions,omitempty"`
+	Actions     []Action    `json:"actions,omitempty"`
 }
 
 type SearchRulesResults struct {
@@ -37,7 +37,7 @@ type SearchRulesParams struct {
 
 type SearchRulesFilter struct {
 	AttributePatterns []string `json:"attributePatterns,omitempty"`
-	Active            *bool    `json:"active"`
+	Active            *bool    `json:"active,omitempty"`
 }
 
 type SearchRule struct {
