@@ -771,7 +771,6 @@ patch_dynamic_search_rule_1: |-
   isEmpty := true
   startTime, _ := time.Parse(time.RFC3339, "2025-11-28T00:00:00Z")
   endTime, _ := time.Parse(time.RFC3339, "2025-11-28T23:59:59Z")
-  
   client.UpdateSearchRule("black-friday", &meilisearch.SearchRulesRequest{
     Description: "Black Friday 2025 rules",
     Priority: 10,
