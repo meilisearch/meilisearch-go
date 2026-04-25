@@ -196,7 +196,7 @@ func resetNetwork(sv meilisearch.ServiceManager) (ok bool, err error) {
 func deleteAllSearchRules(searchRuleMgr meilisearch.SearchRulesManager) (ok bool, err error) {
 	rules, err := searchRuleMgr.ListSearchRules(&meilisearch.SearchRulesParams{
 		Offset: 0,
-		Limit:  20,
+		Limit:  1000,
 	})
 	if err != nil {
 		return false, err
