@@ -51,7 +51,7 @@ type SearchRule struct {
 
 type Condition struct {
 	Scope   string     `json:"scope"`
-	IsEmpty *bool      `json:"isEmpty"`
+	IsEmpty *bool      `json:"isEmpty,omitempty"`
 	Start   *time.Time `json:"start,omitempty"`
 	End     *time.Time `json:"end,omitempty"`
 }
@@ -63,7 +63,7 @@ type Action struct {
 
 type Selector struct {
 	IndexUid string `json:"indexUid"`
-	ID       string `json:"id"`
+	ID       string `json:"id,omitempty"`
 }
 
 type ActionDef struct {
