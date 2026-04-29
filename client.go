@@ -39,12 +39,13 @@ type clientConfig struct {
 }
 
 type internalRequest struct {
-	endpoint        string
-	method          string
-	contentType     string
-	withRequest     interface{}
-	withResponse    interface{}
-	withQueryParams map[string]string
+	endpoint             string
+	method               string
+	contentType          string
+	withRequest          interface{}
+	withResponse         interface{}
+	withQueryParams      map[string]string
+	withResponseEncoding bool
 
 	acceptedStatusCodes []int
 
@@ -171,7 +172,7 @@ func (c *client) sendRequest(
 		request.Header.Set("Authorization", "Bearer "+c.apiKey)
 	}
 
-	if req.withResponse != nil && !c.contentEncoding.IsZero() {
+	if (req.withResponse != nil || req.withResponseEncoding) && !c.contentEncoding.IsZero() {
 		request.Header.Set("Accept-Encoding", c.contentEncoding.String())
 	}
 

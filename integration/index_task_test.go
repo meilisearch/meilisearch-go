@@ -3,10 +3,13 @@ package integration
 import (
 	"context"
 	"crypto/tls"
-	"github.com/meilisearch/meilisearch-go"
-	"github.com/stretchr/testify/require"
+	"fmt"
+	"strconv"
 	"testing"
 	"time"
+
+	"github.com/meilisearch/meilisearch-go"
+	"github.com/stretchr/testify/require"
 )
 
 func TestIndex_GetTask(t *testing.T) {
@@ -285,22 +288,39 @@ func TestGetTaskDocuments(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanup(sv))
 
+	// The /tasks/{task_id}/documents route is gated by an experimental
+	// feature in Meilisearch v1.13. Enable it before issuing the request.
+	_, err := sv.ExperimentalFeatures().SetGetTaskDocumentsRoute(true).Update()
+	require.NoError(t, err)
+	t.Cleanup(func() {
+		_, _ = sv.ExperimentalFeatures().SetGetTaskDocumentsRoute(false).Update()
+	})
+
 	uid := "TestGetTaskDocuments"
 	i := sv.Index(uid)
 
-	documents := []docTest{
-		{ID: "1", Name: "Alice"},
-		{ID: "2", Name: "Bob"},
+	// The endpoint only returns the document payload while the task is
+	// still in `enqueued` or `processing` state. Submit a payload large
+	// enough that the task does not finish processing before we issue
+	// the GetTaskDocuments call.
+	const documentCount = 5000
+	documents := make([]docTest, 0, documentCount)
+	for n := 0; n < documentCount; n++ {
+		documents = append(documents, docTest{
+			ID:   strconv.Itoa(n + 1),
+			Name: fmt.Sprintf("doc-%d", n+1),
+		})
 	}
 
 	task, err := i.AddDocuments(documents, nil)
 	require.NoError(t, err)
 
+	var docs []docTest
+	err = sv.GetTaskDocuments(task.TaskUID, &docs)
+	require.NoError(t, err)
+	require.NotEmpty(t, docs)
+
+	// Drain the task so cleanup is deterministic.
 	_, err = sv.WaitForTask(task.TaskUID, 0)
 	require.NoError(t, err)
-
-	result, err := sv.GetTaskDocuments(task.TaskUID, nil)
-	require.NoError(t, err)
-	require.NotNil(t, result)
-	require.NotEmpty(t, result.Results)
 }
