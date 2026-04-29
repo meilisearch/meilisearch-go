@@ -318,12 +318,12 @@ type TaskManager interface {
 	// GetTaskDocuments retrieves the documents associated with a task (added, updated, or deleted).
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/async-task-management/get-tasks-documents
-	GetTaskDocuments(taskUID int64, param *DocumentsQuery) (*DocumentsResult, error)
+	GetTaskDocuments(taskUID int64, dst interface{}) error
 
 	// GetTaskDocumentsWithContext retrieves the documents associated with a task using the provided context for cancellation.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/async-task-management/get-tasks-documents
-	GetTaskDocumentsWithContext(ctx context.Context, taskUID int64, param *DocumentsQuery) (*DocumentsResult, error)
+	GetTaskDocumentsWithContext(ctx context.Context, taskUID int64, dst interface{}) error
 }
 
 type TaskReader interface {

@@ -829,6 +829,7 @@ type ExperimentalFeaturesBase struct {
 	ChatCompletions         *bool `json:"chatCompletions,omitempty"`
 	MultiModal              *bool `json:"multimodal,omitempty"`
 	DynamicSearchRules      *bool `json:"dynamicSearchRules,omitempty"`
+	GetTaskDocumentsRoute   *bool `json:"getTaskDocumentsRoute,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -841,6 +842,7 @@ type ExperimentalFeaturesResult struct {
 	ChatCompletions         bool `json:"chatCompletions"`
 	MultiModal              bool `json:"multimodal,omitempty"`
 	DynamicSearchRules      bool `json:"dynamicSearchRules"`
+	GetTaskDocumentsRoute   bool `json:"getTaskDocumentsRoute"`
 }
 
 type SwapIndexesParams struct {
