@@ -70,6 +70,26 @@ func TestGetTaskDocumentsDecodesNDJSON(t *testing.T) {
 	}, docs)
 }
 
+func TestGetTaskDocumentsDecodesConcatenatedNDJSON(t *testing.T) {
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		require.Equal(t, "/tasks/42/documents", r.URL.Path)
+		require.Empty(t, r.URL.RawQuery)
+		w.Header().Set("Content-Type", "application/x-ndjson; charset=utf-8")
+		_, _ = w.Write([]byte("{\"id\":\"1\",\"name\":\"Alice\"}{\"id\":\"2\",\"name\":\"Bob\"}{\"id\":\"3\",\"name\":\"Carol\"}"))
+	}))
+	defer server.Close()
+
+	client := New(server.URL)
+	var docs []taskDocumentTest
+	err := client.GetTaskDocuments(42, &docs)
+	require.NoError(t, err)
+	require.Equal(t, []taskDocumentTest{
+		{ID: "1", Name: "Alice"},
+		{ID: "2", Name: "Bob"},
+		{ID: "3", Name: "Carol"},
+	}, docs)
+}
+
 func TestGetTaskDocumentsDecodesEncodedNDJSON(t *testing.T) {
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		require.Equal(t, GzipEncoding.String(), r.Header.Get("Accept-Encoding"))
