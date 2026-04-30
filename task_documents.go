@@ -1,11 +1,11 @@
 package meilisearch
 
 import (
-	"bufio"
-	"bytes"
 	"compress/gzip"
 	"compress/zlib"
 	"context"
+	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -17,8 +17,7 @@ import (
 )
 
 const (
-	taskDocumentsContentType      = "application/x-ndjson"
-	taskDocumentsMaxScanTokenSize = 64 << 20
+	taskDocumentsContentType = "application/x-ndjson"
 )
 
 func (m *meilisearch) GetTaskDocuments(taskUID int64, dst interface{}) error {
@@ -89,22 +88,20 @@ func (m *meilisearch) GetTaskDocumentsWithContext(ctx context.Context, taskUID i
 	}
 
 	result := sliceValue
-	scanner := bufio.NewScanner(body)
-	scanner.Buffer(make([]byte, 0, 64<<10), taskDocumentsMaxScanTokenSize)
-	for scanner.Scan() {
-		line := bytes.TrimSpace(scanner.Bytes())
-		if len(line) == 0 {
-			continue
+	dec := json.NewDecoder(body)
+	for {
+		var raw json.RawMessage
+		if err := dec.Decode(&raw); err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return fmt.Errorf("GetTaskDocuments: failed to decode NDJSON: %w", err)
 		}
-
 		elemPtr := reflect.New(sliceElemType)
-		if err := m.client.jsonUnmarshal(line, elemPtr.Interface()); err != nil {
-			return fmt.Errorf("GetTaskDocuments: failed to unmarshal NDJSON line: %w", err)
+		if err := m.client.jsonUnmarshal(raw, elemPtr.Interface()); err != nil {
+			return fmt.Errorf("GetTaskDocuments: failed to unmarshal NDJSON document: %w", err)
 		}
 		result = reflect.Append(result, elemPtr.Elem())
-	}
-	if err := scanner.Err(); err != nil {
-		return fmt.Errorf("GetTaskDocuments: failed to read NDJSON response: %w", err)
 	}
 
 	sliceValue.Set(result)
