@@ -316,11 +316,13 @@ type TaskManager interface {
 	DeleteTasksWithContext(ctx context.Context, param *DeleteTasksQuery) (*TaskInfo, error)
 
 	// GetTaskDocuments retrieves the documents associated with a task (added, updated, or deleted).
+	// dst must be a non-nil pointer to a slice that receives the streamed NDJSON documents.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/async-task-management/get-tasks-documents
 	GetTaskDocuments(taskUID int64, dst interface{}) error
 
 	// GetTaskDocumentsWithContext retrieves the documents associated with a task using the provided context for cancellation.
+	// dst must be a non-nil pointer to a slice that receives the streamed NDJSON documents.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/async-task-management/get-tasks-documents
 	GetTaskDocumentsWithContext(ctx context.Context, taskUID int64, dst interface{}) error
