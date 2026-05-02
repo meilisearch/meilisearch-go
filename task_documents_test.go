@@ -48,7 +48,7 @@ func TestGetTaskDocumentsRequiresNDJSONContentType(t *testing.T) {
 	client := New(server.URL)
 	var docs []taskDocumentTest
 	err := client.GetTaskDocuments(1, &docs)
-	require.ErrorContains(t, err, `expected Content-Type to start with "application/x-ndjson"`)
+	require.ErrorContains(t, err, `unexpected Content-Type "application/json"`)
 }
 
 func TestGetTaskDocumentsDecodesNDJSON(t *testing.T) {
