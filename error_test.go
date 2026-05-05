@@ -58,6 +58,10 @@ func (f *failEncoder) Decode(_ []byte, v interface{}) error {
 	return fmt.Errorf("decode failed")
 }
 
+func (f *failEncoder) Decoder(r io.Reader) (streamDecoder, error) {
+	return nil, fmt.Errorf("decoder failed")
+}
+
 func TestError_ErrorBody_WithEncoder(t *testing.T) {
 
 	err := &Error{

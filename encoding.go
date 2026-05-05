@@ -13,6 +13,24 @@ import (
 type encoder interface {
 	Encode(io.Reader) (io.ReadCloser, error)
 	Decode([]byte, interface{}) error
+	Decoder(io.Reader) (streamDecoder, error)
+}
+
+type streamDecoder interface {
+	Decode(interface{}) error
+	Close() error
+}
+
+type jsonStreamDecoder struct {
+	*json.Decoder
+	closer io.Closer
+}
+
+func (d *jsonStreamDecoder) Close() error {
+	if d.closer == nil {
+		return nil
+	}
+	return d.closer.Close()
 }
 
 func newEncoding(ce ContentEncoding, level EncodingCompressionLevel) encoder {
@@ -94,6 +112,14 @@ func (g *gzipEncoder) Decode(data []byte, vPtr interface{}) error {
 	return json.NewDecoder(r).Decode(vPtr)
 }
 
+func (g *gzipEncoder) Decoder(r io.Reader) (streamDecoder, error) {
+	gr, err := gzip.NewReader(r)
+	if err != nil {
+		return nil, err
+	}
+	return &jsonStreamDecoder{Decoder: json.NewDecoder(gr), closer: gr}, nil
+}
+
 type flateEncoder struct {
 	flWriterPool *sync.Pool
 	bufferPool   *sync.Pool
@@ -137,6 +163,14 @@ func (f *flateEncoder) Decode(data []byte, vPtr interface{}) error {
 	return json.NewDecoder(r).Decode(vPtr)
 }
 
+func (f *flateEncoder) Decoder(r io.Reader) (streamDecoder, error) {
+	zr, err := zlib.NewReader(r)
+	if err != nil {
+		return nil, err
+	}
+	return &jsonStreamDecoder{Decoder: json.NewDecoder(zr), closer: zr}, nil
+}
+
 type brotliEncoder struct {
 	brWriterPool *sync.Pool
 	bufferPool   *sync.Pool
@@ -164,6 +198,10 @@ func (b *brotliEncoder) Encode(rc io.Reader) (io.ReadCloser, error) {
 func (b *brotliEncoder) Decode(data []byte, vPtr interface{}) error {
 	r := brotli.NewReader(bytes.NewBuffer(data))
 	return json.NewDecoder(r).Decode(vPtr)
+}
+
+func (b *brotliEncoder) Decoder(r io.Reader) (streamDecoder, error) {
+	return &jsonStreamDecoder{Decoder: json.NewDecoder(brotli.NewReader(r))}, nil
 }
 
 var copyBufPool = sync.Pool{

@@ -15,11 +15,12 @@ func (m *meilisearch) GetTaskDocumentsWithContext(ctx context.Context, taskUID i
 		endpoint:             "/tasks/" + strconv.FormatInt(taskUID, 10) + "/documents",
 		method:               http.MethodGet,
 		withRequest:          nil,
-		withResponse:         nil,
+		withResponse:         dst,
 		withQueryParams:      nil,
 		withResponseEncoding: true,
 		acceptedStatusCodes:  []int{http.StatusOK},
+		acceptedContentType:  contentTypeNDJSON,
 		functionName:         "GetTaskDocuments",
 	}
-	return m.client.executeNDJSONRequest(ctx, req, dst)
+	return m.client.executeRequest(ctx, req)
 }

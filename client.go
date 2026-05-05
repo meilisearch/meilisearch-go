@@ -2,8 +2,6 @@ package meilisearch
 
 import (
 	"bytes"
-	"compress/gzip"
-	"compress/zlib"
 	"context"
 	"encoding/json"
 	"errors"
@@ -15,8 +13,6 @@ import (
 	"strings"
 	"sync"
 	"time"
-
-	"github.com/andybalholm/brotli"
 )
 
 type client struct {
@@ -55,6 +51,7 @@ type internalRequest struct {
 	withResponseEncoding bool
 
 	acceptedStatusCodes []int
+	acceptedContentType string
 
 	functionName string
 }
@@ -99,6 +96,12 @@ func newClient(cli *http.Client, host, apiKey string, cfg *clientConfig) *client
 }
 
 func (c *client) executeRequest(ctx context.Context, req *internalRequest) error {
+	if req.acceptedContentType == contentTypeNDJSON && req.withResponse != nil {
+		if _, _, err := validateNDJSONDestination(req.functionName, req.withResponse); err != nil {
+			return err
+		}
+	}
+
 	internalError := &Error{
 		Endpoint:         req.endpoint,
 		Method:           req.method,
@@ -123,12 +126,21 @@ func (c *client) executeRequest(ctx context.Context, req *internalRequest) error
 
 	internalError.StatusCode = resp.StatusCode
 
+	if req.acceptedContentType == contentTypeNDJSON && req.withResponse != nil {
+		return c.handleNDJSONResponse(req, resp, internalError)
+	}
+
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
 	}
 
 	err = c.handleStatusCode(req, resp.StatusCode, b, internalError)
+	if err != nil {
+		return err
+	}
+
+	err = c.handleContentType(req, resp, internalError)
 	if err != nil {
 		return err
 	}
@@ -140,54 +152,29 @@ func (c *client) executeRequest(ctx context.Context, req *internalRequest) error
 	return nil
 }
 
-func (c *client) executeNDJSONRequest(ctx context.Context, req *internalRequest, dst interface{}) error {
-	sliceValue, sliceElemType, err := validateNDJSONDestination(req.functionName, dst)
+func (c *client) handleNDJSONResponse(req *internalRequest, resp *http.Response, internalError *Error) error {
+	sliceValue, sliceElemType, err := validateNDJSONDestination(req.functionName, req.withResponse)
 	if err != nil {
 		return err
 	}
 
-	internalError := &Error{
-		Endpoint:         req.endpoint,
-		Method:           req.method,
-		Function:         req.functionName,
-		RequestToString:  "empty request",
-		ResponseToString: "empty response",
-		MeilisearchApiError: meilisearchApiError{
-			Message: "empty meilisearch message",
-		},
-		StatusCodeExpected: req.acceptedStatusCodes,
-	}
-
-	resp, err := c.sendRequest(ctx, req, internalError)
-	if err != nil {
-		return err
-	}
-	defer func() {
-		_ = resp.Body.Close()
-	}()
-
-	internalError.StatusCode = resp.StatusCode
-
-	if err := c.handleNDJSONStatusCode(req, resp, internalError); err != nil {
+	if err := c.handleStreamingStatusCode(req, resp, internalError); err != nil {
 		return err
 	}
 
-	if err := validateNDJSONContentType(req.functionName, resp.Header.Get("Content-Type")); err != nil {
+	if err := c.handleContentType(req, resp, internalError); err != nil {
 		return err
-	}
-
-	body, closeBody, err := ndjsonResponseBody(req.functionName, resp)
-	if err != nil {
-		return err
-	}
-	if closeBody {
-		defer func() {
-			_ = body.Close()
-		}()
 	}
 
 	result := sliceValue.Slice(0, 0)
-	dec := json.NewDecoder(body)
+	dec, err := c.responseDecoder(resp)
+	if err != nil {
+		return fmt.Errorf("%s: failed to create response decoder: %w", req.functionName, err)
+	}
+	defer func() {
+		_ = dec.Close()
+	}()
+
 	for {
 		var raw json.RawMessage
 		if err := dec.Decode(&raw); err != nil {
@@ -208,7 +195,7 @@ func (c *client) executeNDJSONRequest(ctx context.Context, req *internalRequest,
 	return nil
 }
 
-func (c *client) handleNDJSONStatusCode(req *internalRequest, resp *http.Response, internalError *Error) error {
+func (c *client) handleStreamingStatusCode(req *internalRequest, resp *http.Response, internalError *Error) error {
 	if req.acceptedStatusCodes == nil {
 		return nil
 	}
@@ -231,6 +218,17 @@ func (c *client) handleNDJSONStatusCode(req *internalRequest, resp *http.Respons
 	return c.handleStatusCode(req, resp.StatusCode, body, internalError)
 }
 
+func (c *client) handleContentType(req *internalRequest, resp *http.Response, internalError *Error) error {
+	if req.acceptedContentType == "" {
+		return nil
+	}
+
+	if err := validateContentType(req.functionName, req.acceptedContentType, resp.Header.Get("Content-Type")); err != nil {
+		return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
+	}
+	return nil
+}
+
 func validateNDJSONDestination(functionName string, dst interface{}) (reflect.Value, reflect.Type, error) {
 	if dst == nil {
 		return reflect.Value{}, nil, fmt.Errorf("%s: dst must be a non-nil pointer to a slice", functionName)
@@ -249,29 +247,29 @@ func validateNDJSONDestination(functionName string, dst interface{}) (reflect.Va
 	return sliceValue, sliceValue.Type().Elem(), nil
 }
 
-func validateNDJSONContentType(functionName, contentType string) error {
+func validateContentType(functionName, expectedContentType, contentType string) error {
+	normalizedExpected := strings.ToLower(strings.TrimSpace(expectedContentType))
 	normalized := strings.ToLower(strings.TrimSpace(contentType))
-	if strings.Contains(normalized, "application/x-ndjson") || strings.Contains(normalized, "application/ndjson") {
+	if strings.HasPrefix(normalized, normalizedExpected) {
 		return nil
 	}
-	return fmt.Errorf("%s: unexpected Content-Type %q, expected NDJSON", functionName, contentType)
+	return fmt.Errorf("%s: unexpected Content-Type %q, expected %q", functionName, contentType, expectedContentType)
 }
 
-func ndjsonResponseBody(functionName string, resp *http.Response) (io.ReadCloser, bool, error) {
+func (c *client) responseDecoder(resp *http.Response) (streamDecoder, error) {
 	contentEncoding := strings.ToLower(strings.TrimSpace(resp.Header.Get("Content-Encoding")))
-	switch ContentEncoding(contentEncoding) {
+	ce := ContentEncoding(contentEncoding)
+	switch ce {
 	case "":
-		return resp.Body, false, nil
-	case GzipEncoding:
-		body, err := gzip.NewReader(resp.Body)
-		return body, true, err
-	case DeflateEncoding:
-		body, err := zlib.NewReader(resp.Body)
-		return body, true, err
-	case BrotliEncoding:
-		return io.NopCloser(brotli.NewReader(resp.Body)), true, nil
+		return &jsonStreamDecoder{Decoder: json.NewDecoder(resp.Body)}, nil
+	case GzipEncoding, DeflateEncoding, BrotliEncoding:
+		encoder := c.encoder
+		if encoder == nil || ce != c.contentEncoding {
+			encoder = newEncoding(ce, DefaultCompression)
+		}
+		return encoder.Decoder(resp.Body)
 	default:
-		return nil, false, fmt.Errorf("%s: unsupported Content-Encoding %q", functionName, contentEncoding)
+		return nil, fmt.Errorf("unsupported Content-Encoding %q", contentEncoding)
 	}
 }
 
