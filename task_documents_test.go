@@ -3,7 +3,6 @@ package meilisearch
 import (
 	"io"
 	"net/http"
-	"net/http/httptest"
 	"strings"
 	"testing"
 
@@ -13,6 +12,27 @@ import (
 type taskDocumentTest struct {
 	ID   string `json:"id"`
 	Name string `json:"name"`
+}
+
+type taskDocumentRoundTripFunc func(*http.Request) (*http.Response, error)
+
+func (f taskDocumentRoundTripFunc) RoundTrip(req *http.Request) (*http.Response, error) {
+	return f(req)
+}
+
+func newTaskDocumentTestClient(fn taskDocumentRoundTripFunc, options ...Option) ServiceManager {
+	options = append([]Option{WithCustomClient(&http.Client{Transport: fn})}, options...)
+	return New("http://meilisearch.test", options...)
+}
+
+func taskDocumentResponse(statusCode int, contentType string, body io.Reader) *http.Response {
+	resp := &http.Response{
+		StatusCode: statusCode,
+		Header:     http.Header{},
+		Body:       io.NopCloser(body),
+	}
+	resp.Header.Set("Content-Type", contentType)
+	return resp
 }
 
 func TestGetTaskDocumentsDestinationValidation(t *testing.T) {
@@ -38,29 +58,26 @@ func TestGetTaskDocumentsDestinationValidation(t *testing.T) {
 }
 
 func TestGetTaskDocumentsRequiresNDJSONContentType(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	client := newTaskDocumentTestClient(func(r *http.Request) (*http.Response, error) {
 		require.Equal(t, "/tasks/1/documents", r.URL.Path)
-		w.Header().Set("Content-Type", "application/json")
-		_, _ = w.Write([]byte(`{"results":[]}`))
-	}))
-	defer server.Close()
+		return taskDocumentResponse(http.StatusOK, "application/json", strings.NewReader(`{"results":[]}`)), nil
+	})
 
-	client := New(server.URL)
 	var docs []taskDocumentTest
 	err := client.GetTaskDocuments(1, &docs)
 	require.ErrorContains(t, err, `unexpected Content-Type "application/json"`)
+	var meiliErr *Error
+	require.ErrorAs(t, err, &meiliErr)
+	require.Equal(t, ErrCodeResponseUnmarshalBody, meiliErr.ErrCode)
 }
 
 func TestGetTaskDocumentsDecodesNDJSON(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	client := newTaskDocumentTestClient(func(r *http.Request) (*http.Response, error) {
 		require.Equal(t, "/tasks/42/documents", r.URL.Path)
 		require.Empty(t, r.URL.RawQuery)
-		w.Header().Set("Content-Type", "application/x-ndjson; charset=utf-8")
-		_, _ = w.Write([]byte("{\"id\":\"1\",\"name\":\"Alice\"}\n{\"id\":\"2\",\"name\":\"Bob\"}\n"))
-	}))
-	defer server.Close()
+		return taskDocumentResponse(http.StatusOK, "application/x-ndjson; charset=utf-8", strings.NewReader("{\"id\":\"1\",\"name\":\"Alice\"}\n{\"id\":\"2\",\"name\":\"Bob\"}\n")), nil
+	})
 
-	client := New(server.URL)
 	var docs []taskDocumentTest
 	err := client.GetTaskDocuments(42, &docs)
 	require.NoError(t, err)
@@ -71,15 +88,12 @@ func TestGetTaskDocumentsDecodesNDJSON(t *testing.T) {
 }
 
 func TestGetTaskDocumentsDecodesConcatenatedNDJSON(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	client := newTaskDocumentTestClient(func(r *http.Request) (*http.Response, error) {
 		require.Equal(t, "/tasks/42/documents", r.URL.Path)
 		require.Empty(t, r.URL.RawQuery)
-		w.Header().Set("Content-Type", "application/x-ndjson; charset=utf-8")
-		_, _ = w.Write([]byte("{\"id\":\"1\",\"name\":\"Alice\"}{\"id\":\"2\",\"name\":\"Bob\"}{\"id\":\"3\",\"name\":\"Carol\"}"))
-	}))
-	defer server.Close()
+		return taskDocumentResponse(http.StatusOK, "application/x-ndjson; charset=utf-8", strings.NewReader("{\"id\":\"1\",\"name\":\"Alice\"}{\"id\":\"2\",\"name\":\"Bob\"}{\"id\":\"3\",\"name\":\"Carol\"}")), nil
+	})
 
-	client := New(server.URL)
 	var docs []taskDocumentTest
 	err := client.GetTaskDocuments(42, &docs)
 	require.NoError(t, err)
@@ -91,22 +105,17 @@ func TestGetTaskDocumentsDecodesConcatenatedNDJSON(t *testing.T) {
 }
 
 func TestGetTaskDocumentsDecodesEncodedNDJSON(t *testing.T) {
-	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	client := newTaskDocumentTestClient(func(r *http.Request) (*http.Response, error) {
 		require.Equal(t, GzipEncoding.String(), r.Header.Get("Accept-Encoding"))
-		w.Header().Set("Content-Type", "application/x-ndjson")
-		w.Header().Set("Content-Encoding", GzipEncoding.String())
 
 		body, err := newEncoding(GzipEncoding, DefaultCompression).Encode(strings.NewReader("{\"id\":\"1\",\"name\":\"Alice\"}\n"))
 		require.NoError(t, err)
-		defer func() {
-			_ = body.Close()
-		}()
 
-		_, _ = io.Copy(w, body)
-	}))
-	defer server.Close()
+		resp := taskDocumentResponse(http.StatusOK, "application/x-ndjson", body)
+		resp.Header.Set("Content-Encoding", GzipEncoding.String())
+		return resp, nil
+	}, WithContentEncoding(GzipEncoding, DefaultCompression))
 
-	client := New(server.URL, WithContentEncoding(GzipEncoding, DefaultCompression))
 	var docs []taskDocumentTest
 	err := client.GetTaskDocuments(1, &docs)
 	require.NoError(t, err)

@@ -48,6 +48,10 @@ func (m *mockEncoder) Decode(data []byte, v interface{}) error {
 	return nil
 }
 
+func (m *mockEncoder) Decoder(r io.Reader) (streamDecoder, error) {
+	return &jsonStreamDecoder{Decoder: json.NewDecoder(r)}, nil
+}
+
 func Test_Encode_ErrorOnNewWriter(t *testing.T) {
 	g := &gzipEncoder{
 		gzWriterPool: &sync.Pool{
