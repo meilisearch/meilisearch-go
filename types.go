@@ -643,7 +643,7 @@ type SearchRequest struct {
 	Facets                  []string                 `json:"facets,omitempty"`
 	Sort                    []string                 `json:"sort,omitempty"`
 	Vector                  []float32                `json:"vector,omitempty"`
-	HitsPerPage             int64                    `json:"hitsPerPage,omitempty"`
+	HitsPerPage             *int64                   `json:"hitsPerPage,omitempty"`
 	Page                    int64                    `json:"page,omitempty"`
 	IndexUID                string                   `json:"indexUid,omitempty"`
 	Query                   string                   `json:"q"`
