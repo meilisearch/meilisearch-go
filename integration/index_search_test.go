@@ -807,7 +807,7 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				client: sv,
 				query:  "and",
 				request: &meilisearch.SearchRequest{
-					HitsPerPage: 10,
+					HitsPerPage: int64Ptr(10),
 				},
 			},
 			want: &meilisearch.SearchResponse{
@@ -855,7 +855,7 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				client: sv,
 				query:  "and",
 				request: &meilisearch.SearchRequest{
-					HitsPerPage: 10,
+					HitsPerPage: int64Ptr(10),
 					Page:        1,
 				},
 			},
@@ -870,6 +870,52 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 				Page:        1,
 				TotalHits:   4,
 				TotalPages:  1,
+			},
+			wantErr: false,
+		},
+		{
+			name: "TestIndexBasicSearchWithHitsPerPageZero",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				query:  "and",
+				request: &meilisearch.SearchRequest{
+					HitsPerPage: int64Ptr(0),
+				},
+			},
+			want: &meilisearch.SearchResponse{
+				Hits:        meilisearch.Hits{},
+				HitsPerPage: 0,
+				Page:        1,
+				TotalHits:   4,
+				TotalPages:  0,
+			},
+			wantErr: false,
+		},
+		{
+			name: "TestIndexBasicSearchWithHitsPerPageNull",
+			args: args{
+				UID:    "indexUID",
+				client: sv,
+				query:  "and",
+				request: &meilisearch.SearchRequest{
+					HitsPerPage: nil,
+				},
+			},
+			want: &meilisearch.SearchResponse{
+				Hits: meilisearch.Hits{
+					{"book_id": toRawMessage(123), "title": toRawMessage("Pride and Prejudice")},
+					{"book_id": toRawMessage(730), "title": toRawMessage("War and Peace")},
+					{"book_id": toRawMessage(1032), "title": toRawMessage("Crime and Punishment")},
+					{"book_id": toRawMessage(4), "title": toRawMessage("Harry Potter and the Half-Blood Prince")},
+				},
+				HitsPerPage:        0,
+				Limit:              20,
+				Offset:             0,
+				EstimatedTotalHits: 4,
+				Page:               0,
+				TotalHits:          0,
+				TotalPages:         0,
 			},
 			wantErr: false,
 		},
@@ -905,6 +951,9 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 			require.Equal(t, tt.want.Page, got.Page)
 			require.Equal(t, tt.want.TotalHits, got.TotalHits)
 			require.Equal(t, tt.want.TotalPages, got.TotalPages)
+			require.Equal(t, tt.want.Limit, got.Limit)
+			require.Equal(t, tt.want.EstimatedTotalHits, got.EstimatedTotalHits)
+			require.Equal(t, tt.want.Offset, got.Offset)
 		})
 	}
 }
