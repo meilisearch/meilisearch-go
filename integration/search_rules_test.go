@@ -312,7 +312,3 @@ func Test_DeleteSearchRule(t *testing.T) {
 	require.Error(t, err)
 	assert.Nil(t, got)
 }
-
-func intPtr(i int) *int {
-	return &i
-}

@@ -580,3 +580,12 @@ func toRawMessage(vPtr interface{}) json.RawMessage {
 	}
 	return data
 }
+
+func intPtr(i int) *int {
+	return &i
+}
+
+func int64Ptr(i int) *int64 {
+	v := int64(i)
+	return &v
+}
