@@ -153,7 +153,7 @@ func (c *client) executeRequest(ctx context.Context, req *internalRequest) error
 }
 
 func (c *client) handleNDJSONResponse(req *internalRequest, resp *http.Response, internalError *Error) error {
-	sliceValue, sliceElemType, err := validateNDJSONDestination(req.functionName, req.withResponse)
+	sliceValue, _, err := validateNDJSONDestination(req.functionName, req.withResponse)
 	if err != nil {
 		return err
 	}
@@ -166,7 +166,11 @@ func (c *client) handleNDJSONResponse(req *internalRequest, resp *http.Response,
 		return err
 	}
 
-	result := sliceValue.Slice(0, 0)
+	// The Meilisearch API returns concatenated JSON values (akin to NDJSON
+	// but the server does not stream them). Read every value through the
+	// response decoder up front and assemble a single JSON array, then
+	// unmarshal once into dst so the SDK does not expose streaming
+	// semantics to its callers.
 	dec, err := c.responseDecoder(resp)
 	if err != nil {
 		return fmt.Errorf("%s: failed to create response decoder: %w", req.functionName, err)
@@ -175,6 +179,7 @@ func (c *client) handleNDJSONResponse(req *internalRequest, resp *http.Response,
 		_ = dec.Close()
 	}()
 
+	values := make([]json.RawMessage, 0)
 	for {
 		var raw json.RawMessage
 		if err := dec.Decode(&raw); err != nil {
@@ -183,15 +188,27 @@ func (c *client) handleNDJSONResponse(req *internalRequest, resp *http.Response,
 			}
 			return fmt.Errorf("%s: failed to decode NDJSON: %w", req.functionName, err)
 		}
-
-		elemPtr := reflect.New(sliceElemType)
-		if err := c.jsonUnmarshal(raw, elemPtr.Interface()); err != nil {
-			return fmt.Errorf("%s: failed to unmarshal NDJSON document: %w", req.functionName, err)
-		}
-		result = reflect.Append(result, elemPtr.Elem())
+		values = append(values, raw)
 	}
 
-	sliceValue.Set(result)
+	if len(values) == 0 {
+		sliceValue.Set(sliceValue.Slice(0, 0))
+		return nil
+	}
+
+	var buf bytes.Buffer
+	buf.WriteByte('[')
+	for i, v := range values {
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+		buf.Write(v)
+	}
+	buf.WriteByte(']')
+
+	if err := c.jsonUnmarshal(buf.Bytes(), sliceValue.Addr().Interface()); err != nil {
+		return fmt.Errorf("%s: failed to unmarshal NDJSON response: %w", req.functionName, err)
+	}
 	return nil
 }
 
