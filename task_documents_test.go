@@ -121,3 +121,51 @@ func TestGetTaskDocumentsDecodesEncodedNDJSON(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, []taskDocumentTest{{ID: "1", Name: "Alice"}}, docs)
 }
+
+func TestGetTaskDocumentsDecodesEmptyNDJSON(t *testing.T) {
+	client := newTaskDocumentTestClient(func(r *http.Request) (*http.Response, error) {
+		require.Equal(t, "/tasks/42/documents", r.URL.Path)
+		return taskDocumentResponse(http.StatusOK, "application/x-ndjson", strings.NewReader("")), nil
+	})
+
+	docs := []taskDocumentTest{{ID: "stale", Name: "Stale"}}
+	err := client.GetTaskDocuments(42, &docs)
+	require.NoError(t, err)
+	require.NotNil(t, docs)
+	require.Empty(t, docs)
+}
+
+func TestGetTaskDocumentsResponseDecoderError(t *testing.T) {
+	client := newTaskDocumentTestClient(func(r *http.Request) (*http.Response, error) {
+		require.Equal(t, "/tasks/42/documents", r.URL.Path)
+		resp := taskDocumentResponse(http.StatusOK, "application/x-ndjson", strings.NewReader("not gzip"))
+		resp.Header.Set("Content-Encoding", GzipEncoding.String())
+		return resp, nil
+	})
+
+	var docs []taskDocumentTest
+	err := client.GetTaskDocuments(42, &docs)
+	require.ErrorContains(t, err, "failed to create response decoder")
+}
+
+func TestGetTaskDocumentsDecodeError(t *testing.T) {
+	client := newTaskDocumentTestClient(func(r *http.Request) (*http.Response, error) {
+		require.Equal(t, "/tasks/42/documents", r.URL.Path)
+		return taskDocumentResponse(http.StatusOK, "application/x-ndjson", strings.NewReader("{\"id\":\"a\"}{\"id\":")), nil
+	})
+
+	var docs []taskDocumentTest
+	err := client.GetTaskDocuments(42, &docs)
+	require.ErrorContains(t, err, "failed to decode NDJSON")
+}
+
+func TestGetTaskDocumentsUnmarshalError(t *testing.T) {
+	client := newTaskDocumentTestClient(func(r *http.Request) (*http.Response, error) {
+		require.Equal(t, "/tasks/42/documents", r.URL.Path)
+		return taskDocumentResponse(http.StatusOK, "application/x-ndjson", strings.NewReader(`"not-a-document"`)), nil
+	})
+
+	var docs []taskDocumentTest
+	err := client.GetTaskDocuments(42, &docs)
+	require.ErrorContains(t, err, "failed to unmarshal NDJSON response")
+}
