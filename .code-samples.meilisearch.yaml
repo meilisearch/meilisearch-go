@@ -382,9 +382,9 @@ facet_search_2: |-
       }
   })
 get_index_stats_1: |-
-  client.Index("movies").GetStats()
+  client.Index("movies").GetStats(nil)
 get_indexes_stats_1: |-
-  client.GetStats()
+  client.GetStats(nil)
 get_health_1: |-
   client.Health()
 get_version_1: |-
