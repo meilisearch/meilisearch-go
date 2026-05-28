@@ -138,19 +138,26 @@ func (i *index) DeleteWithContext(ctx context.Context, uid string) (bool, error)
 	return true, nil
 }
 
-func (i *index) GetStats() (*StatsIndex, error) {
-	return i.GetStatsWithContext(context.Background())
+func (i *index) GetStats(param *StatsParams) (*StatsIndex, error) {
+	return i.GetStatsWithContext(context.Background(), param)
 }
 
-func (i *index) GetStatsWithContext(ctx context.Context) (*StatsIndex, error) {
+func (i *index) GetStatsWithContext(ctx context.Context, param *StatsParams) (*StatsIndex, error) {
 	resp := new(StatsIndex)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/stats",
 		method:              http.MethodGet,
 		withRequest:         nil,
+		withQueryParams:     map[string]string{},
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetStats",
+	}
+	if param != nil && param.SizeFormat != "" {
+		req.withQueryParams["sizeFormat"] = param.SizeFormat
+	}
+	if param != nil && param.ShowInternalDatabaseSizes {
+		req.withQueryParams["showInternalDatabaseSizes"] = "true"
 	}
 	if err := i.client.executeRequest(ctx, req); err != nil {
 		return nil, err

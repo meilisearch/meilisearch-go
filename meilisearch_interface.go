@@ -175,12 +175,12 @@ type ServiceReader interface {
 	// GetStats fetches global stats.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/stats/get-stats-of-all-indexes
-	GetStats() (*Stats, error)
+	GetStats(param *StatsParams) (*Stats, error)
 
 	// GetStatsWithContext fetches global stats with a context for cancellation.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/stats/get-stats-of-all-indexes
-	GetStatsWithContext(ctx context.Context) (*Stats, error)
+	GetStatsWithContext(ctx context.Context, param *StatsParams) (*Stats, error)
 
 	// Version fetches the version of the Meilisearch server.
 	//

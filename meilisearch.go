@@ -547,19 +547,26 @@ func (m *meilisearch) GenerateTenantToken(
 	return tokenString, err
 }
 
-func (m *meilisearch) GetStats() (*Stats, error) {
-	return m.GetStatsWithContext(context.Background())
+func (m *meilisearch) GetStats(param *StatsParams) (*Stats, error) {
+	return m.GetStatsWithContext(context.Background(), param)
 }
 
-func (m *meilisearch) GetStatsWithContext(ctx context.Context) (*Stats, error) {
+func (m *meilisearch) GetStatsWithContext(ctx context.Context, param *StatsParams) (*Stats, error) {
 	resp := new(Stats)
 	req := &internalRequest{
 		endpoint:            "/stats",
 		method:              http.MethodGet,
+		withQueryParams:     map[string]string{},
 		withRequest:         nil,
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetStats",
+	}
+	if param != nil && param.SizeFormat != "" {
+		req.withQueryParams["sizeFormat"] = param.SizeFormat
+	}
+	if param != nil && param.ShowInternalDatabaseSizes {
+		req.withQueryParams["showInternalDatabaseSizes"] = "true"
 	}
 	if err := m.client.executeRequest(ctx, req); err != nil {
 		return nil, err
