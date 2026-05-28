@@ -72,12 +72,12 @@ type IndexReader interface {
 	// GetStats retrieves statistical information about the index.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/stats/get-stats-of-index
-	GetStats() (*StatsIndex, error)
+	GetStats(param *StatsParams) (*StatsIndex, error)
 
 	// GetStatsWithContext retrieves statistical information about the index using the provided context for cancellation.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/stats/get-stats-of-index
-	GetStatsWithContext(ctx context.Context) (*StatsIndex, error)
+	GetStatsWithContext(ctx context.Context, param *StatsParams) (*StatsIndex, error)
 }
 
 type DocumentManager interface {

@@ -401,21 +401,27 @@ type Version struct {
 	PkgVersion string `json:"pkgVersion"`
 }
 
+type StatsParams struct {
+	ShowInternalDatabaseSizes bool   `json:"showInternalDatabaseSizes,omitempty"`
+	SizeFormat                string `json:"sizeFormat,omitempty"` // human, raw
+}
+
 // StatsIndex is the type that represent the stats of an index in meilisearch
 type StatsIndex struct {
 	NumberOfDocuments         int64            `json:"numberOfDocuments"`
 	IsIndexing                bool             `json:"isIndexing"`
 	FieldDistribution         map[string]int64 `json:"fieldDistribution"`
-	RawDocumentDbSize         int64            `json:"rawDocumentDbSize"`
-	AvgDocumentSize           int64            `json:"avgDocumentSize"`
+	RawDocumentDbSize         any              `json:"rawDocumentDbSize"`
+	AvgDocumentSize           any              `json:"avgDocumentSize"`
 	NumberOfEmbeddedDocuments int64            `json:"numberOfEmbeddedDocuments"`
 	NumberOfEmbeddings        int64            `json:"numberOfEmbeddings"`
+	InternalDatabaseSizes     map[string]any   `json:"internalDatabaseSizes"`
 }
 
 // Stats is the type that represent all stats
 type Stats struct {
-	DatabaseSize     int64                 `json:"databaseSize"`
-	UsedDatabaseSize int64                 `json:"usedDatabaseSize"`
+	DatabaseSize     any                   `json:"databaseSize"`
+	UsedDatabaseSize any                   `json:"usedDatabaseSize"`
 	LastUpdate       time.Time             `json:"lastUpdate"`
 	Indexes          map[string]StatsIndex `json:"indexes"`
 }
