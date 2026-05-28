@@ -79,21 +79,30 @@ func Test_GetStats(t *testing.T) {
 	}))
 
 	tests := []struct {
-		name   string
-		client meilisearch.ServiceManager
+		name       string
+		client     meilisearch.ServiceManager
+		statsParam *meilisearch.StatsParams
 	}{
 		{
 			name:   "TestGetStats",
 			client: sv,
+			statsParam: &meilisearch.StatsParams{
+				ShowInternalDatabaseSizes: true,
+				SizeFormat:                "human",
+			},
 		},
 		{
 			name:   "TestGetStatsWithCustomClient",
 			client: customSv,
+			statsParam: &meilisearch.StatsParams{
+				ShowInternalDatabaseSizes: false,
+				SizeFormat:                "raw",
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.client.GetStats()
+			gotResp, err := tt.client.GetStats(tt.statsParam)
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "GetStats() should not return nil value")
 		})
@@ -1167,7 +1176,7 @@ func Test_GetTasksUsingClientAllFailures(t *testing.T) {
 			_, err = c.GetTasks(tt.args.query)
 			require.Error(t, err)
 
-			_, err = c.GetStats()
+			_, err = c.GetStats(nil)
 			require.Error(t, err)
 
 			_, err = c.CreateKey(&meilisearch.Key{

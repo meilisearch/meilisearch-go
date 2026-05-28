@@ -110,9 +110,10 @@ func TestIndex_GetStats(t *testing.T) {
 		client meilisearch.ServiceManager
 	}
 	tests := []struct {
-		name     string
-		args     args
-		wantResp *meilisearch.StatsIndex
+		name       string
+		args       args
+		statsParam *meilisearch.StatsParams
+		wantResp   *meilisearch.StatsIndex
 	}{
 		{
 			name: "TestIndexBasicGetStats",
@@ -124,8 +125,8 @@ func TestIndex_GetStats(t *testing.T) {
 				NumberOfDocuments: 6,
 				IsIndexing:        false,
 				FieldDistribution: map[string]int64{"book_id": 6, "title": 6},
-				RawDocumentDbSize: 4096,
-				AvgDocumentSize:   674,
+				RawDocumentDbSize: float64(4096),
+				AvgDocumentSize:   float64(674),
 			},
 		},
 		{
@@ -138,8 +139,44 @@ func TestIndex_GetStats(t *testing.T) {
 				NumberOfDocuments: 6,
 				IsIndexing:        false,
 				FieldDistribution: map[string]int64{"book_id": 6, "title": 6},
-				RawDocumentDbSize: 4096,
-				AvgDocumentSize:   674,
+				RawDocumentDbSize: float64(4096),
+				AvgDocumentSize:   float64(674),
+			},
+		},
+		{
+			name: "TestIndexBasicGetStatsWithRawFormat",
+			args: args{
+				UID:    "TestIndexBasicGetStatsWithRawFormat",
+				client: sv,
+			},
+			statsParam: &meilisearch.StatsParams{
+				ShowInternalDatabaseSizes: true,
+				SizeFormat:                "raw",
+			},
+			wantResp: &meilisearch.StatsIndex{
+				NumberOfDocuments: 6,
+				IsIndexing:        false,
+				FieldDistribution: map[string]int64{"book_id": 6, "title": 6},
+				RawDocumentDbSize: float64(4096),
+				AvgDocumentSize:   float64(674),
+			},
+		},
+		{
+			name: "TestIndexBasicGetStatsWithHumanFormat",
+			args: args{
+				UID:    "TestIndexBasicGetStatsWithHumanFormat",
+				client: sv,
+			},
+			statsParam: &meilisearch.StatsParams{
+				ShowInternalDatabaseSizes: true,
+				SizeFormat:                "human",
+			},
+			wantResp: &meilisearch.StatsIndex{
+				NumberOfDocuments: 6,
+				IsIndexing:        false,
+				FieldDistribution: map[string]int64{"book_id": 6, "title": 6},
+				RawDocumentDbSize: "4 KiB",
+				AvgDocumentSize:   "674 B",
 			},
 		},
 	}
@@ -150,9 +187,16 @@ func TestIndex_GetStats(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetStats()
+			gotResp, err := i.GetStats(tt.statsParam)
 			require.NoError(t, err)
-			require.Equal(t, tt.wantResp, gotResp)
+			require.Equal(t, tt.wantResp.NumberOfDocuments, gotResp.NumberOfDocuments)
+			require.Equal(t, tt.wantResp.IsIndexing, gotResp.IsIndexing)
+			require.Equal(t, tt.wantResp.FieldDistribution, gotResp.FieldDistribution)
+			require.Equal(t, tt.wantResp.RawDocumentDbSize, gotResp.RawDocumentDbSize)
+			require.Equal(t, tt.wantResp.AvgDocumentSize, gotResp.AvgDocumentSize)
+			if tt.statsParam != nil && tt.statsParam.ShowInternalDatabaseSizes {
+				require.NotZero(t, gotResp.InternalDatabaseSizes)
+			}
 		})
 	}
 }
