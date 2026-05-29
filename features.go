@@ -59,6 +59,11 @@ func (ef *ExperimentalFeatures) SetMultiModal(enable bool) *ExperimentalFeatures
 	return ef
 }
 
+func (ef *ExperimentalFeatures) SetGetTaskDocumentsRoute(enable bool) *ExperimentalFeatures {
+	ef.GetTaskDocumentsRoute = &enable
+	return ef
+}
+
 func (ef *ExperimentalFeatures) Get() (*ExperimentalFeaturesResult, error) {
 	return ef.GetWithContext(context.Background())
 }
@@ -97,6 +102,7 @@ func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*Experim
 		ChatCompletions:         ef.ChatCompletions,
 		MultiModal:              ef.MultiModal,
 		DynamicSearchRules:      ef.DynamicSearchRules,
+		GetTaskDocumentsRoute:   ef.GetTaskDocumentsRoute,
 	}
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{

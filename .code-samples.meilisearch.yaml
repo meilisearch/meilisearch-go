@@ -130,6 +130,9 @@ cancel_tasks_1: |-
   });
 get_task_1: |-
   client.GetTask(1);
+get_task_documents_1: |-
+  var documents []map[string]interface{}
+  client.GetTaskDocuments(1, &documents);
 get_all_tasks_1: |-
   client.GetTasks(nil);
 get_all_tasks_paginating_1: |-

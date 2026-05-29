@@ -38,6 +38,10 @@ func (fe failingEncoder) Decode(b []byte, v interface{}) error {
 	return errors.New("dummy decode failure")
 }
 
+func (fe failingEncoder) Decoder(r io.Reader) (streamDecoder, error) {
+	return nil, errors.New("dummy decoder failure")
+}
+
 func TestExecuteRequest(t *testing.T) {
 	retryCount := 0
 

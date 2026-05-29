@@ -3,11 +3,14 @@ package meilisearch
 import (
 	"bytes"
 	"context"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"net/url"
+	"reflect"
+	"strings"
 	"sync"
 	"time"
 )
@@ -39,14 +42,16 @@ type clientConfig struct {
 }
 
 type internalRequest struct {
-	endpoint        string
-	method          string
-	contentType     string
-	withRequest     interface{}
-	withResponse    interface{}
-	withQueryParams map[string]string
+	endpoint             string
+	method               string
+	contentType          string
+	withRequest          interface{}
+	withResponse         interface{}
+	withQueryParams      map[string]string
+	withResponseEncoding bool
 
 	acceptedStatusCodes []int
+	acceptedContentType string
 
 	functionName string
 }
@@ -91,6 +96,12 @@ func newClient(cli *http.Client, host, apiKey string, cfg *clientConfig) *client
 }
 
 func (c *client) executeRequest(ctx context.Context, req *internalRequest) error {
+	if req.acceptedContentType == contentTypeNDJSON && req.withResponse != nil {
+		if _, _, err := validateNDJSONDestination(req.functionName, req.withResponse); err != nil {
+			return err
+		}
+	}
+
 	internalError := &Error{
 		Endpoint:         req.endpoint,
 		Method:           req.method,
@@ -115,6 +126,10 @@ func (c *client) executeRequest(ctx context.Context, req *internalRequest) error
 
 	internalError.StatusCode = resp.StatusCode
 
+	if req.acceptedContentType == contentTypeNDJSON && req.withResponse != nil {
+		return c.handleNDJSONResponse(req, resp, internalError)
+	}
+
 	b, err := io.ReadAll(resp.Body)
 	if err != nil {
 		return err
@@ -125,11 +140,161 @@ func (c *client) executeRequest(ctx context.Context, req *internalRequest) error
 		return err
 	}
 
+	err = c.handleContentType(req, resp, internalError)
+	if err != nil {
+		return err
+	}
+
 	err = c.handleResponse(req, b, internalError)
 	if err != nil {
 		return err
 	}
 	return nil
+}
+
+func (c *client) handleNDJSONResponse(req *internalRequest, resp *http.Response, internalError *Error) error {
+	sliceValue, _, err := validateNDJSONDestination(req.functionName, req.withResponse)
+	if err != nil {
+		return err
+	}
+
+	if err := c.handleStreamingStatusCode(req, resp, internalError); err != nil {
+		return err
+	}
+
+	if err := c.handleContentType(req, resp, internalError); err != nil {
+		return err
+	}
+
+	// The Meilisearch API returns concatenated JSON values (akin to NDJSON
+	// but the server does not stream them). Read every value through the
+	// response decoder up front and assemble a single JSON array, then
+	// unmarshal once into dst so the SDK does not expose streaming
+	// semantics to its callers.
+	dec, err := c.responseDecoder(resp)
+	if err != nil {
+		return fmt.Errorf("%s: failed to create response decoder: %w", req.functionName, err)
+	}
+	defer func() {
+		_ = dec.Close()
+	}()
+
+	values := make([]json.RawMessage, 0)
+	for {
+		var raw json.RawMessage
+		if err := dec.Decode(&raw); err != nil {
+			if errors.Is(err, io.EOF) {
+				break
+			}
+			return fmt.Errorf("%s: failed to decode NDJSON: %w", req.functionName, err)
+		}
+		values = append(values, raw)
+	}
+
+	if len(values) == 0 {
+		sliceValue.Set(sliceValue.Slice(0, 0))
+		return nil
+	}
+
+	var buf bytes.Buffer
+	buf.WriteByte('[')
+	for i, v := range values {
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+		buf.Write(v)
+	}
+	buf.WriteByte(']')
+
+	if err := c.jsonUnmarshal(buf.Bytes(), sliceValue.Addr().Interface()); err != nil {
+		return fmt.Errorf("%s: failed to unmarshal NDJSON response: %w", req.functionName, err)
+	}
+	return nil
+}
+
+func (c *client) handleStreamingStatusCode(req *internalRequest, resp *http.Response, internalError *Error) error {
+	if req.acceptedStatusCodes == nil {
+		return nil
+	}
+
+	for _, acceptedCode := range req.acceptedStatusCodes {
+		if resp.StatusCode == acceptedCode {
+			return nil
+		}
+	}
+
+	if responseUsesClientEncoding(resp, c.contentEncoding) {
+		internalError.encoder = c.encoder
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return c.handleStatusCode(req, resp.StatusCode, body, internalError)
+}
+
+func (c *client) handleContentType(req *internalRequest, resp *http.Response, internalError *Error) error {
+	if req.acceptedContentType == "" {
+		return nil
+	}
+
+	if err := validateContentType(req.functionName, req.acceptedContentType, resp.Header.Get("Content-Type")); err != nil {
+		return internalError.WithErrCode(ErrCodeResponseUnmarshalBody, err)
+	}
+	return nil
+}
+
+func validateNDJSONDestination(functionName string, dst interface{}) (reflect.Value, reflect.Type, error) {
+	if dst == nil {
+		return reflect.Value{}, nil, fmt.Errorf("%s: dst must be a non-nil pointer to a slice", functionName)
+	}
+
+	dstValue := reflect.ValueOf(dst)
+	if dstValue.Kind() != reflect.Ptr || dstValue.IsNil() {
+		return reflect.Value{}, nil, fmt.Errorf("%s: dst must be a non-nil pointer to a slice", functionName)
+	}
+
+	sliceValue := dstValue.Elem()
+	if sliceValue.Kind() != reflect.Slice {
+		return reflect.Value{}, nil, fmt.Errorf("%s: dst must point to a slice, got %s", functionName, sliceValue.Kind())
+	}
+
+	return sliceValue, sliceValue.Type().Elem(), nil
+}
+
+func validateContentType(functionName, expectedContentType, contentType string) error {
+	normalizedExpected := strings.ToLower(strings.TrimSpace(expectedContentType))
+	normalized := strings.ToLower(strings.TrimSpace(contentType))
+	if strings.HasPrefix(normalized, normalizedExpected) {
+		return nil
+	}
+	return fmt.Errorf("%s: unexpected Content-Type %q, expected %q", functionName, contentType, expectedContentType)
+}
+
+func (c *client) responseDecoder(resp *http.Response) (streamDecoder, error) {
+	contentEncoding := strings.ToLower(strings.TrimSpace(resp.Header.Get("Content-Encoding")))
+	ce := ContentEncoding(contentEncoding)
+	switch ce {
+	case "":
+		return &jsonStreamDecoder{Decoder: json.NewDecoder(resp.Body)}, nil
+	case GzipEncoding, DeflateEncoding, BrotliEncoding:
+		encoder := c.encoder
+		if encoder == nil || ce != c.contentEncoding {
+			encoder = newEncoding(ce, DefaultCompression)
+		}
+		return encoder.Decoder(resp.Body)
+	default:
+		return nil, fmt.Errorf("unsupported Content-Encoding %q", contentEncoding)
+	}
+}
+
+func responseUsesClientEncoding(resp *http.Response, contentEncoding ContentEncoding) bool {
+	if contentEncoding.IsZero() {
+		return false
+	}
+	return strings.EqualFold(strings.TrimSpace(resp.Header.Get("Content-Encoding")), contentEncoding.String())
 }
 
 func (c *client) sendRequest(
@@ -171,7 +336,7 @@ func (c *client) sendRequest(
 		request.Header.Set("Authorization", "Bearer "+c.apiKey)
 	}
 
-	if req.withResponse != nil && !c.contentEncoding.IsZero() {
+	if (req.withResponse != nil || req.withResponseEncoding) && !c.contentEncoding.IsZero() {
 		request.Header.Set("Accept-Encoding", c.contentEncoding.String())
 	}
 
