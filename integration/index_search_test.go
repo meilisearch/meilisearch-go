@@ -1082,6 +1082,44 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 	}
 }
 
+func TestIndex_SearchWithPersonalize(t *testing.T) {
+	sv := setup(t, "")
+
+	tests := []struct {
+		name    string
+		UID     string
+		client  meilisearch.ServiceManager
+		query   string
+		request meilisearch.SearchRequest
+	}{
+		{
+			name:   "personalized search with user context",
+			UID:    "indexUID",
+			client: sv,
+			query:  "Pride",
+			request: meilisearch.SearchRequest{
+				Personalize: &meilisearch.SearchRequestPersonalize{
+					UserContext: "Prefers classic romance novels",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpBasicIndex(tt.client, tt.UID)
+			c := tt.client
+			t.Cleanup(cleanup(c))
+			i := c.Index(tt.UID)
+
+			got, err := i.Search(tt.query, &tt.request)
+			require.NoError(t, err)
+			require.NotNil(t, got)
+			require.Greater(t, len(got.Hits), 0, "expected at least one hit")
+		})
+	}
+}
+
 func TestIndex_SearchWithDistinct(t *testing.T) {
 	sv := setup(t, "")
 
