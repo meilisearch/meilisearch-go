@@ -85,6 +85,37 @@ func TestSearchRequest_validate(t *testing.T) {
 	})
 }
 
+func TestSearchRequest_Personalize(t *testing.T) {
+	t.Parallel()
+
+	t.Run("Personalize is nil by default", func(t *testing.T) {
+		sr := &SearchRequest{Query: "test"}
+		data, err := json.Marshal(sr)
+		require.NoError(t, err)
+		require.NotContains(t, string(data), "personalize",
+			"personalize should be omitted when nil")
+	})
+
+	t.Run("Personalize serializes to expected JSON shape", func(t *testing.T) {
+		sr := &SearchRequest{
+			Query: "keyboard",
+			Personalize: &SearchRequestPersonalize{
+				UserContext: "Prefers compact mechanical keyboards",
+			},
+		}
+		data, err := json.Marshal(sr)
+		require.NoError(t, err)
+
+		var got map[string]json.RawMessage
+		require.NoError(t, json.Unmarshal(data, &got))
+		require.Contains(t, got, "personalize", "personalize field must be present in JSON")
+
+		var p map[string]string
+		require.NoError(t, json.Unmarshal(got["personalize"], &p))
+		require.Equal(t, "Prefers compact mechanical keyboards", p["userContext"])
+	})
+}
+
 func TestTimestampz_String(t *testing.T) {
 	t.Parallel()
 
