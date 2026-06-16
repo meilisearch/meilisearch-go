@@ -679,6 +679,10 @@ type SearchRequestHybrid struct {
 // Requires the experimental search personalization feature to be enabled on the server.
 // Documentation: https://www.meilisearch.com/docs/capabilities/personalization/getting_started/personalized_search
 type SearchRequestPersonalize struct {
+	// UserContext is a free-text, natural-language description of the user's
+	// preferences, behavior, or intent (e.g. "Prefers compact mechanical keyboards
+	// from Keychron, mid-range budget"). The re-ranking model only processes
+	// positive signals, so state preferences affirmatively.
 	UserContext string `json:"userContext"`
 }
 
