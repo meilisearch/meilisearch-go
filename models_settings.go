@@ -142,51 +142,6 @@ type Distribution struct {
 	Sigma float64 `json:"sigma"` // Sigma (standard deviation) of the distribution
 }
 
-type RenderTemplateParams struct {
-	Template Template        `json:"template,omitempty"`
-	Input    *TempelateInput `json:"input,omitempty"`
-}
-
-type TemplateKind string
-
-const (
-	DocumentTemplate       TemplateKind = "documentTemplate"
-	ChatDocumentTemplate   TemplateKind = "chatDocumentTemplate"
-	IndexingFragment       TemplateKind = "indexingFragment"
-	SearchFragment         TemplateKind = "searchFragment"
-	InlineDocumentTemplate TemplateKind = "inlineDocumentTemplate"
-	InlineFragment         TemplateKind = "inlineFragment"
-)
-
-type Template struct {
-	Kind                     TemplateKind `json:"kind"`
-	IndexUID                 *string      `json:"indexUid"`
-	Embedder                 *string      `json:"embedder"`
-	Fragment                 *string      `json:"fragment"`
-	Inline                   any          `json:"inline"`
-	DocumentTemplateMaxBytes *int64       `json:"documentTemplateMaxBytes"`
-}
-
-type InputKind string
-
-const (
-	IndexDocument  InputKind = "indexDocument"
-	InlineDocument InputKind = "inlineDocument"
-	InlineSearch   InputKind = "inlineSearch"
-)
-
-type TempelateInput struct {
-	Kind     InputKind `json:"kind"`
-	IndexUID *string   `json:"indexUid"`
-	ID       *string   `json:"id"`
-	Inline   any       `json:"inline"`
-}
-
-type RenderTemplateResponse struct {
-	Template any `json:"template"`
-	Rendered any `json:"rendered"`
-}
-
 // ExperimentalFeaturesBase represents the experimental features result from the API.
 type ExperimentalFeaturesBase struct {
 	LogsRoute               *bool `json:"logsRoute,omitempty"`
@@ -203,15 +158,16 @@ type ExperimentalFeaturesBase struct {
 }
 
 type ExperimentalFeaturesResult struct {
-	LogsRoute               bool `json:"logsRoute"`
-	Metrics                 bool `json:"metrics"`
-	EditDocumentsByFunction bool `json:"editDocumentsByFunction"`
-	ContainsFilter          bool `json:"containsFilter"`
-	Network                 bool `json:"network"`
-	CompositeEmbedders      bool `json:"compositeEmbedders"`
-	ChatCompletions         bool `json:"chatCompletions"`
-	MultiModal              bool `json:"multimodal"`
-	DynamicSearchRules      bool `json:"dynamicSearchRules"`
-	GetTaskDocumentsRoute   bool `json:"getTaskDocumentsRoute"`
-	RenderRoute             bool `json:"renderRoute"`
+	LogsRoute               bool                      `json:"logsRoute"`
+	Metrics                 bool                      `json:"metrics"`
+	EditDocumentsByFunction bool                      `json:"editDocumentsByFunction"`
+	ContainsFilter          bool                      `json:"containsFilter"`
+	Network                 bool                      `json:"network"`
+	CompositeEmbedders      bool                      `json:"compositeEmbedders"`
+	ChatCompletions         bool                      `json:"chatCompletions"`
+	MultiModal              bool                      `json:"multimodal"`
+	DynamicSearchRules      bool                      `json:"dynamicSearchRules"`
+	GetTaskDocumentsRoute   bool                      `json:"getTaskDocumentsRoute"`
+	RenderRoute             bool                      `json:"renderRoute"`
+	Personalize             *SearchRequestPersonalize `json:"personalize,omitempty"`
 }
