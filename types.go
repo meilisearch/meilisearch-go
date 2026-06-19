@@ -850,6 +850,7 @@ type ExperimentalFeaturesBase struct {
 	MultiModal              *bool `json:"multimodal,omitempty"`
 	DynamicSearchRules      *bool `json:"dynamicSearchRules,omitempty"`
 	GetTaskDocumentsRoute   *bool `json:"getTaskDocumentsRoute,omitempty"`
+	Personalization         *bool `json:"personalization,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -863,6 +864,7 @@ type ExperimentalFeaturesResult struct {
 	MultiModal              bool `json:"multimodal,omitempty"`
 	DynamicSearchRules      bool `json:"dynamicSearchRules"`
 	GetTaskDocumentsRoute   bool `json:"getTaskDocumentsRoute"`
+	Personalization         bool `json:"personalization"`
 }
 
 type SwapIndexesParams struct {
