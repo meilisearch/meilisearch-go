@@ -619,6 +619,27 @@ func (m *meilisearch) Health() (*Health, error) {
 	return m.HealthWithContext(context.Background())
 }
 
+func (m *meilisearch) RenderTemplate(params *RenderTemplateParams) (*RenderTemplateResponse, error) {
+	return m.RenderTemplateWithContext(context.Background(), params)
+}
+
+func (m *meilisearch) RenderTemplateWithContext(ctx context.Context, params *RenderTemplateParams) (*RenderTemplateResponse, error) {
+	resp := new(RenderTemplateResponse)
+	req := &internalRequest{
+		endpoint:            "/render-template",
+		method:              http.MethodPost,
+		withRequest:         params,
+		contentType:         contentTypeJSON,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "RenderTemplate",
+	}
+	if err := m.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
 func (m *meilisearch) HealthWithContext(ctx context.Context) (*Health, error) {
 	resp := new(Health)
 	req := &internalRequest{

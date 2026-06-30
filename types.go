@@ -14,6 +14,51 @@ const (
 	nullBody                 = "null"
 )
 
+type RenderTemplateParams struct {
+	Template Template        `json:"template,omitempty"`
+	Input    *TempelateInput `json:"input,omitempty"`
+}
+
+type TemplateKind string
+
+const (
+	DocumentTemplate       TemplateKind = "documentTemplate"
+	ChatDocumentTemplate   TemplateKind = "chatDocumentTemplate"
+	IndexingFragment       TemplateKind = "indexingFragment"
+	SearchFragment         TemplateKind = "searchFragment"
+	InlineDocumentTemplate TemplateKind = "inlineDocumentTemplate"
+	InlineFragment         TemplateKind = "inlineFragment"
+)
+
+type Template struct {
+	Kind                     TemplateKind `json:"kind"`
+	IndexUID                 *string      `json:"indexUid"`
+	Embedder                 *string      `json:"embedder"`
+	Fragment                 *string      `json:"fragment"`
+	Inline                   any          `json:"inline"`
+	DocumentTemplateMaxBytes *int64       `json:"documentTemplateMaxBytes"`
+}
+
+type InputKind string
+
+const (
+	IndexDocument  InputKind = "indexDocument"
+	InlineDocument InputKind = "inlineDocument"
+	InlineSearch   InputKind = "inlineSearch"
+)
+
+type TempelateInput struct {
+	Kind     InputKind `json:"kind"`
+	IndexUID *string   `json:"indexUid"`
+	ID       *string   `json:"id"`
+	Inline   any       `json:"inline"`
+}
+
+type RenderTemplateResponse struct {
+	Template any `json:"template"`
+	Rendered any `json:"rendered"`
+}
+
 type SearchRulesRequest struct {
 	Description string      `json:"description,omitempty"`
 	Priority    *int        `json:"priority,omitempty"`
@@ -847,10 +892,10 @@ type ExperimentalFeaturesResult struct {
 	Network                 bool `json:"network"`
 	CompositeEmbedders      bool `json:"compositeEmbedders"`
 	ChatCompletions         bool `json:"chatCompletions"`
-	MultiModal              bool `json:"multimodal,omitempty"`
+	MultiModal              bool `json:"multimodal"`
 	DynamicSearchRules      bool `json:"dynamicSearchRules"`
 	GetTaskDocumentsRoute   bool `json:"getTaskDocumentsRoute"`
-	RenderRoute             bool `json:"renderRoute,omitempty"`
+	RenderRoute             bool `json:"renderRoute"`
 }
 
 type SwapIndexesParams struct {
