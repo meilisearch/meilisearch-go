@@ -810,7 +810,7 @@ post_render_template_1: |-
       Kind: meilisearch.InlineDocumentTemplate,
       Inline: "An inline document template rendered on {{doc.id}}",
     },
-    Input: meilisearch.Input{
+    Input: &meilisearch.TempelateInput{
       Kind: meilisearch.InlineDocument,
       Inline: map[string]any{
         "id": "this document",

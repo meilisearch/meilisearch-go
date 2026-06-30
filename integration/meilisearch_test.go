@@ -2786,8 +2786,6 @@ func TestRenderTemplate(t *testing.T) {
 	require.NoError(t, err)
 	require.True(t, exFeature.RenderRoute)
 
-	c.ExperimentalFeatures().SetMultiModal(true).Update()
-
 	indexUid := "movies"
 	setupMovieIndex(t, c, indexUid)
 
