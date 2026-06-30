@@ -804,3 +804,16 @@ patch_dynamic_search_rule_1: |-
   })
 delete_dynamic_search_rule_1: |-
   client.DeleteSearchRule("black-friday")
+post_render_template_1: |-
+  client.RenderTemplate(&meilisearch.RenderTemplateParams{
+    Template: meilisearch.Template{
+      Kind: meilisearch.InlineDocumentTemplate,
+      Inline: "An inline document template rendered on {{doc.id}}",
+    },
+    Input: meilisearch.Input{
+      Kind: meilisearch.InlineDocument,
+      Inline: map[string]any{
+        "id": "this document",
+      },
+    },
+  })

@@ -2777,3 +2777,87 @@ func TestExport(t *testing.T) {
 		})
 	}
 }
+
+func TestRenderTemplate(t *testing.T) {
+	c := setup(t, "")
+	t.Cleanup(cleanup(c))
+
+	exFeature, err := c.ExperimentalFeatures().SetRenderRoute(true).Update()
+	require.NoError(t, err)
+	require.True(t, exFeature.RenderRoute)
+
+	c.ExperimentalFeatures().SetMultiModal(true).Update()
+
+	indexUid := "movies"
+	setupMovieIndex(t, c, indexUid)
+
+	tests := []struct {
+		name     string
+		setup    func(t *testing.T)
+		params   *meilisearch.RenderTemplateParams
+		expected *meilisearch.RenderTemplateResponse
+	}{
+		{
+			name: "rendering a document from an index on an inline document template",
+			params: &meilisearch.RenderTemplateParams{
+				Template: meilisearch.Template{
+					Kind:   meilisearch.InlineDocumentTemplate,
+					Inline: stringPtr("You can pass templates inline as well: nice to test them! {{doc.id}}"),
+				},
+				Input: &meilisearch.TempelateInput{
+					Kind:     meilisearch.IndexDocument,
+					IndexUID: &indexUid,
+					ID:       stringPtr("2"),
+				},
+			},
+			expected: &meilisearch.RenderTemplateResponse{
+				Template: "You can pass templates inline as well: nice to test them! {{doc.id}}",
+				Rendered: "You can pass templates inline as well: nice to test them! 2",
+			},
+		},
+		{
+			name: "rendering an inline document on an inline indexing fragment",
+			setup: func(t *testing.T) {
+				feat, err := c.ExperimentalFeatures().SetMultiModal(true).Update()
+				require.NoError(t, err)
+				require.True(t, feat.MultiModal)
+			},
+			params: &meilisearch.RenderTemplateParams{
+				Template: meilisearch.Template{
+					Kind: meilisearch.InlineFragment,
+					Inline: map[string]any{
+						"json_maps":  "supported for fragments",
+						"any_string": "is in liquid format: {{doc.test}}",
+					},
+				},
+				Input: &meilisearch.TempelateInput{
+					Kind: meilisearch.InlineDocument,
+					Inline: map[string]any{
+						"test": true,
+					},
+				},
+			},
+			expected: &meilisearch.RenderTemplateResponse{
+				Template: map[string]interface{}{
+					"any_string": "is in liquid format: {{doc.test}}",
+					"json_maps":  "supported for fragments",
+				},
+				Rendered: map[string]interface{}{
+					"any_string": "is in liquid format: true",
+					"json_maps":  "supported for fragments",
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if tt.setup != nil {
+				tt.setup(t)
+			}
+			result, err := c.RenderTemplate(tt.params)
+			require.NoError(t, err)
+			require.Equal(t, tt.expected, result)
+		})
+	}
+}
