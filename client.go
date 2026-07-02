@@ -339,6 +339,8 @@ func (c *client) sendRequest(
 		request.GetBody = func() (io.ReadCloser, error) {
 			return io.NopCloser(bytes.NewReader(bodyBytes)), nil
 		}
+
+		request.ContentLength = int64(len(bodyBytes))
 	}
 
 	// adding request headers

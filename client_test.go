@@ -8,6 +8,7 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -447,7 +448,8 @@ func TestClient_ExecuteRequest(t *testing.T) {
 			}
 
 			c := newClient(&http.Client{}, ts.URL, "testApiKey", cfg)
-			if tt.name == "Encoder Failure" {
+
+			if strings.Contains(tt.name, "Encoder Failure") {
 				c.encoder = failingEncoder{}
 			}
 
@@ -467,7 +469,10 @@ func TestClient_ExecuteRequest(t *testing.T) {
 				}
 			} else {
 				require.NoError(t, err)
-				if tt.expectedResp != nil {
+
+				if tt.name == "Response Null Body" {
+					assert.Nil(t, tt.req.withResponse)
+				} else if tt.expectedResp != nil {
 					assert.Equal(t, tt.expectedResp, tt.req.withResponse)
 				}
 			}
