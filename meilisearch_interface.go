@@ -114,6 +114,16 @@ type ServiceManager interface {
 	// docs: https://www.meilisearch.com/docs/reference/api/experimental-features/configure-network-topology
 	UpdateNetworkWithContext(ctx context.Context, params *UpdateNetworkRequest) (any, error)
 
+	// RenderTemplate renders any template or fragment on any input
+	// 
+	// docs: https://www.meilisearch.com/docs/reference/api/template/render-documents-with-post
+	RenderTemplate(params *RenderTemplateParams) (*RenderTemplateResponse, error)
+
+	// RenderTemplateWithContext renders any template or fragment on any input with a context
+	// 
+	// docs: https://www.meilisearch.com/docs/reference/api/template/render-documents-with-post
+	RenderTemplateWithContext(ctx context.Context, params *RenderTemplateParams) (*RenderTemplateResponse, error)
+
 	// Close closes the connection to the Meilisearch server.
 	Close()
 }
