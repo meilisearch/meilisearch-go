@@ -1085,11 +1085,6 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 func TestIndex_SearchWithPersonalize(t *testing.T) {
 	sv := setup(t, "")
 
-	resp, err := sv.ExperimentalFeatures().SetPersonalization(true).Update()
-	require.NoError(t, err)
-	require.NotNil(t, resp)
-	require.True(t, resp.Personalization)
-
 	tests := []struct {
 		name    string
 		UID     string

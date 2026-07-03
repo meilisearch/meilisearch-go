@@ -14,6 +14,11 @@ func (m *meilisearch) ExperimentalFeatures() *ExperimentalFeatures {
 	return &ExperimentalFeatures{client: m.client}
 }
 
+func (ef *ExperimentalFeatures) SetRenderRoute(renderRoot bool) *ExperimentalFeatures {
+	ef.RenderRoute = &renderRoot
+	return ef
+}
+
 func (ef *ExperimentalFeatures) SetDynamicSearchRules(dynamicSearchRule bool) *ExperimentalFeatures {
 	ef.DynamicSearchRules = &dynamicSearchRule
 	return ef
@@ -64,11 +69,6 @@ func (ef *ExperimentalFeatures) SetGetTaskDocumentsRoute(enable bool) *Experimen
 	return ef
 }
 
-func (ef *ExperimentalFeatures) SetPersonalization(enable bool) *ExperimentalFeatures {
-	ef.Personalization = &enable
-	return ef
-}
-
 func (ef *ExperimentalFeatures) Get() (*ExperimentalFeaturesResult, error) {
 	return ef.GetWithContext(context.Background())
 }
@@ -108,7 +108,7 @@ func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*Experim
 		MultiModal:              ef.MultiModal,
 		DynamicSearchRules:      ef.DynamicSearchRules,
 		GetTaskDocumentsRoute:   ef.GetTaskDocumentsRoute,
-		Personalization:         ef.Personalization,
+		RenderRoute:             ef.RenderRoute,
 	}
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{
