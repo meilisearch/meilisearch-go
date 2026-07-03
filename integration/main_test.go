@@ -589,3 +589,14 @@ func int64Ptr(i int) *int64 {
 	v := int64(i)
 	return &v
 }
+
+func getEnvOrSkip(t *testing.T, key string) string {
+	t.Helper()
+
+	value := os.Getenv(key)
+	if value == "" {
+		t.Skipf("env %q not set, skipping test", key)
+	}
+
+	return value
+}

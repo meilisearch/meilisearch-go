@@ -1085,6 +1085,8 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 func TestIndex_SearchWithPersonalize(t *testing.T) {
 	sv := setup(t, "")
 
+	_ = getEnvOrSkip(t, "VOYAGE_API_KEY")
+
 	tests := []struct {
 		name    string
 		UID     string
