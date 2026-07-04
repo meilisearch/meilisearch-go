@@ -159,3 +159,13 @@ func (b *SearchRequestBuilder) WithLocales(locales ...string) *SearchRequestBuil
 	b.req.Locales = locales
 	return b
 }
+
+func (b *SearchRequestBuilder) WithVector(v []float32) *SearchRequestBuilder {
+	b.req.Vector = v
+	return b
+}
+
+func (b *SearchRequestBuilder) WithMedia(m map[string]any) *SearchRequestBuilder {
+	b.req.Media = m
+	return b
+}

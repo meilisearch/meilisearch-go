@@ -41,3 +41,45 @@ func TestSearchRequestBuilder_NilSafeBuild(t *testing.T) {
 	req := b.Build()
 	require.NotNil(t, req)
 }
+
+func TestSearchRequestBuilder_WithVector(t *testing.T) {
+	t.Parallel()
+
+	vec := []float32{0.1, 0.2, 0.3}
+	req := NewSearchRequestBuilder().
+		WithVector(vec).
+		Build()
+
+	require.Equal(t, vec, req.Vector)
+}
+
+func TestSearchRequestBuilder_WithMedia(t *testing.T) {
+	t.Parallel()
+
+	media := map[string]any{"query": "cat", "content": "data:image/png;base64,..."}
+	req := NewSearchRequestBuilder().
+		WithMedia(media).
+		Build()
+
+	require.Equal(t, media, req.Media)
+}
+
+func TestSearchRequestBuilder_FullChainIncludesAllSetters(t *testing.T) {
+	t.Parallel()
+
+	vec := []float32{0.5, 0.5}
+	media := map[string]any{"query": "dog"}
+	req := NewSearchRequestBuilder().
+		WithQuery("prince").
+		WithLimit(5).
+		WithVector(vec).
+		WithMedia(media).
+		WithLocales("eng").
+		Build()
+
+	require.Equal(t, "prince", req.Query)
+	require.Equal(t, int64(5), req.Limit)
+	require.Equal(t, vec, req.Vector)
+	require.Equal(t, media, req.Media)
+	require.Equal(t, []string{"eng"}, req.Locales)
+}
