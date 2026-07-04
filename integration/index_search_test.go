@@ -1378,3 +1378,28 @@ func TestIndex_ShowPerformanceDetails(t *testing.T) {
 	require.NotNil(t, resp)
 	assert.NotNil(t, resp.PerformanceDetails)
 }
+
+func TestIndex_SearchWithRequestBuilder(t *testing.T) {
+	sv := setup(t, "")
+	t.Cleanup(cleanup(sv))
+
+	setUpIndexForFaceting(sv)
+
+	idx := sv.Index("indexUID")
+
+	// Build the search request with the fluent builder, exercising the
+	// core setters end-to-end against the test index (#796).
+	req := meilisearch.NewSearchRequestBuilder().
+		WithQuery("prince").
+		WithLimit(20).
+		WithAttributesToRetrieve("book_id", "title").
+		WithShowRankingScore(true).
+		Build()
+
+	resp, err := idx.Search(req.Query, req)
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.NotEmpty(t, resp.Hits)
+	require.Equal(t, int64(20), req.Limit)
+	require.Equal(t, []string{"book_id", "title"}, req.AttributesToRetrieve)
+}
