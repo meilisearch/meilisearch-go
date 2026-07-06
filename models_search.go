@@ -100,6 +100,11 @@ type SearchRequest struct {
 	Personalize             *SearchRequestPersonalize `json:"personalize,omitempty"`
 }
 
+type SearchFederationOptions struct {
+	Weight float64 `json:"weight,omitempty"`
+	Remote string  `json:"remote,omitempty"`
+}
+
 // SearchRequestPersonalize configures personalized search.
 // When set, Meilisearch re-ranks results based on the user profile described in UserContext.
 //
@@ -113,10 +118,6 @@ type SearchRequestPersonalize struct {
 	UserContext string `json:"userContext"`
 }
 
-type SearchFederationOptions struct {
-	Weight float64 `json:"weight,omitempty"`
-	Remote string  `json:"remote,omitempty"`
-}
 
 type SearchRequestHybrid struct {
 	SemanticRatio float64 `json:"semanticRatio,omitempty"`
