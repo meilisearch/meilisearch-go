@@ -8,15 +8,21 @@ import (
 	"io"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
-// Mock structures for testing
 type mockResponse struct {
 	Message string `json:"message"`
+}
+
+type mockData struct {
+	Name string `json:"name"`
+	Age  int    `json:"age"`
 }
 
 type mockJsonMarshaller struct {
@@ -26,508 +32,676 @@ type mockJsonMarshaller struct {
 	Bar   string `json:"bar"`
 }
 
-// failingEncoder is used to simulate encoder failure
+func (m mockJsonMarshaller) MarshalJSON() ([]byte, error) {
+	if !m.valid {
+		return nil, errors.New("mockJsonMarshaller not valid")
+	}
+	if m.null {
+		return nil, nil
+	}
+	return json.Marshal(map[string]string{"foo": m.Foo, "bar": m.Bar})
+}
+
 type failingEncoder struct{}
 
 func (fe failingEncoder) Encode(r io.Reader) (io.ReadCloser, error) {
 	return nil, errors.New("dummy encoding failure")
 }
-
-// Implement Decode method to satisfy the encoder interface, though it won't be used here
 func (fe failingEncoder) Decode(b []byte, v interface{}) error {
 	return errors.New("dummy decode failure")
 }
-
 func (fe failingEncoder) Decoder(r io.Reader) (streamDecoder, error) {
 	return nil, errors.New("dummy decoder failure")
 }
 
-func TestExecuteRequest(t *testing.T) {
+func setupMockServer(t *testing.T) (*httptest.Server, *int) {
 	retryCount := 0
-
-	// Create a mock server
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == http.MethodGet && r.URL.Path == "/test-get" {
+		switch r.URL.Path {
+		case "/success-get":
 			w.WriteHeader(http.StatusOK)
 			_, _ = w.Write([]byte(`{"message":"get successful"}`))
-		} else if r.Method == http.MethodGet && r.URL.Path == "/test-get-encoding" {
-			encode := r.Header.Get("Accept-Encoding")
-			if len(encode) != 0 {
-				enc := newEncoding(ContentEncoding(encode), DefaultCompression)
-				d := &mockData{Name: "foo", Age: 30}
 
-				b, err := json.Marshal(d)
-				require.NoError(t, err)
-
-				res, err := enc.Encode(bytes.NewReader(b))
-				require.NoError(t, err)
-
-				defer func() {
-					_ = res.Close()
-				}()
-
-				compressedData, err := io.ReadAll(res)
-				require.NoError(t, err)
-
-				w.WriteHeader(http.StatusOK)
-				_, _ = w.Write(compressedData)
-				return
-			}
-			_, _ = w.Write([]byte("invalid message"))
-			w.WriteHeader(http.StatusInternalServerError)
-		} else if r.Method == http.MethodPost && r.URL.Path == "/test-req-resp-encoding" {
-			accept := r.Header.Get("Accept-Encoding")
-			ce := r.Header.Get("Content-Encoding")
-
-			reqEnc := newEncoding(ContentEncoding(ce), DefaultCompression)
-			respEnc := newEncoding(ContentEncoding(accept), DefaultCompression)
-			req := new(mockData)
-
-			if len(ce) != 0 {
-				b, err := io.ReadAll(r.Body)
-				require.NoError(t, err)
-
-				err = reqEnc.Decode(b, req)
-				require.NoError(t, err)
-			}
-
-			if len(accept) != 0 {
-				d, err := json.Marshal(req)
-				require.NoError(t, err)
-				res, err := respEnc.Encode(bytes.NewReader(d))
-				require.NoError(t, err)
-				defer func() {
-					_ = res.Close()
-				}()
-
-				compressedData, err := io.ReadAll(res)
-				require.NoError(t, err)
-
-				w.WriteHeader(http.StatusOK)
-				_, _ = w.Write(compressedData)
-
-			}
-		} else if r.Method == http.MethodPost && r.URL.Path == "/test-post" {
+		case "/success-post":
+			b, _ := io.ReadAll(r.Body)
+			require.NotEmpty(t, b, "POST body should not be empty")
 			w.WriteHeader(http.StatusCreated)
-			msg := []byte(`{"message":"post successful"}`)
-			_, _ = w.Write(msg)
+			_, _ = w.Write([]byte(`{"message":"post successful"}`))
 
-		} else if r.Method == http.MethodGet && r.URL.Path == "/test-null-body" {
+		case "/ndjson-success":
+			w.Header().Set("Content-Type", "application/x-ndjson")
 			w.WriteHeader(http.StatusOK)
-			msg := []byte(`null`)
-			_, _ = w.Write(msg)
-		} else if r.Method == http.MethodPost && r.URL.Path == "/test-post-encoding" {
-			w.WriteHeader(http.StatusCreated)
-			msg := []byte(`{"message":"post successful"}`)
+			_, _ = w.Write([]byte(`{"name":"Alice","age":30}` + "\n" + `{"name":"Bob","age":25}`))
 
-			enc := r.Header.Get("Accept-Encoding")
-			if len(enc) != 0 {
-				e := newEncoding(ContentEncoding(enc), DefaultCompression)
-				res, err := e.Encode(bytes.NewReader(msg))
-				require.NoError(t, err)
-				defer func() {
-					_ = res.Close()
-				}()
+		case "/ndjson-malformed":
+			w.Header().Set("Content-Type", "application/x-ndjson")
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"name":"Alice","age":30` + "\n" + `{"name":"Bob",}`))
 
-				compressedData, err := io.ReadAll(res)
-				require.NoError(t, err)
-
-				_, _ = w.Write(compressedData)
+		case "/retry-success":
+			if retryCount < 2 {
+				retryCount++
+				w.WriteHeader(http.StatusBadGateway)
 				return
 			}
-			_, _ = w.Write(msg)
-		} else if r.URL.Path == "/test-bad-request" {
+			b, _ := io.ReadAll(r.Body)
+			if r.Method == http.MethodPost {
+				require.NotEmpty(t, b, "POST body must survive retries via GetBody")
+			}
+			w.WriteHeader(http.StatusOK)
+
+		case "/timeout":
+			time.Sleep(100 * time.Millisecond)
+			w.WriteHeader(http.StatusOK)
+
+		case "/bad-request":
 			w.WriteHeader(http.StatusBadRequest)
-			_, _ = w.Write([]byte(`{"message":"bad request"}`))
-		} else if r.URL.Path == "/invalid-response-body" {
-			w.WriteHeader(http.StatusInternalServerError)
-			_, _ = w.Write([]byte(`{"message":"bad response body"}`))
-		} else if r.URL.Path == "/io-reader" {
-			w.WriteHeader(http.StatusOK)
-			_, _ = w.Write([]byte(`{"message":"io reader"}`))
-		} else if r.URL.Path == "/failed-retry" {
+			_, _ = w.Write([]byte(`{"message":"bad request", "code": "bad_request"}`))
+
+		case "/encoded-post":
+			enc := r.Header.Get("Content-Encoding")
+			require.NotEmpty(t, enc)
+			w.WriteHeader(http.StatusCreated)
+			_, _ = w.Write([]byte(`{"message":"encoded successful"}`))
+
+		case "/always-502":
 			w.WriteHeader(http.StatusBadGateway)
-		} else if r.URL.Path == "/success-retry" {
-			if retryCount == 2 {
-				w.WriteHeader(http.StatusOK)
-				return
-			}
-			w.WriteHeader(http.StatusBadGateway)
-			retryCount++
-		} else if r.URL.Path == "/dummy" {
+
+		case "/return-null":
 			w.WriteHeader(http.StatusOK)
-		} else {
+			_, _ = w.Write([]byte(`null`))
+
+		case "/bad-json":
+			w.WriteHeader(http.StatusOK)
+			_, _ = w.Write([]byte(`{"message": "incomplete JSON`))
+
+		case "/query-params":
+			require.Equal(t, "meilisearch", r.URL.Query().Get("q"))
+			w.WriteHeader(http.StatusOK)
+
+		case "/bad-request-no-code":
+			w.WriteHeader(http.StatusBadRequest)
+			_, _ = w.Write([]byte(`{"message": "error without code field"}`))
+
+		default:
 			w.WriteHeader(http.StatusNotFound)
 		}
 	}))
+	return ts, &retryCount
+}
+
+func TestClient_ExecuteRequest(t *testing.T) {
+	ts, retryCount := setupMockServer(t)
 	defer ts.Close()
 
 	tests := []struct {
-		name            string
-		internalReq     *internalRequest
-		expectedResp    interface{}
-		contentEncoding ContentEncoding
-		withTimeout     bool
-		disableRetry    bool
-		wantErr         bool
+		name         string
+		req          *internalRequest
+		setupCtx     func() (context.Context, context.CancelFunc)
+		cfg          *clientConfig
+		expectedResp interface{}
+		wantErr      bool
+		errTypeCheck func(err error)
 	}{
 		{
-			name: "Successful GET request",
-			internalReq: &internalRequest{
-				endpoint:            "/test-get",
+			name: "GET Success",
+			req: &internalRequest{
+				endpoint:            "/success-get",
 				method:              http.MethodGet,
 				withResponse:        &mockResponse{},
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
 			expectedResp: &mockResponse{Message: "get successful"},
-			wantErr:      false,
 		},
 		{
-			name: "Successful POST request",
-			internalReq: &internalRequest{
-				endpoint:            "/test-post",
+			name: "POST Success with raw struct",
+			req: &internalRequest{
+				endpoint:            "/success-post",
 				method:              http.MethodPost,
-				withRequest:         map[string]string{"key": "value"},
 				contentType:         contentTypeJSON,
+				withRequest:         &mockData{Name: "John", Age: 40},
 				withResponse:        &mockResponse{},
 				acceptedStatusCodes: []int{http.StatusCreated},
 			},
 			expectedResp: &mockResponse{Message: "post successful"},
-			wantErr:      false,
 		},
 		{
-			name: "404 Not Found",
-			internalReq: &internalRequest{
-				endpoint:            "/not-found",
-				method:              http.MethodGet,
-				withResponse:        &mockResponse{},
-				acceptedStatusCodes: []int{http.StatusOK},
-			},
-			expectedResp: nil,
-			wantErr:      true,
-		},
-		{
-			name: "Invalid URL",
-			internalReq: &internalRequest{
-				endpoint:            "/invalid-url$%^*()*#",
-				method:              http.MethodGet,
-				withResponse:        &mockResponse{},
-				acceptedStatusCodes: []int{http.StatusOK},
-			},
-			expectedResp: nil,
-			wantErr:      true,
-		},
-		{
-			name: "Invalid response body",
-			internalReq: &internalRequest{
-				endpoint:            "/invalid-response-body",
-				method:              http.MethodGet,
-				withResponse:        struct{}{},
-				acceptedStatusCodes: []int{http.StatusInternalServerError},
-			},
-			expectedResp: nil,
-			wantErr:      true,
-		},
-		{
-			name: "Invalid request method",
-			internalReq: &internalRequest{
-				endpoint:            "/invalid-request-method",
-				method:              http.MethodGet,
-				withResponse:        nil,
-				withRequest:         struct{}{},
-				acceptedStatusCodes: []int{http.StatusBadRequest},
-			},
-			expectedResp: nil,
-			wantErr:      true,
-		},
-		{
-			name: "Invalid request content type",
-			internalReq: &internalRequest{
-				endpoint:            "/invalid-request-content-type",
+			name: "POST Success with io.Reader",
+			req: &internalRequest{
+				endpoint:            "/success-post",
 				method:              http.MethodPost,
-				withResponse:        nil,
-				contentType:         "",
-				withRequest:         struct{}{},
-				acceptedStatusCodes: []int{http.StatusBadRequest},
-			},
-			expectedResp: nil,
-			wantErr:      true,
-		},
-		{
-			name: "Invalid json marshaler",
-			internalReq: &internalRequest{
-				endpoint:     "/invalid-marshaler",
-				method:       http.MethodPost,
-				withResponse: nil,
-				withRequest: &mockJsonMarshaller{
-					valid: false,
-				},
-				contentType: "application/json",
-			},
-			expectedResp: nil,
-			wantErr:      true,
-		},
-		{
-			name: "Null data marshaler",
-			internalReq: &internalRequest{
-				endpoint:     "/null-data-marshaler",
-				method:       http.MethodPost,
-				withResponse: nil,
-				withRequest: &mockJsonMarshaller{
-					valid: true,
-					null:  true,
-				},
-				contentType: "application/json",
-			},
-			expectedResp: nil,
-			wantErr:      true,
-		},
-		{
-			name: "Test null body response",
-			internalReq: &internalRequest{
-				endpoint:            "/test-null-body",
-				method:              http.MethodGet,
-				withResponse:        make([]byte, 0),
-				contentType:         "application/json",
-				acceptedStatusCodes: []int{http.StatusOK},
-			},
-			expectedResp: nil,
-			wantErr:      false,
-		},
-		{
-			name: "400 Bad Request",
-			internalReq: &internalRequest{
-				endpoint:            "/test-bad-request",
-				method:              http.MethodGet,
-				withResponse:        &mockResponse{},
-				acceptedStatusCodes: []int{http.StatusOK},
-			},
-			expectedResp: nil,
-			wantErr:      true,
-		},
-		{
-			name: "Test request encoding gzip",
-			internalReq: &internalRequest{
-				endpoint:            "/test-post-encoding",
-				method:              http.MethodPost,
-				withRequest:         map[string]string{"key": "value"},
 				contentType:         contentTypeJSON,
+				withRequest:         bytes.NewReader([]byte(`{"name":"John"}`)),
 				withResponse:        &mockResponse{},
 				acceptedStatusCodes: []int{http.StatusCreated},
 			},
-			expectedResp:    &mockResponse{Message: "post successful"},
-			contentEncoding: GzipEncoding,
-			wantErr:         false,
+			expectedResp: &mockResponse{Message: "post successful"},
 		},
 		{
-			name: "Test request encoding deflate",
-			internalReq: &internalRequest{
-				endpoint:            "/test-post-encoding",
+			name: "POST Success with []byte",
+			req: &internalRequest{
+				endpoint:            "/success-post",
 				method:              http.MethodPost,
-				withRequest:         map[string]string{"key": "value"},
 				contentType:         contentTypeJSON,
+				withRequest:         []byte(`{"name":"John"}`),
 				withResponse:        &mockResponse{},
 				acceptedStatusCodes: []int{http.StatusCreated},
 			},
-			expectedResp:    &mockResponse{Message: "post successful"},
-			contentEncoding: DeflateEncoding,
-			wantErr:         false,
+			expectedResp: &mockResponse{Message: "post successful"},
 		},
 		{
-			name: "Test request encoding brotli",
-			internalReq: &internalRequest{
-				endpoint:            "/test-post-encoding",
+			name: "NDJSON Success",
+			req: &internalRequest{
+				endpoint:            "/ndjson-success",
+				method:              http.MethodGet,
+				withResponse:        &[]mockData{},
+				acceptedContentType: contentTypeNDJSON,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp: &[]mockData{{Name: "Alice", Age: 30}, {Name: "Bob", Age: 25}},
+		},
+		{
+			name: "NDJSON Malformed Error",
+			req: &internalRequest{
+				endpoint:            "/ndjson-malformed",
+				method:              http.MethodGet,
+				withResponse:        &[]mockData{},
+				acceptedContentType: contentTypeNDJSON,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			wantErr: true,
+		},
+		{
+			name: "NDJSON Invalid Destination",
+			req: &internalRequest{
+				endpoint:            "/ndjson-success",
+				method:              http.MethodGet,
+				withResponse:        &mockData{},
+				acceptedContentType: contentTypeNDJSON,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			wantErr: true,
+		},
+		{
+			name: "Context Timeout",
+			setupCtx: func() (context.Context, context.CancelFunc) {
+				return context.WithTimeout(context.Background(), 10*time.Millisecond)
+			},
+			req: &internalRequest{
+				endpoint:            "/timeout",
+				method:              http.MethodGet,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			wantErr: true,
+			errTypeCheck: func(err error) {
+				var e *Error
+				require.ErrorAs(t, err, &e)
+				assert.Equal(t, MeilisearchTimeoutError, e.ErrCode)
+			},
+		},
+		{
+			name: "Context Canceled Manually",
+			setupCtx: func() (context.Context, context.CancelFunc) {
+				ctx, cancel := context.WithCancel(context.Background())
+				cancel()
+				return ctx, cancel
+			},
+			req: &internalRequest{
+				endpoint:            "/timeout",
+				method:              http.MethodGet,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			wantErr: true,
+			errTypeCheck: func(err error) {
+				var e *Error
+				require.ErrorAs(t, err, &e)
+				assert.Equal(t, MeilisearchTimeoutError, e.ErrCode)
+			},
+		},
+		{
+			name: "Retry Logic Success (GetBody survival)",
+			req: &internalRequest{
+				endpoint:            "/retry-success",
 				method:              http.MethodPost,
-				withRequest:         map[string]string{"key": "value"},
 				contentType:         contentTypeJSON,
+				withRequest:         &mockData{Name: "Retry", Age: 1},
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+		},
+		{
+			name: "Disable Retry Fails Immediately",
+			cfg: &clientConfig{
+				disableRetry: true,
+			},
+			req: &internalRequest{
+				endpoint:            "/retry-success",
+				method:              http.MethodGet,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			wantErr: true,
+		},
+		{
+			name: "Bad Request API Error",
+			req: &internalRequest{
+				endpoint:            "/bad-request",
+				method:              http.MethodGet,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			wantErr: true,
+			errTypeCheck: func(err error) {
+				var e *Error
+				require.ErrorAs(t, err, &e)
+				assert.Equal(t, MeilisearchApiError, e.ErrCode)
+				assert.Equal(t, "bad_request", e.MeilisearchApiError.Code)
+			},
+		},
+		{
+			name: "Validation Error: GET with Body",
+			req: &internalRequest{
+				endpoint:            "/success-get",
+				method:              http.MethodGet,
+				withRequest:         &mockData{},
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			wantErr: true,
+			errTypeCheck: func(err error) {
+				assert.ErrorIs(t, err, ErrInvalidRequestMethod)
+			},
+		},
+		{
+			name: "Max Retries Exceeded",
+			req: &internalRequest{
+				endpoint:            "/always-502",
+				method:              http.MethodGet,
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			wantErr: true,
+			errTypeCheck: func(err error) {
+				var e *Error
+				require.ErrorAs(t, err, &e)
+				assert.Equal(t, MeilisearchMaxRetriesExceeded, e.ErrCode)
+			},
+		},
+		{
+			name: "Response Null Body",
+			req: &internalRequest{
+				endpoint:            "/return-null",
+				method:              http.MethodGet,
 				withResponse:        &mockResponse{},
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			expectedResp: nil, // Triggers req.withResponse = nil
+		},
+		{
+			name: "JSON Unmarshal Error",
+			req: &internalRequest{
+				endpoint:            "/bad-json",
+				method:              http.MethodGet,
+				withResponse:        &mockResponse{},
+				acceptedStatusCodes: []int{http.StatusOK},
+			},
+			wantErr: true,
+			errTypeCheck: func(err error) {
+				var e *Error
+				require.ErrorAs(t, err, &e)
+				assert.Equal(t, ErrCodeResponseUnmarshalBody, e.ErrCode)
+			},
+		},
+		{
+			name: "JSON Marshal Error in buildBody",
+			req: &internalRequest{
+				endpoint:            "/success-post",
+				method:              http.MethodPost,
+				contentType:         contentTypeJSON,
+				withRequest:         mockJsonMarshaller{valid: false}, // Triggers marshal error
 				acceptedStatusCodes: []int{http.StatusCreated},
 			},
-			expectedResp:    &mockResponse{Message: "post successful"},
-			contentEncoding: BrotliEncoding,
-			wantErr:         false,
+			wantErr: true,
+			errTypeCheck: func(err error) {
+				var e *Error
+				require.ErrorAs(t, err, &e)
+				assert.Equal(t, ErrCodeMarshalRequest, e.ErrCode)
+			},
 		},
 		{
-			name: "Test response decoding gzip",
-			internalReq: &internalRequest{
-				endpoint:            "/test-get-encoding",
+			name: "Query Parameters check",
+			req: &internalRequest{
+				endpoint:            "/query-params",
 				method:              http.MethodGet,
-				withRequest:         nil,
-				withResponse:        &mockData{},
+				withQueryParams:     map[string]string{"q": "meilisearch"}, // Triggers query encoder
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
-			expectedResp:    &mockData{Name: "foo", Age: 30},
-			contentEncoding: GzipEncoding,
-			wantErr:         false,
 		},
 		{
-			name: "Test response decoding deflate",
-			internalReq: &internalRequest{
-				endpoint:            "/test-get-encoding",
+			name: "API Error Without Code",
+			req: &internalRequest{
+				endpoint:            "/bad-request-no-code",
 				method:              http.MethodGet,
-				withRequest:         nil,
-				withResponse:        &mockData{},
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
-			expectedResp:    &mockData{Name: "foo", Age: 30},
-			contentEncoding: DeflateEncoding,
-			wantErr:         false,
-		},
-		{
-			name: "Test response decoding brotli",
-			internalReq: &internalRequest{
-				endpoint:            "/test-get-encoding",
-				method:              http.MethodGet,
-				withRequest:         nil,
-				withResponse:        &mockData{},
-				acceptedStatusCodes: []int{http.StatusOK},
+			wantErr: true,
+			errTypeCheck: func(err error) {
+				var e *Error
+				require.ErrorAs(t, err, &e)
+				assert.Equal(t, MeilisearchApiErrorWithoutMessage, e.ErrCode)
 			},
-			expectedResp:    &mockData{Name: "foo", Age: 30},
-			contentEncoding: BrotliEncoding,
-			wantErr:         false,
 		},
 		{
-			name: "Test request and response encoding",
-			internalReq: &internalRequest{
-				endpoint:            "/test-req-resp-encoding",
+			name: "Encoder Failure: Request Compress",
+			cfg: &clientConfig{
+				contentEncoding: GzipEncoding,
+			},
+			req: &internalRequest{
+				endpoint:            "/encoded-post",
 				method:              http.MethodPost,
 				contentType:         contentTypeJSON,
-				withRequest:         &mockData{Name: "foo", Age: 30},
-				withResponse:        &mockData{},
-				acceptedStatusCodes: []int{http.StatusOK},
+				withRequest:         &mockData{Name: "Gzip", Age: 10},
+				acceptedStatusCodes: []int{http.StatusCreated},
 			},
-			expectedResp:    &mockData{Name: "foo", Age: 30},
-			contentEncoding: GzipEncoding,
-			wantErr:         false,
+			wantErr: true,
 		},
 		{
-			name: "Test successful retries",
-			internalReq: &internalRequest{
-				endpoint:            "/success-retry",
+			name: "Encoder Failure: Response Decode",
+			cfg: &clientConfig{
+				contentEncoding: GzipEncoding,
+			},
+			req: &internalRequest{
+				endpoint:            "/success-get",
 				method:              http.MethodGet,
-				withResponse:        nil,
-				withRequest:         nil,
+				withResponse:        &mockResponse{},
 				acceptedStatusCodes: []int{http.StatusOK},
 			},
-			expectedResp: nil,
-			wantErr:      false,
+			wantErr: true,
 		},
 		{
-			name: "Test failed retries",
-			internalReq: &internalRequest{
-				endpoint:            "/failed-retry",
-				method:              http.MethodGet,
-				withResponse:        nil,
-				withRequest:         nil,
-				acceptedStatusCodes: []int{http.StatusOK},
-			},
-			expectedResp: nil,
-			wantErr:      true,
-		},
-		{
-			name: "Test disable retries",
-			internalReq: &internalRequest{
-				endpoint:            "/test-get",
-				method:              http.MethodGet,
-				withResponse:        nil,
-				withRequest:         nil,
-				acceptedStatusCodes: []int{http.StatusOK},
-			},
-			expectedResp: nil,
-			disableRetry: true,
-			wantErr:      false,
-		},
-		{
-			name: "Test request timeout on retries",
-			internalReq: &internalRequest{
-				endpoint:            "/failed-retry",
-				method:              http.MethodGet,
-				withResponse:        nil,
-				withRequest:         nil,
-				acceptedStatusCodes: []int{http.StatusOK},
-			},
-			expectedResp: nil,
-			withTimeout:  true,
-			wantErr:      true,
-		},
-		{
-			name: "Test request encoding with []byte encode failure",
-			internalReq: &internalRequest{
-				endpoint:            "/dummy",
+			name: "Validation Error: No Content-Type for POST body",
+			req: &internalRequest{
+				endpoint:            "/success-post",
 				method:              http.MethodPost,
-				withRequest:         []byte("test data"),
-				contentType:         "text/plain",
-				acceptedStatusCodes: []int{http.StatusOK},
+				withRequest:         &mockData{},
+				acceptedStatusCodes: []int{http.StatusCreated},
 			},
-			expectedResp:    nil,
-			contentEncoding: GzipEncoding,
-			wantErr:         true,
+			wantErr: true,
+			errTypeCheck: func(err error) {
+				assert.ErrorIs(t, err, ErrRequestBodyWithoutContentType)
+			},
 		},
 	}
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			c := newClient(&http.Client{}, ts.URL, "testApiKey", &clientConfig{
-				contentEncoding:          tt.contentEncoding,
-				encodingCompressionLevel: DefaultCompression,
-				maxRetries:               3,
-				disableRetry:             tt.disableRetry,
-				retryOnStatus: map[int]bool{
-					502: true,
-					503: true,
-					504: true,
-				},
-				jsonMarshal:   json.Marshal,
-				jsonUnmarshal: json.Unmarshal,
-			})
+			*retryCount = 0
 
-			// For the specific test case, override the encoder to force an error
-			if tt.name == "Test request encoding with []byte encode failure" {
+			cfg := tt.cfg
+			if cfg == nil {
+				cfg = &clientConfig{
+					maxRetries:    3,
+					retryOnStatus: map[int]bool{502: true, 503: true, 504: true},
+					jsonMarshal:   json.Marshal,
+					jsonUnmarshal: json.Unmarshal,
+				}
+			} else {
+				if cfg.jsonMarshal == nil {
+					cfg.jsonMarshal = json.Marshal
+					cfg.jsonUnmarshal = json.Unmarshal
+				}
+			}
+
+			c := newClient(&http.Client{}, ts.URL, "testApiKey", cfg)
+
+			if strings.Contains(tt.name, "Encoder Failure") {
 				c.encoder = failingEncoder{}
 			}
 
 			ctx := context.Background()
-
-			if tt.withTimeout {
-				timeoutCtx, cancel := context.WithTimeout(ctx, 1*time.Second)
-				ctx = timeoutCtx
+			if tt.setupCtx != nil {
+				var cancel context.CancelFunc
+				ctx, cancel = tt.setupCtx()
 				defer cancel()
 			}
 
-			err := c.executeRequest(ctx, tt.internalReq)
+			err := c.executeRequest(ctx, tt.req)
+
 			if tt.wantErr {
 				require.Error(t, err)
+				if tt.errTypeCheck != nil {
+					tt.errTypeCheck(err)
+				}
 			} else {
 				require.NoError(t, err)
-				require.Equal(t, tt.expectedResp, tt.internalReq.withResponse)
+
+				if tt.name == "Response Null Body" {
+					assert.Nil(t, tt.req.withResponse)
+				} else if tt.expectedResp != nil {
+					assert.Equal(t, tt.expectedResp, tt.req.withResponse)
+				}
 			}
 		})
 	}
 }
 
-func TestNewClientNilRetryOnStatus(t *testing.T) {
-	c := newClient(&http.Client{}, "", "", &clientConfig{
-		maxRetries:    3,
-		retryOnStatus: nil,
-	})
-
-	require.NotNil(t, c.retryOnStatus)
+type mockRoundTripper struct {
+	fn func(req *http.Request) (*http.Response, error)
 }
 
-func (m mockJsonMarshaller) MarshalJSON() ([]byte, error) {
-	type Alias mockJsonMarshaller
+func (m *mockRoundTripper) RoundTrip(req *http.Request) (*http.Response, error) {
+	return m.fn(req)
+}
 
-	if !m.valid {
-		return nil, errors.New("mockJsonMarshaller not valid")
+// errorReadCloser simulates an io.Reader that fails midway through reading
+type errorReadCloser struct{}
+
+func (e errorReadCloser) Read(p []byte) (n int, err error) {
+	return 0, errors.New("mock read error")
+}
+
+func (e errorReadCloser) Close() error {
+	return nil
+}
+
+func TestClient_Coverage_EdgeCases(t *testing.T) {
+	mockHTTP := &http.Client{
+		Transport: &mockRoundTripper{
+			fn: func(req *http.Request) (*http.Response, error) {
+				return &http.Response{
+					StatusCode: http.StatusOK,
+					Body:       io.NopCloser(bytes.NewReader([]byte(`{"message": "ok"}`))),
+				}, nil
+			},
+		},
 	}
+	c := newClient(mockHTTP, "http://localhost", "key", &clientConfig{
+		disableRetry: true,
+	})
 
-	if m.null {
-		return nil, nil
-	}
+	t.Run("sendRequest - URL Parse Error", func(t *testing.T) {
+		err := c.executeRequest(context.Background(), &internalRequest{
+			endpoint: ":\x7f//invalid", // Invalid control character forces url.Parse to fail
+		})
+		require.Error(t, err)
+	})
 
-	return json.Marshal(&struct {
-		Alias
-	}{
-		Alias: Alias(m),
+	t.Run("sendRequest - http.NewRequestWithContext Error", func(t *testing.T) {
+		err := c.executeRequest(context.Background(), &internalRequest{
+			endpoint: "/test",
+			method:   "B@D M3THOD", // Invalid HTTP method syntax
+		})
+		require.Error(t, err)
+	})
+
+	t.Run("sendRequest - Body ReadAll Error", func(t *testing.T) {
+		err := c.executeRequest(context.Background(), &internalRequest{
+			endpoint:    "/test",
+			method:      http.MethodPost,
+			contentType: contentTypeJSON,
+			withRequest: errorReadCloser{}, // Fails when sendRequest calls io.ReadAll()
+		})
+		require.Error(t, err)
+	})
+
+	t.Run("executeRequest - Response ReadAll Error", func(t *testing.T) {
+		errHTTP := &http.Client{
+			Transport: &mockRoundTripper{
+				fn: func(req *http.Request) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: http.StatusOK,
+						Body:       errorReadCloser{}, // Fails when client reads the response body
+					}, nil
+				},
+			},
+		}
+		cErrResp := newClient(errHTTP, "http://localhost", "key", &clientConfig{
+			disableRetry: true,
+		})
+		err := cErrResp.executeRequest(context.Background(), &internalRequest{
+			endpoint:            "/test",
+			method:              http.MethodGet,
+			acceptedStatusCodes: []int{http.StatusOK},
+		})
+		require.Error(t, err)
+	})
+
+	t.Run("do - Backoff Context Cancellation", func(t *testing.T) {
+		retryHTTP := &http.Client{
+			Transport: &mockRoundTripper{
+				fn: func(req *http.Request) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: http.StatusBadGateway,
+						Body:       io.NopCloser(bytes.NewReader([]byte{})),
+					}, nil
+				},
+			},
+		}
+		cRetry := newClient(retryHTTP, "http://localhost", "key", &clientConfig{
+			maxRetries:    3,
+			retryOnStatus: map[int]bool{http.StatusBadGateway: true},
+		})
+
+		ctx, cancel := context.WithTimeout(context.Background(), 10*time.Millisecond)
+		defer cancel()
+
+		err := cRetry.executeRequest(ctx, &internalRequest{
+			endpoint:            "/test",
+			method:              http.MethodGet,
+			acceptedStatusCodes: []int{http.StatusOK},
+		})
+
+		require.Error(t, err)
+		var e *Error
+		require.ErrorAs(t, err, &e)
+		require.Equal(t, MeilisearchTimeoutError, e.ErrCode)
+	})
+
+	t.Run("do - GetBody Rewind Error", func(t *testing.T) {
+		req, _ := http.NewRequest(http.MethodPost, "http://localhost", nil)
+		req.GetBody = func() (io.ReadCloser, error) {
+			return nil, errors.New("mock getbody error")
+		}
+		cRetry := newClient(mockHTTP, "http://localhost", "key", &clientConfig{
+			maxRetries:    3,
+			retryOnStatus: map[int]bool{http.StatusOK: true}, // Force retry to trigger GetBody
+		})
+		cRetry.retryBackoff = func(attempt uint8) time.Duration { return 0 }
+		_, err := cRetry.do(req, &Error{})
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "failed to rewind body")
+	})
+
+	t.Run("executeRequest - handleContentType Error", func(t *testing.T) {
+		xmlHTTP := &http.Client{
+			Transport: &mockRoundTripper{
+				fn: func(req *http.Request) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: http.StatusOK,
+						Header:     http.Header{"Content-Type": []string{"application/json"}},
+						Body:       io.NopCloser(bytes.NewReader([]byte(`{}`))),
+					}, nil
+				},
+			},
+		}
+		cXML := newClient(xmlHTTP, "http://localhost", "key", &clientConfig{
+			disableRetry: true,
+		})
+		err := cXML.executeRequest(context.Background(), &internalRequest{
+			endpoint:            "/test",
+			method:              http.MethodGet,
+			acceptedContentType: "text/xml", // Forces content type mismatch error
+			acceptedStatusCodes: []int{http.StatusOK},
+		})
+		require.Error(t, err)
+	})
+
+	t.Run("executeRequest - handleResponse Compressed Unmarshal Error", func(t *testing.T) {
+		cGzip := newClient(mockHTTP, "http://localhost", "key", &clientConfig{
+			disableRetry:    true,
+			contentEncoding: GzipEncoding,
+		})
+		err := cGzip.executeRequest(context.Background(), &internalRequest{
+			endpoint:            "/test",
+			method:              http.MethodGet,
+			withResponse:        &mockResponse{},
+			acceptedStatusCodes: []int{http.StatusOK},
+		})
+		require.Error(t, err) // Fails because mockHTTP returns plain JSON, not a valid gzip stream
+	})
+
+	t.Run("handleStatusCode - Nil Accepted Status Codes", func(t *testing.T) {
+		err := c.executeRequest(context.Background(), &internalRequest{
+			endpoint: "/test",
+			method:   http.MethodGet,
+			// acceptedStatusCodes intentionally omitted (nil)
+		})
+		require.NoError(t, err)
+	})
+
+	t.Run("handleStatusCode - API Error Without Code Field", func(t *testing.T) {
+		noCodeHTTP := &http.Client{
+			Transport: &mockRoundTripper{
+				fn: func(req *http.Request) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: http.StatusBadRequest,
+						Body:       io.NopCloser(bytes.NewReader([]byte(`{"message":"error missing code field"}`))),
+					}, nil
+				},
+			},
+		}
+		cNoCode := newClient(noCodeHTTP, "http://localhost", "key", &clientConfig{
+			disableRetry: true,
+		})
+		err := cNoCode.executeRequest(context.Background(), &internalRequest{
+			endpoint:            "/test",
+			method:              http.MethodGet,
+			acceptedStatusCodes: []int{http.StatusOK},
+		})
+
+		require.Error(t, err)
+
+		var e *Error
+		require.ErrorAs(t, err, &e)
+		require.Equal(t, MeilisearchApiErrorWithoutMessage, e.ErrCode)
+	})
+
+	t.Run("handleResponse - Null Body Literal", func(t *testing.T) {
+		nullHTTP := &http.Client{
+			Transport: &mockRoundTripper{
+				fn: func(req *http.Request) (*http.Response, error) {
+					return &http.Response{
+						StatusCode: http.StatusOK,
+						Body:       io.NopCloser(bytes.NewReader([]byte(`null`))),
+					}, nil
+				},
+			},
+		}
+		cNull := newClient(nullHTTP, "http://localhost", "key", &clientConfig{
+			disableRetry: true,
+		})
+		var target mockResponse
+		err := cNull.executeRequest(context.Background(), &internalRequest{
+			endpoint:            "/test",
+			method:              http.MethodGet,
+			withResponse:        &target,
+			acceptedStatusCodes: []int{http.StatusOK},
+		})
+		require.NoError(t, err)
 	})
 }

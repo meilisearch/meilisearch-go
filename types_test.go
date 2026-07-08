@@ -85,6 +85,70 @@ func TestSearchRequest_validate(t *testing.T) {
 	})
 }
 
+func TestSearchRequest_Personalize(t *testing.T) {
+	t.Parallel()
+
+	t.Run("Personalize is nil by default", func(t *testing.T) {
+		sr := &SearchRequest{Query: "test"}
+		data, err := json.Marshal(sr)
+		require.NoError(t, err)
+		require.NotContains(t, string(data), "personalize",
+			"personalize should be omitted when nil")
+	})
+
+	t.Run("Personalize serializes to expected JSON shape", func(t *testing.T) {
+		sr := &SearchRequest{
+			Query: "keyboard",
+			Personalize: &SearchRequestPersonalize{
+				UserContext: "Prefers compact mechanical keyboards",
+			},
+		}
+		data, err := json.Marshal(sr)
+		require.NoError(t, err)
+
+		var got map[string]json.RawMessage
+		require.NoError(t, json.Unmarshal(data, &got))
+		require.Contains(t, got, "personalize", "personalize field must be present in JSON")
+
+		var p map[string]string
+		require.NoError(t, json.Unmarshal(got["personalize"], &p))
+		require.Equal(t, "Prefers compact mechanical keyboards", p["userContext"])
+	})
+
+	t.Run("Personalize with empty UserContext still serializes the field", func(t *testing.T) {
+		sr := &SearchRequest{
+			Query:       "test",
+			Personalize: &SearchRequestPersonalize{UserContext: ""},
+		}
+		data, err := json.Marshal(sr)
+		require.NoError(t, err)
+
+		var got map[string]json.RawMessage
+		require.NoError(t, json.Unmarshal(data, &got))
+		require.Contains(t, got, "personalize", "personalize object must be present even when UserContext is empty")
+
+		var p map[string]string
+		require.NoError(t, json.Unmarshal(got["personalize"], &p))
+		require.Equal(t, "", p["userContext"], "userContext must be present with empty value")
+	})
+
+	t.Run("Personalize round-trips through JSON unmarshal", func(t *testing.T) {
+		original := &SearchRequest{
+			Query: "roundtrip",
+			Personalize: &SearchRequestPersonalize{
+				UserContext: "Prefers lightweight trail running shoes",
+			},
+		}
+		data, err := json.Marshal(original)
+		require.NoError(t, err)
+
+		var decoded SearchRequest
+		require.NoError(t, json.Unmarshal(data, &decoded))
+		require.NotNil(t, decoded.Personalize, "Personalize must populate after unmarshal")
+		require.Equal(t, "Prefers lightweight trail running shoes", decoded.Personalize.UserContext)
+	})
+}
+
 func TestTimestampz_String(t *testing.T) {
 	t.Parallel()
 

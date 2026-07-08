@@ -11,7 +11,6 @@ import (
 	"net/url"
 	"reflect"
 	"strings"
-	"sync"
 	"time"
 )
 
@@ -19,7 +18,6 @@ type client struct {
 	client          *http.Client
 	host            string
 	apiKey          string
-	bufferPool      *sync.Pool
 	encoder         encoder
 	contentEncoding ContentEncoding
 	retryOnStatus   map[int]bool
@@ -58,14 +56,9 @@ type internalRequest struct {
 
 func newClient(cli *http.Client, host, apiKey string, cfg *clientConfig) *client {
 	c := &client{
-		client: cli,
-		host:   host,
-		apiKey: apiKey,
-		bufferPool: &sync.Pool{
-			New: func() interface{} {
-				return new(bytes.Buffer)
-			},
-		},
+		client:        cli,
+		host:          host,
+		apiKey:        apiKey,
 		disableRetry:  cfg.disableRetry,
 		maxRetries:    cfg.maxRetries,
 		retryOnStatus: cfg.retryOnStatus,
@@ -180,6 +173,8 @@ func (c *client) handleNDJSONResponse(req *internalRequest, resp *http.Response,
 	}()
 
 	values := make([]json.RawMessage, 0)
+	totalBytes := 2
+
 	for {
 		var raw json.RawMessage
 		if err := dec.Decode(&raw); err != nil {
@@ -189,6 +184,7 @@ func (c *client) handleNDJSONResponse(req *internalRequest, resp *http.Response,
 			return fmt.Errorf("%s: failed to decode NDJSON: %w", req.functionName, err)
 		}
 		values = append(values, raw)
+		totalBytes += len(raw) + 1
 	}
 
 	if len(values) == 0 {
@@ -197,6 +193,7 @@ func (c *client) handleNDJSONResponse(req *internalRequest, resp *http.Response,
 	}
 
 	var buf bytes.Buffer
+	buf.Grow(totalBytes)
 	buf.WriteByte('[')
 	for i, v := range values {
 		if i > 0 {
@@ -322,10 +319,28 @@ func (c *client) sendRequest(
 		return nil, err
 	}
 
-	// Create the HTTP request
+	var bodyBytes []byte
+	if body != nil {
+		bodyBytes, err = io.ReadAll(body)
+		// Close the original body (handles sync.Pool internally if you implement a custom closer, or let GC handle it)
+		_ = body.Close()
+		if err != nil {
+			return nil, fmt.Errorf("unable to read body: %w", err)
+		}
+		body = io.NopCloser(bytes.NewReader(bodyBytes))
+	}
+
 	request, err := http.NewRequestWithContext(ctx, req.method, apiURL.String(), body)
 	if err != nil {
 		return nil, fmt.Errorf("unable to create request: %w", err)
+	}
+
+	if bodyBytes != nil {
+		request.GetBody = func() (io.ReadCloser, error) {
+			return io.NopCloser(bytes.NewReader(bodyBytes)), nil
+		}
+
+		request.ContentLength = int64(len(bodyBytes))
 	}
 
 	// adding request headers
@@ -365,9 +380,21 @@ func (c *client) do(req *http.Request, internalError *Error) (resp *http.Respons
 	retriesCount := uint8(0)
 
 	for {
+		if retriesCount > 0 && req.GetBody != nil {
+			newBody, bodyErr := req.GetBody()
+			if bodyErr != nil {
+				return nil, internalError.WithErrCode(MeilisearchCommunicationError,
+					fmt.Errorf("failed to rewind body on retry: %w", bodyErr))
+			}
+			req.Body = newBody
+		}
+
 		resp, err = c.client.Do(req)
 		if err != nil {
 			if errors.Is(err, context.DeadlineExceeded) {
+				return nil, internalError.WithErrCode(MeilisearchTimeoutError, err)
+			}
+			if errors.Is(err, context.Canceled) {
 				return nil, internalError.WithErrCode(MeilisearchTimeoutError, err)
 			}
 			return nil, internalError.WithErrCode(MeilisearchCommunicationError, err)
@@ -457,9 +484,7 @@ func (c *client) handleResponse(req *internalRequest, body []byte, internalError
 }
 
 func (c *client) buildBody(req *internalRequest, internalError *Error) (io.ReadCloser, error) {
-	var body io.Reader
-	var buf *bytes.Buffer
-	var bufFromPool bool
+	var body io.ReadCloser
 
 	if req.withRequest != nil {
 		if req.method == http.MethodGet || req.method == http.MethodHead {
@@ -477,25 +502,18 @@ func (c *client) buildBody(req *internalRequest, internalError *Error) (io.ReadC
 		case []byte:
 			body = io.NopCloser(bytes.NewReader(v))
 		default:
-			buf = c.bufferPool.Get().(*bytes.Buffer)
-			buf.Reset()
-			bufFromPool = true
-
 			data, err := c.jsonMarshal(req.withRequest)
 			if err != nil {
-				c.bufferPool.Put(buf)
 				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
 					fmt.Errorf("failed to marshal request with json.Marshal: %w", err))
 			}
-			buf.Write(data)
-			body = buf
+			body = io.NopCloser(bytes.NewReader(data))
 		}
 
 		if !c.contentEncoding.IsZero() {
 			compressedBody, err := c.encoder.Encode(body)
-			if bufFromPool {
-				c.bufferPool.Put(buf)
-			}
+			_ = body.Close()
+
 			if err != nil {
 				return nil, internalError.WithErrCode(ErrCodeMarshalRequest,
 					fmt.Errorf("failed to encode request body: %w", err))
@@ -504,13 +522,5 @@ func (c *client) buildBody(req *internalRequest, internalError *Error) (io.ReadC
 		}
 	}
 
-	// If not compressed, make sure body is io.ReadCloser
-	switch b := body.(type) {
-	case nil:
-		return nil, nil
-	case io.ReadCloser:
-		return b, nil
-	default:
-		return io.NopCloser(b), nil
-	}
+	return body, nil
 }

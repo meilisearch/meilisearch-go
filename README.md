@@ -365,19 +365,21 @@ This package guarantees compatibility with [version v1.x of Meilisearch](https:/
 
 The Meilisearch client performance was tested in [client_bench_test.go](/client_bench_test.go).
 
-```shell
-goos: linux
-goarch: amd64
-pkg: github.com/meilisearch/meilisearch-go
-cpu: AMD Ryzen 7 5700U with Radeon Graphics
-```
-
-**Results**
 
 ```shell
-Benchmark_ExecuteRequest-16                  	   10000	    105880 ns/op	    7241 B/op	      87 allocs/op
-Benchmark_ExecuteRequestWithEncoding-16      	    2716	    455548 ns/op	 1041998 B/op	     169 allocs/op
-Benchmark_ExecuteRequestWithoutRetries-16    	       1	3002787257 ns/op	   56528 B/op	     332 allocs/op
+BenchmarkClient_ExecuteRequest
+BenchmarkClient_ExecuteRequest/GET_Simple
+BenchmarkClient_ExecuteRequest/GET_Simple-12         	   32900	     34597 ns/op	    6944 B/op	      78 allocs/op
+BenchmarkClient_ExecuteRequest/POST_SmallPayload_Uncompressed
+BenchmarkClient_ExecuteRequest/POST_SmallPayload_Uncompressed-12         	   27028	     49757 ns/op	   16125 B/op	     106 allocs/op
+BenchmarkClient_ExecuteRequest/POST_LargePayload_Uncompressed
+BenchmarkClient_ExecuteRequest/POST_LargePayload_Uncompressed-12         	    3032	    434417 ns/op	 1092986 B/op	     149 allocs/op
+BenchmarkClient_ExecuteRequest/POST_LargePayload_Gzip
+BenchmarkClient_ExecuteRequest/POST_LargePayload_Gzip-12                 	    1849	    637963 ns/op	  571842 B/op	     129 allocs/op
+BenchmarkClient_ExecuteRequest/GET_NDJSON_Decoding
+BenchmarkClient_ExecuteRequest/GET_NDJSON_Decoding-12                    	    3943	    274207 ns/op	  200663 B/op	    2125 allocs/op
+BenchmarkClient_ExecuteRequest/GET_WithRetries
+BenchmarkClient_ExecuteRequest/GET_WithRetries-12                        	   10000	    103042 ns/op	   16267 B/op	     185 allocs/op
 ```
 
 ## 💡 Learn more

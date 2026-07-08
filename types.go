@@ -675,36 +675,37 @@ type CreateIndexRequest struct {
 //
 // Documentation: https://www.meilisearch.com/docs/reference/api/search#search-parameters
 type SearchRequest struct {
-	Offset                  int64                    `json:"offset,omitempty"`
-	Limit                   int64                    `json:"limit,omitempty"`
-	AttributesToRetrieve    []string                 `json:"attributesToRetrieve,omitempty"`
-	AttributesToSearchOn    []string                 `json:"attributesToSearchOn,omitempty"`
-	AttributesToCrop        []string                 `json:"attributesToCrop,omitempty"`
-	CropLength              int64                    `json:"cropLength,omitempty"`
-	CropMarker              string                   `json:"cropMarker,omitempty"`
-	AttributesToHighlight   []string                 `json:"attributesToHighlight,omitempty"`
-	HighlightPreTag         string                   `json:"highlightPreTag,omitempty"`
-	HighlightPostTag        string                   `json:"highlightPostTag,omitempty"`
-	MatchingStrategy        MatchingStrategy         `json:"matchingStrategy,omitempty"`
-	Filter                  interface{}              `json:"filter,omitempty"`
-	ShowMatchesPosition     bool                     `json:"showMatchesPosition,omitempty"`
-	ShowRankingScore        bool                     `json:"showRankingScore,omitempty"`
-	ShowRankingScoreDetails bool                     `json:"showRankingScoreDetails,omitempty"`
-	ShowPerformanceDetails  bool                     `json:"showPerformanceDetails,omitempty"`
-	Facets                  []string                 `json:"facets,omitempty"`
-	Sort                    []string                 `json:"sort,omitempty"`
-	Vector                  []float32                `json:"vector,omitempty"`
-	HitsPerPage             *int64                   `json:"hitsPerPage,omitempty"`
-	Page                    int64                    `json:"page,omitempty"`
-	IndexUID                string                   `json:"indexUid,omitempty"`
-	Query                   string                   `json:"q"`
-	Distinct                string                   `json:"distinct,omitempty"`
-	Hybrid                  *SearchRequestHybrid     `json:"hybrid"`
-	RetrieveVectors         bool                     `json:"retrieveVectors,omitempty"`
-	RankingScoreThreshold   float64                  `json:"rankingScoreThreshold,omitempty"`
-	FederationOptions       *SearchFederationOptions `json:"federationOptions,omitempty"`
-	Locales                 []string                 `json:"locales,omitempty"`
-	Media                   map[string]any           `json:"media,omitempty"`
+	Offset                  int64                     `json:"offset,omitempty"`
+	Limit                   int64                     `json:"limit,omitempty"`
+	AttributesToRetrieve    []string                  `json:"attributesToRetrieve,omitempty"`
+	AttributesToSearchOn    []string                  `json:"attributesToSearchOn,omitempty"`
+	AttributesToCrop        []string                  `json:"attributesToCrop,omitempty"`
+	CropLength              int64                     `json:"cropLength,omitempty"`
+	CropMarker              string                    `json:"cropMarker,omitempty"`
+	AttributesToHighlight   []string                  `json:"attributesToHighlight,omitempty"`
+	HighlightPreTag         string                    `json:"highlightPreTag,omitempty"`
+	HighlightPostTag        string                    `json:"highlightPostTag,omitempty"`
+	MatchingStrategy        MatchingStrategy          `json:"matchingStrategy,omitempty"`
+	Filter                  interface{}               `json:"filter,omitempty"`
+	ShowMatchesPosition     bool                      `json:"showMatchesPosition,omitempty"`
+	ShowRankingScore        bool                      `json:"showRankingScore,omitempty"`
+	ShowRankingScoreDetails bool                      `json:"showRankingScoreDetails,omitempty"`
+	ShowPerformanceDetails  bool                      `json:"showPerformanceDetails,omitempty"`
+	Facets                  []string                  `json:"facets,omitempty"`
+	Sort                    []string                  `json:"sort,omitempty"`
+	Vector                  []float32                 `json:"vector,omitempty"`
+	HitsPerPage             *int64                    `json:"hitsPerPage,omitempty"`
+	Page                    int64                     `json:"page,omitempty"`
+	IndexUID                string                    `json:"indexUid,omitempty"`
+	Query                   string                    `json:"q"`
+	Distinct                string                    `json:"distinct,omitempty"`
+	Hybrid                  *SearchRequestHybrid      `json:"hybrid"`
+	RetrieveVectors         bool                      `json:"retrieveVectors,omitempty"`
+	RankingScoreThreshold   float64                   `json:"rankingScoreThreshold,omitempty"`
+	FederationOptions       *SearchFederationOptions  `json:"federationOptions,omitempty"`
+	Locales                 []string                  `json:"locales,omitempty"`
+	Media                   map[string]any            `json:"media,omitempty"`
+	Personalize             *SearchRequestPersonalize `json:"personalize,omitempty"`
 }
 
 type SearchFederationOptions struct {
@@ -715,6 +716,19 @@ type SearchFederationOptions struct {
 type SearchRequestHybrid struct {
 	SemanticRatio float64 `json:"semanticRatio,omitempty"`
 	Embedder      string  `json:"embedder"`
+}
+
+// SearchRequestPersonalize configures personalized search.
+// When set, Meilisearch re-ranks results based on the user profile described in UserContext.
+//
+// Requires the experimental search personalization feature to be enabled on the server.
+// Documentation: https://www.meilisearch.com/docs/capabilities/personalization/getting_started/personalized_search
+type SearchRequestPersonalize struct {
+	// UserContext is a free-text, natural-language description of the user's
+	// preferences, behavior, or intent (e.g. "Prefers compact mechanical keyboards
+	// from Keychron, mid-range budget"). The re-ranking model only processes
+	// positive signals, so state preferences affirmatively.
+	UserContext string `json:"userContext"`
 }
 
 type MultiSearchRequest struct {

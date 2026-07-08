@@ -267,6 +267,17 @@ func getenv(key, fallback string) string {
 	return value
 }
 
+func getEnvOrSkip(t *testing.T, key string) string {
+	t.Helper()
+
+	value := os.Getenv(key)
+	if value == "" {
+		t.Skipf("env %q not set, skipping test", key)
+	}
+
+	return value
+}
+
 func testWaitForIndexTask(t *testing.T, i meilisearch.IndexManager, u *meilisearch.TaskInfo) {
 	t.Helper()
 	r, err := i.WaitForTask(u.TaskUID, 0)
