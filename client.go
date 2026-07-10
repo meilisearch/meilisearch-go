@@ -101,7 +101,7 @@ func (c *client) executeRequest(ctx context.Context, req *internalRequest) error
 		Function:         req.functionName,
 		RequestToString:  "empty request",
 		ResponseToString: "empty response",
-		MeilisearchApiError: meilisearchApiError{
+		APIError: meilisearchApiError{
 			Message: "empty meilisearch message",
 		},
 		StatusCodeExpected: req.acceptedStatusCodes,
@@ -383,7 +383,7 @@ func (c *client) do(req *http.Request, internalError *Error) (resp *http.Respons
 		if retriesCount > 0 && req.GetBody != nil {
 			newBody, bodyErr := req.GetBody()
 			if bodyErr != nil {
-				return nil, internalError.WithErrCode(MeilisearchCommunicationError,
+				return nil, internalError.WithErrCode(CommunicationError,
 					fmt.Errorf("failed to rewind body on retry: %w", bodyErr))
 			}
 			req.Body = newBody
@@ -392,12 +392,12 @@ func (c *client) do(req *http.Request, internalError *Error) (resp *http.Respons
 		resp, err = c.client.Do(req)
 		if err != nil {
 			if errors.Is(err, context.DeadlineExceeded) {
-				return nil, internalError.WithErrCode(MeilisearchTimeoutError, err)
+				return nil, internalError.WithErrCode(TimeoutError, err)
 			}
 			if errors.Is(err, context.Canceled) {
-				return nil, internalError.WithErrCode(MeilisearchTimeoutError, err)
+				return nil, internalError.WithErrCode(TimeoutError, err)
 			}
-			return nil, internalError.WithErrCode(MeilisearchCommunicationError, err)
+			return nil, internalError.WithErrCode(CommunicationError, err)
 		}
 
 		// Exit if retries are disabled
@@ -420,7 +420,7 @@ func (c *client) do(req *http.Request, internalError *Error) (resp *http.Respons
 			case <-req.Context().Done():
 				err := req.Context().Err()
 				timer.Stop()
-				return nil, internalError.WithErrCode(MeilisearchTimeoutError, err)
+				return nil, internalError.WithErrCode(TimeoutError, err)
 			case <-timer.C:
 				// Retry after backoff
 				timer.Stop()
@@ -434,7 +434,7 @@ func (c *client) do(req *http.Request, internalError *Error) (resp *http.Respons
 
 	// Return error if retries exceeded the maximum limit
 	if !c.disableRetry && retriesCount >= c.maxRetries {
-		return nil, internalError.WithErrCode(MeilisearchMaxRetriesExceeded, nil)
+		return nil, internalError.WithErrCode(MaxRetriesExceeded, nil)
 	}
 
 	return resp, nil
@@ -453,10 +453,10 @@ func (c *client) handleStatusCode(req *internalRequest, statusCode int, body []b
 
 		internalError.ErrorBody(body)
 
-		if internalError.MeilisearchApiError.Code == "" {
-			return internalError.WithErrCode(MeilisearchApiErrorWithoutMessage)
+		if internalError.APIError.Code == "" {
+			return internalError.WithErrCode(APIErrorWithoutMessage)
 		}
-		return internalError.WithErrCode(MeilisearchApiError)
+		return internalError.WithErrCode(APIError)
 	}
 
 	return nil

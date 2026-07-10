@@ -34,7 +34,7 @@ func (m *meilisearch) ChatCompletionStreamWithContext(ctx context.Context, works
 		Function:         req.functionName,
 		RequestToString:  "empty request",
 		ResponseToString: "empty response",
-		MeilisearchApiError: meilisearchApiError{
+		APIError: meilisearchApiError{
 			Message: "empty meilisearch message",
 		},
 		StatusCodeExpected: req.acceptedStatusCodes,

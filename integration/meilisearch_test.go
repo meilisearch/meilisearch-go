@@ -1774,7 +1774,7 @@ func Test_ConnectionCloseByServer(t *testing.T) {
 			time.Sleep(5 * time.Second)
 			_, err := sv.Index("foo").Search("bar", &meilisearch.SearchRequest{})
 			var e *meilisearch.Error
-			if errors.As(err, &e) && e.ErrCode == meilisearch.MeilisearchCommunicationError {
+			if errors.As(err, &e) && e.ErrCode == meilisearch.CommunicationError {
 				require.NoErrorf(t, e, "unexpected meilisearch.Error")
 			}
 		}()

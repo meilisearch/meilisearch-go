@@ -118,7 +118,6 @@ type SearchRequestPersonalize struct {
 	UserContext string `json:"userContext"`
 }
 
-
 type SearchRequestHybrid struct {
 	SemanticRatio float64 `json:"semanticRatio,omitempty"`
 	Embedder      string  `json:"embedder"`

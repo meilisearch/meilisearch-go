@@ -249,8 +249,8 @@ func TestGetTaskDocumentsAPIError(t *testing.T) {
 
 			var meiliErr *Error
 			require.ErrorAs(t, err, &meiliErr)
-			require.Equal(t, MeilisearchApiError, meiliErr.ErrCode)
-			require.Equal(t, "bad_request", meiliErr.MeilisearchApiError.Code)
+			require.Equal(t, APIError, meiliErr.ErrCode)
+			require.Equal(t, APIErrCodeBadRequest, meiliErr.APIError.Code)
 		})
 	}
 }
