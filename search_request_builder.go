@@ -169,3 +169,8 @@ func (b *SearchRequestBuilder) WithMedia(m map[string]any) *SearchRequestBuilder
 	b.req.Media = m
 	return b
 }
+
+func (b *SearchRequestBuilder) WithPersonalize(p *SearchRequestPersonalize) *SearchRequestBuilder {
+	b.req.Personalize = p
+	return b
+}

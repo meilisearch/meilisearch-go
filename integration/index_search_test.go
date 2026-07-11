@@ -1402,4 +1402,5 @@ func TestIndex_SearchWithRequestBuilder(t *testing.T) {
 	require.NotEmpty(t, resp.Hits)
 	require.Equal(t, int64(20), req.Limit)
 	require.Equal(t, []string{"book_id", "title"}, req.AttributesToRetrieve)
+	require.True(t, req.ShowRankingScore)
 }
