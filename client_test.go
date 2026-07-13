@@ -236,7 +236,7 @@ func TestClient_ExecuteRequest(t *testing.T) {
 			errTypeCheck: func(err error) {
 				var e *Error
 				require.ErrorAs(t, err, &e)
-				assert.Equal(t, MeilisearchTimeoutError, e.ErrCode)
+				assert.Equal(t, TimeoutError, e.ErrCode)
 			},
 		},
 		{
@@ -255,7 +255,7 @@ func TestClient_ExecuteRequest(t *testing.T) {
 			errTypeCheck: func(err error) {
 				var e *Error
 				require.ErrorAs(t, err, &e)
-				assert.Equal(t, MeilisearchTimeoutError, e.ErrCode)
+				assert.Equal(t, TimeoutError, e.ErrCode)
 			},
 		},
 		{
@@ -291,8 +291,8 @@ func TestClient_ExecuteRequest(t *testing.T) {
 			errTypeCheck: func(err error) {
 				var e *Error
 				require.ErrorAs(t, err, &e)
-				assert.Equal(t, MeilisearchApiError, e.ErrCode)
-				assert.Equal(t, "bad_request", e.MeilisearchApiError.Code)
+				assert.Equal(t, APIError, e.ErrCode)
+				assert.Equal(t, APIErrCodeBadRequest, e.APIError.Code)
 			},
 		},
 		{
@@ -319,7 +319,7 @@ func TestClient_ExecuteRequest(t *testing.T) {
 			errTypeCheck: func(err error) {
 				var e *Error
 				require.ErrorAs(t, err, &e)
-				assert.Equal(t, MeilisearchMaxRetriesExceeded, e.ErrCode)
+				assert.Equal(t, MaxRetriesExceeded, e.ErrCode)
 			},
 		},
 		{
@@ -383,7 +383,7 @@ func TestClient_ExecuteRequest(t *testing.T) {
 			errTypeCheck: func(err error) {
 				var e *Error
 				require.ErrorAs(t, err, &e)
-				assert.Equal(t, MeilisearchApiErrorWithoutMessage, e.ErrCode)
+				assert.Equal(t, APIErrorWithoutMessage, e.ErrCode)
 			},
 		},
 		{
@@ -447,7 +447,7 @@ func TestClient_ExecuteRequest(t *testing.T) {
 				}
 			}
 
-			c := newClient(&http.Client{}, ts.URL, "testApiKey", cfg)
+			c := newClient(&http.Client{}, ts.URL, "testAPIKey", cfg)
 
 			if strings.Contains(tt.name, "Encoder Failure") {
 				c.encoder = failingEncoder{}
@@ -589,7 +589,7 @@ func TestClient_Coverage_EdgeCases(t *testing.T) {
 		require.Error(t, err)
 		var e *Error
 		require.ErrorAs(t, err, &e)
-		require.Equal(t, MeilisearchTimeoutError, e.ErrCode)
+		require.Equal(t, TimeoutError, e.ErrCode)
 	})
 
 	t.Run("do - GetBody Rewind Error", func(t *testing.T) {
@@ -678,7 +678,7 @@ func TestClient_Coverage_EdgeCases(t *testing.T) {
 
 		var e *Error
 		require.ErrorAs(t, err, &e)
-		require.Equal(t, MeilisearchApiErrorWithoutMessage, e.ErrCode)
+		require.Equal(t, APIErrorWithoutMessage, e.ErrCode)
 	})
 
 	t.Run("handleResponse - Null Body Literal", func(t *testing.T) {

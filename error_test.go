@@ -30,7 +30,7 @@ func TestError_VersionErrorHintMessage(t *testing.T) {
 					Function:         "GetDocuments",
 					RequestToString:  "empty request",
 					ResponseToString: "empty response",
-					MeilisearchApiError: meilisearchApiError{
+					APIError: meilisearchApiError{
 						Message: "empty Meilisearch message",
 					},
 					StatusCode: 1,
@@ -69,19 +69,42 @@ func TestError_ErrorBody_WithEncoder(t *testing.T) {
 	}
 	body := []byte(`{"message":"should not be used"}`)
 	err.ErrorBody(body)
-	require.Equal(t, "mocked message", err.MeilisearchApiError.Message)
-	require.Equal(t, "mocked code", err.MeilisearchApiError.Code)
-	require.Equal(t, "mocked type", err.MeilisearchApiError.Type)
-	require.Equal(t, "mocked link", err.MeilisearchApiError.Link)
+	require.Equal(t, "mocked message", err.APIError.Message)
+	require.Equal(t, APIErrCode("mocked code"), err.APIError.Code)
+	require.Equal(t, "mocked type", err.APIError.Type)
+	require.Equal(t, "mocked link", err.APIError.Link)
 
 	err2 := &Error{
 		encoder: &failEncoder{},
 	}
 	body2 := []byte(`{"message":"should not be used"}`)
 	err2.ErrorBody(body2)
-	// Should not set MeilisearchApiError fields
-	require.Empty(t, err2.MeilisearchApiError.Message)
-	require.Empty(t, err2.MeilisearchApiError.Code)
-	require.Empty(t, err2.MeilisearchApiError.Type)
-	require.Empty(t, err2.MeilisearchApiError.Link)
+	// Should not set APIError fields
+	require.Empty(t, err2.APIError.Message)
+	require.Empty(t, err2.APIError.Code)
+	require.Empty(t, err2.APIError.Type)
+	require.Empty(t, err2.APIError.Link)
+}
+
+func TestError_UnwrapAndHasCode(t *testing.T) {
+	origin := fmt.Errorf("underlying database error")
+	err := &Error{
+		Endpoint: "endpoint",
+		Method:   "GET",
+		Function: "Test",
+		APIError: APIErrorDetails{
+			Message: "Index movies not found.",
+			Code:    APIErrCodeIndexNotFound,
+			Type:    "invalid_request",
+			Link:    "https://docs.meilisearch.com/errors#index_not_found",
+		},
+		OriginError: origin,
+	}
+
+	// Test Unwrap
+	require.Equal(t, origin, err.Unwrap())
+
+	// Test HasCode
+	require.True(t, err.HasCode(APIErrCodeIndexNotFound))
+	require.False(t, err.HasCode(APIErrCodeAPIKeyNotFound))
 }
