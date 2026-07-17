@@ -1629,6 +1629,35 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 	}
 }
 
+func TestIndex_UpdateSettingsForeignKeys(t *testing.T) {
+	c := setup(t, "")
+	t.Cleanup(cleanup(c))
+
+	ex, err := c.ExperimentalFeatures().SetForeignKeys(true).Update()
+	require.NoError(t, err)
+	require.True(t, ex.ForeignKeys, "expected foreignKeys to be true")
+
+	setUpIndexesWithForeignKeys(t, c)
+
+	idx := c.Index("books")
+	want := []meilisearch.ForeignKey{
+		{
+			FieldName:       "author",
+			ForeignIndexUid: "authors",
+		},
+	}
+
+	task, err := idx.UpdateSettings(&meilisearch.Settings{
+		ForeignKeys: want,
+	})
+	require.NoError(t, err)
+	testWaitForIndexTask(t, idx, task)
+
+	got, err := idx.GetForeignKeys()
+	require.NoError(t, err)
+	assert.Equal(t, want, got)
+}
+
 func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 	meili := setup(t, "")
 	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
@@ -4329,6 +4358,92 @@ func Test_NonSeparatorTokens(t *testing.T) {
 	got, err = i.GetNonSeparatorTokens()
 	require.NoError(t, err)
 	require.Equal(t, got, []string{})
+}
+
+func TestIndex_UpdateForeignKeys(t *testing.T) {
+	tests := []struct {
+		name string
+		args []meilisearch.ForeignKey
+		want []meilisearch.ForeignKey
+	}{
+		{
+			name: "SetupForeignKeys",
+			args: []meilisearch.ForeignKey{
+				{
+					FieldName:       "author",
+					ForeignIndexUid: "authors",
+				},
+			},
+			want: []meilisearch.ForeignKey{
+				{
+					FieldName:       "author",
+					ForeignIndexUid: "authors",
+				},
+			},
+		},
+		{
+			name: "ResetForeignKeys",
+			args: nil,
+			want: make([]meilisearch.ForeignKey, 0),
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := setup(t, "")
+			t.Cleanup(cleanup(c))
+
+			ex, err := c.ExperimentalFeatures().SetForeignKeys(true).Update()
+			require.NoError(t, err)
+			require.True(t, ex.ForeignKeys, "expected foreignKeys to be true")
+
+			setUpIndexesWithForeignKeys(t, c)
+
+			i := c.Index("books")
+
+			task, err := i.UpdateForeignKeys(tt.args)
+			require.NoError(t, err)
+			testWaitForIndexTask(t, i, task)
+
+			got, err := i.GetForeignKeys()
+			require.NoError(t, err)
+			assert.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestIndex_ResetForeignKeys(t *testing.T) {
+	c := setup(t, "")
+	t.Cleanup(cleanup(c))
+
+	ex, err := c.ExperimentalFeatures().SetForeignKeys(true).Update()
+	require.NoError(t, err)
+	require.True(t, ex.ForeignKeys, "expected foreignKeys to be true")
+
+	setUpIndexesWithForeignKeys(t, c)
+	i := c.Index("books")
+
+	foreignKeys := []meilisearch.ForeignKey{
+		{
+			FieldName:       "author",
+			ForeignIndexUid: "authors",
+		},
+	}
+	task, err := i.UpdateForeignKeys(foreignKeys)
+	require.NoError(t, err)
+	testWaitForIndexTask(t, i, task)
+
+	got, err := i.GetForeignKeys()
+	require.NoError(t, err)
+	assert.Equal(t, foreignKeys, got)
+
+	task, err = i.ResetForeignKeys()
+	require.NoError(t, err)
+	testWaitForIndexTask(t, i, task)
+
+	got, err = i.GetForeignKeys()
+	require.NoError(t, err)
+	assert.Empty(t, got)
 }
 
 func Test_ProximityPrecision(t *testing.T) {
