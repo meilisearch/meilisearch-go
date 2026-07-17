@@ -69,6 +69,11 @@ func (ef *ExperimentalFeatures) SetGetTaskDocumentsRoute(enable bool) *Experimen
 	return ef
 }
 
+func (ef *ExperimentalFeatures) SetForeignKeys(enable bool) *ExperimentalFeatures {
+	ef.ForeignKeys = &enable
+	return ef
+}
+
 func (ef *ExperimentalFeatures) Get() (*ExperimentalFeaturesResult, error) {
 	return ef.GetWithContext(context.Background())
 }
