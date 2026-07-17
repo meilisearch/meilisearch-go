@@ -38,6 +38,12 @@ type Settings struct {
 	PrefixSearch         *string                `json:"prefixSearch,omitempty"`
 	FacetSearch          bool                   `json:"facetSearch,omitempty"`
 	Chat                 *Chat                  `json:"chat,omitempty"`
+	ForeignKeys          []ForeignKey           `json:"foreignKeys,omitempty"`
+}
+
+type ForeignKey struct {
+	FieldName       string `json:"fieldName"`
+	ForeignIndexUid string `json:"foreignIndexUid"`
 }
 
 type LocalizedAttributes struct {

@@ -780,6 +780,26 @@ type SettingsManager interface {
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/settings/reset-facetsearch
 	ResetFacetSearchWithContext(ctx context.Context) (*TaskInfo, error)
+
+	// UpdateForeignKeys updates the foreignKeys setting for the index. Set foreignKeys to nil to reset to default.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/settings/update-foreignkeys
+	UpdateForeignKeys(foreignKeys []ForeignKey) (*TaskInfo, error)
+
+	// UpdateForeignKeysWithContext updates the foreignKeys setting for the index with a context. Set foreignKeys to nil to reset to default.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/settings/update-foreignkeys
+	UpdateForeignKeysWithContext(ctx context.Context, foreignKeys []ForeignKey) (*TaskInfo, error)
+
+	// ResetForeignKeys resets the foreignKeys setting to its default value.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/settings/reset-foreignkeys
+	ResetForeignKeys() (*TaskInfo, error)
+
+	// ResetForeignKeysWithContext resets the foreignKeys setting to its default value with a context.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/settings/reset-foreignkeys
+	ResetForeignKeysWithContext(ctx context.Context) (*TaskInfo, error)
 }
 
 type SettingsReader interface {
@@ -1006,4 +1026,14 @@ type SettingsReader interface {
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/settings/get-facetsearch
 	GetFacetSearchWithContext(ctx context.Context) (bool, error)
+
+	// GetForeignKeys returns the current value of the foreignKeys setting for the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/settings/get-foreignkeys
+	GetForeignKeys() ([]ForeignKey, error)
+
+	// GetForeignKeysWithContext returns the current value of the foreignKeys setting for the index with a context.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/settings/get-foreignkeys
+	GetForeignKeysWithContext(ctx context.Context) ([]ForeignKey, error)
 }
