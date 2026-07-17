@@ -109,6 +109,7 @@ func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*Experim
 		DynamicSearchRules:      ef.DynamicSearchRules,
 		GetTaskDocumentsRoute:   ef.GetTaskDocumentsRoute,
 		RenderRoute:             ef.RenderRoute,
+		ForeignKeys:             ef.ForeignKeys,
 	}
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{
