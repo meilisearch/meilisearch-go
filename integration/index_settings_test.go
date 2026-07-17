@@ -1806,6 +1806,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					FacetSearch:  true,
 					Embedders:    make(map[string]meilisearch.Embedder),
 					Chat:         &defaultChat,
+					ForeignKeys:  make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -1838,6 +1839,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				FacetSearch:  true,
 				Embedders:    make(map[string]meilisearch.Embedder),
 				Chat:         &defaultChat,
+				ForeignKeys:  make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -1896,6 +1898,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -1922,6 +1925,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 	}
@@ -2001,6 +2005,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					Synonyms: map[string][]string{
@@ -2031,6 +2036,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2056,6 +2062,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -2095,6 +2102,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					Synonyms: map[string][]string{
@@ -2125,6 +2133,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2150,6 +2159,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -2189,6 +2199,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					SearchableAttributes: []string{
@@ -2219,6 +2230,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2244,6 +2256,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -2283,6 +2296,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					DisplayedAttributes: []string{
@@ -2313,6 +2327,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2338,6 +2353,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -2377,6 +2393,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					StopWords: []string{
@@ -2407,6 +2424,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2432,6 +2450,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -2471,6 +2490,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					FilterableAttributes: []string{
@@ -2501,6 +2521,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2526,6 +2547,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -2565,6 +2587,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					SortableAttributes: []string{
@@ -2595,6 +2618,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2620,6 +2644,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -2673,6 +2698,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:          true,
 					Embedders:            make(map[string]meilisearch.Embedder),
 					Chat:                 &defaultChat,
+					ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					TypoTolerance: &meilisearch.TypoTolerance{
@@ -2725,6 +2751,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2750,6 +2777,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -2789,6 +2817,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					Pagination: &meilisearch.Pagination{
@@ -2819,6 +2848,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2844,6 +2874,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -2886,6 +2917,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					Faceting: &meilisearch.Faceting{
@@ -2919,6 +2951,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -2944,6 +2977,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -2984,6 +3018,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					RankingRules: []string{
@@ -3018,6 +3053,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FacetSearch:        true,
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
+					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -3043,6 +3079,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 		{
@@ -3082,6 +3119,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						DocumentTemplateMaxBytes: 400,
 						SearchParameters:         defaultChat.SearchParameters,
 					},
+					ForeignKeys: make([]meilisearch.ForeignKey, 0),
 				},
 				secondRequest: meilisearch.Settings{
 					Chat: &meilisearch.Chat{
@@ -3092,6 +3130,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 							Limit: 20,
 						},
 					},
+					ForeignKeys: make([]meilisearch.ForeignKey, 0),
 				},
 				secondResponse: meilisearch.Settings{
 					RankingRules:         defaultRankingRules,
@@ -3120,6 +3159,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 							Limit: 20,
 						},
 					},
+					ForeignKeys: make([]meilisearch.ForeignKey, 0),
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
@@ -3145,6 +3185,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				FacetSearch:          true,
 				Embedders:            make(map[string]meilisearch.Embedder),
 				Chat:                 &defaultChat,
+				ForeignKeys:          make([]meilisearch.ForeignKey, 0),
 			},
 		},
 	}
@@ -4451,6 +4492,8 @@ func Test_ProximityPrecision(t *testing.T) {
 	t.Cleanup(cleanup(c))
 
 	indexID := "newIndexUID"
+	setUpBasicIndex(c, indexID)
+
 	i := c.Index(indexID)
 
 	got, err := i.GetProximityPrecision()
