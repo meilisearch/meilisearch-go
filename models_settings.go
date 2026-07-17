@@ -155,6 +155,7 @@ type ExperimentalFeaturesBase struct {
 	DynamicSearchRules      *bool `json:"dynamicSearchRules,omitempty"`
 	GetTaskDocumentsRoute   *bool `json:"getTaskDocumentsRoute,omitempty"`
 	RenderRoute             *bool `json:"renderRoute,omitempty"`
+	ForeignKeys             *bool `json:"foreignKeys,omitempty"`
 }
 
 type ExperimentalFeaturesResult struct {
@@ -169,5 +170,6 @@ type ExperimentalFeaturesResult struct {
 	DynamicSearchRules      bool                      `json:"dynamicSearchRules"`
 	GetTaskDocumentsRoute   bool                      `json:"getTaskDocumentsRoute"`
 	RenderRoute             bool                      `json:"renderRoute"`
+	ForeignKeys             bool                      `json:"foreignKeys"`
 	Personalize             *SearchRequestPersonalize `json:"personalize,omitempty"`
 }
