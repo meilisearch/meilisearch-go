@@ -853,6 +853,123 @@ func (_c *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call)
 	return _c
 }
 
+// GetForeignKeys provides a mock function for the type MockmeilisearchSettingsReader
+func (_mock *MockmeilisearchSettingsReader) GetForeignKeys() ([]meilisearch.ForeignKey, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetForeignKeys")
+	}
+
+	var r0 []meilisearch.ForeignKey
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]meilisearch.ForeignKey, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []meilisearch.ForeignKey); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]meilisearch.ForeignKey)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsReader_GetForeignKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeys'
+type MockmeilisearchSettingsReader_GetForeignKeys_Call struct {
+	*mock.Call
+}
+
+// GetForeignKeys is a helper method to define mock.On call
+func (_e *MockmeilisearchSettingsReader_Expecter) GetForeignKeys() *MockmeilisearchSettingsReader_GetForeignKeys_Call {
+	return &MockmeilisearchSettingsReader_GetForeignKeys_Call{Call: _e.mock.On("GetForeignKeys")}
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) Run(run func()) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
+	_c.Call.Return(foreignKeys, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) RunAndReturn(run func() ([]meilisearch.ForeignKey, error)) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetForeignKeysWithContext provides a mock function for the type MockmeilisearchSettingsReader
+func (_mock *MockmeilisearchSettingsReader) GetForeignKeysWithContext(ctx context.Context) ([]meilisearch.ForeignKey, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetForeignKeysWithContext")
+	}
+
+	var r0 []meilisearch.ForeignKey
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]meilisearch.ForeignKey, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []meilisearch.ForeignKey); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]meilisearch.ForeignKey)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeysWithContext'
+type MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call struct {
+	*mock.Call
+}
+
+// GetForeignKeysWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockmeilisearchSettingsReader_Expecter) GetForeignKeysWithContext(ctx any) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
+	return &MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call{Call: _e.mock.On("GetForeignKeysWithContext", ctx)}
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
+	_c.Call.Return(foreignKeys, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call) RunAndReturn(run func(ctx context.Context) ([]meilisearch.ForeignKey, error)) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetLocalizedAttributes provides a mock function for the type MockmeilisearchSettingsReader
 func (_mock *MockmeilisearchSettingsReader) GetLocalizedAttributes() ([]*meilisearch.LocalizedAttributes, error) {
 	ret := _mock.Called()

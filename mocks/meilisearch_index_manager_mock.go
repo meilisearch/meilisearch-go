@@ -3843,6 +3843,123 @@ func (_c *MockmeilisearchIndexManager_GetFilterableAttributesWithContext_Call) R
 	return _c
 }
 
+// GetForeignKeys provides a mock function for the type MockmeilisearchIndexManager
+func (_mock *MockmeilisearchIndexManager) GetForeignKeys() ([]meilisearch.ForeignKey, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetForeignKeys")
+	}
+
+	var r0 []meilisearch.ForeignKey
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]meilisearch.ForeignKey, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []meilisearch.ForeignKey); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]meilisearch.ForeignKey)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchIndexManager_GetForeignKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeys'
+type MockmeilisearchIndexManager_GetForeignKeys_Call struct {
+	*mock.Call
+}
+
+// GetForeignKeys is a helper method to define mock.On call
+func (_e *MockmeilisearchIndexManager_Expecter) GetForeignKeys() *MockmeilisearchIndexManager_GetForeignKeys_Call {
+	return &MockmeilisearchIndexManager_GetForeignKeys_Call{Call: _e.mock.On("GetForeignKeys")}
+}
+
+func (_c *MockmeilisearchIndexManager_GetForeignKeys_Call) Run(run func()) *MockmeilisearchIndexManager_GetForeignKeys_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_GetForeignKeys_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchIndexManager_GetForeignKeys_Call {
+	_c.Call.Return(foreignKeys, err)
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_GetForeignKeys_Call) RunAndReturn(run func() ([]meilisearch.ForeignKey, error)) *MockmeilisearchIndexManager_GetForeignKeys_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetForeignKeysWithContext provides a mock function for the type MockmeilisearchIndexManager
+func (_mock *MockmeilisearchIndexManager) GetForeignKeysWithContext(ctx context.Context) ([]meilisearch.ForeignKey, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetForeignKeysWithContext")
+	}
+
+	var r0 []meilisearch.ForeignKey
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]meilisearch.ForeignKey, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []meilisearch.ForeignKey); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]meilisearch.ForeignKey)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchIndexManager_GetForeignKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeysWithContext'
+type MockmeilisearchIndexManager_GetForeignKeysWithContext_Call struct {
+	*mock.Call
+}
+
+// GetForeignKeysWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockmeilisearchIndexManager_Expecter) GetForeignKeysWithContext(ctx any) *MockmeilisearchIndexManager_GetForeignKeysWithContext_Call {
+	return &MockmeilisearchIndexManager_GetForeignKeysWithContext_Call{Call: _e.mock.On("GetForeignKeysWithContext", ctx)}
+}
+
+func (_c *MockmeilisearchIndexManager_GetForeignKeysWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchIndexManager_GetForeignKeysWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_GetForeignKeysWithContext_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchIndexManager_GetForeignKeysWithContext_Call {
+	_c.Call.Return(foreignKeys, err)
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_GetForeignKeysWithContext_Call) RunAndReturn(run func(ctx context.Context) ([]meilisearch.ForeignKey, error)) *MockmeilisearchIndexManager_GetForeignKeysWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // GetIndexReader provides a mock function for the type MockmeilisearchIndexManager
 func (_mock *MockmeilisearchIndexManager) GetIndexReader() meilisearch.IndexReader {
 	ret := _mock.Called()
@@ -6908,6 +7025,123 @@ func (_c *MockmeilisearchIndexManager_ResetFilterableAttributesWithContext_Call)
 }
 
 func (_c *MockmeilisearchIndexManager_ResetFilterableAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.TaskInfo, error)) *MockmeilisearchIndexManager_ResetFilterableAttributesWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ResetForeignKeys provides a mock function for the type MockmeilisearchIndexManager
+func (_mock *MockmeilisearchIndexManager) ResetForeignKeys() (*meilisearch.TaskInfo, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ResetForeignKeys")
+	}
+
+	var r0 *meilisearch.TaskInfo
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() (*meilisearch.TaskInfo, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() *meilisearch.TaskInfo); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.TaskInfo)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchIndexManager_ResetForeignKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ResetForeignKeys'
+type MockmeilisearchIndexManager_ResetForeignKeys_Call struct {
+	*mock.Call
+}
+
+// ResetForeignKeys is a helper method to define mock.On call
+func (_e *MockmeilisearchIndexManager_Expecter) ResetForeignKeys() *MockmeilisearchIndexManager_ResetForeignKeys_Call {
+	return &MockmeilisearchIndexManager_ResetForeignKeys_Call{Call: _e.mock.On("ResetForeignKeys")}
+}
+
+func (_c *MockmeilisearchIndexManager_ResetForeignKeys_Call) Run(run func()) *MockmeilisearchIndexManager_ResetForeignKeys_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_ResetForeignKeys_Call) Return(taskInfo *meilisearch.TaskInfo, err error) *MockmeilisearchIndexManager_ResetForeignKeys_Call {
+	_c.Call.Return(taskInfo, err)
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_ResetForeignKeys_Call) RunAndReturn(run func() (*meilisearch.TaskInfo, error)) *MockmeilisearchIndexManager_ResetForeignKeys_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ResetForeignKeysWithContext provides a mock function for the type MockmeilisearchIndexManager
+func (_mock *MockmeilisearchIndexManager) ResetForeignKeysWithContext(ctx context.Context) (*meilisearch.TaskInfo, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ResetForeignKeysWithContext")
+	}
+
+	var r0 *meilisearch.TaskInfo
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) (*meilisearch.TaskInfo, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) *meilisearch.TaskInfo); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.TaskInfo)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchIndexManager_ResetForeignKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ResetForeignKeysWithContext'
+type MockmeilisearchIndexManager_ResetForeignKeysWithContext_Call struct {
+	*mock.Call
+}
+
+// ResetForeignKeysWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockmeilisearchIndexManager_Expecter) ResetForeignKeysWithContext(ctx any) *MockmeilisearchIndexManager_ResetForeignKeysWithContext_Call {
+	return &MockmeilisearchIndexManager_ResetForeignKeysWithContext_Call{Call: _e.mock.On("ResetForeignKeysWithContext", ctx)}
+}
+
+func (_c *MockmeilisearchIndexManager_ResetForeignKeysWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchIndexManager_ResetForeignKeysWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_ResetForeignKeysWithContext_Call) Return(taskInfo *meilisearch.TaskInfo, err error) *MockmeilisearchIndexManager_ResetForeignKeysWithContext_Call {
+	_c.Call.Return(taskInfo, err)
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_ResetForeignKeysWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.TaskInfo, error)) *MockmeilisearchIndexManager_ResetForeignKeysWithContext_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -10878,6 +11112,136 @@ func (_c *MockmeilisearchIndexManager_UpdateFilterableAttributesWithContext_Call
 }
 
 func (_c *MockmeilisearchIndexManager_UpdateFilterableAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context, request *[]interface{}) (*meilisearch.TaskInfo, error)) *MockmeilisearchIndexManager_UpdateFilterableAttributesWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateForeignKeys provides a mock function for the type MockmeilisearchIndexManager
+func (_mock *MockmeilisearchIndexManager) UpdateForeignKeys(foreignKeys []meilisearch.ForeignKey) (*meilisearch.TaskInfo, error) {
+	ret := _mock.Called(foreignKeys)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateForeignKeys")
+	}
+
+	var r0 *meilisearch.TaskInfo
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func([]meilisearch.ForeignKey) (*meilisearch.TaskInfo, error)); ok {
+		return returnFunc(foreignKeys)
+	}
+	if returnFunc, ok := ret.Get(0).(func([]meilisearch.ForeignKey) *meilisearch.TaskInfo); ok {
+		r0 = returnFunc(foreignKeys)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.TaskInfo)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func([]meilisearch.ForeignKey) error); ok {
+		r1 = returnFunc(foreignKeys)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchIndexManager_UpdateForeignKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateForeignKeys'
+type MockmeilisearchIndexManager_UpdateForeignKeys_Call struct {
+	*mock.Call
+}
+
+// UpdateForeignKeys is a helper method to define mock.On call
+//   - foreignKeys []meilisearch.ForeignKey
+func (_e *MockmeilisearchIndexManager_Expecter) UpdateForeignKeys(foreignKeys any) *MockmeilisearchIndexManager_UpdateForeignKeys_Call {
+	return &MockmeilisearchIndexManager_UpdateForeignKeys_Call{Call: _e.mock.On("UpdateForeignKeys", foreignKeys)}
+}
+
+func (_c *MockmeilisearchIndexManager_UpdateForeignKeys_Call) Run(run func(foreignKeys []meilisearch.ForeignKey)) *MockmeilisearchIndexManager_UpdateForeignKeys_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 []meilisearch.ForeignKey
+		if args[0] != nil {
+			arg0 = args[0].([]meilisearch.ForeignKey)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_UpdateForeignKeys_Call) Return(taskInfo *meilisearch.TaskInfo, err error) *MockmeilisearchIndexManager_UpdateForeignKeys_Call {
+	_c.Call.Return(taskInfo, err)
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_UpdateForeignKeys_Call) RunAndReturn(run func(foreignKeys []meilisearch.ForeignKey) (*meilisearch.TaskInfo, error)) *MockmeilisearchIndexManager_UpdateForeignKeys_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateForeignKeysWithContext provides a mock function for the type MockmeilisearchIndexManager
+func (_mock *MockmeilisearchIndexManager) UpdateForeignKeysWithContext(ctx context.Context, foreignKeys []meilisearch.ForeignKey) (*meilisearch.TaskInfo, error) {
+	ret := _mock.Called(ctx, foreignKeys)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateForeignKeysWithContext")
+	}
+
+	var r0 *meilisearch.TaskInfo
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []meilisearch.ForeignKey) (*meilisearch.TaskInfo, error)); ok {
+		return returnFunc(ctx, foreignKeys)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []meilisearch.ForeignKey) *meilisearch.TaskInfo); ok {
+		r0 = returnFunc(ctx, foreignKeys)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.TaskInfo)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, []meilisearch.ForeignKey) error); ok {
+		r1 = returnFunc(ctx, foreignKeys)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchIndexManager_UpdateForeignKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateForeignKeysWithContext'
+type MockmeilisearchIndexManager_UpdateForeignKeysWithContext_Call struct {
+	*mock.Call
+}
+
+// UpdateForeignKeysWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+//   - foreignKeys []meilisearch.ForeignKey
+func (_e *MockmeilisearchIndexManager_Expecter) UpdateForeignKeysWithContext(ctx any, foreignKeys any) *MockmeilisearchIndexManager_UpdateForeignKeysWithContext_Call {
+	return &MockmeilisearchIndexManager_UpdateForeignKeysWithContext_Call{Call: _e.mock.On("UpdateForeignKeysWithContext", ctx, foreignKeys)}
+}
+
+func (_c *MockmeilisearchIndexManager_UpdateForeignKeysWithContext_Call) Run(run func(ctx context.Context, foreignKeys []meilisearch.ForeignKey)) *MockmeilisearchIndexManager_UpdateForeignKeysWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 []meilisearch.ForeignKey
+		if args[1] != nil {
+			arg1 = args[1].([]meilisearch.ForeignKey)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_UpdateForeignKeysWithContext_Call) Return(taskInfo *meilisearch.TaskInfo, err error) *MockmeilisearchIndexManager_UpdateForeignKeysWithContext_Call {
+	_c.Call.Return(taskInfo, err)
+	return _c
+}
+
+func (_c *MockmeilisearchIndexManager_UpdateForeignKeysWithContext_Call) RunAndReturn(run func(ctx context.Context, foreignKeys []meilisearch.ForeignKey) (*meilisearch.TaskInfo, error)) *MockmeilisearchIndexManager_UpdateForeignKeysWithContext_Call {
 	_c.Call.Return(run)
 	return _c
 }
