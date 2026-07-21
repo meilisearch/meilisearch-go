@@ -74,7 +74,7 @@ type MockmeilisearchChatManager_ChatCompletionStream_Call struct {
 // ChatCompletionStream is a helper method to define mock.On call
 //   - workspace string
 //   - query *meilisearch.ChatCompletionQuery
-func (_e *MockmeilisearchChatManager_Expecter) ChatCompletionStream(workspace interface{}, query interface{}) *MockmeilisearchChatManager_ChatCompletionStream_Call {
+func (_e *MockmeilisearchChatManager_Expecter) ChatCompletionStream(workspace any, query any) *MockmeilisearchChatManager_ChatCompletionStream_Call {
 	return &MockmeilisearchChatManager_ChatCompletionStream_Call{Call: _e.mock.On("ChatCompletionStream", workspace, query)}
 }
 
@@ -143,7 +143,7 @@ type MockmeilisearchChatManager_ChatCompletionStreamWithContext_Call struct {
 //   - ctx context.Context
 //   - workspace string
 //   - query *meilisearch.ChatCompletionQuery
-func (_e *MockmeilisearchChatManager_Expecter) ChatCompletionStreamWithContext(ctx interface{}, workspace interface{}, query interface{}) *MockmeilisearchChatManager_ChatCompletionStreamWithContext_Call {
+func (_e *MockmeilisearchChatManager_Expecter) ChatCompletionStreamWithContext(ctx any, workspace any, query any) *MockmeilisearchChatManager_ChatCompletionStreamWithContext_Call {
 	return &MockmeilisearchChatManager_ChatCompletionStreamWithContext_Call{Call: _e.mock.On("ChatCompletionStreamWithContext", ctx, workspace, query)}
 }
 
@@ -215,7 +215,7 @@ type MockmeilisearchChatManager_GetChatWorkspace_Call struct {
 
 // GetChatWorkspace is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchChatManager_Expecter) GetChatWorkspace(uid interface{}) *MockmeilisearchChatManager_GetChatWorkspace_Call {
+func (_e *MockmeilisearchChatManager_Expecter) GetChatWorkspace(uid any) *MockmeilisearchChatManager_GetChatWorkspace_Call {
 	return &MockmeilisearchChatManager_GetChatWorkspace_Call{Call: _e.mock.On("GetChatWorkspace", uid)}
 }
 
@@ -277,7 +277,7 @@ type MockmeilisearchChatManager_GetChatWorkspaceSettings_Call struct {
 
 // GetChatWorkspaceSettings is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchChatManager_Expecter) GetChatWorkspaceSettings(uid interface{}) *MockmeilisearchChatManager_GetChatWorkspaceSettings_Call {
+func (_e *MockmeilisearchChatManager_Expecter) GetChatWorkspaceSettings(uid any) *MockmeilisearchChatManager_GetChatWorkspaceSettings_Call {
 	return &MockmeilisearchChatManager_GetChatWorkspaceSettings_Call{Call: _e.mock.On("GetChatWorkspaceSettings", uid)}
 }
 
@@ -340,7 +340,7 @@ type MockmeilisearchChatManager_GetChatWorkspaceSettingsWithContext_Call struct 
 // GetChatWorkspaceSettingsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchChatManager_Expecter) GetChatWorkspaceSettingsWithContext(ctx interface{}, uid interface{}) *MockmeilisearchChatManager_GetChatWorkspaceSettingsWithContext_Call {
+func (_e *MockmeilisearchChatManager_Expecter) GetChatWorkspaceSettingsWithContext(ctx any, uid any) *MockmeilisearchChatManager_GetChatWorkspaceSettingsWithContext_Call {
 	return &MockmeilisearchChatManager_GetChatWorkspaceSettingsWithContext_Call{Call: _e.mock.On("GetChatWorkspaceSettingsWithContext", ctx, uid)}
 }
 
@@ -408,7 +408,7 @@ type MockmeilisearchChatManager_GetChatWorkspaceWithContext_Call struct {
 // GetChatWorkspaceWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchChatManager_Expecter) GetChatWorkspaceWithContext(ctx interface{}, uid interface{}) *MockmeilisearchChatManager_GetChatWorkspaceWithContext_Call {
+func (_e *MockmeilisearchChatManager_Expecter) GetChatWorkspaceWithContext(ctx any, uid any) *MockmeilisearchChatManager_GetChatWorkspaceWithContext_Call {
 	return &MockmeilisearchChatManager_GetChatWorkspaceWithContext_Call{Call: _e.mock.On("GetChatWorkspaceWithContext", ctx, uid)}
 }
 
@@ -475,7 +475,7 @@ type MockmeilisearchChatManager_ListChatWorkspaces_Call struct {
 
 // ListChatWorkspaces is a helper method to define mock.On call
 //   - query *meilisearch.ListChatWorkSpaceQuery
-func (_e *MockmeilisearchChatManager_Expecter) ListChatWorkspaces(query interface{}) *MockmeilisearchChatManager_ListChatWorkspaces_Call {
+func (_e *MockmeilisearchChatManager_Expecter) ListChatWorkspaces(query any) *MockmeilisearchChatManager_ListChatWorkspaces_Call {
 	return &MockmeilisearchChatManager_ListChatWorkspaces_Call{Call: _e.mock.On("ListChatWorkspaces", query)}
 }
 
@@ -538,7 +538,7 @@ type MockmeilisearchChatManager_ListChatWorkspacesWithContext_Call struct {
 // ListChatWorkspacesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - query *meilisearch.ListChatWorkSpaceQuery
-func (_e *MockmeilisearchChatManager_Expecter) ListChatWorkspacesWithContext(ctx interface{}, query interface{}) *MockmeilisearchChatManager_ListChatWorkspacesWithContext_Call {
+func (_e *MockmeilisearchChatManager_Expecter) ListChatWorkspacesWithContext(ctx any, query any) *MockmeilisearchChatManager_ListChatWorkspacesWithContext_Call {
 	return &MockmeilisearchChatManager_ListChatWorkspacesWithContext_Call{Call: _e.mock.On("ListChatWorkspacesWithContext", ctx, query)}
 }
 
@@ -605,7 +605,7 @@ type MockmeilisearchChatManager_ResetChatWorkspace_Call struct {
 
 // ResetChatWorkspace is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchChatManager_Expecter) ResetChatWorkspace(uid interface{}) *MockmeilisearchChatManager_ResetChatWorkspace_Call {
+func (_e *MockmeilisearchChatManager_Expecter) ResetChatWorkspace(uid any) *MockmeilisearchChatManager_ResetChatWorkspace_Call {
 	return &MockmeilisearchChatManager_ResetChatWorkspace_Call{Call: _e.mock.On("ResetChatWorkspace", uid)}
 }
 
@@ -668,7 +668,7 @@ type MockmeilisearchChatManager_ResetChatWorkspaceWithContext_Call struct {
 // ResetChatWorkspaceWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchChatManager_Expecter) ResetChatWorkspaceWithContext(ctx interface{}, uid interface{}) *MockmeilisearchChatManager_ResetChatWorkspaceWithContext_Call {
+func (_e *MockmeilisearchChatManager_Expecter) ResetChatWorkspaceWithContext(ctx any, uid any) *MockmeilisearchChatManager_ResetChatWorkspaceWithContext_Call {
 	return &MockmeilisearchChatManager_ResetChatWorkspaceWithContext_Call{Call: _e.mock.On("ResetChatWorkspaceWithContext", ctx, uid)}
 }
 
@@ -736,7 +736,7 @@ type MockmeilisearchChatManager_UpdateChatWorkspace_Call struct {
 // UpdateChatWorkspace is a helper method to define mock.On call
 //   - uid string
 //   - settings *meilisearch.ChatWorkspaceSettings
-func (_e *MockmeilisearchChatManager_Expecter) UpdateChatWorkspace(uid interface{}, settings interface{}) *MockmeilisearchChatManager_UpdateChatWorkspace_Call {
+func (_e *MockmeilisearchChatManager_Expecter) UpdateChatWorkspace(uid any, settings any) *MockmeilisearchChatManager_UpdateChatWorkspace_Call {
 	return &MockmeilisearchChatManager_UpdateChatWorkspace_Call{Call: _e.mock.On("UpdateChatWorkspace", uid, settings)}
 }
 
@@ -805,7 +805,7 @@ type MockmeilisearchChatManager_UpdateChatWorkspaceWithContext_Call struct {
 //   - ctx context.Context
 //   - uid string
 //   - settings *meilisearch.ChatWorkspaceSettings
-func (_e *MockmeilisearchChatManager_Expecter) UpdateChatWorkspaceWithContext(ctx interface{}, uid interface{}, settings interface{}) *MockmeilisearchChatManager_UpdateChatWorkspaceWithContext_Call {
+func (_e *MockmeilisearchChatManager_Expecter) UpdateChatWorkspaceWithContext(ctx any, uid any, settings any) *MockmeilisearchChatManager_UpdateChatWorkspaceWithContext_Call {
 	return &MockmeilisearchChatManager_UpdateChatWorkspaceWithContext_Call{Call: _e.mock.On("UpdateChatWorkspaceWithContext", ctx, uid, settings)}
 }
 

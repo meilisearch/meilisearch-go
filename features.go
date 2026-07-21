@@ -69,6 +69,11 @@ func (ef *ExperimentalFeatures) SetGetTaskDocumentsRoute(enable bool) *Experimen
 	return ef
 }
 
+func (ef *ExperimentalFeatures) SetForeignKeys(enable bool) *ExperimentalFeatures {
+	ef.ForeignKeys = &enable
+	return ef
+}
+
 func (ef *ExperimentalFeatures) Get() (*ExperimentalFeaturesResult, error) {
 	return ef.GetWithContext(context.Background())
 }
@@ -109,6 +114,7 @@ func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*Experim
 		DynamicSearchRules:      ef.DynamicSearchRules,
 		GetTaskDocumentsRoute:   ef.GetTaskDocumentsRoute,
 		RenderRoute:             ef.RenderRoute,
+		ForeignKeys:             ef.ForeignKeys,
 	}
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{

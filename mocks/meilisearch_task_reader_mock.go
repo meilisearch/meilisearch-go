@@ -74,7 +74,7 @@ type MockmeilisearchTaskReader_GetTask_Call struct {
 
 // GetTask is a helper method to define mock.On call
 //   - taskUID int64
-func (_e *MockmeilisearchTaskReader_Expecter) GetTask(taskUID interface{}) *MockmeilisearchTaskReader_GetTask_Call {
+func (_e *MockmeilisearchTaskReader_Expecter) GetTask(taskUID any) *MockmeilisearchTaskReader_GetTask_Call {
 	return &MockmeilisearchTaskReader_GetTask_Call{Call: _e.mock.On("GetTask", taskUID)}
 }
 
@@ -137,7 +137,7 @@ type MockmeilisearchTaskReader_GetTaskWithContext_Call struct {
 // GetTaskWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - taskUID int64
-func (_e *MockmeilisearchTaskReader_Expecter) GetTaskWithContext(ctx interface{}, taskUID interface{}) *MockmeilisearchTaskReader_GetTaskWithContext_Call {
+func (_e *MockmeilisearchTaskReader_Expecter) GetTaskWithContext(ctx any, taskUID any) *MockmeilisearchTaskReader_GetTaskWithContext_Call {
 	return &MockmeilisearchTaskReader_GetTaskWithContext_Call{Call: _e.mock.On("GetTaskWithContext", ctx, taskUID)}
 }
 
@@ -204,7 +204,7 @@ type MockmeilisearchTaskReader_GetTasks_Call struct {
 
 // GetTasks is a helper method to define mock.On call
 //   - param *meilisearch.TasksQuery
-func (_e *MockmeilisearchTaskReader_Expecter) GetTasks(param interface{}) *MockmeilisearchTaskReader_GetTasks_Call {
+func (_e *MockmeilisearchTaskReader_Expecter) GetTasks(param any) *MockmeilisearchTaskReader_GetTasks_Call {
 	return &MockmeilisearchTaskReader_GetTasks_Call{Call: _e.mock.On("GetTasks", param)}
 }
 
@@ -267,7 +267,7 @@ type MockmeilisearchTaskReader_GetTasksWithContext_Call struct {
 // GetTasksWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.TasksQuery
-func (_e *MockmeilisearchTaskReader_Expecter) GetTasksWithContext(ctx interface{}, param interface{}) *MockmeilisearchTaskReader_GetTasksWithContext_Call {
+func (_e *MockmeilisearchTaskReader_Expecter) GetTasksWithContext(ctx any, param any) *MockmeilisearchTaskReader_GetTasksWithContext_Call {
 	return &MockmeilisearchTaskReader_GetTasksWithContext_Call{Call: _e.mock.On("GetTasksWithContext", ctx, param)}
 }
 
@@ -335,7 +335,7 @@ type MockmeilisearchTaskReader_WaitForTask_Call struct {
 // WaitForTask is a helper method to define mock.On call
 //   - taskUID int64
 //   - interval time.Duration
-func (_e *MockmeilisearchTaskReader_Expecter) WaitForTask(taskUID interface{}, interval interface{}) *MockmeilisearchTaskReader_WaitForTask_Call {
+func (_e *MockmeilisearchTaskReader_Expecter) WaitForTask(taskUID any, interval any) *MockmeilisearchTaskReader_WaitForTask_Call {
 	return &MockmeilisearchTaskReader_WaitForTask_Call{Call: _e.mock.On("WaitForTask", taskUID, interval)}
 }
 
@@ -404,7 +404,7 @@ type MockmeilisearchTaskReader_WaitForTaskWithContext_Call struct {
 //   - ctx context.Context
 //   - taskUID int64
 //   - interval time.Duration
-func (_e *MockmeilisearchTaskReader_Expecter) WaitForTaskWithContext(ctx interface{}, taskUID interface{}, interval interface{}) *MockmeilisearchTaskReader_WaitForTaskWithContext_Call {
+func (_e *MockmeilisearchTaskReader_Expecter) WaitForTaskWithContext(ctx any, taskUID any, interval any) *MockmeilisearchTaskReader_WaitForTaskWithContext_Call {
 	return &MockmeilisearchTaskReader_WaitForTaskWithContext_Call{Call: _e.mock.On("WaitForTaskWithContext", ctx, taskUID, interval)}
 }
 

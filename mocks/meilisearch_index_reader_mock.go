@@ -128,7 +128,7 @@ type MockmeilisearchIndexReader_FetchInfoWithContext_Call struct {
 
 // FetchInfoWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchIndexReader_Expecter) FetchInfoWithContext(ctx interface{}) *MockmeilisearchIndexReader_FetchInfoWithContext_Call {
+func (_e *MockmeilisearchIndexReader_Expecter) FetchInfoWithContext(ctx any) *MockmeilisearchIndexReader_FetchInfoWithContext_Call {
 	return &MockmeilisearchIndexReader_FetchInfoWithContext_Call{Call: _e.mock.On("FetchInfoWithContext", ctx)}
 }
 
@@ -245,7 +245,7 @@ type MockmeilisearchIndexReader_FetchPrimaryKeyWithContext_Call struct {
 
 // FetchPrimaryKeyWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchIndexReader_Expecter) FetchPrimaryKeyWithContext(ctx interface{}) *MockmeilisearchIndexReader_FetchPrimaryKeyWithContext_Call {
+func (_e *MockmeilisearchIndexReader_Expecter) FetchPrimaryKeyWithContext(ctx any) *MockmeilisearchIndexReader_FetchPrimaryKeyWithContext_Call {
 	return &MockmeilisearchIndexReader_FetchPrimaryKeyWithContext_Call{Call: _e.mock.On("FetchPrimaryKeyWithContext", ctx)}
 }
 
@@ -273,8 +273,8 @@ func (_c *MockmeilisearchIndexReader_FetchPrimaryKeyWithContext_Call) RunAndRetu
 }
 
 // GetStats provides a mock function for the type MockmeilisearchIndexReader
-func (_mock *MockmeilisearchIndexReader) GetStats() (*meilisearch.StatsIndex, error) {
-	ret := _mock.Called()
+func (_mock *MockmeilisearchIndexReader) GetStats(param *meilisearch.StatsParams) (*meilisearch.StatsIndex, error) {
+	ret := _mock.Called(param)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetStats")
@@ -282,18 +282,18 @@ func (_mock *MockmeilisearchIndexReader) GetStats() (*meilisearch.StatsIndex, er
 
 	var r0 *meilisearch.StatsIndex
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*meilisearch.StatsIndex, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(*meilisearch.StatsParams) (*meilisearch.StatsIndex, error)); ok {
+		return returnFunc(param)
 	}
-	if returnFunc, ok := ret.Get(0).(func() *meilisearch.StatsIndex); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(*meilisearch.StatsParams) *meilisearch.StatsIndex); ok {
+		r0 = returnFunc(param)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*meilisearch.StatsIndex)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(*meilisearch.StatsParams) error); ok {
+		r1 = returnFunc(param)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -306,13 +306,20 @@ type MockmeilisearchIndexReader_GetStats_Call struct {
 }
 
 // GetStats is a helper method to define mock.On call
-func (_e *MockmeilisearchIndexReader_Expecter) GetStats() *MockmeilisearchIndexReader_GetStats_Call {
-	return &MockmeilisearchIndexReader_GetStats_Call{Call: _e.mock.On("GetStats")}
+//   - param *meilisearch.StatsParams
+func (_e *MockmeilisearchIndexReader_Expecter) GetStats(param any) *MockmeilisearchIndexReader_GetStats_Call {
+	return &MockmeilisearchIndexReader_GetStats_Call{Call: _e.mock.On("GetStats", param)}
 }
 
-func (_c *MockmeilisearchIndexReader_GetStats_Call) Run(run func()) *MockmeilisearchIndexReader_GetStats_Call {
+func (_c *MockmeilisearchIndexReader_GetStats_Call) Run(run func(param *meilisearch.StatsParams)) *MockmeilisearchIndexReader_GetStats_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 *meilisearch.StatsParams
+		if args[0] != nil {
+			arg0 = args[0].(*meilisearch.StatsParams)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -322,14 +329,14 @@ func (_c *MockmeilisearchIndexReader_GetStats_Call) Return(statsIndex *meilisear
 	return _c
 }
 
-func (_c *MockmeilisearchIndexReader_GetStats_Call) RunAndReturn(run func() (*meilisearch.StatsIndex, error)) *MockmeilisearchIndexReader_GetStats_Call {
+func (_c *MockmeilisearchIndexReader_GetStats_Call) RunAndReturn(run func(param *meilisearch.StatsParams) (*meilisearch.StatsIndex, error)) *MockmeilisearchIndexReader_GetStats_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetStatsWithContext provides a mock function for the type MockmeilisearchIndexReader
-func (_mock *MockmeilisearchIndexReader) GetStatsWithContext(ctx context.Context) (*meilisearch.StatsIndex, error) {
-	ret := _mock.Called(ctx)
+func (_mock *MockmeilisearchIndexReader) GetStatsWithContext(ctx context.Context, param *meilisearch.StatsParams) (*meilisearch.StatsIndex, error) {
+	ret := _mock.Called(ctx, param)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetStatsWithContext")
@@ -337,18 +344,18 @@ func (_mock *MockmeilisearchIndexReader) GetStatsWithContext(ctx context.Context
 
 	var r0 *meilisearch.StatsIndex
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context) (*meilisearch.StatsIndex, error)); ok {
-		return returnFunc(ctx)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.StatsParams) (*meilisearch.StatsIndex, error)); ok {
+		return returnFunc(ctx, param)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context) *meilisearch.StatsIndex); ok {
-		r0 = returnFunc(ctx)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.StatsParams) *meilisearch.StatsIndex); ok {
+		r0 = returnFunc(ctx, param)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*meilisearch.StatsIndex)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
-		r1 = returnFunc(ctx)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *meilisearch.StatsParams) error); ok {
+		r1 = returnFunc(ctx, param)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -362,18 +369,24 @@ type MockmeilisearchIndexReader_GetStatsWithContext_Call struct {
 
 // GetStatsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchIndexReader_Expecter) GetStatsWithContext(ctx interface{}) *MockmeilisearchIndexReader_GetStatsWithContext_Call {
-	return &MockmeilisearchIndexReader_GetStatsWithContext_Call{Call: _e.mock.On("GetStatsWithContext", ctx)}
+//   - param *meilisearch.StatsParams
+func (_e *MockmeilisearchIndexReader_Expecter) GetStatsWithContext(ctx any, param any) *MockmeilisearchIndexReader_GetStatsWithContext_Call {
+	return &MockmeilisearchIndexReader_GetStatsWithContext_Call{Call: _e.mock.On("GetStatsWithContext", ctx, param)}
 }
 
-func (_c *MockmeilisearchIndexReader_GetStatsWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchIndexReader_GetStatsWithContext_Call {
+func (_c *MockmeilisearchIndexReader_GetStatsWithContext_Call) Run(run func(ctx context.Context, param *meilisearch.StatsParams)) *MockmeilisearchIndexReader_GetStatsWithContext_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
+		var arg1 *meilisearch.StatsParams
+		if args[1] != nil {
+			arg1 = args[1].(*meilisearch.StatsParams)
+		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
@@ -384,7 +397,7 @@ func (_c *MockmeilisearchIndexReader_GetStatsWithContext_Call) Return(statsIndex
 	return _c
 }
 
-func (_c *MockmeilisearchIndexReader_GetStatsWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.StatsIndex, error)) *MockmeilisearchIndexReader_GetStatsWithContext_Call {
+func (_c *MockmeilisearchIndexReader_GetStatsWithContext_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.StatsParams) (*meilisearch.StatsIndex, error)) *MockmeilisearchIndexReader_GetStatsWithContext_Call {
 	_c.Call.Return(run)
 	return _c
 }

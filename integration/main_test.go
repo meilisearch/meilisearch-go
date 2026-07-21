@@ -394,6 +394,35 @@ func setupComicIndex(t *testing.T, client meilisearch.ServiceManager, uid string
 	return idx
 }
 
+func setUpIndexesWithForeignKeys(t *testing.T, client meilisearch.ServiceManager) {
+	t.Helper()
+	// Authors index
+	authorsIndex := client.Index("authors")
+
+	authors := []map[string]interface{}{
+		{"id": 1, "name": "Jane Austen"},
+		{"id": 2, "name": "J. R. R. Tolkien"},
+		{"id": 3, "name": "Antoine de Saint-Exupéry"},
+	}
+
+	task, err := authorsIndex.AddDocuments(authors, nil)
+	require.NoError(t, err)
+	testWaitForIndexTask(t, authorsIndex, task)
+
+	// Books index
+	booksIndex := client.Index("books")
+	books := []map[string]interface{}{
+		{"id": 101, "title": "Pride and Prejudice", "author": 1},
+		{"id": 102, "title": "The Hobbit", "author": 2},
+		{"id": 103, "title": "Le Petit Prince", "author": 3},
+		{"id": 104, "title": "Emma", "author": 1},
+	}
+
+	task, err = booksIndex.AddDocuments(books, nil)
+	require.NoError(t, err)
+	testWaitForIndexTask(t, booksIndex, task)
+}
+
 func setUpIndexForFaceting(client meilisearch.ServiceManager) {
 	idx := client.Index("indexUID")
 

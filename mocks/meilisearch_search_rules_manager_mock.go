@@ -62,7 +62,7 @@ type MockmeilisearchSearchRulesManager_DeleteSearchRule_Call struct {
 
 // DeleteSearchRule is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchSearchRulesManager_Expecter) DeleteSearchRule(uid interface{}) *MockmeilisearchSearchRulesManager_DeleteSearchRule_Call {
+func (_e *MockmeilisearchSearchRulesManager_Expecter) DeleteSearchRule(uid any) *MockmeilisearchSearchRulesManager_DeleteSearchRule_Call {
 	return &MockmeilisearchSearchRulesManager_DeleteSearchRule_Call{Call: _e.mock.On("DeleteSearchRule", uid)}
 }
 
@@ -114,7 +114,7 @@ type MockmeilisearchSearchRulesManager_DeleteSearchRuleWithContext_Call struct {
 // DeleteSearchRuleWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchSearchRulesManager_Expecter) DeleteSearchRuleWithContext(ctx interface{}, uid interface{}) *MockmeilisearchSearchRulesManager_DeleteSearchRuleWithContext_Call {
+func (_e *MockmeilisearchSearchRulesManager_Expecter) DeleteSearchRuleWithContext(ctx any, uid any) *MockmeilisearchSearchRulesManager_DeleteSearchRuleWithContext_Call {
 	return &MockmeilisearchSearchRulesManager_DeleteSearchRuleWithContext_Call{Call: _e.mock.On("DeleteSearchRuleWithContext", ctx, uid)}
 }
 
@@ -181,7 +181,7 @@ type MockmeilisearchSearchRulesManager_GetSearchRule_Call struct {
 
 // GetSearchRule is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchSearchRulesManager_Expecter) GetSearchRule(uid interface{}) *MockmeilisearchSearchRulesManager_GetSearchRule_Call {
+func (_e *MockmeilisearchSearchRulesManager_Expecter) GetSearchRule(uid any) *MockmeilisearchSearchRulesManager_GetSearchRule_Call {
 	return &MockmeilisearchSearchRulesManager_GetSearchRule_Call{Call: _e.mock.On("GetSearchRule", uid)}
 }
 
@@ -244,7 +244,7 @@ type MockmeilisearchSearchRulesManager_GetSearchRuleWithContext_Call struct {
 // GetSearchRuleWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchSearchRulesManager_Expecter) GetSearchRuleWithContext(ctx interface{}, uid interface{}) *MockmeilisearchSearchRulesManager_GetSearchRuleWithContext_Call {
+func (_e *MockmeilisearchSearchRulesManager_Expecter) GetSearchRuleWithContext(ctx any, uid any) *MockmeilisearchSearchRulesManager_GetSearchRuleWithContext_Call {
 	return &MockmeilisearchSearchRulesManager_GetSearchRuleWithContext_Call{Call: _e.mock.On("GetSearchRuleWithContext", ctx, uid)}
 }
 
@@ -311,7 +311,7 @@ type MockmeilisearchSearchRulesManager_ListSearchRules_Call struct {
 
 // ListSearchRules is a helper method to define mock.On call
 //   - params *meilisearch.SearchRulesParams
-func (_e *MockmeilisearchSearchRulesManager_Expecter) ListSearchRules(params interface{}) *MockmeilisearchSearchRulesManager_ListSearchRules_Call {
+func (_e *MockmeilisearchSearchRulesManager_Expecter) ListSearchRules(params any) *MockmeilisearchSearchRulesManager_ListSearchRules_Call {
 	return &MockmeilisearchSearchRulesManager_ListSearchRules_Call{Call: _e.mock.On("ListSearchRules", params)}
 }
 
@@ -374,7 +374,7 @@ type MockmeilisearchSearchRulesManager_ListSearchRulesWithContext_Call struct {
 // ListSearchRulesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *meilisearch.SearchRulesParams
-func (_e *MockmeilisearchSearchRulesManager_Expecter) ListSearchRulesWithContext(ctx interface{}, params interface{}) *MockmeilisearchSearchRulesManager_ListSearchRulesWithContext_Call {
+func (_e *MockmeilisearchSearchRulesManager_Expecter) ListSearchRulesWithContext(ctx any, params any) *MockmeilisearchSearchRulesManager_ListSearchRulesWithContext_Call {
 	return &MockmeilisearchSearchRulesManager_ListSearchRulesWithContext_Call{Call: _e.mock.On("ListSearchRulesWithContext", ctx, params)}
 }
 
@@ -442,7 +442,7 @@ type MockmeilisearchSearchRulesManager_UpdateSearchRule_Call struct {
 // UpdateSearchRule is a helper method to define mock.On call
 //   - uid string
 //   - params *meilisearch.SearchRulesRequest
-func (_e *MockmeilisearchSearchRulesManager_Expecter) UpdateSearchRule(uid interface{}, params interface{}) *MockmeilisearchSearchRulesManager_UpdateSearchRule_Call {
+func (_e *MockmeilisearchSearchRulesManager_Expecter) UpdateSearchRule(uid any, params any) *MockmeilisearchSearchRulesManager_UpdateSearchRule_Call {
 	return &MockmeilisearchSearchRulesManager_UpdateSearchRule_Call{Call: _e.mock.On("UpdateSearchRule", uid, params)}
 }
 
@@ -511,7 +511,7 @@ type MockmeilisearchSearchRulesManager_UpdateSearchRuleWithContext_Call struct {
 //   - ctx context.Context
 //   - uid string
 //   - params *meilisearch.SearchRulesRequest
-func (_e *MockmeilisearchSearchRulesManager_Expecter) UpdateSearchRuleWithContext(ctx interface{}, uid interface{}, params interface{}) *MockmeilisearchSearchRulesManager_UpdateSearchRuleWithContext_Call {
+func (_e *MockmeilisearchSearchRulesManager_Expecter) UpdateSearchRuleWithContext(ctx any, uid any, params any) *MockmeilisearchSearchRulesManager_UpdateSearchRuleWithContext_Call {
 	return &MockmeilisearchSearchRulesManager_UpdateSearchRuleWithContext_Call{Call: _e.mock.On("UpdateSearchRuleWithContext", ctx, uid, params)}
 }
 

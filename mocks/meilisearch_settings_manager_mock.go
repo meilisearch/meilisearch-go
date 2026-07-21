@@ -128,7 +128,7 @@ type MockmeilisearchSettingsManager_GetDictionaryWithContext_Call struct {
 
 // GetDictionaryWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetDictionaryWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetDictionaryWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetDictionaryWithContext(ctx any) *MockmeilisearchSettingsManager_GetDictionaryWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetDictionaryWithContext_Call{Call: _e.mock.On("GetDictionaryWithContext", ctx)}
 }
 
@@ -245,7 +245,7 @@ type MockmeilisearchSettingsManager_GetDisplayedAttributesWithContext_Call struc
 
 // GetDisplayedAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetDisplayedAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetDisplayedAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetDisplayedAttributesWithContext(ctx any) *MockmeilisearchSettingsManager_GetDisplayedAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetDisplayedAttributesWithContext_Call{Call: _e.mock.On("GetDisplayedAttributesWithContext", ctx)}
 }
 
@@ -362,7 +362,7 @@ type MockmeilisearchSettingsManager_GetDistinctAttributeWithContext_Call struct 
 
 // GetDistinctAttributeWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetDistinctAttributeWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetDistinctAttributeWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetDistinctAttributeWithContext(ctx any) *MockmeilisearchSettingsManager_GetDistinctAttributeWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetDistinctAttributeWithContext_Call{Call: _e.mock.On("GetDistinctAttributeWithContext", ctx)}
 }
 
@@ -479,7 +479,7 @@ type MockmeilisearchSettingsManager_GetEmbeddersWithContext_Call struct {
 
 // GetEmbeddersWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetEmbeddersWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetEmbeddersWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetEmbeddersWithContext(ctx any) *MockmeilisearchSettingsManager_GetEmbeddersWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetEmbeddersWithContext_Call{Call: _e.mock.On("GetEmbeddersWithContext", ctx)}
 }
 
@@ -592,7 +592,7 @@ type MockmeilisearchSettingsManager_GetFacetSearchWithContext_Call struct {
 
 // GetFacetSearchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetFacetSearchWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetFacetSearchWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetFacetSearchWithContext(ctx any) *MockmeilisearchSettingsManager_GetFacetSearchWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetFacetSearchWithContext_Call{Call: _e.mock.On("GetFacetSearchWithContext", ctx)}
 }
 
@@ -709,7 +709,7 @@ type MockmeilisearchSettingsManager_GetFacetingWithContext_Call struct {
 
 // GetFacetingWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetFacetingWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetFacetingWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetFacetingWithContext(ctx any) *MockmeilisearchSettingsManager_GetFacetingWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetFacetingWithContext_Call{Call: _e.mock.On("GetFacetingWithContext", ctx)}
 }
 
@@ -826,7 +826,7 @@ type MockmeilisearchSettingsManager_GetFilterableAttributesWithContext_Call stru
 
 // GetFilterableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetFilterableAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetFilterableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetFilterableAttributesWithContext(ctx any) *MockmeilisearchSettingsManager_GetFilterableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetFilterableAttributesWithContext_Call{Call: _e.mock.On("GetFilterableAttributesWithContext", ctx)}
 }
 
@@ -849,6 +849,123 @@ func (_c *MockmeilisearchSettingsManager_GetFilterableAttributesWithContext_Call
 }
 
 func (_c *MockmeilisearchSettingsManager_GetFilterableAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context) (*[]interface{}, error)) *MockmeilisearchSettingsManager_GetFilterableAttributesWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetForeignKeys provides a mock function for the type MockmeilisearchSettingsManager
+func (_mock *MockmeilisearchSettingsManager) GetForeignKeys() ([]meilisearch.ForeignKey, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetForeignKeys")
+	}
+
+	var r0 []meilisearch.ForeignKey
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]meilisearch.ForeignKey, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []meilisearch.ForeignKey); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]meilisearch.ForeignKey)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsManager_GetForeignKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeys'
+type MockmeilisearchSettingsManager_GetForeignKeys_Call struct {
+	*mock.Call
+}
+
+// GetForeignKeys is a helper method to define mock.On call
+func (_e *MockmeilisearchSettingsManager_Expecter) GetForeignKeys() *MockmeilisearchSettingsManager_GetForeignKeys_Call {
+	return &MockmeilisearchSettingsManager_GetForeignKeys_Call{Call: _e.mock.On("GetForeignKeys")}
+}
+
+func (_c *MockmeilisearchSettingsManager_GetForeignKeys_Call) Run(run func()) *MockmeilisearchSettingsManager_GetForeignKeys_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_GetForeignKeys_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchSettingsManager_GetForeignKeys_Call {
+	_c.Call.Return(foreignKeys, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_GetForeignKeys_Call) RunAndReturn(run func() ([]meilisearch.ForeignKey, error)) *MockmeilisearchSettingsManager_GetForeignKeys_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetForeignKeysWithContext provides a mock function for the type MockmeilisearchSettingsManager
+func (_mock *MockmeilisearchSettingsManager) GetForeignKeysWithContext(ctx context.Context) ([]meilisearch.ForeignKey, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetForeignKeysWithContext")
+	}
+
+	var r0 []meilisearch.ForeignKey
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]meilisearch.ForeignKey, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []meilisearch.ForeignKey); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]meilisearch.ForeignKey)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsManager_GetForeignKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeysWithContext'
+type MockmeilisearchSettingsManager_GetForeignKeysWithContext_Call struct {
+	*mock.Call
+}
+
+// GetForeignKeysWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockmeilisearchSettingsManager_Expecter) GetForeignKeysWithContext(ctx any) *MockmeilisearchSettingsManager_GetForeignKeysWithContext_Call {
+	return &MockmeilisearchSettingsManager_GetForeignKeysWithContext_Call{Call: _e.mock.On("GetForeignKeysWithContext", ctx)}
+}
+
+func (_c *MockmeilisearchSettingsManager_GetForeignKeysWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsManager_GetForeignKeysWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_GetForeignKeysWithContext_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchSettingsManager_GetForeignKeysWithContext_Call {
+	_c.Call.Return(foreignKeys, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_GetForeignKeysWithContext_Call) RunAndReturn(run func(ctx context.Context) ([]meilisearch.ForeignKey, error)) *MockmeilisearchSettingsManager_GetForeignKeysWithContext_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -943,7 +1060,7 @@ type MockmeilisearchSettingsManager_GetLocalizedAttributesWithContext_Call struc
 
 // GetLocalizedAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetLocalizedAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetLocalizedAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetLocalizedAttributesWithContext(ctx any) *MockmeilisearchSettingsManager_GetLocalizedAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetLocalizedAttributesWithContext_Call{Call: _e.mock.On("GetLocalizedAttributesWithContext", ctx)}
 }
 
@@ -1060,7 +1177,7 @@ type MockmeilisearchSettingsManager_GetNonSeparatorTokensWithContext_Call struct
 
 // GetNonSeparatorTokensWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetNonSeparatorTokensWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetNonSeparatorTokensWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetNonSeparatorTokensWithContext(ctx any) *MockmeilisearchSettingsManager_GetNonSeparatorTokensWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetNonSeparatorTokensWithContext_Call{Call: _e.mock.On("GetNonSeparatorTokensWithContext", ctx)}
 }
 
@@ -1177,7 +1294,7 @@ type MockmeilisearchSettingsManager_GetPaginationWithContext_Call struct {
 
 // GetPaginationWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetPaginationWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetPaginationWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetPaginationWithContext(ctx any) *MockmeilisearchSettingsManager_GetPaginationWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetPaginationWithContext_Call{Call: _e.mock.On("GetPaginationWithContext", ctx)}
 }
 
@@ -1294,7 +1411,7 @@ type MockmeilisearchSettingsManager_GetPrefixSearchWithContext_Call struct {
 
 // GetPrefixSearchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetPrefixSearchWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetPrefixSearchWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetPrefixSearchWithContext(ctx any) *MockmeilisearchSettingsManager_GetPrefixSearchWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetPrefixSearchWithContext_Call{Call: _e.mock.On("GetPrefixSearchWithContext", ctx)}
 }
 
@@ -1407,7 +1524,7 @@ type MockmeilisearchSettingsManager_GetProximityPrecisionWithContext_Call struct
 
 // GetProximityPrecisionWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetProximityPrecisionWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetProximityPrecisionWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetProximityPrecisionWithContext(ctx any) *MockmeilisearchSettingsManager_GetProximityPrecisionWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetProximityPrecisionWithContext_Call{Call: _e.mock.On("GetProximityPrecisionWithContext", ctx)}
 }
 
@@ -1524,7 +1641,7 @@ type MockmeilisearchSettingsManager_GetRankingRulesWithContext_Call struct {
 
 // GetRankingRulesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetRankingRulesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetRankingRulesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetRankingRulesWithContext(ctx any) *MockmeilisearchSettingsManager_GetRankingRulesWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetRankingRulesWithContext_Call{Call: _e.mock.On("GetRankingRulesWithContext", ctx)}
 }
 
@@ -1637,7 +1754,7 @@ type MockmeilisearchSettingsManager_GetSearchCutoffMsWithContext_Call struct {
 
 // GetSearchCutoffMsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetSearchCutoffMsWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetSearchCutoffMsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetSearchCutoffMsWithContext(ctx any) *MockmeilisearchSettingsManager_GetSearchCutoffMsWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetSearchCutoffMsWithContext_Call{Call: _e.mock.On("GetSearchCutoffMsWithContext", ctx)}
 }
 
@@ -1754,7 +1871,7 @@ type MockmeilisearchSettingsManager_GetSearchableAttributesWithContext_Call stru
 
 // GetSearchableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetSearchableAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetSearchableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetSearchableAttributesWithContext(ctx any) *MockmeilisearchSettingsManager_GetSearchableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetSearchableAttributesWithContext_Call{Call: _e.mock.On("GetSearchableAttributesWithContext", ctx)}
 }
 
@@ -1871,7 +1988,7 @@ type MockmeilisearchSettingsManager_GetSeparatorTokensWithContext_Call struct {
 
 // GetSeparatorTokensWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetSeparatorTokensWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetSeparatorTokensWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetSeparatorTokensWithContext(ctx any) *MockmeilisearchSettingsManager_GetSeparatorTokensWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetSeparatorTokensWithContext_Call{Call: _e.mock.On("GetSeparatorTokensWithContext", ctx)}
 }
 
@@ -1988,7 +2105,7 @@ type MockmeilisearchSettingsManager_GetSettingsWithContext_Call struct {
 
 // GetSettingsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetSettingsWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetSettingsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetSettingsWithContext(ctx any) *MockmeilisearchSettingsManager_GetSettingsWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetSettingsWithContext_Call{Call: _e.mock.On("GetSettingsWithContext", ctx)}
 }
 
@@ -2105,7 +2222,7 @@ type MockmeilisearchSettingsManager_GetSortableAttributesWithContext_Call struct
 
 // GetSortableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetSortableAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetSortableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetSortableAttributesWithContext(ctx any) *MockmeilisearchSettingsManager_GetSortableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetSortableAttributesWithContext_Call{Call: _e.mock.On("GetSortableAttributesWithContext", ctx)}
 }
 
@@ -2222,7 +2339,7 @@ type MockmeilisearchSettingsManager_GetStopWordsWithContext_Call struct {
 
 // GetStopWordsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetStopWordsWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetStopWordsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetStopWordsWithContext(ctx any) *MockmeilisearchSettingsManager_GetStopWordsWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetStopWordsWithContext_Call{Call: _e.mock.On("GetStopWordsWithContext", ctx)}
 }
 
@@ -2339,7 +2456,7 @@ type MockmeilisearchSettingsManager_GetSynonymsWithContext_Call struct {
 
 // GetSynonymsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetSynonymsWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetSynonymsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetSynonymsWithContext(ctx any) *MockmeilisearchSettingsManager_GetSynonymsWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetSynonymsWithContext_Call{Call: _e.mock.On("GetSynonymsWithContext", ctx)}
 }
 
@@ -2456,7 +2573,7 @@ type MockmeilisearchSettingsManager_GetTypoToleranceWithContext_Call struct {
 
 // GetTypoToleranceWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) GetTypoToleranceWithContext(ctx interface{}) *MockmeilisearchSettingsManager_GetTypoToleranceWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) GetTypoToleranceWithContext(ctx any) *MockmeilisearchSettingsManager_GetTypoToleranceWithContext_Call {
 	return &MockmeilisearchSettingsManager_GetTypoToleranceWithContext_Call{Call: _e.mock.On("GetTypoToleranceWithContext", ctx)}
 }
 
@@ -2573,7 +2690,7 @@ type MockmeilisearchSettingsManager_ResetDictionaryWithContext_Call struct {
 
 // ResetDictionaryWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetDictionaryWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetDictionaryWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetDictionaryWithContext(ctx any) *MockmeilisearchSettingsManager_ResetDictionaryWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetDictionaryWithContext_Call{Call: _e.mock.On("ResetDictionaryWithContext", ctx)}
 }
 
@@ -2690,7 +2807,7 @@ type MockmeilisearchSettingsManager_ResetDisplayedAttributesWithContext_Call str
 
 // ResetDisplayedAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetDisplayedAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetDisplayedAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetDisplayedAttributesWithContext(ctx any) *MockmeilisearchSettingsManager_ResetDisplayedAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetDisplayedAttributesWithContext_Call{Call: _e.mock.On("ResetDisplayedAttributesWithContext", ctx)}
 }
 
@@ -2807,7 +2924,7 @@ type MockmeilisearchSettingsManager_ResetDistinctAttributeWithContext_Call struc
 
 // ResetDistinctAttributeWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetDistinctAttributeWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetDistinctAttributeWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetDistinctAttributeWithContext(ctx any) *MockmeilisearchSettingsManager_ResetDistinctAttributeWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetDistinctAttributeWithContext_Call{Call: _e.mock.On("ResetDistinctAttributeWithContext", ctx)}
 }
 
@@ -2924,7 +3041,7 @@ type MockmeilisearchSettingsManager_ResetEmbeddersWithContext_Call struct {
 
 // ResetEmbeddersWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetEmbeddersWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetEmbeddersWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetEmbeddersWithContext(ctx any) *MockmeilisearchSettingsManager_ResetEmbeddersWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetEmbeddersWithContext_Call{Call: _e.mock.On("ResetEmbeddersWithContext", ctx)}
 }
 
@@ -3041,7 +3158,7 @@ type MockmeilisearchSettingsManager_ResetFacetSearchWithContext_Call struct {
 
 // ResetFacetSearchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetFacetSearchWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetFacetSearchWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetFacetSearchWithContext(ctx any) *MockmeilisearchSettingsManager_ResetFacetSearchWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetFacetSearchWithContext_Call{Call: _e.mock.On("ResetFacetSearchWithContext", ctx)}
 }
 
@@ -3158,7 +3275,7 @@ type MockmeilisearchSettingsManager_ResetFacetingWithContext_Call struct {
 
 // ResetFacetingWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetFacetingWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetFacetingWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetFacetingWithContext(ctx any) *MockmeilisearchSettingsManager_ResetFacetingWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetFacetingWithContext_Call{Call: _e.mock.On("ResetFacetingWithContext", ctx)}
 }
 
@@ -3275,7 +3392,7 @@ type MockmeilisearchSettingsManager_ResetFilterableAttributesWithContext_Call st
 
 // ResetFilterableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetFilterableAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetFilterableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetFilterableAttributesWithContext(ctx any) *MockmeilisearchSettingsManager_ResetFilterableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetFilterableAttributesWithContext_Call{Call: _e.mock.On("ResetFilterableAttributesWithContext", ctx)}
 }
 
@@ -3298,6 +3415,123 @@ func (_c *MockmeilisearchSettingsManager_ResetFilterableAttributesWithContext_Ca
 }
 
 func (_c *MockmeilisearchSettingsManager_ResetFilterableAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.TaskInfo, error)) *MockmeilisearchSettingsManager_ResetFilterableAttributesWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ResetForeignKeys provides a mock function for the type MockmeilisearchSettingsManager
+func (_mock *MockmeilisearchSettingsManager) ResetForeignKeys() (*meilisearch.TaskInfo, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for ResetForeignKeys")
+	}
+
+	var r0 *meilisearch.TaskInfo
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() (*meilisearch.TaskInfo, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() *meilisearch.TaskInfo); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.TaskInfo)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsManager_ResetForeignKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ResetForeignKeys'
+type MockmeilisearchSettingsManager_ResetForeignKeys_Call struct {
+	*mock.Call
+}
+
+// ResetForeignKeys is a helper method to define mock.On call
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetForeignKeys() *MockmeilisearchSettingsManager_ResetForeignKeys_Call {
+	return &MockmeilisearchSettingsManager_ResetForeignKeys_Call{Call: _e.mock.On("ResetForeignKeys")}
+}
+
+func (_c *MockmeilisearchSettingsManager_ResetForeignKeys_Call) Run(run func()) *MockmeilisearchSettingsManager_ResetForeignKeys_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_ResetForeignKeys_Call) Return(taskInfo *meilisearch.TaskInfo, err error) *MockmeilisearchSettingsManager_ResetForeignKeys_Call {
+	_c.Call.Return(taskInfo, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_ResetForeignKeys_Call) RunAndReturn(run func() (*meilisearch.TaskInfo, error)) *MockmeilisearchSettingsManager_ResetForeignKeys_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ResetForeignKeysWithContext provides a mock function for the type MockmeilisearchSettingsManager
+func (_mock *MockmeilisearchSettingsManager) ResetForeignKeysWithContext(ctx context.Context) (*meilisearch.TaskInfo, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ResetForeignKeysWithContext")
+	}
+
+	var r0 *meilisearch.TaskInfo
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) (*meilisearch.TaskInfo, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) *meilisearch.TaskInfo); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.TaskInfo)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsManager_ResetForeignKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ResetForeignKeysWithContext'
+type MockmeilisearchSettingsManager_ResetForeignKeysWithContext_Call struct {
+	*mock.Call
+}
+
+// ResetForeignKeysWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetForeignKeysWithContext(ctx any) *MockmeilisearchSettingsManager_ResetForeignKeysWithContext_Call {
+	return &MockmeilisearchSettingsManager_ResetForeignKeysWithContext_Call{Call: _e.mock.On("ResetForeignKeysWithContext", ctx)}
+}
+
+func (_c *MockmeilisearchSettingsManager_ResetForeignKeysWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsManager_ResetForeignKeysWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_ResetForeignKeysWithContext_Call) Return(taskInfo *meilisearch.TaskInfo, err error) *MockmeilisearchSettingsManager_ResetForeignKeysWithContext_Call {
+	_c.Call.Return(taskInfo, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_ResetForeignKeysWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.TaskInfo, error)) *MockmeilisearchSettingsManager_ResetForeignKeysWithContext_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3392,7 +3626,7 @@ type MockmeilisearchSettingsManager_ResetLocalizedAttributesWithContext_Call str
 
 // ResetLocalizedAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetLocalizedAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetLocalizedAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetLocalizedAttributesWithContext(ctx any) *MockmeilisearchSettingsManager_ResetLocalizedAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetLocalizedAttributesWithContext_Call{Call: _e.mock.On("ResetLocalizedAttributesWithContext", ctx)}
 }
 
@@ -3509,7 +3743,7 @@ type MockmeilisearchSettingsManager_ResetNonSeparatorTokensWithContext_Call stru
 
 // ResetNonSeparatorTokensWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetNonSeparatorTokensWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetNonSeparatorTokensWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetNonSeparatorTokensWithContext(ctx any) *MockmeilisearchSettingsManager_ResetNonSeparatorTokensWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetNonSeparatorTokensWithContext_Call{Call: _e.mock.On("ResetNonSeparatorTokensWithContext", ctx)}
 }
 
@@ -3626,7 +3860,7 @@ type MockmeilisearchSettingsManager_ResetPaginationWithContext_Call struct {
 
 // ResetPaginationWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetPaginationWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetPaginationWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetPaginationWithContext(ctx any) *MockmeilisearchSettingsManager_ResetPaginationWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetPaginationWithContext_Call{Call: _e.mock.On("ResetPaginationWithContext", ctx)}
 }
 
@@ -3743,7 +3977,7 @@ type MockmeilisearchSettingsManager_ResetPrefixSearchWithContext_Call struct {
 
 // ResetPrefixSearchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetPrefixSearchWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetPrefixSearchWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetPrefixSearchWithContext(ctx any) *MockmeilisearchSettingsManager_ResetPrefixSearchWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetPrefixSearchWithContext_Call{Call: _e.mock.On("ResetPrefixSearchWithContext", ctx)}
 }
 
@@ -3860,7 +4094,7 @@ type MockmeilisearchSettingsManager_ResetProximityPrecisionWithContext_Call stru
 
 // ResetProximityPrecisionWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetProximityPrecisionWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetProximityPrecisionWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetProximityPrecisionWithContext(ctx any) *MockmeilisearchSettingsManager_ResetProximityPrecisionWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetProximityPrecisionWithContext_Call{Call: _e.mock.On("ResetProximityPrecisionWithContext", ctx)}
 }
 
@@ -3977,7 +4211,7 @@ type MockmeilisearchSettingsManager_ResetRankingRulesWithContext_Call struct {
 
 // ResetRankingRulesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetRankingRulesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetRankingRulesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetRankingRulesWithContext(ctx any) *MockmeilisearchSettingsManager_ResetRankingRulesWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetRankingRulesWithContext_Call{Call: _e.mock.On("ResetRankingRulesWithContext", ctx)}
 }
 
@@ -4094,7 +4328,7 @@ type MockmeilisearchSettingsManager_ResetSearchCutoffMsWithContext_Call struct {
 
 // ResetSearchCutoffMsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetSearchCutoffMsWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetSearchCutoffMsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetSearchCutoffMsWithContext(ctx any) *MockmeilisearchSettingsManager_ResetSearchCutoffMsWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetSearchCutoffMsWithContext_Call{Call: _e.mock.On("ResetSearchCutoffMsWithContext", ctx)}
 }
 
@@ -4211,7 +4445,7 @@ type MockmeilisearchSettingsManager_ResetSearchableAttributesWithContext_Call st
 
 // ResetSearchableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetSearchableAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetSearchableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetSearchableAttributesWithContext(ctx any) *MockmeilisearchSettingsManager_ResetSearchableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetSearchableAttributesWithContext_Call{Call: _e.mock.On("ResetSearchableAttributesWithContext", ctx)}
 }
 
@@ -4328,7 +4562,7 @@ type MockmeilisearchSettingsManager_ResetSeparatorTokensWithContext_Call struct 
 
 // ResetSeparatorTokensWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetSeparatorTokensWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetSeparatorTokensWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetSeparatorTokensWithContext(ctx any) *MockmeilisearchSettingsManager_ResetSeparatorTokensWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetSeparatorTokensWithContext_Call{Call: _e.mock.On("ResetSeparatorTokensWithContext", ctx)}
 }
 
@@ -4445,7 +4679,7 @@ type MockmeilisearchSettingsManager_ResetSettingsWithContext_Call struct {
 
 // ResetSettingsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetSettingsWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetSettingsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetSettingsWithContext(ctx any) *MockmeilisearchSettingsManager_ResetSettingsWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetSettingsWithContext_Call{Call: _e.mock.On("ResetSettingsWithContext", ctx)}
 }
 
@@ -4562,7 +4796,7 @@ type MockmeilisearchSettingsManager_ResetSortableAttributesWithContext_Call stru
 
 // ResetSortableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetSortableAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetSortableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetSortableAttributesWithContext(ctx any) *MockmeilisearchSettingsManager_ResetSortableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetSortableAttributesWithContext_Call{Call: _e.mock.On("ResetSortableAttributesWithContext", ctx)}
 }
 
@@ -4679,7 +4913,7 @@ type MockmeilisearchSettingsManager_ResetStopWordsWithContext_Call struct {
 
 // ResetStopWordsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetStopWordsWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetStopWordsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetStopWordsWithContext(ctx any) *MockmeilisearchSettingsManager_ResetStopWordsWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetStopWordsWithContext_Call{Call: _e.mock.On("ResetStopWordsWithContext", ctx)}
 }
 
@@ -4796,7 +5030,7 @@ type MockmeilisearchSettingsManager_ResetSynonymsWithContext_Call struct {
 
 // ResetSynonymsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetSynonymsWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetSynonymsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetSynonymsWithContext(ctx any) *MockmeilisearchSettingsManager_ResetSynonymsWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetSynonymsWithContext_Call{Call: _e.mock.On("ResetSynonymsWithContext", ctx)}
 }
 
@@ -4913,7 +5147,7 @@ type MockmeilisearchSettingsManager_ResetTypoToleranceWithContext_Call struct {
 
 // ResetTypoToleranceWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsManager_Expecter) ResetTypoToleranceWithContext(ctx interface{}) *MockmeilisearchSettingsManager_ResetTypoToleranceWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetTypoToleranceWithContext(ctx any) *MockmeilisearchSettingsManager_ResetTypoToleranceWithContext_Call {
 	return &MockmeilisearchSettingsManager_ResetTypoToleranceWithContext_Call{Call: _e.mock.On("ResetTypoToleranceWithContext", ctx)}
 }
 
@@ -4975,7 +5209,7 @@ type MockmeilisearchSettingsManager_UpdateDictionary_Call struct {
 
 // UpdateDictionary is a helper method to define mock.On call
 //   - words []string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDictionary(words interface{}) *MockmeilisearchSettingsManager_UpdateDictionary_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDictionary(words any) *MockmeilisearchSettingsManager_UpdateDictionary_Call {
 	return &MockmeilisearchSettingsManager_UpdateDictionary_Call{Call: _e.mock.On("UpdateDictionary", words)}
 }
 
@@ -5038,7 +5272,7 @@ type MockmeilisearchSettingsManager_UpdateDictionaryWithContext_Call struct {
 // UpdateDictionaryWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - words []string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDictionaryWithContext(ctx interface{}, words interface{}) *MockmeilisearchSettingsManager_UpdateDictionaryWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDictionaryWithContext(ctx any, words any) *MockmeilisearchSettingsManager_UpdateDictionaryWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateDictionaryWithContext_Call{Call: _e.mock.On("UpdateDictionaryWithContext", ctx, words)}
 }
 
@@ -5105,7 +5339,7 @@ type MockmeilisearchSettingsManager_UpdateDisplayedAttributes_Call struct {
 
 // UpdateDisplayedAttributes is a helper method to define mock.On call
 //   - request *[]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDisplayedAttributes(request interface{}) *MockmeilisearchSettingsManager_UpdateDisplayedAttributes_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDisplayedAttributes(request any) *MockmeilisearchSettingsManager_UpdateDisplayedAttributes_Call {
 	return &MockmeilisearchSettingsManager_UpdateDisplayedAttributes_Call{Call: _e.mock.On("UpdateDisplayedAttributes", request)}
 }
 
@@ -5168,7 +5402,7 @@ type MockmeilisearchSettingsManager_UpdateDisplayedAttributesWithContext_Call st
 // UpdateDisplayedAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *[]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDisplayedAttributesWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateDisplayedAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDisplayedAttributesWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateDisplayedAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateDisplayedAttributesWithContext_Call{Call: _e.mock.On("UpdateDisplayedAttributesWithContext", ctx, request)}
 }
 
@@ -5235,7 +5469,7 @@ type MockmeilisearchSettingsManager_UpdateDistinctAttribute_Call struct {
 
 // UpdateDistinctAttribute is a helper method to define mock.On call
 //   - request string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDistinctAttribute(request interface{}) *MockmeilisearchSettingsManager_UpdateDistinctAttribute_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDistinctAttribute(request any) *MockmeilisearchSettingsManager_UpdateDistinctAttribute_Call {
 	return &MockmeilisearchSettingsManager_UpdateDistinctAttribute_Call{Call: _e.mock.On("UpdateDistinctAttribute", request)}
 }
 
@@ -5298,7 +5532,7 @@ type MockmeilisearchSettingsManager_UpdateDistinctAttributeWithContext_Call stru
 // UpdateDistinctAttributeWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDistinctAttributeWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateDistinctAttributeWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateDistinctAttributeWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateDistinctAttributeWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateDistinctAttributeWithContext_Call{Call: _e.mock.On("UpdateDistinctAttributeWithContext", ctx, request)}
 }
 
@@ -5365,7 +5599,7 @@ type MockmeilisearchSettingsManager_UpdateEmbedders_Call struct {
 
 // UpdateEmbedders is a helper method to define mock.On call
 //   - request map[string]meilisearch.Embedder
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateEmbedders(request interface{}) *MockmeilisearchSettingsManager_UpdateEmbedders_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateEmbedders(request any) *MockmeilisearchSettingsManager_UpdateEmbedders_Call {
 	return &MockmeilisearchSettingsManager_UpdateEmbedders_Call{Call: _e.mock.On("UpdateEmbedders", request)}
 }
 
@@ -5428,7 +5662,7 @@ type MockmeilisearchSettingsManager_UpdateEmbeddersWithContext_Call struct {
 // UpdateEmbeddersWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request map[string]meilisearch.Embedder
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateEmbeddersWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateEmbeddersWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateEmbeddersWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateEmbeddersWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateEmbeddersWithContext_Call{Call: _e.mock.On("UpdateEmbeddersWithContext", ctx, request)}
 }
 
@@ -5495,7 +5729,7 @@ type MockmeilisearchSettingsManager_UpdateFacetSearch_Call struct {
 
 // UpdateFacetSearch is a helper method to define mock.On call
 //   - request bool
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFacetSearch(request interface{}) *MockmeilisearchSettingsManager_UpdateFacetSearch_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFacetSearch(request any) *MockmeilisearchSettingsManager_UpdateFacetSearch_Call {
 	return &MockmeilisearchSettingsManager_UpdateFacetSearch_Call{Call: _e.mock.On("UpdateFacetSearch", request)}
 }
 
@@ -5558,7 +5792,7 @@ type MockmeilisearchSettingsManager_UpdateFacetSearchWithContext_Call struct {
 // UpdateFacetSearchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request bool
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFacetSearchWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateFacetSearchWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFacetSearchWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateFacetSearchWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateFacetSearchWithContext_Call{Call: _e.mock.On("UpdateFacetSearchWithContext", ctx, request)}
 }
 
@@ -5625,7 +5859,7 @@ type MockmeilisearchSettingsManager_UpdateFaceting_Call struct {
 
 // UpdateFaceting is a helper method to define mock.On call
 //   - request *meilisearch.Faceting
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFaceting(request interface{}) *MockmeilisearchSettingsManager_UpdateFaceting_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFaceting(request any) *MockmeilisearchSettingsManager_UpdateFaceting_Call {
 	return &MockmeilisearchSettingsManager_UpdateFaceting_Call{Call: _e.mock.On("UpdateFaceting", request)}
 }
 
@@ -5688,7 +5922,7 @@ type MockmeilisearchSettingsManager_UpdateFacetingWithContext_Call struct {
 // UpdateFacetingWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *meilisearch.Faceting
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFacetingWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateFacetingWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFacetingWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateFacetingWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateFacetingWithContext_Call{Call: _e.mock.On("UpdateFacetingWithContext", ctx, request)}
 }
 
@@ -5755,7 +5989,7 @@ type MockmeilisearchSettingsManager_UpdateFilterableAttributes_Call struct {
 
 // UpdateFilterableAttributes is a helper method to define mock.On call
 //   - request *[]interface{}
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFilterableAttributes(request interface{}) *MockmeilisearchSettingsManager_UpdateFilterableAttributes_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFilterableAttributes(request any) *MockmeilisearchSettingsManager_UpdateFilterableAttributes_Call {
 	return &MockmeilisearchSettingsManager_UpdateFilterableAttributes_Call{Call: _e.mock.On("UpdateFilterableAttributes", request)}
 }
 
@@ -5818,7 +6052,7 @@ type MockmeilisearchSettingsManager_UpdateFilterableAttributesWithContext_Call s
 // UpdateFilterableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *[]interface{}
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFilterableAttributesWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateFilterableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateFilterableAttributesWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateFilterableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateFilterableAttributesWithContext_Call{Call: _e.mock.On("UpdateFilterableAttributesWithContext", ctx, request)}
 }
 
@@ -5846,6 +6080,136 @@ func (_c *MockmeilisearchSettingsManager_UpdateFilterableAttributesWithContext_C
 }
 
 func (_c *MockmeilisearchSettingsManager_UpdateFilterableAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context, request *[]interface{}) (*meilisearch.TaskInfo, error)) *MockmeilisearchSettingsManager_UpdateFilterableAttributesWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateForeignKeys provides a mock function for the type MockmeilisearchSettingsManager
+func (_mock *MockmeilisearchSettingsManager) UpdateForeignKeys(foreignKeys []meilisearch.ForeignKey) (*meilisearch.TaskInfo, error) {
+	ret := _mock.Called(foreignKeys)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateForeignKeys")
+	}
+
+	var r0 *meilisearch.TaskInfo
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func([]meilisearch.ForeignKey) (*meilisearch.TaskInfo, error)); ok {
+		return returnFunc(foreignKeys)
+	}
+	if returnFunc, ok := ret.Get(0).(func([]meilisearch.ForeignKey) *meilisearch.TaskInfo); ok {
+		r0 = returnFunc(foreignKeys)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.TaskInfo)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func([]meilisearch.ForeignKey) error); ok {
+		r1 = returnFunc(foreignKeys)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsManager_UpdateForeignKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateForeignKeys'
+type MockmeilisearchSettingsManager_UpdateForeignKeys_Call struct {
+	*mock.Call
+}
+
+// UpdateForeignKeys is a helper method to define mock.On call
+//   - foreignKeys []meilisearch.ForeignKey
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateForeignKeys(foreignKeys any) *MockmeilisearchSettingsManager_UpdateForeignKeys_Call {
+	return &MockmeilisearchSettingsManager_UpdateForeignKeys_Call{Call: _e.mock.On("UpdateForeignKeys", foreignKeys)}
+}
+
+func (_c *MockmeilisearchSettingsManager_UpdateForeignKeys_Call) Run(run func(foreignKeys []meilisearch.ForeignKey)) *MockmeilisearchSettingsManager_UpdateForeignKeys_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 []meilisearch.ForeignKey
+		if args[0] != nil {
+			arg0 = args[0].([]meilisearch.ForeignKey)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_UpdateForeignKeys_Call) Return(taskInfo *meilisearch.TaskInfo, err error) *MockmeilisearchSettingsManager_UpdateForeignKeys_Call {
+	_c.Call.Return(taskInfo, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_UpdateForeignKeys_Call) RunAndReturn(run func(foreignKeys []meilisearch.ForeignKey) (*meilisearch.TaskInfo, error)) *MockmeilisearchSettingsManager_UpdateForeignKeys_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateForeignKeysWithContext provides a mock function for the type MockmeilisearchSettingsManager
+func (_mock *MockmeilisearchSettingsManager) UpdateForeignKeysWithContext(ctx context.Context, foreignKeys []meilisearch.ForeignKey) (*meilisearch.TaskInfo, error) {
+	ret := _mock.Called(ctx, foreignKeys)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateForeignKeysWithContext")
+	}
+
+	var r0 *meilisearch.TaskInfo
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []meilisearch.ForeignKey) (*meilisearch.TaskInfo, error)); ok {
+		return returnFunc(ctx, foreignKeys)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, []meilisearch.ForeignKey) *meilisearch.TaskInfo); ok {
+		r0 = returnFunc(ctx, foreignKeys)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.TaskInfo)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, []meilisearch.ForeignKey) error); ok {
+		r1 = returnFunc(ctx, foreignKeys)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsManager_UpdateForeignKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateForeignKeysWithContext'
+type MockmeilisearchSettingsManager_UpdateForeignKeysWithContext_Call struct {
+	*mock.Call
+}
+
+// UpdateForeignKeysWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+//   - foreignKeys []meilisearch.ForeignKey
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateForeignKeysWithContext(ctx any, foreignKeys any) *MockmeilisearchSettingsManager_UpdateForeignKeysWithContext_Call {
+	return &MockmeilisearchSettingsManager_UpdateForeignKeysWithContext_Call{Call: _e.mock.On("UpdateForeignKeysWithContext", ctx, foreignKeys)}
+}
+
+func (_c *MockmeilisearchSettingsManager_UpdateForeignKeysWithContext_Call) Run(run func(ctx context.Context, foreignKeys []meilisearch.ForeignKey)) *MockmeilisearchSettingsManager_UpdateForeignKeysWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 []meilisearch.ForeignKey
+		if args[1] != nil {
+			arg1 = args[1].([]meilisearch.ForeignKey)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_UpdateForeignKeysWithContext_Call) Return(taskInfo *meilisearch.TaskInfo, err error) *MockmeilisearchSettingsManager_UpdateForeignKeysWithContext_Call {
+	_c.Call.Return(taskInfo, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_UpdateForeignKeysWithContext_Call) RunAndReturn(run func(ctx context.Context, foreignKeys []meilisearch.ForeignKey) (*meilisearch.TaskInfo, error)) *MockmeilisearchSettingsManager_UpdateForeignKeysWithContext_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -5885,7 +6249,7 @@ type MockmeilisearchSettingsManager_UpdateLocalizedAttributes_Call struct {
 
 // UpdateLocalizedAttributes is a helper method to define mock.On call
 //   - request []*meilisearch.LocalizedAttributes
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateLocalizedAttributes(request interface{}) *MockmeilisearchSettingsManager_UpdateLocalizedAttributes_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateLocalizedAttributes(request any) *MockmeilisearchSettingsManager_UpdateLocalizedAttributes_Call {
 	return &MockmeilisearchSettingsManager_UpdateLocalizedAttributes_Call{Call: _e.mock.On("UpdateLocalizedAttributes", request)}
 }
 
@@ -5948,7 +6312,7 @@ type MockmeilisearchSettingsManager_UpdateLocalizedAttributesWithContext_Call st
 // UpdateLocalizedAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request []*meilisearch.LocalizedAttributes
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateLocalizedAttributesWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateLocalizedAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateLocalizedAttributesWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateLocalizedAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateLocalizedAttributesWithContext_Call{Call: _e.mock.On("UpdateLocalizedAttributesWithContext", ctx, request)}
 }
 
@@ -6015,7 +6379,7 @@ type MockmeilisearchSettingsManager_UpdateNonSeparatorTokens_Call struct {
 
 // UpdateNonSeparatorTokens is a helper method to define mock.On call
 //   - tokens []string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateNonSeparatorTokens(tokens interface{}) *MockmeilisearchSettingsManager_UpdateNonSeparatorTokens_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateNonSeparatorTokens(tokens any) *MockmeilisearchSettingsManager_UpdateNonSeparatorTokens_Call {
 	return &MockmeilisearchSettingsManager_UpdateNonSeparatorTokens_Call{Call: _e.mock.On("UpdateNonSeparatorTokens", tokens)}
 }
 
@@ -6078,7 +6442,7 @@ type MockmeilisearchSettingsManager_UpdateNonSeparatorTokensWithContext_Call str
 // UpdateNonSeparatorTokensWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - tokens []string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateNonSeparatorTokensWithContext(ctx interface{}, tokens interface{}) *MockmeilisearchSettingsManager_UpdateNonSeparatorTokensWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateNonSeparatorTokensWithContext(ctx any, tokens any) *MockmeilisearchSettingsManager_UpdateNonSeparatorTokensWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateNonSeparatorTokensWithContext_Call{Call: _e.mock.On("UpdateNonSeparatorTokensWithContext", ctx, tokens)}
 }
 
@@ -6145,7 +6509,7 @@ type MockmeilisearchSettingsManager_UpdatePagination_Call struct {
 
 // UpdatePagination is a helper method to define mock.On call
 //   - request *meilisearch.Pagination
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdatePagination(request interface{}) *MockmeilisearchSettingsManager_UpdatePagination_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdatePagination(request any) *MockmeilisearchSettingsManager_UpdatePagination_Call {
 	return &MockmeilisearchSettingsManager_UpdatePagination_Call{Call: _e.mock.On("UpdatePagination", request)}
 }
 
@@ -6208,7 +6572,7 @@ type MockmeilisearchSettingsManager_UpdatePaginationWithContext_Call struct {
 // UpdatePaginationWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *meilisearch.Pagination
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdatePaginationWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdatePaginationWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdatePaginationWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdatePaginationWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdatePaginationWithContext_Call{Call: _e.mock.On("UpdatePaginationWithContext", ctx, request)}
 }
 
@@ -6275,7 +6639,7 @@ type MockmeilisearchSettingsManager_UpdatePrefixSearch_Call struct {
 
 // UpdatePrefixSearch is a helper method to define mock.On call
 //   - request string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdatePrefixSearch(request interface{}) *MockmeilisearchSettingsManager_UpdatePrefixSearch_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdatePrefixSearch(request any) *MockmeilisearchSettingsManager_UpdatePrefixSearch_Call {
 	return &MockmeilisearchSettingsManager_UpdatePrefixSearch_Call{Call: _e.mock.On("UpdatePrefixSearch", request)}
 }
 
@@ -6338,7 +6702,7 @@ type MockmeilisearchSettingsManager_UpdatePrefixSearchWithContext_Call struct {
 // UpdatePrefixSearchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdatePrefixSearchWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdatePrefixSearchWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdatePrefixSearchWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdatePrefixSearchWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdatePrefixSearchWithContext_Call{Call: _e.mock.On("UpdatePrefixSearchWithContext", ctx, request)}
 }
 
@@ -6405,7 +6769,7 @@ type MockmeilisearchSettingsManager_UpdateProximityPrecision_Call struct {
 
 // UpdateProximityPrecision is a helper method to define mock.On call
 //   - proximityType meilisearch.ProximityPrecisionType
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateProximityPrecision(proximityType interface{}) *MockmeilisearchSettingsManager_UpdateProximityPrecision_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateProximityPrecision(proximityType any) *MockmeilisearchSettingsManager_UpdateProximityPrecision_Call {
 	return &MockmeilisearchSettingsManager_UpdateProximityPrecision_Call{Call: _e.mock.On("UpdateProximityPrecision", proximityType)}
 }
 
@@ -6468,7 +6832,7 @@ type MockmeilisearchSettingsManager_UpdateProximityPrecisionWithContext_Call str
 // UpdateProximityPrecisionWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - proximityType meilisearch.ProximityPrecisionType
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateProximityPrecisionWithContext(ctx interface{}, proximityType interface{}) *MockmeilisearchSettingsManager_UpdateProximityPrecisionWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateProximityPrecisionWithContext(ctx any, proximityType any) *MockmeilisearchSettingsManager_UpdateProximityPrecisionWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateProximityPrecisionWithContext_Call{Call: _e.mock.On("UpdateProximityPrecisionWithContext", ctx, proximityType)}
 }
 
@@ -6535,7 +6899,7 @@ type MockmeilisearchSettingsManager_UpdateRankingRules_Call struct {
 
 // UpdateRankingRules is a helper method to define mock.On call
 //   - request *[]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateRankingRules(request interface{}) *MockmeilisearchSettingsManager_UpdateRankingRules_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateRankingRules(request any) *MockmeilisearchSettingsManager_UpdateRankingRules_Call {
 	return &MockmeilisearchSettingsManager_UpdateRankingRules_Call{Call: _e.mock.On("UpdateRankingRules", request)}
 }
 
@@ -6598,7 +6962,7 @@ type MockmeilisearchSettingsManager_UpdateRankingRulesWithContext_Call struct {
 // UpdateRankingRulesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *[]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateRankingRulesWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateRankingRulesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateRankingRulesWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateRankingRulesWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateRankingRulesWithContext_Call{Call: _e.mock.On("UpdateRankingRulesWithContext", ctx, request)}
 }
 
@@ -6665,7 +7029,7 @@ type MockmeilisearchSettingsManager_UpdateSearchCutoffMs_Call struct {
 
 // UpdateSearchCutoffMs is a helper method to define mock.On call
 //   - request int64
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSearchCutoffMs(request interface{}) *MockmeilisearchSettingsManager_UpdateSearchCutoffMs_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSearchCutoffMs(request any) *MockmeilisearchSettingsManager_UpdateSearchCutoffMs_Call {
 	return &MockmeilisearchSettingsManager_UpdateSearchCutoffMs_Call{Call: _e.mock.On("UpdateSearchCutoffMs", request)}
 }
 
@@ -6728,7 +7092,7 @@ type MockmeilisearchSettingsManager_UpdateSearchCutoffMsWithContext_Call struct 
 // UpdateSearchCutoffMsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request int64
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSearchCutoffMsWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateSearchCutoffMsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSearchCutoffMsWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateSearchCutoffMsWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateSearchCutoffMsWithContext_Call{Call: _e.mock.On("UpdateSearchCutoffMsWithContext", ctx, request)}
 }
 
@@ -6795,7 +7159,7 @@ type MockmeilisearchSettingsManager_UpdateSearchableAttributes_Call struct {
 
 // UpdateSearchableAttributes is a helper method to define mock.On call
 //   - request *[]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSearchableAttributes(request interface{}) *MockmeilisearchSettingsManager_UpdateSearchableAttributes_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSearchableAttributes(request any) *MockmeilisearchSettingsManager_UpdateSearchableAttributes_Call {
 	return &MockmeilisearchSettingsManager_UpdateSearchableAttributes_Call{Call: _e.mock.On("UpdateSearchableAttributes", request)}
 }
 
@@ -6858,7 +7222,7 @@ type MockmeilisearchSettingsManager_UpdateSearchableAttributesWithContext_Call s
 // UpdateSearchableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *[]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSearchableAttributesWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateSearchableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSearchableAttributesWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateSearchableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateSearchableAttributesWithContext_Call{Call: _e.mock.On("UpdateSearchableAttributesWithContext", ctx, request)}
 }
 
@@ -6925,7 +7289,7 @@ type MockmeilisearchSettingsManager_UpdateSeparatorTokens_Call struct {
 
 // UpdateSeparatorTokens is a helper method to define mock.On call
 //   - tokens []string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSeparatorTokens(tokens interface{}) *MockmeilisearchSettingsManager_UpdateSeparatorTokens_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSeparatorTokens(tokens any) *MockmeilisearchSettingsManager_UpdateSeparatorTokens_Call {
 	return &MockmeilisearchSettingsManager_UpdateSeparatorTokens_Call{Call: _e.mock.On("UpdateSeparatorTokens", tokens)}
 }
 
@@ -6988,7 +7352,7 @@ type MockmeilisearchSettingsManager_UpdateSeparatorTokensWithContext_Call struct
 // UpdateSeparatorTokensWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - tokens []string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSeparatorTokensWithContext(ctx interface{}, tokens interface{}) *MockmeilisearchSettingsManager_UpdateSeparatorTokensWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSeparatorTokensWithContext(ctx any, tokens any) *MockmeilisearchSettingsManager_UpdateSeparatorTokensWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateSeparatorTokensWithContext_Call{Call: _e.mock.On("UpdateSeparatorTokensWithContext", ctx, tokens)}
 }
 
@@ -7055,7 +7419,7 @@ type MockmeilisearchSettingsManager_UpdateSettings_Call struct {
 
 // UpdateSettings is a helper method to define mock.On call
 //   - request *meilisearch.Settings
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSettings(request interface{}) *MockmeilisearchSettingsManager_UpdateSettings_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSettings(request any) *MockmeilisearchSettingsManager_UpdateSettings_Call {
 	return &MockmeilisearchSettingsManager_UpdateSettings_Call{Call: _e.mock.On("UpdateSettings", request)}
 }
 
@@ -7118,7 +7482,7 @@ type MockmeilisearchSettingsManager_UpdateSettingsWithContext_Call struct {
 // UpdateSettingsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *meilisearch.Settings
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSettingsWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateSettingsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSettingsWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateSettingsWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateSettingsWithContext_Call{Call: _e.mock.On("UpdateSettingsWithContext", ctx, request)}
 }
 
@@ -7185,7 +7549,7 @@ type MockmeilisearchSettingsManager_UpdateSortableAttributes_Call struct {
 
 // UpdateSortableAttributes is a helper method to define mock.On call
 //   - request *[]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSortableAttributes(request interface{}) *MockmeilisearchSettingsManager_UpdateSortableAttributes_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSortableAttributes(request any) *MockmeilisearchSettingsManager_UpdateSortableAttributes_Call {
 	return &MockmeilisearchSettingsManager_UpdateSortableAttributes_Call{Call: _e.mock.On("UpdateSortableAttributes", request)}
 }
 
@@ -7248,7 +7612,7 @@ type MockmeilisearchSettingsManager_UpdateSortableAttributesWithContext_Call str
 // UpdateSortableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *[]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSortableAttributesWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateSortableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSortableAttributesWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateSortableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateSortableAttributesWithContext_Call{Call: _e.mock.On("UpdateSortableAttributesWithContext", ctx, request)}
 }
 
@@ -7315,7 +7679,7 @@ type MockmeilisearchSettingsManager_UpdateStopWords_Call struct {
 
 // UpdateStopWords is a helper method to define mock.On call
 //   - request *[]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateStopWords(request interface{}) *MockmeilisearchSettingsManager_UpdateStopWords_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateStopWords(request any) *MockmeilisearchSettingsManager_UpdateStopWords_Call {
 	return &MockmeilisearchSettingsManager_UpdateStopWords_Call{Call: _e.mock.On("UpdateStopWords", request)}
 }
 
@@ -7378,7 +7742,7 @@ type MockmeilisearchSettingsManager_UpdateStopWordsWithContext_Call struct {
 // UpdateStopWordsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *[]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateStopWordsWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateStopWordsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateStopWordsWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateStopWordsWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateStopWordsWithContext_Call{Call: _e.mock.On("UpdateStopWordsWithContext", ctx, request)}
 }
 
@@ -7445,7 +7809,7 @@ type MockmeilisearchSettingsManager_UpdateSynonyms_Call struct {
 
 // UpdateSynonyms is a helper method to define mock.On call
 //   - request *map[string][]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSynonyms(request interface{}) *MockmeilisearchSettingsManager_UpdateSynonyms_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSynonyms(request any) *MockmeilisearchSettingsManager_UpdateSynonyms_Call {
 	return &MockmeilisearchSettingsManager_UpdateSynonyms_Call{Call: _e.mock.On("UpdateSynonyms", request)}
 }
 
@@ -7508,7 +7872,7 @@ type MockmeilisearchSettingsManager_UpdateSynonymsWithContext_Call struct {
 // UpdateSynonymsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *map[string][]string
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSynonymsWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateSynonymsWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateSynonymsWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateSynonymsWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateSynonymsWithContext_Call{Call: _e.mock.On("UpdateSynonymsWithContext", ctx, request)}
 }
 
@@ -7575,7 +7939,7 @@ type MockmeilisearchSettingsManager_UpdateTypoTolerance_Call struct {
 
 // UpdateTypoTolerance is a helper method to define mock.On call
 //   - request *meilisearch.TypoTolerance
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateTypoTolerance(request interface{}) *MockmeilisearchSettingsManager_UpdateTypoTolerance_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateTypoTolerance(request any) *MockmeilisearchSettingsManager_UpdateTypoTolerance_Call {
 	return &MockmeilisearchSettingsManager_UpdateTypoTolerance_Call{Call: _e.mock.On("UpdateTypoTolerance", request)}
 }
 
@@ -7638,7 +8002,7 @@ type MockmeilisearchSettingsManager_UpdateTypoToleranceWithContext_Call struct {
 // UpdateTypoToleranceWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *meilisearch.TypoTolerance
-func (_e *MockmeilisearchSettingsManager_Expecter) UpdateTypoToleranceWithContext(ctx interface{}, request interface{}) *MockmeilisearchSettingsManager_UpdateTypoToleranceWithContext_Call {
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateTypoToleranceWithContext(ctx any, request any) *MockmeilisearchSettingsManager_UpdateTypoToleranceWithContext_Call {
 	return &MockmeilisearchSettingsManager_UpdateTypoToleranceWithContext_Call{Call: _e.mock.On("UpdateTypoToleranceWithContext", ctx, request)}
 }
 

@@ -73,7 +73,7 @@ type MockmeilisearchWebhookManager_AddWebhook_Call struct {
 
 // AddWebhook is a helper method to define mock.On call
 //   - params *meilisearch.AddWebhookRequest
-func (_e *MockmeilisearchWebhookManager_Expecter) AddWebhook(params interface{}) *MockmeilisearchWebhookManager_AddWebhook_Call {
+func (_e *MockmeilisearchWebhookManager_Expecter) AddWebhook(params any) *MockmeilisearchWebhookManager_AddWebhook_Call {
 	return &MockmeilisearchWebhookManager_AddWebhook_Call{Call: _e.mock.On("AddWebhook", params)}
 }
 
@@ -136,7 +136,7 @@ type MockmeilisearchWebhookManager_AddWebhookWithContext_Call struct {
 // AddWebhookWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *meilisearch.AddWebhookRequest
-func (_e *MockmeilisearchWebhookManager_Expecter) AddWebhookWithContext(ctx interface{}, params interface{}) *MockmeilisearchWebhookManager_AddWebhookWithContext_Call {
+func (_e *MockmeilisearchWebhookManager_Expecter) AddWebhookWithContext(ctx any, params any) *MockmeilisearchWebhookManager_AddWebhookWithContext_Call {
 	return &MockmeilisearchWebhookManager_AddWebhookWithContext_Call{Call: _e.mock.On("AddWebhookWithContext", ctx, params)}
 }
 
@@ -192,7 +192,7 @@ type MockmeilisearchWebhookManager_DeleteWebhook_Call struct {
 
 // DeleteWebhook is a helper method to define mock.On call
 //   - uuid string
-func (_e *MockmeilisearchWebhookManager_Expecter) DeleteWebhook(uuid interface{}) *MockmeilisearchWebhookManager_DeleteWebhook_Call {
+func (_e *MockmeilisearchWebhookManager_Expecter) DeleteWebhook(uuid any) *MockmeilisearchWebhookManager_DeleteWebhook_Call {
 	return &MockmeilisearchWebhookManager_DeleteWebhook_Call{Call: _e.mock.On("DeleteWebhook", uuid)}
 }
 
@@ -244,7 +244,7 @@ type MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call struct {
 // DeleteWebhookWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockmeilisearchWebhookManager_Expecter) DeleteWebhookWithContext(ctx interface{}, uuid interface{}) *MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call {
+func (_e *MockmeilisearchWebhookManager_Expecter) DeleteWebhookWithContext(ctx any, uuid any) *MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call {
 	return &MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call{Call: _e.mock.On("DeleteWebhookWithContext", ctx, uuid)}
 }
 
@@ -311,7 +311,7 @@ type MockmeilisearchWebhookManager_GetWebhook_Call struct {
 
 // GetWebhook is a helper method to define mock.On call
 //   - uuid string
-func (_e *MockmeilisearchWebhookManager_Expecter) GetWebhook(uuid interface{}) *MockmeilisearchWebhookManager_GetWebhook_Call {
+func (_e *MockmeilisearchWebhookManager_Expecter) GetWebhook(uuid any) *MockmeilisearchWebhookManager_GetWebhook_Call {
 	return &MockmeilisearchWebhookManager_GetWebhook_Call{Call: _e.mock.On("GetWebhook", uuid)}
 }
 
@@ -374,7 +374,7 @@ type MockmeilisearchWebhookManager_GetWebhookWithContext_Call struct {
 // GetWebhookWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockmeilisearchWebhookManager_Expecter) GetWebhookWithContext(ctx interface{}, uuid interface{}) *MockmeilisearchWebhookManager_GetWebhookWithContext_Call {
+func (_e *MockmeilisearchWebhookManager_Expecter) GetWebhookWithContext(ctx any, uuid any) *MockmeilisearchWebhookManager_GetWebhookWithContext_Call {
 	return &MockmeilisearchWebhookManager_GetWebhookWithContext_Call{Call: _e.mock.On("GetWebhookWithContext", ctx, uuid)}
 }
 
@@ -496,7 +496,7 @@ type MockmeilisearchWebhookManager_ListWebhooksWithContext_Call struct {
 
 // ListWebhooksWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchWebhookManager_Expecter) ListWebhooksWithContext(ctx interface{}) *MockmeilisearchWebhookManager_ListWebhooksWithContext_Call {
+func (_e *MockmeilisearchWebhookManager_Expecter) ListWebhooksWithContext(ctx any) *MockmeilisearchWebhookManager_ListWebhooksWithContext_Call {
 	return &MockmeilisearchWebhookManager_ListWebhooksWithContext_Call{Call: _e.mock.On("ListWebhooksWithContext", ctx)}
 }
 
@@ -559,7 +559,7 @@ type MockmeilisearchWebhookManager_UpdateWebhook_Call struct {
 // UpdateWebhook is a helper method to define mock.On call
 //   - uuid string
 //   - params *meilisearch.UpdateWebhookRequest
-func (_e *MockmeilisearchWebhookManager_Expecter) UpdateWebhook(uuid interface{}, params interface{}) *MockmeilisearchWebhookManager_UpdateWebhook_Call {
+func (_e *MockmeilisearchWebhookManager_Expecter) UpdateWebhook(uuid any, params any) *MockmeilisearchWebhookManager_UpdateWebhook_Call {
 	return &MockmeilisearchWebhookManager_UpdateWebhook_Call{Call: _e.mock.On("UpdateWebhook", uuid, params)}
 }
 
@@ -628,7 +628,7 @@ type MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call struct {
 //   - ctx context.Context
 //   - uuid string
 //   - params *meilisearch.UpdateWebhookRequest
-func (_e *MockmeilisearchWebhookManager_Expecter) UpdateWebhookWithContext(ctx interface{}, uuid interface{}, params interface{}) *MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call {
+func (_e *MockmeilisearchWebhookManager_Expecter) UpdateWebhookWithContext(ctx any, uuid any, params any) *MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call {
 	return &MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call{Call: _e.mock.On("UpdateWebhookWithContext", ctx, uuid, params)}
 }
 

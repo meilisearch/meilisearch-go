@@ -1286,3 +1286,62 @@ func (i *index) ResetFacetSearchWithContext(ctx context.Context) (*TaskInfo, err
 	}
 	return resp, nil
 }
+
+func (i *index) GetForeignKeys() ([]ForeignKey, error) {
+	return i.GetForeignKeysWithContext(context.Background())
+}
+
+func (i *index) GetForeignKeysWithContext(ctx context.Context) ([]ForeignKey, error) {
+	var resp []ForeignKey
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/foreign-keys",
+		method:              http.MethodGet,
+		withResponse:        &resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetForeignKeys",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) UpdateForeignKeys(foreignKeys []ForeignKey) (*TaskInfo, error) {
+	return i.UpdateForeignKeysWithContext(context.Background(), foreignKeys)
+}
+
+func (i *index) UpdateForeignKeysWithContext(ctx context.Context, foreignKeys []ForeignKey) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/foreign-keys",
+		method:              http.MethodPut,
+		withRequest:         foreignKeys,
+		withResponse:        resp,
+		contentType:         contentTypeJSON,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateForeignKeys",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) ResetForeignKeys() (*TaskInfo, error) {
+	return i.ResetForeignKeysWithContext(context.Background())
+}
+
+func (i *index) ResetForeignKeysWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/foreign-keys",
+		method:              http.MethodDelete,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetForeignKeys",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

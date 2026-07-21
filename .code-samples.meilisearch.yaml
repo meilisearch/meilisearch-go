@@ -817,3 +817,14 @@ post_render_template_1: |-
       },
     },
   })
+get_foreign_keys_setting_1: |-
+  client.Index("books").GetForeignKeys()
+update_foreign_keys_setting_1: |-
+  client.Index("books").UpdateForeignKeys([]meilisearch.ForeignKey{
+    {
+      FieldName: "author",
+      ForeignIndexUid: "authors",
+    },
+  })
+reset_foreign_keys_setting_1: |-
+  client.Index("books").ResetForeignKeys()

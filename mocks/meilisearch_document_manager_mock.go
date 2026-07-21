@@ -75,7 +75,7 @@ type MockmeilisearchDocumentManager_AddDocuments_Call struct {
 // AddDocuments is a helper method to define mock.On call
 //   - documentsPtr interface{}
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocuments(documentsPtr interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocuments_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocuments(documentsPtr any, opts any) *MockmeilisearchDocumentManager_AddDocuments_Call {
 	return &MockmeilisearchDocumentManager_AddDocuments_Call{Call: _e.mock.On("AddDocuments", documentsPtr, opts)}
 }
 
@@ -143,7 +143,7 @@ type MockmeilisearchDocumentManager_AddDocumentsCsv_Call struct {
 // AddDocumentsCsv is a helper method to define mock.On call
 //   - documents []byte
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsv(documents interface{}, options interface{}) *MockmeilisearchDocumentManager_AddDocumentsCsv_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsv(documents any, options any) *MockmeilisearchDocumentManager_AddDocumentsCsv_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsCsv_Call{Call: _e.mock.On("AddDocumentsCsv", documents, options)}
 }
 
@@ -211,7 +211,7 @@ type MockmeilisearchDocumentManager_AddDocumentsCsvFromReader_Call struct {
 // AddDocumentsCsvFromReader is a helper method to define mock.On call
 //   - documents io.Reader
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvFromReader(documents interface{}, options interface{}) *MockmeilisearchDocumentManager_AddDocumentsCsvFromReader_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvFromReader(documents any, options any) *MockmeilisearchDocumentManager_AddDocumentsCsvFromReader_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsCsvFromReader_Call{Call: _e.mock.On("AddDocumentsCsvFromReader", documents, options)}
 }
 
@@ -280,7 +280,7 @@ type MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderInBatches_Call stru
 //   - documents io.Reader
 //   - batchSize int
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvFromReaderInBatches(documents interface{}, batchSize interface{}, options interface{}) *MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderInBatches_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvFromReaderInBatches(documents any, batchSize any, options any) *MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderInBatches_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderInBatches_Call{Call: _e.mock.On("AddDocumentsCsvFromReaderInBatches", documents, batchSize, options)}
 }
 
@@ -355,7 +355,7 @@ type MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderInBatchesWithContex
 //   - documents io.Reader
 //   - batchSize int
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvFromReaderInBatchesWithContext(ctx interface{}, documents interface{}, batchSize interface{}, options interface{}) *MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderInBatchesWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvFromReaderInBatchesWithContext(ctx any, documents any, batchSize any, options any) *MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderInBatchesWithContext_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderInBatchesWithContext_Call{Call: _e.mock.On("AddDocumentsCsvFromReaderInBatchesWithContext", ctx, documents, batchSize, options)}
 }
 
@@ -434,7 +434,7 @@ type MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderWithContext_Call st
 //   - ctx context.Context
 //   - documents io.Reader
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvFromReaderWithContext(ctx interface{}, documents interface{}, options interface{}) *MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvFromReaderWithContext(ctx any, documents any, options any) *MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderWithContext_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsCsvFromReaderWithContext_Call{Call: _e.mock.On("AddDocumentsCsvFromReaderWithContext", ctx, documents, options)}
 }
 
@@ -508,7 +508,7 @@ type MockmeilisearchDocumentManager_AddDocumentsCsvInBatches_Call struct {
 //   - documents []byte
 //   - batchSize int
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvInBatches(documents interface{}, batchSize interface{}, options interface{}) *MockmeilisearchDocumentManager_AddDocumentsCsvInBatches_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvInBatches(documents any, batchSize any, options any) *MockmeilisearchDocumentManager_AddDocumentsCsvInBatches_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsCsvInBatches_Call{Call: _e.mock.On("AddDocumentsCsvInBatches", documents, batchSize, options)}
 }
 
@@ -583,7 +583,7 @@ type MockmeilisearchDocumentManager_AddDocumentsCsvInBatchesWithContext_Call str
 //   - documents []byte
 //   - batchSize int
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvInBatchesWithContext(ctx interface{}, documents interface{}, batchSize interface{}, options interface{}) *MockmeilisearchDocumentManager_AddDocumentsCsvInBatchesWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvInBatchesWithContext(ctx any, documents any, batchSize any, options any) *MockmeilisearchDocumentManager_AddDocumentsCsvInBatchesWithContext_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsCsvInBatchesWithContext_Call{Call: _e.mock.On("AddDocumentsCsvInBatchesWithContext", ctx, documents, batchSize, options)}
 }
 
@@ -662,7 +662,7 @@ type MockmeilisearchDocumentManager_AddDocumentsCsvWithContext_Call struct {
 //   - ctx context.Context
 //   - documents []byte
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvWithContext(ctx interface{}, documents interface{}, options interface{}) *MockmeilisearchDocumentManager_AddDocumentsCsvWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsCsvWithContext(ctx any, documents any, options any) *MockmeilisearchDocumentManager_AddDocumentsCsvWithContext_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsCsvWithContext_Call{Call: _e.mock.On("AddDocumentsCsvWithContext", ctx, documents, options)}
 }
 
@@ -736,7 +736,7 @@ type MockmeilisearchDocumentManager_AddDocumentsInBatches_Call struct {
 //   - documentsPtr interface{}
 //   - batchSize int
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsInBatches(documentsPtr interface{}, batchSize interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsInBatches_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsInBatches(documentsPtr any, batchSize any, opts any) *MockmeilisearchDocumentManager_AddDocumentsInBatches_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsInBatches_Call{Call: _e.mock.On("AddDocumentsInBatches", documentsPtr, batchSize, opts)}
 }
 
@@ -811,7 +811,7 @@ type MockmeilisearchDocumentManager_AddDocumentsInBatchesWithContext_Call struct
 //   - documentsPtr interface{}
 //   - batchSize int
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsInBatchesWithContext(ctx interface{}, documentsPtr interface{}, batchSize interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsInBatchesWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsInBatchesWithContext(ctx any, documentsPtr any, batchSize any, opts any) *MockmeilisearchDocumentManager_AddDocumentsInBatchesWithContext_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsInBatchesWithContext_Call{Call: _e.mock.On("AddDocumentsInBatchesWithContext", ctx, documentsPtr, batchSize, opts)}
 }
 
@@ -889,7 +889,7 @@ type MockmeilisearchDocumentManager_AddDocumentsNdjson_Call struct {
 // AddDocumentsNdjson is a helper method to define mock.On call
 //   - documents []byte
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjson(documents interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsNdjson_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjson(documents any, opts any) *MockmeilisearchDocumentManager_AddDocumentsNdjson_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsNdjson_Call{Call: _e.mock.On("AddDocumentsNdjson", documents, opts)}
 }
 
@@ -957,7 +957,7 @@ type MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReader_Call struct {
 // AddDocumentsNdjsonFromReader is a helper method to define mock.On call
 //   - documents io.Reader
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonFromReader(documents interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReader_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonFromReader(documents any, opts any) *MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReader_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReader_Call{Call: _e.mock.On("AddDocumentsNdjsonFromReader", documents, opts)}
 }
 
@@ -1026,7 +1026,7 @@ type MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderInBatches_Call s
 //   - documents io.Reader
 //   - batchSize int
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonFromReaderInBatches(documents interface{}, batchSize interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderInBatches_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonFromReaderInBatches(documents any, batchSize any, opts any) *MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderInBatches_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderInBatches_Call{Call: _e.mock.On("AddDocumentsNdjsonFromReaderInBatches", documents, batchSize, opts)}
 }
 
@@ -1101,7 +1101,7 @@ type MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderInBatchesWithCon
 //   - documents io.Reader
 //   - batchSize int
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx interface{}, documents interface{}, batchSize interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderInBatchesWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonFromReaderInBatchesWithContext(ctx any, documents any, batchSize any, opts any) *MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderInBatchesWithContext_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderInBatchesWithContext_Call{Call: _e.mock.On("AddDocumentsNdjsonFromReaderInBatchesWithContext", ctx, documents, batchSize, opts)}
 }
 
@@ -1180,7 +1180,7 @@ type MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderWithContext_Call
 //   - ctx context.Context
 //   - documents io.Reader
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonFromReaderWithContext(ctx interface{}, documents interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonFromReaderWithContext(ctx any, documents any, opts any) *MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderWithContext_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsNdjsonFromReaderWithContext_Call{Call: _e.mock.On("AddDocumentsNdjsonFromReaderWithContext", ctx, documents, opts)}
 }
 
@@ -1254,7 +1254,7 @@ type MockmeilisearchDocumentManager_AddDocumentsNdjsonInBatches_Call struct {
 //   - documents []byte
 //   - batchSize int
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonInBatches(documents interface{}, batchSize interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsNdjsonInBatches_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonInBatches(documents any, batchSize any, opts any) *MockmeilisearchDocumentManager_AddDocumentsNdjsonInBatches_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsNdjsonInBatches_Call{Call: _e.mock.On("AddDocumentsNdjsonInBatches", documents, batchSize, opts)}
 }
 
@@ -1329,7 +1329,7 @@ type MockmeilisearchDocumentManager_AddDocumentsNdjsonInBatchesWithContext_Call 
 //   - documents []byte
 //   - batchSize int
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonInBatchesWithContext(ctx interface{}, documents interface{}, batchSize interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsNdjsonInBatchesWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonInBatchesWithContext(ctx any, documents any, batchSize any, opts any) *MockmeilisearchDocumentManager_AddDocumentsNdjsonInBatchesWithContext_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsNdjsonInBatchesWithContext_Call{Call: _e.mock.On("AddDocumentsNdjsonInBatchesWithContext", ctx, documents, batchSize, opts)}
 }
 
@@ -1408,7 +1408,7 @@ type MockmeilisearchDocumentManager_AddDocumentsNdjsonWithContext_Call struct {
 //   - ctx context.Context
 //   - documents []byte
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonWithContext(ctx interface{}, documents interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsNdjsonWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsNdjsonWithContext(ctx any, documents any, opts any) *MockmeilisearchDocumentManager_AddDocumentsNdjsonWithContext_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsNdjsonWithContext_Call{Call: _e.mock.On("AddDocumentsNdjsonWithContext", ctx, documents, opts)}
 }
 
@@ -1482,7 +1482,7 @@ type MockmeilisearchDocumentManager_AddDocumentsWithContext_Call struct {
 //   - ctx context.Context
 //   - documentsPtr interface{}
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsWithContext(ctx interface{}, documentsPtr interface{}, opts interface{}) *MockmeilisearchDocumentManager_AddDocumentsWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) AddDocumentsWithContext(ctx any, documentsPtr any, opts any) *MockmeilisearchDocumentManager_AddDocumentsWithContext_Call {
 	return &MockmeilisearchDocumentManager_AddDocumentsWithContext_Call{Call: _e.mock.On("AddDocumentsWithContext", ctx, documentsPtr, opts)}
 }
 
@@ -1554,7 +1554,7 @@ type MockmeilisearchDocumentManager_DeleteAllDocuments_Call struct {
 
 // DeleteAllDocuments is a helper method to define mock.On call
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) DeleteAllDocuments(opts interface{}) *MockmeilisearchDocumentManager_DeleteAllDocuments_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) DeleteAllDocuments(opts any) *MockmeilisearchDocumentManager_DeleteAllDocuments_Call {
 	return &MockmeilisearchDocumentManager_DeleteAllDocuments_Call{Call: _e.mock.On("DeleteAllDocuments", opts)}
 }
 
@@ -1617,7 +1617,7 @@ type MockmeilisearchDocumentManager_DeleteAllDocumentsWithContext_Call struct {
 // DeleteAllDocumentsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) DeleteAllDocumentsWithContext(ctx interface{}, opts interface{}) *MockmeilisearchDocumentManager_DeleteAllDocumentsWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) DeleteAllDocumentsWithContext(ctx any, opts any) *MockmeilisearchDocumentManager_DeleteAllDocumentsWithContext_Call {
 	return &MockmeilisearchDocumentManager_DeleteAllDocumentsWithContext_Call{Call: _e.mock.On("DeleteAllDocumentsWithContext", ctx, opts)}
 }
 
@@ -1685,7 +1685,7 @@ type MockmeilisearchDocumentManager_DeleteDocument_Call struct {
 // DeleteDocument is a helper method to define mock.On call
 //   - identifier string
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocument(identifier interface{}, opts interface{}) *MockmeilisearchDocumentManager_DeleteDocument_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocument(identifier any, opts any) *MockmeilisearchDocumentManager_DeleteDocument_Call {
 	return &MockmeilisearchDocumentManager_DeleteDocument_Call{Call: _e.mock.On("DeleteDocument", identifier, opts)}
 }
 
@@ -1754,7 +1754,7 @@ type MockmeilisearchDocumentManager_DeleteDocumentWithContext_Call struct {
 //   - ctx context.Context
 //   - identifier string
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocumentWithContext(ctx interface{}, identifier interface{}, opts interface{}) *MockmeilisearchDocumentManager_DeleteDocumentWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocumentWithContext(ctx any, identifier any, opts any) *MockmeilisearchDocumentManager_DeleteDocumentWithContext_Call {
 	return &MockmeilisearchDocumentManager_DeleteDocumentWithContext_Call{Call: _e.mock.On("DeleteDocumentWithContext", ctx, identifier, opts)}
 }
 
@@ -1827,7 +1827,7 @@ type MockmeilisearchDocumentManager_DeleteDocuments_Call struct {
 // DeleteDocuments is a helper method to define mock.On call
 //   - identifiers []string
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocuments(identifiers interface{}, opts interface{}) *MockmeilisearchDocumentManager_DeleteDocuments_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocuments(identifiers any, opts any) *MockmeilisearchDocumentManager_DeleteDocuments_Call {
 	return &MockmeilisearchDocumentManager_DeleteDocuments_Call{Call: _e.mock.On("DeleteDocuments", identifiers, opts)}
 }
 
@@ -1895,7 +1895,7 @@ type MockmeilisearchDocumentManager_DeleteDocumentsByFilter_Call struct {
 // DeleteDocumentsByFilter is a helper method to define mock.On call
 //   - filter interface{}
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocumentsByFilter(filter interface{}, opts interface{}) *MockmeilisearchDocumentManager_DeleteDocumentsByFilter_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocumentsByFilter(filter any, opts any) *MockmeilisearchDocumentManager_DeleteDocumentsByFilter_Call {
 	return &MockmeilisearchDocumentManager_DeleteDocumentsByFilter_Call{Call: _e.mock.On("DeleteDocumentsByFilter", filter, opts)}
 }
 
@@ -1964,7 +1964,7 @@ type MockmeilisearchDocumentManager_DeleteDocumentsByFilterWithContext_Call stru
 //   - ctx context.Context
 //   - filter interface{}
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocumentsByFilterWithContext(ctx interface{}, filter interface{}, opts interface{}) *MockmeilisearchDocumentManager_DeleteDocumentsByFilterWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocumentsByFilterWithContext(ctx any, filter any, opts any) *MockmeilisearchDocumentManager_DeleteDocumentsByFilterWithContext_Call {
 	return &MockmeilisearchDocumentManager_DeleteDocumentsByFilterWithContext_Call{Call: _e.mock.On("DeleteDocumentsByFilterWithContext", ctx, filter, opts)}
 }
 
@@ -2038,7 +2038,7 @@ type MockmeilisearchDocumentManager_DeleteDocumentsWithContext_Call struct {
 //   - ctx context.Context
 //   - identifiers []string
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocumentsWithContext(ctx interface{}, identifiers interface{}, opts interface{}) *MockmeilisearchDocumentManager_DeleteDocumentsWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) DeleteDocumentsWithContext(ctx any, identifiers any, opts any) *MockmeilisearchDocumentManager_DeleteDocumentsWithContext_Call {
 	return &MockmeilisearchDocumentManager_DeleteDocumentsWithContext_Call{Call: _e.mock.On("DeleteDocumentsWithContext", ctx, identifiers, opts)}
 }
 
@@ -2101,7 +2101,7 @@ type MockmeilisearchDocumentManager_GetDocument_Call struct {
 //   - identifier string
 //   - request *meilisearch.DocumentQuery
 //   - documentPtr interface{}
-func (_e *MockmeilisearchDocumentManager_Expecter) GetDocument(identifier interface{}, request interface{}, documentPtr interface{}) *MockmeilisearchDocumentManager_GetDocument_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) GetDocument(identifier any, request any, documentPtr any) *MockmeilisearchDocumentManager_GetDocument_Call {
 	return &MockmeilisearchDocumentManager_GetDocument_Call{Call: _e.mock.On("GetDocument", identifier, request, documentPtr)}
 }
 
@@ -2165,7 +2165,7 @@ type MockmeilisearchDocumentManager_GetDocumentWithContext_Call struct {
 //   - identifier string
 //   - request *meilisearch.DocumentQuery
 //   - documentPtr interface{}
-func (_e *MockmeilisearchDocumentManager_Expecter) GetDocumentWithContext(ctx interface{}, identifier interface{}, request interface{}, documentPtr interface{}) *MockmeilisearchDocumentManager_GetDocumentWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) GetDocumentWithContext(ctx any, identifier any, request any, documentPtr any) *MockmeilisearchDocumentManager_GetDocumentWithContext_Call {
 	return &MockmeilisearchDocumentManager_GetDocumentWithContext_Call{Call: _e.mock.On("GetDocumentWithContext", ctx, identifier, request, documentPtr)}
 }
 
@@ -2232,7 +2232,7 @@ type MockmeilisearchDocumentManager_GetDocuments_Call struct {
 // GetDocuments is a helper method to define mock.On call
 //   - param *meilisearch.DocumentsQuery
 //   - resp *meilisearch.DocumentsResult
-func (_e *MockmeilisearchDocumentManager_Expecter) GetDocuments(param interface{}, resp interface{}) *MockmeilisearchDocumentManager_GetDocuments_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) GetDocuments(param any, resp any) *MockmeilisearchDocumentManager_GetDocuments_Call {
 	return &MockmeilisearchDocumentManager_GetDocuments_Call{Call: _e.mock.On("GetDocuments", param, resp)}
 }
 
@@ -2290,7 +2290,7 @@ type MockmeilisearchDocumentManager_GetDocumentsWithContext_Call struct {
 //   - ctx context.Context
 //   - param *meilisearch.DocumentsQuery
 //   - resp *meilisearch.DocumentsResult
-func (_e *MockmeilisearchDocumentManager_Expecter) GetDocumentsWithContext(ctx interface{}, param interface{}, resp interface{}) *MockmeilisearchDocumentManager_GetDocumentsWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) GetDocumentsWithContext(ctx any, param any, resp any) *MockmeilisearchDocumentManager_GetDocumentsWithContext_Call {
 	return &MockmeilisearchDocumentManager_GetDocumentsWithContext_Call{Call: _e.mock.On("GetDocumentsWithContext", ctx, param, resp)}
 }
 
@@ -2363,7 +2363,7 @@ type MockmeilisearchDocumentManager_UpdateDocuments_Call struct {
 // UpdateDocuments is a helper method to define mock.On call
 //   - documentsPtr interface{}
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocuments(documentsPtr interface{}, opts interface{}) *MockmeilisearchDocumentManager_UpdateDocuments_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocuments(documentsPtr any, opts any) *MockmeilisearchDocumentManager_UpdateDocuments_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocuments_Call{Call: _e.mock.On("UpdateDocuments", documentsPtr, opts)}
 }
 
@@ -2430,7 +2430,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsByFunction_Call struct {
 
 // UpdateDocumentsByFunction is a helper method to define mock.On call
 //   - req *meilisearch.UpdateDocumentByFunctionRequest
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsByFunction(req interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsByFunction_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsByFunction(req any) *MockmeilisearchDocumentManager_UpdateDocumentsByFunction_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsByFunction_Call{Call: _e.mock.On("UpdateDocumentsByFunction", req)}
 }
 
@@ -2493,7 +2493,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsByFunctionWithContext_Call st
 // UpdateDocumentsByFunctionWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - req *meilisearch.UpdateDocumentByFunctionRequest
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsByFunctionWithContext(ctx interface{}, req interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsByFunctionWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsByFunctionWithContext(ctx any, req any) *MockmeilisearchDocumentManager_UpdateDocumentsByFunctionWithContext_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsByFunctionWithContext_Call{Call: _e.mock.On("UpdateDocumentsByFunctionWithContext", ctx, req)}
 }
 
@@ -2561,7 +2561,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsCsv_Call struct {
 // UpdateDocumentsCsv is a helper method to define mock.On call
 //   - documents []byte
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsCsv(documents interface{}, options interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsCsv_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsCsv(documents any, options any) *MockmeilisearchDocumentManager_UpdateDocumentsCsv_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsCsv_Call{Call: _e.mock.On("UpdateDocumentsCsv", documents, options)}
 }
 
@@ -2630,7 +2630,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsCsvInBatches_Call struct {
 //   - documents []byte
 //   - batchsize int
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsCsvInBatches(documents interface{}, batchsize interface{}, options interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsCsvInBatches_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsCsvInBatches(documents any, batchsize any, options any) *MockmeilisearchDocumentManager_UpdateDocumentsCsvInBatches_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsCsvInBatches_Call{Call: _e.mock.On("UpdateDocumentsCsvInBatches", documents, batchsize, options)}
 }
 
@@ -2705,7 +2705,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsCsvInBatchesWithContext_Call 
 //   - documents []byte
 //   - batchsize int
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsCsvInBatchesWithContext(ctx interface{}, documents interface{}, batchsize interface{}, options interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsCsvInBatchesWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsCsvInBatchesWithContext(ctx any, documents any, batchsize any, options any) *MockmeilisearchDocumentManager_UpdateDocumentsCsvInBatchesWithContext_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsCsvInBatchesWithContext_Call{Call: _e.mock.On("UpdateDocumentsCsvInBatchesWithContext", ctx, documents, batchsize, options)}
 }
 
@@ -2784,7 +2784,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsCsvWithContext_Call struct {
 //   - ctx context.Context
 //   - documents []byte
 //   - options *meilisearch.CsvDocumentsQuery
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsCsvWithContext(ctx interface{}, documents interface{}, options interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsCsvWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsCsvWithContext(ctx any, documents any, options any) *MockmeilisearchDocumentManager_UpdateDocumentsCsvWithContext_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsCsvWithContext_Call{Call: _e.mock.On("UpdateDocumentsCsvWithContext", ctx, documents, options)}
 }
 
@@ -2858,7 +2858,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsInBatches_Call struct {
 //   - documentsPtr interface{}
 //   - batchSize int
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsInBatches(documentsPtr interface{}, batchSize interface{}, opts interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsInBatches_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsInBatches(documentsPtr any, batchSize any, opts any) *MockmeilisearchDocumentManager_UpdateDocumentsInBatches_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsInBatches_Call{Call: _e.mock.On("UpdateDocumentsInBatches", documentsPtr, batchSize, opts)}
 }
 
@@ -2933,7 +2933,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsInBatchesWithContext_Call str
 //   - documentsPtr interface{}
 //   - batchSize int
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsInBatchesWithContext(ctx interface{}, documentsPtr interface{}, batchSize interface{}, opts interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsInBatchesWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsInBatchesWithContext(ctx any, documentsPtr any, batchSize any, opts any) *MockmeilisearchDocumentManager_UpdateDocumentsInBatchesWithContext_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsInBatchesWithContext_Call{Call: _e.mock.On("UpdateDocumentsInBatchesWithContext", ctx, documentsPtr, batchSize, opts)}
 }
 
@@ -3011,7 +3011,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsNdjson_Call struct {
 // UpdateDocumentsNdjson is a helper method to define mock.On call
 //   - documents []byte
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsNdjson(documents interface{}, opts interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsNdjson_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsNdjson(documents any, opts any) *MockmeilisearchDocumentManager_UpdateDocumentsNdjson_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsNdjson_Call{Call: _e.mock.On("UpdateDocumentsNdjson", documents, opts)}
 }
 
@@ -3080,7 +3080,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsNdjsonInBatches_Call struct {
 //   - documents []byte
 //   - batchsize int
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsNdjsonInBatches(documents interface{}, batchsize interface{}, opts interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsNdjsonInBatches_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsNdjsonInBatches(documents any, batchsize any, opts any) *MockmeilisearchDocumentManager_UpdateDocumentsNdjsonInBatches_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsNdjsonInBatches_Call{Call: _e.mock.On("UpdateDocumentsNdjsonInBatches", documents, batchsize, opts)}
 }
 
@@ -3155,7 +3155,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsNdjsonInBatchesWithContext_Ca
 //   - documents []byte
 //   - batchsize int
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsNdjsonInBatchesWithContext(ctx interface{}, documents interface{}, batchsize interface{}, opts interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsNdjsonInBatchesWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsNdjsonInBatchesWithContext(ctx any, documents any, batchsize any, opts any) *MockmeilisearchDocumentManager_UpdateDocumentsNdjsonInBatchesWithContext_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsNdjsonInBatchesWithContext_Call{Call: _e.mock.On("UpdateDocumentsNdjsonInBatchesWithContext", ctx, documents, batchsize, opts)}
 }
 
@@ -3234,7 +3234,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsNdjsonWithContext_Call struct
 //   - ctx context.Context
 //   - documents []byte
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsNdjsonWithContext(ctx interface{}, documents interface{}, opts interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsNdjsonWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsNdjsonWithContext(ctx any, documents any, opts any) *MockmeilisearchDocumentManager_UpdateDocumentsNdjsonWithContext_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsNdjsonWithContext_Call{Call: _e.mock.On("UpdateDocumentsNdjsonWithContext", ctx, documents, opts)}
 }
 
@@ -3308,7 +3308,7 @@ type MockmeilisearchDocumentManager_UpdateDocumentsWithContext_Call struct {
 //   - ctx context.Context
 //   - documentsPtr interface{}
 //   - opts *meilisearch.DocumentOptions
-func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsWithContext(ctx interface{}, documentsPtr interface{}, opts interface{}) *MockmeilisearchDocumentManager_UpdateDocumentsWithContext_Call {
+func (_e *MockmeilisearchDocumentManager_Expecter) UpdateDocumentsWithContext(ctx any, documentsPtr any, opts any) *MockmeilisearchDocumentManager_UpdateDocumentsWithContext_Call {
 	return &MockmeilisearchDocumentManager_UpdateDocumentsWithContext_Call{Call: _e.mock.On("UpdateDocumentsWithContext", ctx, documentsPtr, opts)}
 }
 
