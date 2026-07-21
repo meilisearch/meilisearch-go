@@ -128,7 +128,7 @@ type MockmeilisearchSettingsReader_GetDictionaryWithContext_Call struct {
 
 // GetDictionaryWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetDictionaryWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetDictionaryWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetDictionaryWithContext(ctx any) *MockmeilisearchSettingsReader_GetDictionaryWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetDictionaryWithContext_Call{Call: _e.mock.On("GetDictionaryWithContext", ctx)}
 }
 
@@ -245,7 +245,7 @@ type MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call struct
 
 // GetDisplayedAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetDisplayedAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetDisplayedAttributesWithContext(ctx any) *MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call{Call: _e.mock.On("GetDisplayedAttributesWithContext", ctx)}
 }
 
@@ -362,7 +362,7 @@ type MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call struct {
 
 // GetDistinctAttributeWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetDistinctAttributeWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetDistinctAttributeWithContext(ctx any) *MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call{Call: _e.mock.On("GetDistinctAttributeWithContext", ctx)}
 }
 
@@ -479,7 +479,7 @@ type MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call struct {
 
 // GetEmbeddersWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetEmbeddersWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetEmbeddersWithContext(ctx any) *MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call{Call: _e.mock.On("GetEmbeddersWithContext", ctx)}
 }
 
@@ -592,7 +592,7 @@ type MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call struct {
 
 // GetFacetSearchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetFacetSearchWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetFacetSearchWithContext(ctx any) *MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call{Call: _e.mock.On("GetFacetSearchWithContext", ctx)}
 }
 
@@ -709,7 +709,7 @@ type MockmeilisearchSettingsReader_GetFacetingWithContext_Call struct {
 
 // GetFacetingWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetFacetingWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetFacetingWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetFacetingWithContext(ctx any) *MockmeilisearchSettingsReader_GetFacetingWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetFacetingWithContext_Call{Call: _e.mock.On("GetFacetingWithContext", ctx)}
 }
 
@@ -826,7 +826,7 @@ type MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call struc
 
 // GetFilterableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetFilterableAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetFilterableAttributesWithContext(ctx any) *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call{Call: _e.mock.On("GetFilterableAttributesWithContext", ctx)}
 }
 
@@ -849,6 +849,123 @@ func (_c *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call)
 }
 
 func (_c *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context) (*[]interface{}, error)) *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetForeignKeys provides a mock function for the type MockmeilisearchSettingsReader
+func (_mock *MockmeilisearchSettingsReader) GetForeignKeys() ([]meilisearch.ForeignKey, error) {
+	ret := _mock.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetForeignKeys")
+	}
+
+	var r0 []meilisearch.ForeignKey
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func() ([]meilisearch.ForeignKey, error)); ok {
+		return returnFunc()
+	}
+	if returnFunc, ok := ret.Get(0).(func() []meilisearch.ForeignKey); ok {
+		r0 = returnFunc()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]meilisearch.ForeignKey)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func() error); ok {
+		r1 = returnFunc()
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsReader_GetForeignKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeys'
+type MockmeilisearchSettingsReader_GetForeignKeys_Call struct {
+	*mock.Call
+}
+
+// GetForeignKeys is a helper method to define mock.On call
+func (_e *MockmeilisearchSettingsReader_Expecter) GetForeignKeys() *MockmeilisearchSettingsReader_GetForeignKeys_Call {
+	return &MockmeilisearchSettingsReader_GetForeignKeys_Call{Call: _e.mock.On("GetForeignKeys")}
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) Run(run func()) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		run()
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
+	_c.Call.Return(foreignKeys, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) RunAndReturn(run func() ([]meilisearch.ForeignKey, error)) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// GetForeignKeysWithContext provides a mock function for the type MockmeilisearchSettingsReader
+func (_mock *MockmeilisearchSettingsReader) GetForeignKeysWithContext(ctx context.Context) ([]meilisearch.ForeignKey, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetForeignKeysWithContext")
+	}
+
+	var r0 []meilisearch.ForeignKey
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) ([]meilisearch.ForeignKey, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) []meilisearch.ForeignKey); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]meilisearch.ForeignKey)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeysWithContext'
+type MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call struct {
+	*mock.Call
+}
+
+// GetForeignKeysWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockmeilisearchSettingsReader_Expecter) GetForeignKeysWithContext(ctx any) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
+	return &MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call{Call: _e.mock.On("GetForeignKeysWithContext", ctx)}
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
+	_c.Call.Return(foreignKeys, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call) RunAndReturn(run func(ctx context.Context) ([]meilisearch.ForeignKey, error)) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -943,7 +1060,7 @@ type MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call struct
 
 // GetLocalizedAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetLocalizedAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetLocalizedAttributesWithContext(ctx any) *MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call{Call: _e.mock.On("GetLocalizedAttributesWithContext", ctx)}
 }
 
@@ -1060,7 +1177,7 @@ type MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call struct 
 
 // GetNonSeparatorTokensWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetNonSeparatorTokensWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetNonSeparatorTokensWithContext(ctx any) *MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call{Call: _e.mock.On("GetNonSeparatorTokensWithContext", ctx)}
 }
 
@@ -1177,7 +1294,7 @@ type MockmeilisearchSettingsReader_GetPaginationWithContext_Call struct {
 
 // GetPaginationWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetPaginationWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetPaginationWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetPaginationWithContext(ctx any) *MockmeilisearchSettingsReader_GetPaginationWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetPaginationWithContext_Call{Call: _e.mock.On("GetPaginationWithContext", ctx)}
 }
 
@@ -1294,7 +1411,7 @@ type MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call struct {
 
 // GetPrefixSearchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetPrefixSearchWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetPrefixSearchWithContext(ctx any) *MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call{Call: _e.mock.On("GetPrefixSearchWithContext", ctx)}
 }
 
@@ -1407,7 +1524,7 @@ type MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call struct 
 
 // GetProximityPrecisionWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetProximityPrecisionWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetProximityPrecisionWithContext(ctx any) *MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call{Call: _e.mock.On("GetProximityPrecisionWithContext", ctx)}
 }
 
@@ -1524,7 +1641,7 @@ type MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call struct {
 
 // GetRankingRulesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetRankingRulesWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetRankingRulesWithContext(ctx any) *MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call{Call: _e.mock.On("GetRankingRulesWithContext", ctx)}
 }
 
@@ -1637,7 +1754,7 @@ type MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call struct {
 
 // GetSearchCutoffMsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSearchCutoffMsWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSearchCutoffMsWithContext(ctx any) *MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call{Call: _e.mock.On("GetSearchCutoffMsWithContext", ctx)}
 }
 
@@ -1754,7 +1871,7 @@ type MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call struc
 
 // GetSearchableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSearchableAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSearchableAttributesWithContext(ctx any) *MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call{Call: _e.mock.On("GetSearchableAttributesWithContext", ctx)}
 }
 
@@ -1871,7 +1988,7 @@ type MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call struct {
 
 // GetSeparatorTokensWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSeparatorTokensWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSeparatorTokensWithContext(ctx any) *MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call{Call: _e.mock.On("GetSeparatorTokensWithContext", ctx)}
 }
 
@@ -1988,7 +2105,7 @@ type MockmeilisearchSettingsReader_GetSettingsWithContext_Call struct {
 
 // GetSettingsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSettingsWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetSettingsWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSettingsWithContext(ctx any) *MockmeilisearchSettingsReader_GetSettingsWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetSettingsWithContext_Call{Call: _e.mock.On("GetSettingsWithContext", ctx)}
 }
 
@@ -2105,7 +2222,7 @@ type MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call struct 
 
 // GetSortableAttributesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSortableAttributesWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSortableAttributesWithContext(ctx any) *MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call{Call: _e.mock.On("GetSortableAttributesWithContext", ctx)}
 }
 
@@ -2222,7 +2339,7 @@ type MockmeilisearchSettingsReader_GetStopWordsWithContext_Call struct {
 
 // GetStopWordsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetStopWordsWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetStopWordsWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetStopWordsWithContext(ctx any) *MockmeilisearchSettingsReader_GetStopWordsWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetStopWordsWithContext_Call{Call: _e.mock.On("GetStopWordsWithContext", ctx)}
 }
 
@@ -2339,7 +2456,7 @@ type MockmeilisearchSettingsReader_GetSynonymsWithContext_Call struct {
 
 // GetSynonymsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSynonymsWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetSynonymsWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSynonymsWithContext(ctx any) *MockmeilisearchSettingsReader_GetSynonymsWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetSynonymsWithContext_Call{Call: _e.mock.On("GetSynonymsWithContext", ctx)}
 }
 
@@ -2456,7 +2573,7 @@ type MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call struct {
 
 // GetTypoToleranceWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetTypoToleranceWithContext(ctx interface{}) *MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call {
+func (_e *MockmeilisearchSettingsReader_Expecter) GetTypoToleranceWithContext(ctx any) *MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call {
 	return &MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call{Call: _e.mock.On("GetTypoToleranceWithContext", ctx)}
 }
 

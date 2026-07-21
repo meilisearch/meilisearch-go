@@ -73,7 +73,7 @@ type MockmeilisearchKeyManager_CreateKey_Call struct {
 
 // CreateKey is a helper method to define mock.On call
 //   - request *meilisearch.Key
-func (_e *MockmeilisearchKeyManager_Expecter) CreateKey(request interface{}) *MockmeilisearchKeyManager_CreateKey_Call {
+func (_e *MockmeilisearchKeyManager_Expecter) CreateKey(request any) *MockmeilisearchKeyManager_CreateKey_Call {
 	return &MockmeilisearchKeyManager_CreateKey_Call{Call: _e.mock.On("CreateKey", request)}
 }
 
@@ -136,7 +136,7 @@ type MockmeilisearchKeyManager_CreateKeyWithContext_Call struct {
 // CreateKeyWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *meilisearch.Key
-func (_e *MockmeilisearchKeyManager_Expecter) CreateKeyWithContext(ctx interface{}, request interface{}) *MockmeilisearchKeyManager_CreateKeyWithContext_Call {
+func (_e *MockmeilisearchKeyManager_Expecter) CreateKeyWithContext(ctx any, request any) *MockmeilisearchKeyManager_CreateKeyWithContext_Call {
 	return &MockmeilisearchKeyManager_CreateKeyWithContext_Call{Call: _e.mock.On("CreateKeyWithContext", ctx, request)}
 }
 
@@ -201,7 +201,7 @@ type MockmeilisearchKeyManager_DeleteKey_Call struct {
 
 // DeleteKey is a helper method to define mock.On call
 //   - keyOrUID string
-func (_e *MockmeilisearchKeyManager_Expecter) DeleteKey(keyOrUID interface{}) *MockmeilisearchKeyManager_DeleteKey_Call {
+func (_e *MockmeilisearchKeyManager_Expecter) DeleteKey(keyOrUID any) *MockmeilisearchKeyManager_DeleteKey_Call {
 	return &MockmeilisearchKeyManager_DeleteKey_Call{Call: _e.mock.On("DeleteKey", keyOrUID)}
 }
 
@@ -262,7 +262,7 @@ type MockmeilisearchKeyManager_DeleteKeyWithContext_Call struct {
 // DeleteKeyWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - keyOrUID string
-func (_e *MockmeilisearchKeyManager_Expecter) DeleteKeyWithContext(ctx interface{}, keyOrUID interface{}) *MockmeilisearchKeyManager_DeleteKeyWithContext_Call {
+func (_e *MockmeilisearchKeyManager_Expecter) DeleteKeyWithContext(ctx any, keyOrUID any) *MockmeilisearchKeyManager_DeleteKeyWithContext_Call {
 	return &MockmeilisearchKeyManager_DeleteKeyWithContext_Call{Call: _e.mock.On("DeleteKeyWithContext", ctx, keyOrUID)}
 }
 
@@ -329,7 +329,7 @@ type MockmeilisearchKeyManager_GetKey_Call struct {
 
 // GetKey is a helper method to define mock.On call
 //   - identifier string
-func (_e *MockmeilisearchKeyManager_Expecter) GetKey(identifier interface{}) *MockmeilisearchKeyManager_GetKey_Call {
+func (_e *MockmeilisearchKeyManager_Expecter) GetKey(identifier any) *MockmeilisearchKeyManager_GetKey_Call {
 	return &MockmeilisearchKeyManager_GetKey_Call{Call: _e.mock.On("GetKey", identifier)}
 }
 
@@ -392,7 +392,7 @@ type MockmeilisearchKeyManager_GetKeyWithContext_Call struct {
 // GetKeyWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - identifier string
-func (_e *MockmeilisearchKeyManager_Expecter) GetKeyWithContext(ctx interface{}, identifier interface{}) *MockmeilisearchKeyManager_GetKeyWithContext_Call {
+func (_e *MockmeilisearchKeyManager_Expecter) GetKeyWithContext(ctx any, identifier any) *MockmeilisearchKeyManager_GetKeyWithContext_Call {
 	return &MockmeilisearchKeyManager_GetKeyWithContext_Call{Call: _e.mock.On("GetKeyWithContext", ctx, identifier)}
 }
 
@@ -459,7 +459,7 @@ type MockmeilisearchKeyManager_GetKeys_Call struct {
 
 // GetKeys is a helper method to define mock.On call
 //   - param *meilisearch.KeysQuery
-func (_e *MockmeilisearchKeyManager_Expecter) GetKeys(param interface{}) *MockmeilisearchKeyManager_GetKeys_Call {
+func (_e *MockmeilisearchKeyManager_Expecter) GetKeys(param any) *MockmeilisearchKeyManager_GetKeys_Call {
 	return &MockmeilisearchKeyManager_GetKeys_Call{Call: _e.mock.On("GetKeys", param)}
 }
 
@@ -522,7 +522,7 @@ type MockmeilisearchKeyManager_GetKeysWithContext_Call struct {
 // GetKeysWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.KeysQuery
-func (_e *MockmeilisearchKeyManager_Expecter) GetKeysWithContext(ctx interface{}, param interface{}) *MockmeilisearchKeyManager_GetKeysWithContext_Call {
+func (_e *MockmeilisearchKeyManager_Expecter) GetKeysWithContext(ctx any, param any) *MockmeilisearchKeyManager_GetKeysWithContext_Call {
 	return &MockmeilisearchKeyManager_GetKeysWithContext_Call{Call: _e.mock.On("GetKeysWithContext", ctx, param)}
 }
 
@@ -590,7 +590,7 @@ type MockmeilisearchKeyManager_UpdateKey_Call struct {
 // UpdateKey is a helper method to define mock.On call
 //   - keyOrUID string
 //   - request *meilisearch.Key
-func (_e *MockmeilisearchKeyManager_Expecter) UpdateKey(keyOrUID interface{}, request interface{}) *MockmeilisearchKeyManager_UpdateKey_Call {
+func (_e *MockmeilisearchKeyManager_Expecter) UpdateKey(keyOrUID any, request any) *MockmeilisearchKeyManager_UpdateKey_Call {
 	return &MockmeilisearchKeyManager_UpdateKey_Call{Call: _e.mock.On("UpdateKey", keyOrUID, request)}
 }
 
@@ -659,7 +659,7 @@ type MockmeilisearchKeyManager_UpdateKeyWithContext_Call struct {
 //   - ctx context.Context
 //   - keyOrUID string
 //   - request *meilisearch.Key
-func (_e *MockmeilisearchKeyManager_Expecter) UpdateKeyWithContext(ctx interface{}, keyOrUID interface{}, request interface{}) *MockmeilisearchKeyManager_UpdateKeyWithContext_Call {
+func (_e *MockmeilisearchKeyManager_Expecter) UpdateKeyWithContext(ctx any, keyOrUID any, request any) *MockmeilisearchKeyManager_UpdateKeyWithContext_Call {
 	return &MockmeilisearchKeyManager_UpdateKeyWithContext_Call{Call: _e.mock.On("UpdateKeyWithContext", ctx, keyOrUID, request)}
 }
 

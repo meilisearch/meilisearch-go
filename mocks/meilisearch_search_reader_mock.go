@@ -74,7 +74,7 @@ type MockmeilisearchSearchReader_FacetSearch_Call struct {
 
 // FacetSearch is a helper method to define mock.On call
 //   - request *meilisearch.FacetSearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) FacetSearch(request interface{}) *MockmeilisearchSearchReader_FacetSearch_Call {
+func (_e *MockmeilisearchSearchReader_Expecter) FacetSearch(request any) *MockmeilisearchSearchReader_FacetSearch_Call {
 	return &MockmeilisearchSearchReader_FacetSearch_Call{Call: _e.mock.On("FacetSearch", request)}
 }
 
@@ -137,7 +137,7 @@ type MockmeilisearchSearchReader_FacetSearchWithContext_Call struct {
 // FacetSearchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *meilisearch.FacetSearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) FacetSearchWithContext(ctx interface{}, request interface{}) *MockmeilisearchSearchReader_FacetSearchWithContext_Call {
+func (_e *MockmeilisearchSearchReader_Expecter) FacetSearchWithContext(ctx any, request any) *MockmeilisearchSearchReader_FacetSearchWithContext_Call {
 	return &MockmeilisearchSearchReader_FacetSearchWithContext_Call{Call: _e.mock.On("FacetSearchWithContext", ctx, request)}
 }
 
@@ -205,7 +205,7 @@ type MockmeilisearchSearchReader_Search_Call struct {
 // Search is a helper method to define mock.On call
 //   - query string
 //   - request *meilisearch.SearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) Search(query interface{}, request interface{}) *MockmeilisearchSearchReader_Search_Call {
+func (_e *MockmeilisearchSearchReader_Expecter) Search(query any, request any) *MockmeilisearchSearchReader_Search_Call {
 	return &MockmeilisearchSearchReader_Search_Call{Call: _e.mock.On("Search", query, request)}
 }
 
@@ -273,7 +273,7 @@ type MockmeilisearchSearchReader_SearchRaw_Call struct {
 // SearchRaw is a helper method to define mock.On call
 //   - query string
 //   - request *meilisearch.SearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) SearchRaw(query interface{}, request interface{}) *MockmeilisearchSearchReader_SearchRaw_Call {
+func (_e *MockmeilisearchSearchReader_Expecter) SearchRaw(query any, request any) *MockmeilisearchSearchReader_SearchRaw_Call {
 	return &MockmeilisearchSearchReader_SearchRaw_Call{Call: _e.mock.On("SearchRaw", query, request)}
 }
 
@@ -342,7 +342,7 @@ type MockmeilisearchSearchReader_SearchRawWithContext_Call struct {
 //   - ctx context.Context
 //   - query string
 //   - request *meilisearch.SearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) SearchRawWithContext(ctx interface{}, query interface{}, request interface{}) *MockmeilisearchSearchReader_SearchRawWithContext_Call {
+func (_e *MockmeilisearchSearchReader_Expecter) SearchRawWithContext(ctx any, query any, request any) *MockmeilisearchSearchReader_SearchRawWithContext_Call {
 	return &MockmeilisearchSearchReader_SearchRawWithContext_Call{Call: _e.mock.On("SearchRawWithContext", ctx, query, request)}
 }
 
@@ -404,7 +404,7 @@ type MockmeilisearchSearchReader_SearchSimilarDocuments_Call struct {
 // SearchSimilarDocuments is a helper method to define mock.On call
 //   - param *meilisearch.SimilarDocumentQuery
 //   - resp *meilisearch.SimilarDocumentResult
-func (_e *MockmeilisearchSearchReader_Expecter) SearchSimilarDocuments(param interface{}, resp interface{}) *MockmeilisearchSearchReader_SearchSimilarDocuments_Call {
+func (_e *MockmeilisearchSearchReader_Expecter) SearchSimilarDocuments(param any, resp any) *MockmeilisearchSearchReader_SearchSimilarDocuments_Call {
 	return &MockmeilisearchSearchReader_SearchSimilarDocuments_Call{Call: _e.mock.On("SearchSimilarDocuments", param, resp)}
 }
 
@@ -462,7 +462,7 @@ type MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call struct {
 //   - ctx context.Context
 //   - param *meilisearch.SimilarDocumentQuery
 //   - resp *meilisearch.SimilarDocumentResult
-func (_e *MockmeilisearchSearchReader_Expecter) SearchSimilarDocumentsWithContext(ctx interface{}, param interface{}, resp interface{}) *MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call {
+func (_e *MockmeilisearchSearchReader_Expecter) SearchSimilarDocumentsWithContext(ctx any, param any, resp any) *MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call {
 	return &MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call{Call: _e.mock.On("SearchSimilarDocumentsWithContext", ctx, param, resp)}
 }
 
@@ -536,7 +536,7 @@ type MockmeilisearchSearchReader_SearchWithContext_Call struct {
 //   - ctx context.Context
 //   - query string
 //   - request *meilisearch.SearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) SearchWithContext(ctx interface{}, query interface{}, request interface{}) *MockmeilisearchSearchReader_SearchWithContext_Call {
+func (_e *MockmeilisearchSearchReader_Expecter) SearchWithContext(ctx any, query any, request any) *MockmeilisearchSearchReader_SearchWithContext_Call {
 	return &MockmeilisearchSearchReader_SearchWithContext_Call{Call: _e.mock.On("SearchWithContext", ctx, query, request)}
 }
 

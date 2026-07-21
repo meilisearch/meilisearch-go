@@ -73,7 +73,7 @@ type MockmeilisearchSearchRulesReader_GetSearchRule_Call struct {
 
 // GetSearchRule is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchSearchRulesReader_Expecter) GetSearchRule(uid interface{}) *MockmeilisearchSearchRulesReader_GetSearchRule_Call {
+func (_e *MockmeilisearchSearchRulesReader_Expecter) GetSearchRule(uid any) *MockmeilisearchSearchRulesReader_GetSearchRule_Call {
 	return &MockmeilisearchSearchRulesReader_GetSearchRule_Call{Call: _e.mock.On("GetSearchRule", uid)}
 }
 
@@ -136,7 +136,7 @@ type MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call struct {
 // GetSearchRuleWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchSearchRulesReader_Expecter) GetSearchRuleWithContext(ctx interface{}, uid interface{}) *MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call {
+func (_e *MockmeilisearchSearchRulesReader_Expecter) GetSearchRuleWithContext(ctx any, uid any) *MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call {
 	return &MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call{Call: _e.mock.On("GetSearchRuleWithContext", ctx, uid)}
 }
 
@@ -203,7 +203,7 @@ type MockmeilisearchSearchRulesReader_ListSearchRules_Call struct {
 
 // ListSearchRules is a helper method to define mock.On call
 //   - params *meilisearch.SearchRulesParams
-func (_e *MockmeilisearchSearchRulesReader_Expecter) ListSearchRules(params interface{}) *MockmeilisearchSearchRulesReader_ListSearchRules_Call {
+func (_e *MockmeilisearchSearchRulesReader_Expecter) ListSearchRules(params any) *MockmeilisearchSearchRulesReader_ListSearchRules_Call {
 	return &MockmeilisearchSearchRulesReader_ListSearchRules_Call{Call: _e.mock.On("ListSearchRules", params)}
 }
 
@@ -266,7 +266,7 @@ type MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call struct {
 // ListSearchRulesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *meilisearch.SearchRulesParams
-func (_e *MockmeilisearchSearchRulesReader_Expecter) ListSearchRulesWithContext(ctx interface{}, params interface{}) *MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call {
+func (_e *MockmeilisearchSearchRulesReader_Expecter) ListSearchRulesWithContext(ctx any, params any) *MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call {
 	return &MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call{Call: _e.mock.On("ListSearchRulesWithContext", ctx, params)}
 }
 

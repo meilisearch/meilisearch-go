@@ -74,7 +74,7 @@ type MockmeilisearchServiceManager_AddWebhook_Call struct {
 
 // AddWebhook is a helper method to define mock.On call
 //   - params *meilisearch.AddWebhookRequest
-func (_e *MockmeilisearchServiceManager_Expecter) AddWebhook(params interface{}) *MockmeilisearchServiceManager_AddWebhook_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) AddWebhook(params any) *MockmeilisearchServiceManager_AddWebhook_Call {
 	return &MockmeilisearchServiceManager_AddWebhook_Call{Call: _e.mock.On("AddWebhook", params)}
 }
 
@@ -137,7 +137,7 @@ type MockmeilisearchServiceManager_AddWebhookWithContext_Call struct {
 // AddWebhookWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *meilisearch.AddWebhookRequest
-func (_e *MockmeilisearchServiceManager_Expecter) AddWebhookWithContext(ctx interface{}, params interface{}) *MockmeilisearchServiceManager_AddWebhookWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) AddWebhookWithContext(ctx any, params any) *MockmeilisearchServiceManager_AddWebhookWithContext_Call {
 	return &MockmeilisearchServiceManager_AddWebhookWithContext_Call{Call: _e.mock.On("AddWebhookWithContext", ctx, params)}
 }
 
@@ -204,7 +204,7 @@ type MockmeilisearchServiceManager_CancelTasks_Call struct {
 
 // CancelTasks is a helper method to define mock.On call
 //   - param *meilisearch.CancelTasksQuery
-func (_e *MockmeilisearchServiceManager_Expecter) CancelTasks(param interface{}) *MockmeilisearchServiceManager_CancelTasks_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) CancelTasks(param any) *MockmeilisearchServiceManager_CancelTasks_Call {
 	return &MockmeilisearchServiceManager_CancelTasks_Call{Call: _e.mock.On("CancelTasks", param)}
 }
 
@@ -267,7 +267,7 @@ type MockmeilisearchServiceManager_CancelTasksWithContext_Call struct {
 // CancelTasksWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.CancelTasksQuery
-func (_e *MockmeilisearchServiceManager_Expecter) CancelTasksWithContext(ctx interface{}, param interface{}) *MockmeilisearchServiceManager_CancelTasksWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) CancelTasksWithContext(ctx any, param any) *MockmeilisearchServiceManager_CancelTasksWithContext_Call {
 	return &MockmeilisearchServiceManager_CancelTasksWithContext_Call{Call: _e.mock.On("CancelTasksWithContext", ctx, param)}
 }
 
@@ -335,7 +335,7 @@ type MockmeilisearchServiceManager_ChatCompletionStream_Call struct {
 // ChatCompletionStream is a helper method to define mock.On call
 //   - workspace string
 //   - query *meilisearch.ChatCompletionQuery
-func (_e *MockmeilisearchServiceManager_Expecter) ChatCompletionStream(workspace interface{}, query interface{}) *MockmeilisearchServiceManager_ChatCompletionStream_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ChatCompletionStream(workspace any, query any) *MockmeilisearchServiceManager_ChatCompletionStream_Call {
 	return &MockmeilisearchServiceManager_ChatCompletionStream_Call{Call: _e.mock.On("ChatCompletionStream", workspace, query)}
 }
 
@@ -404,7 +404,7 @@ type MockmeilisearchServiceManager_ChatCompletionStreamWithContext_Call struct {
 //   - ctx context.Context
 //   - workspace string
 //   - query *meilisearch.ChatCompletionQuery
-func (_e *MockmeilisearchServiceManager_Expecter) ChatCompletionStreamWithContext(ctx interface{}, workspace interface{}, query interface{}) *MockmeilisearchServiceManager_ChatCompletionStreamWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ChatCompletionStreamWithContext(ctx any, workspace any, query any) *MockmeilisearchServiceManager_ChatCompletionStreamWithContext_Call {
 	return &MockmeilisearchServiceManager_ChatCompletionStreamWithContext_Call{Call: _e.mock.On("ChatCompletionStreamWithContext", ctx, workspace, query)}
 }
 
@@ -656,7 +656,7 @@ type MockmeilisearchServiceManager_CreateDumpWithContext_Call struct {
 
 // CreateDumpWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchServiceManager_Expecter) CreateDumpWithContext(ctx interface{}) *MockmeilisearchServiceManager_CreateDumpWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) CreateDumpWithContext(ctx any) *MockmeilisearchServiceManager_CreateDumpWithContext_Call {
 	return &MockmeilisearchServiceManager_CreateDumpWithContext_Call{Call: _e.mock.On("CreateDumpWithContext", ctx)}
 }
 
@@ -718,7 +718,7 @@ type MockmeilisearchServiceManager_CreateIndex_Call struct {
 
 // CreateIndex is a helper method to define mock.On call
 //   - config *meilisearch.IndexConfig
-func (_e *MockmeilisearchServiceManager_Expecter) CreateIndex(config interface{}) *MockmeilisearchServiceManager_CreateIndex_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) CreateIndex(config any) *MockmeilisearchServiceManager_CreateIndex_Call {
 	return &MockmeilisearchServiceManager_CreateIndex_Call{Call: _e.mock.On("CreateIndex", config)}
 }
 
@@ -781,7 +781,7 @@ type MockmeilisearchServiceManager_CreateIndexWithContext_Call struct {
 // CreateIndexWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - config *meilisearch.IndexConfig
-func (_e *MockmeilisearchServiceManager_Expecter) CreateIndexWithContext(ctx interface{}, config interface{}) *MockmeilisearchServiceManager_CreateIndexWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) CreateIndexWithContext(ctx any, config any) *MockmeilisearchServiceManager_CreateIndexWithContext_Call {
 	return &MockmeilisearchServiceManager_CreateIndexWithContext_Call{Call: _e.mock.On("CreateIndexWithContext", ctx, config)}
 }
 
@@ -848,7 +848,7 @@ type MockmeilisearchServiceManager_CreateKey_Call struct {
 
 // CreateKey is a helper method to define mock.On call
 //   - request *meilisearch.Key
-func (_e *MockmeilisearchServiceManager_Expecter) CreateKey(request interface{}) *MockmeilisearchServiceManager_CreateKey_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) CreateKey(request any) *MockmeilisearchServiceManager_CreateKey_Call {
 	return &MockmeilisearchServiceManager_CreateKey_Call{Call: _e.mock.On("CreateKey", request)}
 }
 
@@ -911,7 +911,7 @@ type MockmeilisearchServiceManager_CreateKeyWithContext_Call struct {
 // CreateKeyWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *meilisearch.Key
-func (_e *MockmeilisearchServiceManager_Expecter) CreateKeyWithContext(ctx interface{}, request interface{}) *MockmeilisearchServiceManager_CreateKeyWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) CreateKeyWithContext(ctx any, request any) *MockmeilisearchServiceManager_CreateKeyWithContext_Call {
 	return &MockmeilisearchServiceManager_CreateKeyWithContext_Call{Call: _e.mock.On("CreateKeyWithContext", ctx, request)}
 }
 
@@ -1033,7 +1033,7 @@ type MockmeilisearchServiceManager_CreateSnapshotWithContext_Call struct {
 
 // CreateSnapshotWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchServiceManager_Expecter) CreateSnapshotWithContext(ctx interface{}) *MockmeilisearchServiceManager_CreateSnapshotWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) CreateSnapshotWithContext(ctx any) *MockmeilisearchServiceManager_CreateSnapshotWithContext_Call {
 	return &MockmeilisearchServiceManager_CreateSnapshotWithContext_Call{Call: _e.mock.On("CreateSnapshotWithContext", ctx)}
 }
 
@@ -1095,7 +1095,7 @@ type MockmeilisearchServiceManager_DeleteIndex_Call struct {
 
 // DeleteIndex is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) DeleteIndex(uid interface{}) *MockmeilisearchServiceManager_DeleteIndex_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteIndex(uid any) *MockmeilisearchServiceManager_DeleteIndex_Call {
 	return &MockmeilisearchServiceManager_DeleteIndex_Call{Call: _e.mock.On("DeleteIndex", uid)}
 }
 
@@ -1158,7 +1158,7 @@ type MockmeilisearchServiceManager_DeleteIndexWithContext_Call struct {
 // DeleteIndexWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) DeleteIndexWithContext(ctx interface{}, uid interface{}) *MockmeilisearchServiceManager_DeleteIndexWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteIndexWithContext(ctx any, uid any) *MockmeilisearchServiceManager_DeleteIndexWithContext_Call {
 	return &MockmeilisearchServiceManager_DeleteIndexWithContext_Call{Call: _e.mock.On("DeleteIndexWithContext", ctx, uid)}
 }
 
@@ -1223,7 +1223,7 @@ type MockmeilisearchServiceManager_DeleteKey_Call struct {
 
 // DeleteKey is a helper method to define mock.On call
 //   - keyOrUID string
-func (_e *MockmeilisearchServiceManager_Expecter) DeleteKey(keyOrUID interface{}) *MockmeilisearchServiceManager_DeleteKey_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteKey(keyOrUID any) *MockmeilisearchServiceManager_DeleteKey_Call {
 	return &MockmeilisearchServiceManager_DeleteKey_Call{Call: _e.mock.On("DeleteKey", keyOrUID)}
 }
 
@@ -1284,7 +1284,7 @@ type MockmeilisearchServiceManager_DeleteKeyWithContext_Call struct {
 // DeleteKeyWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - keyOrUID string
-func (_e *MockmeilisearchServiceManager_Expecter) DeleteKeyWithContext(ctx interface{}, keyOrUID interface{}) *MockmeilisearchServiceManager_DeleteKeyWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteKeyWithContext(ctx any, keyOrUID any) *MockmeilisearchServiceManager_DeleteKeyWithContext_Call {
 	return &MockmeilisearchServiceManager_DeleteKeyWithContext_Call{Call: _e.mock.On("DeleteKeyWithContext", ctx, keyOrUID)}
 }
 
@@ -1340,7 +1340,7 @@ type MockmeilisearchServiceManager_DeleteSearchRule_Call struct {
 
 // DeleteSearchRule is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) DeleteSearchRule(uid interface{}) *MockmeilisearchServiceManager_DeleteSearchRule_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteSearchRule(uid any) *MockmeilisearchServiceManager_DeleteSearchRule_Call {
 	return &MockmeilisearchServiceManager_DeleteSearchRule_Call{Call: _e.mock.On("DeleteSearchRule", uid)}
 }
 
@@ -1392,7 +1392,7 @@ type MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call struct {
 // DeleteSearchRuleWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) DeleteSearchRuleWithContext(ctx interface{}, uid interface{}) *MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteSearchRuleWithContext(ctx any, uid any) *MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call {
 	return &MockmeilisearchServiceManager_DeleteSearchRuleWithContext_Call{Call: _e.mock.On("DeleteSearchRuleWithContext", ctx, uid)}
 }
 
@@ -1459,7 +1459,7 @@ type MockmeilisearchServiceManager_DeleteTasks_Call struct {
 
 // DeleteTasks is a helper method to define mock.On call
 //   - param *meilisearch.DeleteTasksQuery
-func (_e *MockmeilisearchServiceManager_Expecter) DeleteTasks(param interface{}) *MockmeilisearchServiceManager_DeleteTasks_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteTasks(param any) *MockmeilisearchServiceManager_DeleteTasks_Call {
 	return &MockmeilisearchServiceManager_DeleteTasks_Call{Call: _e.mock.On("DeleteTasks", param)}
 }
 
@@ -1522,7 +1522,7 @@ type MockmeilisearchServiceManager_DeleteTasksWithContext_Call struct {
 // DeleteTasksWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.DeleteTasksQuery
-func (_e *MockmeilisearchServiceManager_Expecter) DeleteTasksWithContext(ctx interface{}, param interface{}) *MockmeilisearchServiceManager_DeleteTasksWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteTasksWithContext(ctx any, param any) *MockmeilisearchServiceManager_DeleteTasksWithContext_Call {
 	return &MockmeilisearchServiceManager_DeleteTasksWithContext_Call{Call: _e.mock.On("DeleteTasksWithContext", ctx, param)}
 }
 
@@ -1578,7 +1578,7 @@ type MockmeilisearchServiceManager_DeleteWebhook_Call struct {
 
 // DeleteWebhook is a helper method to define mock.On call
 //   - uuid string
-func (_e *MockmeilisearchServiceManager_Expecter) DeleteWebhook(uuid interface{}) *MockmeilisearchServiceManager_DeleteWebhook_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteWebhook(uuid any) *MockmeilisearchServiceManager_DeleteWebhook_Call {
 	return &MockmeilisearchServiceManager_DeleteWebhook_Call{Call: _e.mock.On("DeleteWebhook", uuid)}
 }
 
@@ -1630,7 +1630,7 @@ type MockmeilisearchServiceManager_DeleteWebhookWithContext_Call struct {
 // DeleteWebhookWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockmeilisearchServiceManager_Expecter) DeleteWebhookWithContext(ctx interface{}, uuid interface{}) *MockmeilisearchServiceManager_DeleteWebhookWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) DeleteWebhookWithContext(ctx any, uuid any) *MockmeilisearchServiceManager_DeleteWebhookWithContext_Call {
 	return &MockmeilisearchServiceManager_DeleteWebhookWithContext_Call{Call: _e.mock.On("DeleteWebhookWithContext", ctx, uuid)}
 }
 
@@ -1743,7 +1743,7 @@ type MockmeilisearchServiceManager_Export_Call struct {
 
 // Export is a helper method to define mock.On call
 //   - params *meilisearch.ExportParams
-func (_e *MockmeilisearchServiceManager_Expecter) Export(params interface{}) *MockmeilisearchServiceManager_Export_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) Export(params any) *MockmeilisearchServiceManager_Export_Call {
 	return &MockmeilisearchServiceManager_Export_Call{Call: _e.mock.On("Export", params)}
 }
 
@@ -1806,7 +1806,7 @@ type MockmeilisearchServiceManager_ExportWithContext_Call struct {
 // ExportWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *meilisearch.ExportParams
-func (_e *MockmeilisearchServiceManager_Expecter) ExportWithContext(ctx interface{}, params interface{}) *MockmeilisearchServiceManager_ExportWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ExportWithContext(ctx any, params any) *MockmeilisearchServiceManager_ExportWithContext_Call {
 	return &MockmeilisearchServiceManager_ExportWithContext_Call{Call: _e.mock.On("ExportWithContext", ctx, params)}
 }
 
@@ -1873,7 +1873,7 @@ type MockmeilisearchServiceManager_GenerateTenantToken_Call struct {
 //   - apiKeyUID string
 //   - searchRules map[string]interface{}
 //   - options *meilisearch.TenantTokenOptions
-func (_e *MockmeilisearchServiceManager_Expecter) GenerateTenantToken(apiKeyUID interface{}, searchRules interface{}, options interface{}) *MockmeilisearchServiceManager_GenerateTenantToken_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GenerateTenantToken(apiKeyUID any, searchRules any, options any) *MockmeilisearchServiceManager_GenerateTenantToken_Call {
 	return &MockmeilisearchServiceManager_GenerateTenantToken_Call{Call: _e.mock.On("GenerateTenantToken", apiKeyUID, searchRules, options)}
 }
 
@@ -1945,7 +1945,7 @@ type MockmeilisearchServiceManager_GetBatch_Call struct {
 
 // GetBatch is a helper method to define mock.On call
 //   - batchUID int
-func (_e *MockmeilisearchServiceManager_Expecter) GetBatch(batchUID interface{}) *MockmeilisearchServiceManager_GetBatch_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetBatch(batchUID any) *MockmeilisearchServiceManager_GetBatch_Call {
 	return &MockmeilisearchServiceManager_GetBatch_Call{Call: _e.mock.On("GetBatch", batchUID)}
 }
 
@@ -2008,7 +2008,7 @@ type MockmeilisearchServiceManager_GetBatchWithContext_Call struct {
 // GetBatchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - batchUID int
-func (_e *MockmeilisearchServiceManager_Expecter) GetBatchWithContext(ctx interface{}, batchUID interface{}) *MockmeilisearchServiceManager_GetBatchWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetBatchWithContext(ctx any, batchUID any) *MockmeilisearchServiceManager_GetBatchWithContext_Call {
 	return &MockmeilisearchServiceManager_GetBatchWithContext_Call{Call: _e.mock.On("GetBatchWithContext", ctx, batchUID)}
 }
 
@@ -2075,7 +2075,7 @@ type MockmeilisearchServiceManager_GetBatches_Call struct {
 
 // GetBatches is a helper method to define mock.On call
 //   - param *meilisearch.BatchesQuery
-func (_e *MockmeilisearchServiceManager_Expecter) GetBatches(param interface{}) *MockmeilisearchServiceManager_GetBatches_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetBatches(param any) *MockmeilisearchServiceManager_GetBatches_Call {
 	return &MockmeilisearchServiceManager_GetBatches_Call{Call: _e.mock.On("GetBatches", param)}
 }
 
@@ -2138,7 +2138,7 @@ type MockmeilisearchServiceManager_GetBatchesWithContext_Call struct {
 // GetBatchesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.BatchesQuery
-func (_e *MockmeilisearchServiceManager_Expecter) GetBatchesWithContext(ctx interface{}, param interface{}) *MockmeilisearchServiceManager_GetBatchesWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetBatchesWithContext(ctx any, param any) *MockmeilisearchServiceManager_GetBatchesWithContext_Call {
 	return &MockmeilisearchServiceManager_GetBatchesWithContext_Call{Call: _e.mock.On("GetBatchesWithContext", ctx, param)}
 }
 
@@ -2205,7 +2205,7 @@ type MockmeilisearchServiceManager_GetChatWorkspace_Call struct {
 
 // GetChatWorkspace is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) GetChatWorkspace(uid interface{}) *MockmeilisearchServiceManager_GetChatWorkspace_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetChatWorkspace(uid any) *MockmeilisearchServiceManager_GetChatWorkspace_Call {
 	return &MockmeilisearchServiceManager_GetChatWorkspace_Call{Call: _e.mock.On("GetChatWorkspace", uid)}
 }
 
@@ -2267,7 +2267,7 @@ type MockmeilisearchServiceManager_GetChatWorkspaceSettings_Call struct {
 
 // GetChatWorkspaceSettings is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) GetChatWorkspaceSettings(uid interface{}) *MockmeilisearchServiceManager_GetChatWorkspaceSettings_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetChatWorkspaceSettings(uid any) *MockmeilisearchServiceManager_GetChatWorkspaceSettings_Call {
 	return &MockmeilisearchServiceManager_GetChatWorkspaceSettings_Call{Call: _e.mock.On("GetChatWorkspaceSettings", uid)}
 }
 
@@ -2330,7 +2330,7 @@ type MockmeilisearchServiceManager_GetChatWorkspaceSettingsWithContext_Call stru
 // GetChatWorkspaceSettingsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) GetChatWorkspaceSettingsWithContext(ctx interface{}, uid interface{}) *MockmeilisearchServiceManager_GetChatWorkspaceSettingsWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetChatWorkspaceSettingsWithContext(ctx any, uid any) *MockmeilisearchServiceManager_GetChatWorkspaceSettingsWithContext_Call {
 	return &MockmeilisearchServiceManager_GetChatWorkspaceSettingsWithContext_Call{Call: _e.mock.On("GetChatWorkspaceSettingsWithContext", ctx, uid)}
 }
 
@@ -2398,7 +2398,7 @@ type MockmeilisearchServiceManager_GetChatWorkspaceWithContext_Call struct {
 // GetChatWorkspaceWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) GetChatWorkspaceWithContext(ctx interface{}, uid interface{}) *MockmeilisearchServiceManager_GetChatWorkspaceWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetChatWorkspaceWithContext(ctx any, uid any) *MockmeilisearchServiceManager_GetChatWorkspaceWithContext_Call {
 	return &MockmeilisearchServiceManager_GetChatWorkspaceWithContext_Call{Call: _e.mock.On("GetChatWorkspaceWithContext", ctx, uid)}
 }
 
@@ -2465,7 +2465,7 @@ type MockmeilisearchServiceManager_GetIndex_Call struct {
 
 // GetIndex is a helper method to define mock.On call
 //   - indexID string
-func (_e *MockmeilisearchServiceManager_Expecter) GetIndex(indexID interface{}) *MockmeilisearchServiceManager_GetIndex_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetIndex(indexID any) *MockmeilisearchServiceManager_GetIndex_Call {
 	return &MockmeilisearchServiceManager_GetIndex_Call{Call: _e.mock.On("GetIndex", indexID)}
 }
 
@@ -2528,7 +2528,7 @@ type MockmeilisearchServiceManager_GetIndexWithContext_Call struct {
 // GetIndexWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - indexID string
-func (_e *MockmeilisearchServiceManager_Expecter) GetIndexWithContext(ctx interface{}, indexID interface{}) *MockmeilisearchServiceManager_GetIndexWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetIndexWithContext(ctx any, indexID any) *MockmeilisearchServiceManager_GetIndexWithContext_Call {
 	return &MockmeilisearchServiceManager_GetIndexWithContext_Call{Call: _e.mock.On("GetIndexWithContext", ctx, indexID)}
 }
 
@@ -2595,7 +2595,7 @@ type MockmeilisearchServiceManager_GetKey_Call struct {
 
 // GetKey is a helper method to define mock.On call
 //   - identifier string
-func (_e *MockmeilisearchServiceManager_Expecter) GetKey(identifier interface{}) *MockmeilisearchServiceManager_GetKey_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetKey(identifier any) *MockmeilisearchServiceManager_GetKey_Call {
 	return &MockmeilisearchServiceManager_GetKey_Call{Call: _e.mock.On("GetKey", identifier)}
 }
 
@@ -2658,7 +2658,7 @@ type MockmeilisearchServiceManager_GetKeyWithContext_Call struct {
 // GetKeyWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - identifier string
-func (_e *MockmeilisearchServiceManager_Expecter) GetKeyWithContext(ctx interface{}, identifier interface{}) *MockmeilisearchServiceManager_GetKeyWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetKeyWithContext(ctx any, identifier any) *MockmeilisearchServiceManager_GetKeyWithContext_Call {
 	return &MockmeilisearchServiceManager_GetKeyWithContext_Call{Call: _e.mock.On("GetKeyWithContext", ctx, identifier)}
 }
 
@@ -2725,7 +2725,7 @@ type MockmeilisearchServiceManager_GetKeys_Call struct {
 
 // GetKeys is a helper method to define mock.On call
 //   - param *meilisearch.KeysQuery
-func (_e *MockmeilisearchServiceManager_Expecter) GetKeys(param interface{}) *MockmeilisearchServiceManager_GetKeys_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetKeys(param any) *MockmeilisearchServiceManager_GetKeys_Call {
 	return &MockmeilisearchServiceManager_GetKeys_Call{Call: _e.mock.On("GetKeys", param)}
 }
 
@@ -2788,7 +2788,7 @@ type MockmeilisearchServiceManager_GetKeysWithContext_Call struct {
 // GetKeysWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.KeysQuery
-func (_e *MockmeilisearchServiceManager_Expecter) GetKeysWithContext(ctx interface{}, param interface{}) *MockmeilisearchServiceManager_GetKeysWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetKeysWithContext(ctx any, param any) *MockmeilisearchServiceManager_GetKeysWithContext_Call {
 	return &MockmeilisearchServiceManager_GetKeysWithContext_Call{Call: _e.mock.On("GetKeysWithContext", ctx, param)}
 }
 
@@ -2910,7 +2910,7 @@ type MockmeilisearchServiceManager_GetNetworkWithContext_Call struct {
 
 // GetNetworkWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchServiceManager_Expecter) GetNetworkWithContext(ctx interface{}) *MockmeilisearchServiceManager_GetNetworkWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetNetworkWithContext(ctx any) *MockmeilisearchServiceManager_GetNetworkWithContext_Call {
 	return &MockmeilisearchServiceManager_GetNetworkWithContext_Call{Call: _e.mock.On("GetNetworkWithContext", ctx)}
 }
 
@@ -2972,7 +2972,7 @@ type MockmeilisearchServiceManager_GetRawIndex_Call struct {
 
 // GetRawIndex is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) GetRawIndex(uid interface{}) *MockmeilisearchServiceManager_GetRawIndex_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetRawIndex(uid any) *MockmeilisearchServiceManager_GetRawIndex_Call {
 	return &MockmeilisearchServiceManager_GetRawIndex_Call{Call: _e.mock.On("GetRawIndex", uid)}
 }
 
@@ -3035,7 +3035,7 @@ type MockmeilisearchServiceManager_GetRawIndexWithContext_Call struct {
 // GetRawIndexWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) GetRawIndexWithContext(ctx interface{}, uid interface{}) *MockmeilisearchServiceManager_GetRawIndexWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetRawIndexWithContext(ctx any, uid any) *MockmeilisearchServiceManager_GetRawIndexWithContext_Call {
 	return &MockmeilisearchServiceManager_GetRawIndexWithContext_Call{Call: _e.mock.On("GetRawIndexWithContext", ctx, uid)}
 }
 
@@ -3102,7 +3102,7 @@ type MockmeilisearchServiceManager_GetRawIndexes_Call struct {
 
 // GetRawIndexes is a helper method to define mock.On call
 //   - param *meilisearch.IndexesQuery
-func (_e *MockmeilisearchServiceManager_Expecter) GetRawIndexes(param interface{}) *MockmeilisearchServiceManager_GetRawIndexes_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetRawIndexes(param any) *MockmeilisearchServiceManager_GetRawIndexes_Call {
 	return &MockmeilisearchServiceManager_GetRawIndexes_Call{Call: _e.mock.On("GetRawIndexes", param)}
 }
 
@@ -3165,7 +3165,7 @@ type MockmeilisearchServiceManager_GetRawIndexesWithContext_Call struct {
 // GetRawIndexesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.IndexesQuery
-func (_e *MockmeilisearchServiceManager_Expecter) GetRawIndexesWithContext(ctx interface{}, param interface{}) *MockmeilisearchServiceManager_GetRawIndexesWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetRawIndexesWithContext(ctx any, param any) *MockmeilisearchServiceManager_GetRawIndexesWithContext_Call {
 	return &MockmeilisearchServiceManager_GetRawIndexesWithContext_Call{Call: _e.mock.On("GetRawIndexesWithContext", ctx, param)}
 }
 
@@ -3232,7 +3232,7 @@ type MockmeilisearchServiceManager_GetSearchRule_Call struct {
 
 // GetSearchRule is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) GetSearchRule(uid interface{}) *MockmeilisearchServiceManager_GetSearchRule_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetSearchRule(uid any) *MockmeilisearchServiceManager_GetSearchRule_Call {
 	return &MockmeilisearchServiceManager_GetSearchRule_Call{Call: _e.mock.On("GetSearchRule", uid)}
 }
 
@@ -3295,7 +3295,7 @@ type MockmeilisearchServiceManager_GetSearchRuleWithContext_Call struct {
 // GetSearchRuleWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) GetSearchRuleWithContext(ctx interface{}, uid interface{}) *MockmeilisearchServiceManager_GetSearchRuleWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetSearchRuleWithContext(ctx any, uid any) *MockmeilisearchServiceManager_GetSearchRuleWithContext_Call {
 	return &MockmeilisearchServiceManager_GetSearchRuleWithContext_Call{Call: _e.mock.On("GetSearchRuleWithContext", ctx, uid)}
 }
 
@@ -3328,8 +3328,8 @@ func (_c *MockmeilisearchServiceManager_GetSearchRuleWithContext_Call) RunAndRet
 }
 
 // GetStats provides a mock function for the type MockmeilisearchServiceManager
-func (_mock *MockmeilisearchServiceManager) GetStats() (*meilisearch.Stats, error) {
-	ret := _mock.Called()
+func (_mock *MockmeilisearchServiceManager) GetStats(param *meilisearch.StatsParams) (*meilisearch.Stats, error) {
+	ret := _mock.Called(param)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetStats")
@@ -3337,18 +3337,18 @@ func (_mock *MockmeilisearchServiceManager) GetStats() (*meilisearch.Stats, erro
 
 	var r0 *meilisearch.Stats
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*meilisearch.Stats, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(*meilisearch.StatsParams) (*meilisearch.Stats, error)); ok {
+		return returnFunc(param)
 	}
-	if returnFunc, ok := ret.Get(0).(func() *meilisearch.Stats); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(*meilisearch.StatsParams) *meilisearch.Stats); ok {
+		r0 = returnFunc(param)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*meilisearch.Stats)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(*meilisearch.StatsParams) error); ok {
+		r1 = returnFunc(param)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -3361,13 +3361,20 @@ type MockmeilisearchServiceManager_GetStats_Call struct {
 }
 
 // GetStats is a helper method to define mock.On call
-func (_e *MockmeilisearchServiceManager_Expecter) GetStats() *MockmeilisearchServiceManager_GetStats_Call {
-	return &MockmeilisearchServiceManager_GetStats_Call{Call: _e.mock.On("GetStats")}
+//   - param *meilisearch.StatsParams
+func (_e *MockmeilisearchServiceManager_Expecter) GetStats(param any) *MockmeilisearchServiceManager_GetStats_Call {
+	return &MockmeilisearchServiceManager_GetStats_Call{Call: _e.mock.On("GetStats", param)}
 }
 
-func (_c *MockmeilisearchServiceManager_GetStats_Call) Run(run func()) *MockmeilisearchServiceManager_GetStats_Call {
+func (_c *MockmeilisearchServiceManager_GetStats_Call) Run(run func(param *meilisearch.StatsParams)) *MockmeilisearchServiceManager_GetStats_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 *meilisearch.StatsParams
+		if args[0] != nil {
+			arg0 = args[0].(*meilisearch.StatsParams)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -3377,14 +3384,14 @@ func (_c *MockmeilisearchServiceManager_GetStats_Call) Return(stats *meilisearch
 	return _c
 }
 
-func (_c *MockmeilisearchServiceManager_GetStats_Call) RunAndReturn(run func() (*meilisearch.Stats, error)) *MockmeilisearchServiceManager_GetStats_Call {
+func (_c *MockmeilisearchServiceManager_GetStats_Call) RunAndReturn(run func(param *meilisearch.StatsParams) (*meilisearch.Stats, error)) *MockmeilisearchServiceManager_GetStats_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetStatsWithContext provides a mock function for the type MockmeilisearchServiceManager
-func (_mock *MockmeilisearchServiceManager) GetStatsWithContext(ctx context.Context) (*meilisearch.Stats, error) {
-	ret := _mock.Called(ctx)
+func (_mock *MockmeilisearchServiceManager) GetStatsWithContext(ctx context.Context, param *meilisearch.StatsParams) (*meilisearch.Stats, error) {
+	ret := _mock.Called(ctx, param)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetStatsWithContext")
@@ -3392,18 +3399,18 @@ func (_mock *MockmeilisearchServiceManager) GetStatsWithContext(ctx context.Cont
 
 	var r0 *meilisearch.Stats
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context) (*meilisearch.Stats, error)); ok {
-		return returnFunc(ctx)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.StatsParams) (*meilisearch.Stats, error)); ok {
+		return returnFunc(ctx, param)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context) *meilisearch.Stats); ok {
-		r0 = returnFunc(ctx)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.StatsParams) *meilisearch.Stats); ok {
+		r0 = returnFunc(ctx, param)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*meilisearch.Stats)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
-		r1 = returnFunc(ctx)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *meilisearch.StatsParams) error); ok {
+		r1 = returnFunc(ctx, param)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -3417,18 +3424,24 @@ type MockmeilisearchServiceManager_GetStatsWithContext_Call struct {
 
 // GetStatsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchServiceManager_Expecter) GetStatsWithContext(ctx interface{}) *MockmeilisearchServiceManager_GetStatsWithContext_Call {
-	return &MockmeilisearchServiceManager_GetStatsWithContext_Call{Call: _e.mock.On("GetStatsWithContext", ctx)}
+//   - param *meilisearch.StatsParams
+func (_e *MockmeilisearchServiceManager_Expecter) GetStatsWithContext(ctx any, param any) *MockmeilisearchServiceManager_GetStatsWithContext_Call {
+	return &MockmeilisearchServiceManager_GetStatsWithContext_Call{Call: _e.mock.On("GetStatsWithContext", ctx, param)}
 }
 
-func (_c *MockmeilisearchServiceManager_GetStatsWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchServiceManager_GetStatsWithContext_Call {
+func (_c *MockmeilisearchServiceManager_GetStatsWithContext_Call) Run(run func(ctx context.Context, param *meilisearch.StatsParams)) *MockmeilisearchServiceManager_GetStatsWithContext_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
+		var arg1 *meilisearch.StatsParams
+		if args[1] != nil {
+			arg1 = args[1].(*meilisearch.StatsParams)
+		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
@@ -3439,7 +3452,7 @@ func (_c *MockmeilisearchServiceManager_GetStatsWithContext_Call) Return(stats *
 	return _c
 }
 
-func (_c *MockmeilisearchServiceManager_GetStatsWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.Stats, error)) *MockmeilisearchServiceManager_GetStatsWithContext_Call {
+func (_c *MockmeilisearchServiceManager_GetStatsWithContext_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.StatsParams) (*meilisearch.Stats, error)) *MockmeilisearchServiceManager_GetStatsWithContext_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -3479,7 +3492,7 @@ type MockmeilisearchServiceManager_GetTask_Call struct {
 
 // GetTask is a helper method to define mock.On call
 //   - taskUID int64
-func (_e *MockmeilisearchServiceManager_Expecter) GetTask(taskUID interface{}) *MockmeilisearchServiceManager_GetTask_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetTask(taskUID any) *MockmeilisearchServiceManager_GetTask_Call {
 	return &MockmeilisearchServiceManager_GetTask_Call{Call: _e.mock.On("GetTask", taskUID)}
 }
 
@@ -3531,7 +3544,7 @@ type MockmeilisearchServiceManager_GetTaskDocuments_Call struct {
 // GetTaskDocuments is a helper method to define mock.On call
 //   - taskUID int64
 //   - dst interface{}
-func (_e *MockmeilisearchServiceManager_Expecter) GetTaskDocuments(taskUID interface{}, dst interface{}) *MockmeilisearchServiceManager_GetTaskDocuments_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetTaskDocuments(taskUID any, dst any) *MockmeilisearchServiceManager_GetTaskDocuments_Call {
 	return &MockmeilisearchServiceManager_GetTaskDocuments_Call{Call: _e.mock.On("GetTaskDocuments", taskUID, dst)}
 }
 
@@ -3589,7 +3602,7 @@ type MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call struct {
 //   - ctx context.Context
 //   - taskUID int64
 //   - dst interface{}
-func (_e *MockmeilisearchServiceManager_Expecter) GetTaskDocumentsWithContext(ctx interface{}, taskUID interface{}, dst interface{}) *MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetTaskDocumentsWithContext(ctx any, taskUID any, dst any) *MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call {
 	return &MockmeilisearchServiceManager_GetTaskDocumentsWithContext_Call{Call: _e.mock.On("GetTaskDocumentsWithContext", ctx, taskUID, dst)}
 }
 
@@ -3662,7 +3675,7 @@ type MockmeilisearchServiceManager_GetTaskWithContext_Call struct {
 // GetTaskWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - taskUID int64
-func (_e *MockmeilisearchServiceManager_Expecter) GetTaskWithContext(ctx interface{}, taskUID interface{}) *MockmeilisearchServiceManager_GetTaskWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetTaskWithContext(ctx any, taskUID any) *MockmeilisearchServiceManager_GetTaskWithContext_Call {
 	return &MockmeilisearchServiceManager_GetTaskWithContext_Call{Call: _e.mock.On("GetTaskWithContext", ctx, taskUID)}
 }
 
@@ -3729,7 +3742,7 @@ type MockmeilisearchServiceManager_GetTasks_Call struct {
 
 // GetTasks is a helper method to define mock.On call
 //   - param *meilisearch.TasksQuery
-func (_e *MockmeilisearchServiceManager_Expecter) GetTasks(param interface{}) *MockmeilisearchServiceManager_GetTasks_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetTasks(param any) *MockmeilisearchServiceManager_GetTasks_Call {
 	return &MockmeilisearchServiceManager_GetTasks_Call{Call: _e.mock.On("GetTasks", param)}
 }
 
@@ -3792,7 +3805,7 @@ type MockmeilisearchServiceManager_GetTasksWithContext_Call struct {
 // GetTasksWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.TasksQuery
-func (_e *MockmeilisearchServiceManager_Expecter) GetTasksWithContext(ctx interface{}, param interface{}) *MockmeilisearchServiceManager_GetTasksWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetTasksWithContext(ctx any, param any) *MockmeilisearchServiceManager_GetTasksWithContext_Call {
 	return &MockmeilisearchServiceManager_GetTasksWithContext_Call{Call: _e.mock.On("GetTasksWithContext", ctx, param)}
 }
 
@@ -3859,7 +3872,7 @@ type MockmeilisearchServiceManager_GetWebhook_Call struct {
 
 // GetWebhook is a helper method to define mock.On call
 //   - uuid string
-func (_e *MockmeilisearchServiceManager_Expecter) GetWebhook(uuid interface{}) *MockmeilisearchServiceManager_GetWebhook_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetWebhook(uuid any) *MockmeilisearchServiceManager_GetWebhook_Call {
 	return &MockmeilisearchServiceManager_GetWebhook_Call{Call: _e.mock.On("GetWebhook", uuid)}
 }
 
@@ -3922,7 +3935,7 @@ type MockmeilisearchServiceManager_GetWebhookWithContext_Call struct {
 // GetWebhookWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockmeilisearchServiceManager_Expecter) GetWebhookWithContext(ctx interface{}, uuid interface{}) *MockmeilisearchServiceManager_GetWebhookWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) GetWebhookWithContext(ctx any, uuid any) *MockmeilisearchServiceManager_GetWebhookWithContext_Call {
 	return &MockmeilisearchServiceManager_GetWebhookWithContext_Call{Call: _e.mock.On("GetWebhookWithContext", ctx, uuid)}
 }
 
@@ -4044,7 +4057,7 @@ type MockmeilisearchServiceManager_HealthWithContext_Call struct {
 
 // HealthWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchServiceManager_Expecter) HealthWithContext(ctx interface{}) *MockmeilisearchServiceManager_HealthWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) HealthWithContext(ctx any) *MockmeilisearchServiceManager_HealthWithContext_Call {
 	return &MockmeilisearchServiceManager_HealthWithContext_Call{Call: _e.mock.On("HealthWithContext", ctx)}
 }
 
@@ -4097,7 +4110,7 @@ type MockmeilisearchServiceManager_Index_Call struct {
 
 // Index is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) Index(uid interface{}) *MockmeilisearchServiceManager_Index_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) Index(uid any) *MockmeilisearchServiceManager_Index_Call {
 	return &MockmeilisearchServiceManager_Index_Call{Call: _e.mock.On("Index", uid)}
 }
 
@@ -4295,7 +4308,7 @@ type MockmeilisearchServiceManager_ListChatWorkspaces_Call struct {
 
 // ListChatWorkspaces is a helper method to define mock.On call
 //   - query *meilisearch.ListChatWorkSpaceQuery
-func (_e *MockmeilisearchServiceManager_Expecter) ListChatWorkspaces(query interface{}) *MockmeilisearchServiceManager_ListChatWorkspaces_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ListChatWorkspaces(query any) *MockmeilisearchServiceManager_ListChatWorkspaces_Call {
 	return &MockmeilisearchServiceManager_ListChatWorkspaces_Call{Call: _e.mock.On("ListChatWorkspaces", query)}
 }
 
@@ -4358,7 +4371,7 @@ type MockmeilisearchServiceManager_ListChatWorkspacesWithContext_Call struct {
 // ListChatWorkspacesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - query *meilisearch.ListChatWorkSpaceQuery
-func (_e *MockmeilisearchServiceManager_Expecter) ListChatWorkspacesWithContext(ctx interface{}, query interface{}) *MockmeilisearchServiceManager_ListChatWorkspacesWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ListChatWorkspacesWithContext(ctx any, query any) *MockmeilisearchServiceManager_ListChatWorkspacesWithContext_Call {
 	return &MockmeilisearchServiceManager_ListChatWorkspacesWithContext_Call{Call: _e.mock.On("ListChatWorkspacesWithContext", ctx, query)}
 }
 
@@ -4425,7 +4438,7 @@ type MockmeilisearchServiceManager_ListIndexes_Call struct {
 
 // ListIndexes is a helper method to define mock.On call
 //   - param *meilisearch.IndexesQuery
-func (_e *MockmeilisearchServiceManager_Expecter) ListIndexes(param interface{}) *MockmeilisearchServiceManager_ListIndexes_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ListIndexes(param any) *MockmeilisearchServiceManager_ListIndexes_Call {
 	return &MockmeilisearchServiceManager_ListIndexes_Call{Call: _e.mock.On("ListIndexes", param)}
 }
 
@@ -4488,7 +4501,7 @@ type MockmeilisearchServiceManager_ListIndexesWithContext_Call struct {
 // ListIndexesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.IndexesQuery
-func (_e *MockmeilisearchServiceManager_Expecter) ListIndexesWithContext(ctx interface{}, param interface{}) *MockmeilisearchServiceManager_ListIndexesWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ListIndexesWithContext(ctx any, param any) *MockmeilisearchServiceManager_ListIndexesWithContext_Call {
 	return &MockmeilisearchServiceManager_ListIndexesWithContext_Call{Call: _e.mock.On("ListIndexesWithContext", ctx, param)}
 }
 
@@ -4555,7 +4568,7 @@ type MockmeilisearchServiceManager_ListSearchRules_Call struct {
 
 // ListSearchRules is a helper method to define mock.On call
 //   - params *meilisearch.SearchRulesParams
-func (_e *MockmeilisearchServiceManager_Expecter) ListSearchRules(params interface{}) *MockmeilisearchServiceManager_ListSearchRules_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ListSearchRules(params any) *MockmeilisearchServiceManager_ListSearchRules_Call {
 	return &MockmeilisearchServiceManager_ListSearchRules_Call{Call: _e.mock.On("ListSearchRules", params)}
 }
 
@@ -4618,7 +4631,7 @@ type MockmeilisearchServiceManager_ListSearchRulesWithContext_Call struct {
 // ListSearchRulesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *meilisearch.SearchRulesParams
-func (_e *MockmeilisearchServiceManager_Expecter) ListSearchRulesWithContext(ctx interface{}, params interface{}) *MockmeilisearchServiceManager_ListSearchRulesWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ListSearchRulesWithContext(ctx any, params any) *MockmeilisearchServiceManager_ListSearchRulesWithContext_Call {
 	return &MockmeilisearchServiceManager_ListSearchRulesWithContext_Call{Call: _e.mock.On("ListSearchRulesWithContext", ctx, params)}
 }
 
@@ -4740,7 +4753,7 @@ type MockmeilisearchServiceManager_ListWebhooksWithContext_Call struct {
 
 // ListWebhooksWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchServiceManager_Expecter) ListWebhooksWithContext(ctx interface{}) *MockmeilisearchServiceManager_ListWebhooksWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ListWebhooksWithContext(ctx any) *MockmeilisearchServiceManager_ListWebhooksWithContext_Call {
 	return &MockmeilisearchServiceManager_ListWebhooksWithContext_Call{Call: _e.mock.On("ListWebhooksWithContext", ctx)}
 }
 
@@ -4802,7 +4815,7 @@ type MockmeilisearchServiceManager_MultiSearch_Call struct {
 
 // MultiSearch is a helper method to define mock.On call
 //   - queries *meilisearch.MultiSearchRequest
-func (_e *MockmeilisearchServiceManager_Expecter) MultiSearch(queries interface{}) *MockmeilisearchServiceManager_MultiSearch_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) MultiSearch(queries any) *MockmeilisearchServiceManager_MultiSearch_Call {
 	return &MockmeilisearchServiceManager_MultiSearch_Call{Call: _e.mock.On("MultiSearch", queries)}
 }
 
@@ -4865,7 +4878,7 @@ type MockmeilisearchServiceManager_MultiSearchWithContext_Call struct {
 // MultiSearchWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - queries *meilisearch.MultiSearchRequest
-func (_e *MockmeilisearchServiceManager_Expecter) MultiSearchWithContext(ctx interface{}, queries interface{}) *MockmeilisearchServiceManager_MultiSearchWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) MultiSearchWithContext(ctx any, queries any) *MockmeilisearchServiceManager_MultiSearchWithContext_Call {
 	return &MockmeilisearchServiceManager_MultiSearchWithContext_Call{Call: _e.mock.On("MultiSearchWithContext", ctx, queries)}
 }
 
@@ -4893,6 +4906,136 @@ func (_c *MockmeilisearchServiceManager_MultiSearchWithContext_Call) Return(mult
 }
 
 func (_c *MockmeilisearchServiceManager_MultiSearchWithContext_Call) RunAndReturn(run func(ctx context.Context, queries *meilisearch.MultiSearchRequest) (*meilisearch.MultiSearchResponse, error)) *MockmeilisearchServiceManager_MultiSearchWithContext_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// RenderTemplate provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) RenderTemplate(params *meilisearch.RenderTemplateParams) (*meilisearch.RenderTemplateResponse, error) {
+	ret := _mock.Called(params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RenderTemplate")
+	}
+
+	var r0 *meilisearch.RenderTemplateResponse
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(*meilisearch.RenderTemplateParams) (*meilisearch.RenderTemplateResponse, error)); ok {
+		return returnFunc(params)
+	}
+	if returnFunc, ok := ret.Get(0).(func(*meilisearch.RenderTemplateParams) *meilisearch.RenderTemplateResponse); ok {
+		r0 = returnFunc(params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.RenderTemplateResponse)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(*meilisearch.RenderTemplateParams) error); ok {
+		r1 = returnFunc(params)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchServiceManager_RenderTemplate_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'RenderTemplate'
+type MockmeilisearchServiceManager_RenderTemplate_Call struct {
+	*mock.Call
+}
+
+// RenderTemplate is a helper method to define mock.On call
+//   - params *meilisearch.RenderTemplateParams
+func (_e *MockmeilisearchServiceManager_Expecter) RenderTemplate(params any) *MockmeilisearchServiceManager_RenderTemplate_Call {
+	return &MockmeilisearchServiceManager_RenderTemplate_Call{Call: _e.mock.On("RenderTemplate", params)}
+}
+
+func (_c *MockmeilisearchServiceManager_RenderTemplate_Call) Run(run func(params *meilisearch.RenderTemplateParams)) *MockmeilisearchServiceManager_RenderTemplate_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 *meilisearch.RenderTemplateParams
+		if args[0] != nil {
+			arg0 = args[0].(*meilisearch.RenderTemplateParams)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_RenderTemplate_Call) Return(renderTemplateResponse *meilisearch.RenderTemplateResponse, err error) *MockmeilisearchServiceManager_RenderTemplate_Call {
+	_c.Call.Return(renderTemplateResponse, err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_RenderTemplate_Call) RunAndReturn(run func(params *meilisearch.RenderTemplateParams) (*meilisearch.RenderTemplateResponse, error)) *MockmeilisearchServiceManager_RenderTemplate_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// RenderTemplateWithContext provides a mock function for the type MockmeilisearchServiceManager
+func (_mock *MockmeilisearchServiceManager) RenderTemplateWithContext(ctx context.Context, params *meilisearch.RenderTemplateParams) (*meilisearch.RenderTemplateResponse, error) {
+	ret := _mock.Called(ctx, params)
+
+	if len(ret) == 0 {
+		panic("no return value specified for RenderTemplateWithContext")
+	}
+
+	var r0 *meilisearch.RenderTemplateResponse
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.RenderTemplateParams) (*meilisearch.RenderTemplateResponse, error)); ok {
+		return returnFunc(ctx, params)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.RenderTemplateParams) *meilisearch.RenderTemplateResponse); ok {
+		r0 = returnFunc(ctx, params)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.RenderTemplateResponse)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *meilisearch.RenderTemplateParams) error); ok {
+		r1 = returnFunc(ctx, params)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchServiceManager_RenderTemplateWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'RenderTemplateWithContext'
+type MockmeilisearchServiceManager_RenderTemplateWithContext_Call struct {
+	*mock.Call
+}
+
+// RenderTemplateWithContext is a helper method to define mock.On call
+//   - ctx context.Context
+//   - params *meilisearch.RenderTemplateParams
+func (_e *MockmeilisearchServiceManager_Expecter) RenderTemplateWithContext(ctx any, params any) *MockmeilisearchServiceManager_RenderTemplateWithContext_Call {
+	return &MockmeilisearchServiceManager_RenderTemplateWithContext_Call{Call: _e.mock.On("RenderTemplateWithContext", ctx, params)}
+}
+
+func (_c *MockmeilisearchServiceManager_RenderTemplateWithContext_Call) Run(run func(ctx context.Context, params *meilisearch.RenderTemplateParams)) *MockmeilisearchServiceManager_RenderTemplateWithContext_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 *meilisearch.RenderTemplateParams
+		if args[1] != nil {
+			arg1 = args[1].(*meilisearch.RenderTemplateParams)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_RenderTemplateWithContext_Call) Return(renderTemplateResponse *meilisearch.RenderTemplateResponse, err error) *MockmeilisearchServiceManager_RenderTemplateWithContext_Call {
+	_c.Call.Return(renderTemplateResponse, err)
+	return _c
+}
+
+func (_c *MockmeilisearchServiceManager_RenderTemplateWithContext_Call) RunAndReturn(run func(ctx context.Context, params *meilisearch.RenderTemplateParams) (*meilisearch.RenderTemplateResponse, error)) *MockmeilisearchServiceManager_RenderTemplateWithContext_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4932,7 +5075,7 @@ type MockmeilisearchServiceManager_ResetChatWorkspace_Call struct {
 
 // ResetChatWorkspace is a helper method to define mock.On call
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) ResetChatWorkspace(uid interface{}) *MockmeilisearchServiceManager_ResetChatWorkspace_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ResetChatWorkspace(uid any) *MockmeilisearchServiceManager_ResetChatWorkspace_Call {
 	return &MockmeilisearchServiceManager_ResetChatWorkspace_Call{Call: _e.mock.On("ResetChatWorkspace", uid)}
 }
 
@@ -4995,7 +5138,7 @@ type MockmeilisearchServiceManager_ResetChatWorkspaceWithContext_Call struct {
 // ResetChatWorkspaceWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchServiceManager_Expecter) ResetChatWorkspaceWithContext(ctx interface{}, uid interface{}) *MockmeilisearchServiceManager_ResetChatWorkspaceWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) ResetChatWorkspaceWithContext(ctx any, uid any) *MockmeilisearchServiceManager_ResetChatWorkspaceWithContext_Call {
 	return &MockmeilisearchServiceManager_ResetChatWorkspaceWithContext_Call{Call: _e.mock.On("ResetChatWorkspaceWithContext", ctx, uid)}
 }
 
@@ -5200,7 +5343,7 @@ type MockmeilisearchServiceManager_SwapIndexes_Call struct {
 
 // SwapIndexes is a helper method to define mock.On call
 //   - param []*meilisearch.SwapIndexesParams
-func (_e *MockmeilisearchServiceManager_Expecter) SwapIndexes(param interface{}) *MockmeilisearchServiceManager_SwapIndexes_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) SwapIndexes(param any) *MockmeilisearchServiceManager_SwapIndexes_Call {
 	return &MockmeilisearchServiceManager_SwapIndexes_Call{Call: _e.mock.On("SwapIndexes", param)}
 }
 
@@ -5263,7 +5406,7 @@ type MockmeilisearchServiceManager_SwapIndexesWithContext_Call struct {
 // SwapIndexesWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param []*meilisearch.SwapIndexesParams
-func (_e *MockmeilisearchServiceManager_Expecter) SwapIndexesWithContext(ctx interface{}, param interface{}) *MockmeilisearchServiceManager_SwapIndexesWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) SwapIndexesWithContext(ctx any, param any) *MockmeilisearchServiceManager_SwapIndexesWithContext_Call {
 	return &MockmeilisearchServiceManager_SwapIndexesWithContext_Call{Call: _e.mock.On("SwapIndexesWithContext", ctx, param)}
 }
 
@@ -5423,7 +5566,7 @@ type MockmeilisearchServiceManager_UpdateChatWorkspace_Call struct {
 // UpdateChatWorkspace is a helper method to define mock.On call
 //   - uid string
 //   - settings *meilisearch.ChatWorkspaceSettings
-func (_e *MockmeilisearchServiceManager_Expecter) UpdateChatWorkspace(uid interface{}, settings interface{}) *MockmeilisearchServiceManager_UpdateChatWorkspace_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateChatWorkspace(uid any, settings any) *MockmeilisearchServiceManager_UpdateChatWorkspace_Call {
 	return &MockmeilisearchServiceManager_UpdateChatWorkspace_Call{Call: _e.mock.On("UpdateChatWorkspace", uid, settings)}
 }
 
@@ -5492,7 +5635,7 @@ type MockmeilisearchServiceManager_UpdateChatWorkspaceWithContext_Call struct {
 //   - ctx context.Context
 //   - uid string
 //   - settings *meilisearch.ChatWorkspaceSettings
-func (_e *MockmeilisearchServiceManager_Expecter) UpdateChatWorkspaceWithContext(ctx interface{}, uid interface{}, settings interface{}) *MockmeilisearchServiceManager_UpdateChatWorkspaceWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateChatWorkspaceWithContext(ctx any, uid any, settings any) *MockmeilisearchServiceManager_UpdateChatWorkspaceWithContext_Call {
 	return &MockmeilisearchServiceManager_UpdateChatWorkspaceWithContext_Call{Call: _e.mock.On("UpdateChatWorkspaceWithContext", ctx, uid, settings)}
 }
 
@@ -5565,7 +5708,7 @@ type MockmeilisearchServiceManager_UpdateKey_Call struct {
 // UpdateKey is a helper method to define mock.On call
 //   - keyOrUID string
 //   - request *meilisearch.Key
-func (_e *MockmeilisearchServiceManager_Expecter) UpdateKey(keyOrUID interface{}, request interface{}) *MockmeilisearchServiceManager_UpdateKey_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateKey(keyOrUID any, request any) *MockmeilisearchServiceManager_UpdateKey_Call {
 	return &MockmeilisearchServiceManager_UpdateKey_Call{Call: _e.mock.On("UpdateKey", keyOrUID, request)}
 }
 
@@ -5634,7 +5777,7 @@ type MockmeilisearchServiceManager_UpdateKeyWithContext_Call struct {
 //   - ctx context.Context
 //   - keyOrUID string
 //   - request *meilisearch.Key
-func (_e *MockmeilisearchServiceManager_Expecter) UpdateKeyWithContext(ctx interface{}, keyOrUID interface{}, request interface{}) *MockmeilisearchServiceManager_UpdateKeyWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateKeyWithContext(ctx any, keyOrUID any, request any) *MockmeilisearchServiceManager_UpdateKeyWithContext_Call {
 	return &MockmeilisearchServiceManager_UpdateKeyWithContext_Call{Call: _e.mock.On("UpdateKeyWithContext", ctx, keyOrUID, request)}
 }
 
@@ -5706,7 +5849,7 @@ type MockmeilisearchServiceManager_UpdateNetwork_Call struct {
 
 // UpdateNetwork is a helper method to define mock.On call
 //   - params *meilisearch.UpdateNetworkRequest
-func (_e *MockmeilisearchServiceManager_Expecter) UpdateNetwork(params interface{}) *MockmeilisearchServiceManager_UpdateNetwork_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateNetwork(params any) *MockmeilisearchServiceManager_UpdateNetwork_Call {
 	return &MockmeilisearchServiceManager_UpdateNetwork_Call{Call: _e.mock.On("UpdateNetwork", params)}
 }
 
@@ -5769,7 +5912,7 @@ type MockmeilisearchServiceManager_UpdateNetworkWithContext_Call struct {
 // UpdateNetworkWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *meilisearch.UpdateNetworkRequest
-func (_e *MockmeilisearchServiceManager_Expecter) UpdateNetworkWithContext(ctx interface{}, params interface{}) *MockmeilisearchServiceManager_UpdateNetworkWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateNetworkWithContext(ctx any, params any) *MockmeilisearchServiceManager_UpdateNetworkWithContext_Call {
 	return &MockmeilisearchServiceManager_UpdateNetworkWithContext_Call{Call: _e.mock.On("UpdateNetworkWithContext", ctx, params)}
 }
 
@@ -5837,7 +5980,7 @@ type MockmeilisearchServiceManager_UpdateSearchRule_Call struct {
 // UpdateSearchRule is a helper method to define mock.On call
 //   - uid string
 //   - params *meilisearch.SearchRulesRequest
-func (_e *MockmeilisearchServiceManager_Expecter) UpdateSearchRule(uid interface{}, params interface{}) *MockmeilisearchServiceManager_UpdateSearchRule_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateSearchRule(uid any, params any) *MockmeilisearchServiceManager_UpdateSearchRule_Call {
 	return &MockmeilisearchServiceManager_UpdateSearchRule_Call{Call: _e.mock.On("UpdateSearchRule", uid, params)}
 }
 
@@ -5906,7 +6049,7 @@ type MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call struct {
 //   - ctx context.Context
 //   - uid string
 //   - params *meilisearch.SearchRulesRequest
-func (_e *MockmeilisearchServiceManager_Expecter) UpdateSearchRuleWithContext(ctx interface{}, uid interface{}, params interface{}) *MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateSearchRuleWithContext(ctx any, uid any, params any) *MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call {
 	return &MockmeilisearchServiceManager_UpdateSearchRuleWithContext_Call{Call: _e.mock.On("UpdateSearchRuleWithContext", ctx, uid, params)}
 }
 
@@ -5979,7 +6122,7 @@ type MockmeilisearchServiceManager_UpdateWebhook_Call struct {
 // UpdateWebhook is a helper method to define mock.On call
 //   - uuid string
 //   - params *meilisearch.UpdateWebhookRequest
-func (_e *MockmeilisearchServiceManager_Expecter) UpdateWebhook(uuid interface{}, params interface{}) *MockmeilisearchServiceManager_UpdateWebhook_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateWebhook(uuid any, params any) *MockmeilisearchServiceManager_UpdateWebhook_Call {
 	return &MockmeilisearchServiceManager_UpdateWebhook_Call{Call: _e.mock.On("UpdateWebhook", uuid, params)}
 }
 
@@ -6048,7 +6191,7 @@ type MockmeilisearchServiceManager_UpdateWebhookWithContext_Call struct {
 //   - ctx context.Context
 //   - uuid string
 //   - params *meilisearch.UpdateWebhookRequest
-func (_e *MockmeilisearchServiceManager_Expecter) UpdateWebhookWithContext(ctx interface{}, uuid interface{}, params interface{}) *MockmeilisearchServiceManager_UpdateWebhookWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) UpdateWebhookWithContext(ctx any, uuid any, params any) *MockmeilisearchServiceManager_UpdateWebhookWithContext_Call {
 	return &MockmeilisearchServiceManager_UpdateWebhookWithContext_Call{Call: _e.mock.On("UpdateWebhookWithContext", ctx, uuid, params)}
 }
 
@@ -6175,7 +6318,7 @@ type MockmeilisearchServiceManager_VersionWithContext_Call struct {
 
 // VersionWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchServiceManager_Expecter) VersionWithContext(ctx interface{}) *MockmeilisearchServiceManager_VersionWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) VersionWithContext(ctx any) *MockmeilisearchServiceManager_VersionWithContext_Call {
 	return &MockmeilisearchServiceManager_VersionWithContext_Call{Call: _e.mock.On("VersionWithContext", ctx)}
 }
 
@@ -6238,7 +6381,7 @@ type MockmeilisearchServiceManager_WaitForTask_Call struct {
 // WaitForTask is a helper method to define mock.On call
 //   - taskUID int64
 //   - interval time.Duration
-func (_e *MockmeilisearchServiceManager_Expecter) WaitForTask(taskUID interface{}, interval interface{}) *MockmeilisearchServiceManager_WaitForTask_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) WaitForTask(taskUID any, interval any) *MockmeilisearchServiceManager_WaitForTask_Call {
 	return &MockmeilisearchServiceManager_WaitForTask_Call{Call: _e.mock.On("WaitForTask", taskUID, interval)}
 }
 
@@ -6307,7 +6450,7 @@ type MockmeilisearchServiceManager_WaitForTaskWithContext_Call struct {
 //   - ctx context.Context
 //   - taskUID int64
 //   - interval time.Duration
-func (_e *MockmeilisearchServiceManager_Expecter) WaitForTaskWithContext(ctx interface{}, taskUID interface{}, interval interface{}) *MockmeilisearchServiceManager_WaitForTaskWithContext_Call {
+func (_e *MockmeilisearchServiceManager_Expecter) WaitForTaskWithContext(ctx any, taskUID any, interval any) *MockmeilisearchServiceManager_WaitForTaskWithContext_Call {
 	return &MockmeilisearchServiceManager_WaitForTaskWithContext_Call{Call: _e.mock.On("WaitForTaskWithContext", ctx, taskUID, interval)}
 }
 

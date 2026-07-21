@@ -73,7 +73,7 @@ type MockmeilisearchWebhookReader_GetWebhook_Call struct {
 
 // GetWebhook is a helper method to define mock.On call
 //   - uuid string
-func (_e *MockmeilisearchWebhookReader_Expecter) GetWebhook(uuid interface{}) *MockmeilisearchWebhookReader_GetWebhook_Call {
+func (_e *MockmeilisearchWebhookReader_Expecter) GetWebhook(uuid any) *MockmeilisearchWebhookReader_GetWebhook_Call {
 	return &MockmeilisearchWebhookReader_GetWebhook_Call{Call: _e.mock.On("GetWebhook", uuid)}
 }
 
@@ -136,7 +136,7 @@ type MockmeilisearchWebhookReader_GetWebhookWithContext_Call struct {
 // GetWebhookWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockmeilisearchWebhookReader_Expecter) GetWebhookWithContext(ctx interface{}, uuid interface{}) *MockmeilisearchWebhookReader_GetWebhookWithContext_Call {
+func (_e *MockmeilisearchWebhookReader_Expecter) GetWebhookWithContext(ctx any, uuid any) *MockmeilisearchWebhookReader_GetWebhookWithContext_Call {
 	return &MockmeilisearchWebhookReader_GetWebhookWithContext_Call{Call: _e.mock.On("GetWebhookWithContext", ctx, uuid)}
 }
 
@@ -258,7 +258,7 @@ type MockmeilisearchWebhookReader_ListWebhooksWithContext_Call struct {
 
 // ListWebhooksWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchWebhookReader_Expecter) ListWebhooksWithContext(ctx interface{}) *MockmeilisearchWebhookReader_ListWebhooksWithContext_Call {
+func (_e *MockmeilisearchWebhookReader_Expecter) ListWebhooksWithContext(ctx any) *MockmeilisearchWebhookReader_ListWebhooksWithContext_Call {
 	return &MockmeilisearchWebhookReader_ListWebhooksWithContext_Call{Call: _e.mock.On("ListWebhooksWithContext", ctx)}
 }
 

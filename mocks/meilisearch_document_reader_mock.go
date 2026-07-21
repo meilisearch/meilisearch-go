@@ -64,7 +64,7 @@ type MockmeilisearchDocumentReader_GetDocument_Call struct {
 //   - identifier string
 //   - request *meilisearch.DocumentQuery
 //   - documentPtr interface{}
-func (_e *MockmeilisearchDocumentReader_Expecter) GetDocument(identifier interface{}, request interface{}, documentPtr interface{}) *MockmeilisearchDocumentReader_GetDocument_Call {
+func (_e *MockmeilisearchDocumentReader_Expecter) GetDocument(identifier any, request any, documentPtr any) *MockmeilisearchDocumentReader_GetDocument_Call {
 	return &MockmeilisearchDocumentReader_GetDocument_Call{Call: _e.mock.On("GetDocument", identifier, request, documentPtr)}
 }
 
@@ -128,7 +128,7 @@ type MockmeilisearchDocumentReader_GetDocumentWithContext_Call struct {
 //   - identifier string
 //   - request *meilisearch.DocumentQuery
 //   - documentPtr interface{}
-func (_e *MockmeilisearchDocumentReader_Expecter) GetDocumentWithContext(ctx interface{}, identifier interface{}, request interface{}, documentPtr interface{}) *MockmeilisearchDocumentReader_GetDocumentWithContext_Call {
+func (_e *MockmeilisearchDocumentReader_Expecter) GetDocumentWithContext(ctx any, identifier any, request any, documentPtr any) *MockmeilisearchDocumentReader_GetDocumentWithContext_Call {
 	return &MockmeilisearchDocumentReader_GetDocumentWithContext_Call{Call: _e.mock.On("GetDocumentWithContext", ctx, identifier, request, documentPtr)}
 }
 
@@ -195,7 +195,7 @@ type MockmeilisearchDocumentReader_GetDocuments_Call struct {
 // GetDocuments is a helper method to define mock.On call
 //   - param *meilisearch.DocumentsQuery
 //   - resp *meilisearch.DocumentsResult
-func (_e *MockmeilisearchDocumentReader_Expecter) GetDocuments(param interface{}, resp interface{}) *MockmeilisearchDocumentReader_GetDocuments_Call {
+func (_e *MockmeilisearchDocumentReader_Expecter) GetDocuments(param any, resp any) *MockmeilisearchDocumentReader_GetDocuments_Call {
 	return &MockmeilisearchDocumentReader_GetDocuments_Call{Call: _e.mock.On("GetDocuments", param, resp)}
 }
 
@@ -253,7 +253,7 @@ type MockmeilisearchDocumentReader_GetDocumentsWithContext_Call struct {
 //   - ctx context.Context
 //   - param *meilisearch.DocumentsQuery
 //   - resp *meilisearch.DocumentsResult
-func (_e *MockmeilisearchDocumentReader_Expecter) GetDocumentsWithContext(ctx interface{}, param interface{}, resp interface{}) *MockmeilisearchDocumentReader_GetDocumentsWithContext_Call {
+func (_e *MockmeilisearchDocumentReader_Expecter) GetDocumentsWithContext(ctx any, param any, resp any) *MockmeilisearchDocumentReader_GetDocumentsWithContext_Call {
 	return &MockmeilisearchDocumentReader_GetDocumentsWithContext_Call{Call: _e.mock.On("GetDocumentsWithContext", ctx, param, resp)}
 }
 

@@ -73,7 +73,7 @@ type MockmeilisearchKeyReader_GetKey_Call struct {
 
 // GetKey is a helper method to define mock.On call
 //   - identifier string
-func (_e *MockmeilisearchKeyReader_Expecter) GetKey(identifier interface{}) *MockmeilisearchKeyReader_GetKey_Call {
+func (_e *MockmeilisearchKeyReader_Expecter) GetKey(identifier any) *MockmeilisearchKeyReader_GetKey_Call {
 	return &MockmeilisearchKeyReader_GetKey_Call{Call: _e.mock.On("GetKey", identifier)}
 }
 
@@ -136,7 +136,7 @@ type MockmeilisearchKeyReader_GetKeyWithContext_Call struct {
 // GetKeyWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - identifier string
-func (_e *MockmeilisearchKeyReader_Expecter) GetKeyWithContext(ctx interface{}, identifier interface{}) *MockmeilisearchKeyReader_GetKeyWithContext_Call {
+func (_e *MockmeilisearchKeyReader_Expecter) GetKeyWithContext(ctx any, identifier any) *MockmeilisearchKeyReader_GetKeyWithContext_Call {
 	return &MockmeilisearchKeyReader_GetKeyWithContext_Call{Call: _e.mock.On("GetKeyWithContext", ctx, identifier)}
 }
 
@@ -203,7 +203,7 @@ type MockmeilisearchKeyReader_GetKeys_Call struct {
 
 // GetKeys is a helper method to define mock.On call
 //   - param *meilisearch.KeysQuery
-func (_e *MockmeilisearchKeyReader_Expecter) GetKeys(param interface{}) *MockmeilisearchKeyReader_GetKeys_Call {
+func (_e *MockmeilisearchKeyReader_Expecter) GetKeys(param any) *MockmeilisearchKeyReader_GetKeys_Call {
 	return &MockmeilisearchKeyReader_GetKeys_Call{Call: _e.mock.On("GetKeys", param)}
 }
 
@@ -266,7 +266,7 @@ type MockmeilisearchKeyReader_GetKeysWithContext_Call struct {
 // GetKeysWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.KeysQuery
-func (_e *MockmeilisearchKeyReader_Expecter) GetKeysWithContext(ctx interface{}, param interface{}) *MockmeilisearchKeyReader_GetKeysWithContext_Call {
+func (_e *MockmeilisearchKeyReader_Expecter) GetKeysWithContext(ctx any, param any) *MockmeilisearchKeyReader_GetKeysWithContext_Call {
 	return &MockmeilisearchKeyReader_GetKeysWithContext_Call{Call: _e.mock.On("GetKeysWithContext", ctx, param)}
 }
 
