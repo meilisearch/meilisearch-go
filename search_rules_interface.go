@@ -6,23 +6,33 @@ type SearchRulesManager interface {
 	SearchRulesReader
 	// UpdateSearchRule update a dynamic search rule or create a new one if it doesn't exist.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/update-a-dynamic-search-rule-or-create-a-new-one-if-it-doesnt-exist#body-priority-one-of-0
-	UpdateSearchRule(uid string, params *SearchRulesRequest) (*SearchRule, error)
+	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/update-a-dynamic-search-rule-or-create-a-new-one-if-it-doesnt-exist
+	UpdateSearchRule(uid string, params *SearchRulesRequest) (*TaskInfo, error)
 
 	// UpdateSearchRuleWithContext update a dynamic search rule or create a new one if it doesn't exist with a context.
 	//
-	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/update-a-dynamic-search-rule-or-create-a-new-one-if-it-doesnt-exist#body-priority-one-of-0
-	UpdateSearchRuleWithContext(ctx context.Context, uid string, params *SearchRulesRequest) (*SearchRule, error)
+	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/update-a-dynamic-search-rule-or-create-a-new-one-if-it-doesnt-exist
+	UpdateSearchRuleWithContext(ctx context.Context, uid string, params *SearchRulesRequest) (*TaskInfo, error)
 
 	// DeleteSearchRule deletes a dynamic search rule by its unique identifier.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/delete-a-dynamic-search-rule
-	DeleteSearchRule(uid string) error
+	DeleteSearchRule(uid string) (*TaskInfo, error)
 
 	// DeleteSearchRuleWithContext deletes a dynamic search rule by its unique identifier with a context.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/delete-a-dynamic-search-rule
-	DeleteSearchRuleWithContext(ctx context.Context, uid string) error
+	DeleteSearchRuleWithContext(ctx context.Context, uid string) (*TaskInfo, error)
+
+	// DeleteAllSearchRules deletes all dynamic search rules.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/delete-all-dynamic-search-rules
+	DeleteAllSearchRules() (*TaskInfo, error)
+
+	// DeleteAllSearchRulesWithContext deletes all dynamic search rules with a context.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/dynamic-search-rules/delete-all-dynamic-search-rules
+	DeleteAllSearchRulesWithContext(ctx context.Context) (*TaskInfo, error)
 }
 
 type SearchRulesReader interface {
