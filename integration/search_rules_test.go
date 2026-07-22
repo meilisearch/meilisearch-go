@@ -10,6 +10,25 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func updateSearchRuleAndWait(
+	t *testing.T,
+	sv meilisearch.ServiceManager,
+	uid string,
+	request *meilisearch.SearchRulesRequest,
+) *meilisearch.TaskInfo {
+	t.Helper()
+
+	task, err := sv.UpdateSearchRule(uid, request)
+	require.NoError(t, err)
+	require.NotNil(t, task)
+	require.Equal(t, meilisearch.TaskStatusEnqueued, task.Status)
+	require.False(t, task.EnqueuedAt.IsZero())
+
+	_, err = sv.WaitForTask(task.TaskUID, 0)
+	require.NoError(t, err)
+	return task
+}
+
 func Test_ListSearchRule(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupSearchRules(sv))
@@ -21,20 +40,20 @@ func Test_ListSearchRule(t *testing.T) {
 
 	uids := []string{"black-friday", "christmas-sale", "summer-deals"}
 	start := time.Now().UTC().Truncate(time.Second)
-	end := start.Add(time.Hour * 24)
+	end := start.Add(24 * time.Hour)
 
 	for i, uid := range uids {
-		_, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
+		words := fmt.Sprintf("%s promotion", uid)
+		updateSearchRuleAndWait(t, sv, uid, &meilisearch.SearchRulesRequest{
 			Description: fmt.Sprintf("Rule %d for %s", i, uid),
-			Priority:    intPtr(i + 1),
+			Precedence:  intPtr(i + 1),
 			Active:      boolPtr(true),
-			Conditions: []meilisearch.Condition{
-				{
-					Scope:   "query",
-					IsEmpty: boolPtr(true),
+			Conditions: &meilisearch.SearchRuleConditions{
+				Query: &meilisearch.QueryCondition{
+					IsEmpty: boolPtr(false),
+					Words:   &words,
 				},
-				{
-					Scope: "time",
+				Time: &meilisearch.TimeCondition{
 					Start: &start,
 					End:   &end,
 				},
@@ -52,62 +71,66 @@ func Test_ListSearchRule(t *testing.T) {
 				},
 			},
 		})
-		require.NoError(t, err)
 	}
 
-	t.Run("list all rules with pagination", func(t *testing.T) {
+	t.Run("list all rules", func(t *testing.T) {
 		results, err := sv.ListSearchRules(&meilisearch.SearchRulesParams{
 			Offset: 0,
 			Limit:  20,
 		})
 		require.NoError(t, err)
-		assert.NotNil(t, results)
-
-		assert.Equal(t, results.Total, int64(len(uids)))
+		require.NotNil(t, results)
+		assert.Equal(t, int64(len(uids)), results.Total)
 		assert.Equal(t, int64(0), results.Offset)
 		assert.Equal(t, int64(20), results.Limit)
 		assert.Len(t, results.Results, len(uids))
 
-		// Verify results contain expected UIDs
 		foundUIDs := make(map[string]bool)
 		for _, rule := range results.Results {
 			foundUIDs[rule.Uid] = true
-			assert.NotEmpty(t, rule.Uid)
 			assert.NotEmpty(t, rule.Description)
 			assert.True(t, rule.Active)
-			assert.Greater(t, rule.Priority, 0)
-			assert.NotEmpty(t, rule.Conditions)
+			assert.Greater(t, rule.Precedence, 0)
+			require.NotNil(t, rule.Conditions.Query)
+			assert.NotNil(t, rule.Conditions.Query.Words)
+			assert.NotNil(t, rule.Conditions.Time)
 			assert.NotEmpty(t, rule.Actions)
 		}
 		for _, uid := range uids {
-			assert.True(t, foundUIDs[uid], "Expected to find rule with UID: %s", uid)
+			assert.True(t, foundUIDs[uid], "expected to find rule with UID: %s", uid)
 		}
 	})
 
-	t.Run("list rules with filter", func(t *testing.T) {
+	t.Run("paginate rules", func(t *testing.T) {
 		results, err := sv.ListSearchRules(&meilisearch.SearchRulesParams{
-			Offset: 0,
-			Limit:  20,
-			Filter: &meilisearch.SearchRulesFilter{
-				Active: boolPtr(false),
-			},
+			Offset: 1,
+			Limit:  1,
 		})
 		require.NoError(t, err)
-		assert.NotNil(t, results)
+		require.NotNil(t, results)
+		assert.Equal(t, int64(1), results.Offset)
+		assert.Equal(t, int64(1), results.Limit)
+		assert.Equal(t, int64(len(uids)), results.Total)
+		assert.Len(t, results.Results, 1)
+	})
+
+	t.Run("filter rules by active status", func(t *testing.T) {
+		results, err := sv.ListSearchRules(&meilisearch.SearchRulesParams{
+			Filter: &meilisearch.SearchRulesFilter{Active: boolPtr(false)},
+		})
+		require.NoError(t, err)
+		require.NotNil(t, results)
 		assert.Zero(t, results.Total)
 	})
 
-	t.Run("list rules with attribute patterns filter", func(t *testing.T) {
+	t.Run("filter rules by query", func(t *testing.T) {
 		results, err := sv.ListSearchRules(&meilisearch.SearchRulesParams{
-			Offset: 0,
-			Limit:  20,
-			Filter: &meilisearch.SearchRulesFilter{
-				AttributePatterns: []string{"categories"},
-			},
+			Filter: &meilisearch.SearchRulesFilter{Query: "christmas"},
 		})
 		require.NoError(t, err)
-		assert.NotNil(t, results)
-		assert.Equal(t, len(results.Results), 0)
+		require.NotNil(t, results)
+		require.Len(t, results.Results, 1)
+		assert.Equal(t, "christmas-sale", results.Results[0].Uid)
 	})
 }
 
@@ -121,98 +144,73 @@ func Test_UpdateSearchRule(t *testing.T) {
 	require.True(t, resp.DynamicSearchRules)
 
 	uid := "promo-rule"
-	start := time.Now().Truncate(time.Second)
-	end := start.Add(time.Hour * 2)
+	start := time.Now().UTC().Truncate(time.Second)
+	end := start.Add(2 * time.Hour)
+	createWords := "special offer"
 
-	t.Run("create new rule", func(t *testing.T) {
-		rule, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
-			Description: "Promotional campaign rules",
-			Priority:    intPtr(10),
-			Active:      boolPtr(true),
-			Conditions: []meilisearch.Condition{
-				{
-					Scope:   "query",
-					IsEmpty: boolPtr(true),
-				},
-				{
-					Scope: "time",
-					Start: &start,
-					End:   &end,
-				},
+	createTask := updateSearchRuleAndWait(t, sv, uid, &meilisearch.SearchRulesRequest{
+		Description: "Promotional campaign rules",
+		Precedence:  intPtr(10),
+		Active:      boolPtr(true),
+		Conditions: &meilisearch.SearchRuleConditions{
+			Query: &meilisearch.QueryCondition{
+				IsEmpty: boolPtr(false),
+				Words:   &createWords,
 			},
-			Actions: []meilisearch.Action{
-				{
-					Selector: meilisearch.Selector{
-						IndexUid: "products",
-						ID:       "456",
-					},
-					Action: meilisearch.ActionDef{
-						Type:     "pin",
-						Position: 1,
-					},
-				},
+			Time: &meilisearch.TimeCondition{Start: &start, End: &end},
+		},
+		Actions: []meilisearch.Action{
+			{
+				Selector: meilisearch.Selector{IndexUid: "products", ID: "456"},
+				Action:   meilisearch.ActionDef{Type: "pin", Position: 1},
 			},
-		})
-		require.NoError(t, err)
-		require.NotNil(t, rule)
-		assert.Equal(t, uid, rule.Uid)
-		assert.Equal(t, "Promotional campaign rules", rule.Description)
-		assert.Equal(t, 10, rule.Priority)
-		assert.True(t, rule.Active)
-		assert.Len(t, rule.Conditions, 2)
-		assert.Len(t, rule.Actions, 1)
+		},
 	})
+	assert.Equal(t, meilisearch.TaskStatusEnqueued, createTask.Status)
 
-	t.Run("update existing rule", func(t *testing.T) {
-		updatedRule, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
-			Description: "Updated promotional campaign rules",
-			Priority:    intPtr(8),
-			Active:      boolPtr(false),
-			Conditions: []meilisearch.Condition{
-				{
-					Scope:   "query",
-					IsEmpty: boolPtr(false),
-				},
-			},
-			Actions: []meilisearch.Action{
-				{
-					Selector: meilisearch.Selector{
-						IndexUid: "products",
-						ID:       "789",
-					},
-					Action: meilisearch.ActionDef{
-						Type:     "pin",
-						Position: 2,
-					},
-				},
-				{
-					Selector: meilisearch.Selector{
-						IndexUid: "categories",
-						ID:       "001",
-					},
-					Action: meilisearch.ActionDef{
-						Type:     "pin",
-						Position: 1,
-					},
-				},
-			},
-		})
-		require.NoError(t, err)
-		require.NotNil(t, updatedRule)
-		assert.Equal(t, uid, updatedRule.Uid)
-		assert.Equal(t, "Updated promotional campaign rules", updatedRule.Description)
-		assert.Equal(t, 8, updatedRule.Priority)
-		assert.False(t, updatedRule.Active)
-		assert.Len(t, updatedRule.Conditions, 1)
-		assert.Len(t, updatedRule.Actions, 2)
+	createdRule, err := sv.GetSearchRule(uid)
+	require.NoError(t, err)
+	require.NotNil(t, createdRule)
+	assert.Equal(t, "Promotional campaign rules", createdRule.Description)
+	assert.Equal(t, 10, createdRule.Precedence)
+	assert.True(t, createdRule.Active)
+	require.NotNil(t, createdRule.Conditions.Query)
+	assert.Equal(t, createWords, *createdRule.Conditions.Query.Words)
+	assert.Len(t, createdRule.Actions, 1)
 
-		// Verify update persisted
-		fetchedRule, err := sv.GetSearchRule(uid)
-		require.NoError(t, err)
-		assert.Equal(t, updatedRule.Description, fetchedRule.Description)
-		assert.Equal(t, updatedRule.Priority, fetchedRule.Priority)
-		assert.Equal(t, updatedRule.Active, fetchedRule.Active)
+	updateWords := "updated promotion"
+	updateTask := updateSearchRuleAndWait(t, sv, uid, &meilisearch.SearchRulesRequest{
+		Description: "Updated promotional campaign rules",
+		Precedence:  intPtr(8),
+		Active:      boolPtr(false),
+		Conditions: &meilisearch.SearchRuleConditions{
+			Query: &meilisearch.QueryCondition{
+				IsEmpty: boolPtr(false),
+				Words:   &updateWords,
+			},
+		},
+		Actions: []meilisearch.Action{
+			{
+				Selector: meilisearch.Selector{IndexUid: "products", ID: "789"},
+				Action:   meilisearch.ActionDef{Type: "pin", Position: 2},
+			},
+			{
+				Selector: meilisearch.Selector{IndexUid: "categories", ID: "001"},
+				Action:   meilisearch.ActionDef{Type: "pin", Position: 1},
+			},
+		},
 	})
+	assert.Equal(t, meilisearch.TaskStatusEnqueued, updateTask.Status)
+
+	updatedRule, err := sv.GetSearchRule(uid)
+	require.NoError(t, err)
+	require.NotNil(t, updatedRule)
+	assert.Equal(t, "Updated promotional campaign rules", updatedRule.Description)
+	assert.Equal(t, 8, updatedRule.Precedence)
+	assert.False(t, updatedRule.Active)
+	require.NotNil(t, updatedRule.Conditions.Query)
+	assert.Equal(t, updateWords, *updatedRule.Conditions.Query.Words)
+	assert.Len(t, updatedRule.Actions, 2)
 }
 
 func Test_GetSearchRule(t *testing.T) {
@@ -225,42 +223,29 @@ func Test_GetSearchRule(t *testing.T) {
 	require.True(t, resp.DynamicSearchRules)
 
 	uid := "black-friday"
-	start := time.Now()
-	end := start.Add(time.Hour * 1)
-
-	want, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
+	updateSearchRuleAndWait(t, sv, uid, &meilisearch.SearchRulesRequest{
 		Description: "Black Friday 2025 rules",
-		Priority:    intPtr(5),
+		Precedence:  intPtr(5),
 		Active:      boolPtr(true),
-		Conditions: []meilisearch.Condition{
-			{
-				Scope:   "query",
-				IsEmpty: boolPtr(true),
-			},
-			{
-				Scope: "time",
-				Start: &start,
-				End:   &end,
-			},
+		Conditions: &meilisearch.SearchRuleConditions{
+			Query: &meilisearch.QueryCondition{IsEmpty: boolPtr(true)},
 		},
 		Actions: []meilisearch.Action{
 			{
-				Selector: meilisearch.Selector{
-					IndexUid: "products",
-					ID:       "123",
-				},
-				Action: meilisearch.ActionDef{
-					Type:     "pin",
-					Position: 1,
-				},
+				Selector: meilisearch.Selector{IndexUid: "products", ID: "123"},
+				Action:   meilisearch.ActionDef{Type: "pin", Position: 1},
 			},
 		},
 	})
-	require.NoError(t, err)
 
 	got, err := sv.GetSearchRule(uid)
 	require.NoError(t, err)
-	assert.Equal(t, want, got)
+	require.NotNil(t, got)
+	assert.Equal(t, uid, got.Uid)
+	assert.Equal(t, "Black Friday 2025 rules", got.Description)
+	assert.Equal(t, 5, got.Precedence)
+	require.NotNil(t, got.Conditions.Query)
+	assert.Equal(t, true, *got.Conditions.Query.IsEmpty)
 }
 
 func Test_DeleteSearchRule(t *testing.T) {
@@ -273,42 +258,65 @@ func Test_DeleteSearchRule(t *testing.T) {
 	require.True(t, resp.DynamicSearchRules)
 
 	uid := "black-friday"
-	start := time.Now()
-	end := start.Add(time.Hour * 1)
-	_, err = sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
-		Description: "Black Friday 2025 rules",
-		Priority:    intPtr(5),
-		Active:      boolPtr(true),
-		Conditions: []meilisearch.Condition{
-			{
-				Scope:   "query",
-				IsEmpty: boolPtr(true),
-			},
-			{
-				Scope: "time",
-				Start: &start,
-				End:   &end,
-			},
+	updateSearchRuleAndWait(t, sv, uid, &meilisearch.SearchRulesRequest{
+		Conditions: &meilisearch.SearchRuleConditions{
+			Query: &meilisearch.QueryCondition{IsEmpty: boolPtr(true)},
 		},
 		Actions: []meilisearch.Action{
 			{
-				Selector: meilisearch.Selector{
-					IndexUid: "products",
-					ID:       "123",
-				},
-				Action: meilisearch.ActionDef{
-					Type:     "pin",
-					Position: 1,
-				},
+				Selector: meilisearch.Selector{IndexUid: "products", ID: "123"},
+				Action:   meilisearch.ActionDef{Type: "pin", Position: 1},
 			},
 		},
 	})
-	require.NoError(t, err)
 
-	err = sv.DeleteSearchRule(uid)
+	deleteTask, err := sv.DeleteSearchRule(uid)
+	require.NoError(t, err)
+	require.NotNil(t, deleteTask)
+	assert.Equal(t, meilisearch.TaskStatusEnqueued, deleteTask.Status)
+	_, err = sv.WaitForTask(deleteTask.TaskUID, 0)
 	require.NoError(t, err)
 
 	got, err := sv.GetSearchRule(uid)
 	require.Error(t, err)
 	assert.Nil(t, got)
+
+	missingTask, err := sv.DeleteSearchRule("missing-rule")
+	require.NoError(t, err)
+	require.NotNil(t, missingTask)
+	_, err = sv.WaitForTask(missingTask.TaskUID, 0)
+	require.NoError(t, err)
+}
+
+func Test_DeleteAllSearchRules(t *testing.T) {
+	sv := setup(t, "")
+	t.Cleanup(cleanupSearchRules(sv))
+
+	resp, err := sv.ExperimentalFeatures().SetDynamicSearchRules(true).Update()
+	require.NoError(t, err)
+	require.NotNil(t, resp)
+	require.True(t, resp.DynamicSearchRules)
+
+	for _, uid := range []string{"rule-one", "rule-two"} {
+		updateSearchRuleAndWait(t, sv, uid, &meilisearch.SearchRulesRequest{
+			Actions: []meilisearch.Action{
+				{
+					Selector: meilisearch.Selector{ID: uid},
+					Action:   meilisearch.ActionDef{Type: "pin", Position: 1},
+				},
+			},
+		})
+	}
+
+	deleteTask, err := sv.DeleteAllSearchRules()
+	require.NoError(t, err)
+	require.NotNil(t, deleteTask)
+	assert.Equal(t, meilisearch.TaskStatusEnqueued, deleteTask.Status)
+	_, err = sv.WaitForTask(deleteTask.TaskUID, 0)
+	require.NoError(t, err)
+
+	results, err := sv.ListSearchRules(&meilisearch.SearchRulesParams{})
+	require.NoError(t, err)
+	require.NotNil(t, results)
+	assert.Zero(t, results.Total)
 }

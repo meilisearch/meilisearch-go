@@ -6,12 +6,12 @@ import (
 	"net/http"
 )
 
-func (m *meilisearch) UpdateSearchRule(uid string, params *SearchRulesRequest) (*SearchRule, error) {
+func (m *meilisearch) UpdateSearchRule(uid string, params *SearchRulesRequest) (*TaskInfo, error) {
 	return m.UpdateSearchRuleWithContext(context.Background(), uid, params)
 }
 
-func (m *meilisearch) UpdateSearchRuleWithContext(ctx context.Context, uid string, params *SearchRulesRequest) (*SearchRule, error) {
-	resp := new(SearchRule)
+func (m *meilisearch) UpdateSearchRuleWithContext(ctx context.Context, uid string, params *SearchRulesRequest) (*TaskInfo, error) {
+	resp := new(TaskInfo)
 
 	req := &internalRequest{
 		endpoint:            fmt.Sprintf("/dynamic-search-rules/%s", uid),
@@ -19,7 +19,7 @@ func (m *meilisearch) UpdateSearchRuleWithContext(ctx context.Context, uid strin
 		contentType:         contentTypeJSON,
 		withRequest:         params,
 		withResponse:        resp,
-		acceptedStatusCodes: []int{http.StatusCreated, http.StatusOK},
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "UpdateSearchRule",
 	}
 
@@ -77,18 +77,42 @@ func (m *meilisearch) GetSearchRuleWithContext(ctx context.Context, uid string) 
 	return resp, nil
 }
 
-func (m *meilisearch) DeleteSearchRule(uid string) error {
+func (m *meilisearch) DeleteSearchRule(uid string) (*TaskInfo, error) {
 	return m.DeleteSearchRuleWithContext(context.Background(), uid)
 }
 
-func (m *meilisearch) DeleteSearchRuleWithContext(ctx context.Context, uid string) error {
+func (m *meilisearch) DeleteSearchRuleWithContext(ctx context.Context, uid string) (*TaskInfo, error) {
+	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            fmt.Sprintf("/dynamic-search-rules/%s", uid),
 		method:              http.MethodDelete,
 		withRequest:         nil,
-		withResponse:        nil,
-		acceptedStatusCodes: []int{http.StatusNoContent},
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
 		functionName:        "DeleteSearchRule",
 	}
-	return m.client.executeRequest(ctx, req)
+	if err := m.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (m *meilisearch) DeleteAllSearchRules() (*TaskInfo, error) {
+	return m.DeleteAllSearchRulesWithContext(context.Background())
+}
+
+func (m *meilisearch) DeleteAllSearchRulesWithContext(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/dynamic-search-rules",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "DeleteAllSearchRules",
+	}
+	if err := m.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
 }

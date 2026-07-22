@@ -114,7 +114,7 @@ func cleanupChat(services ...meilisearch.ChatManager) func() {
 	}
 }
 
-func cleanupSearchRules(services ...meilisearch.SearchRulesManager) func() {
+func cleanupSearchRules(services ...meilisearch.ServiceManager) func() {
 	return func() {
 		for _, s := range services {
 			_, _ = deleteAllSearchRules(s)
@@ -193,18 +193,13 @@ func resetNetwork(sv meilisearch.ServiceManager) (ok bool, err error) {
 	return true, nil
 }
 
-func deleteAllSearchRules(searchRuleMgr meilisearch.SearchRulesManager) (ok bool, err error) {
-	rules, err := searchRuleMgr.ListSearchRules(&meilisearch.SearchRulesParams{
-		Offset: 0,
-		Limit:  1000,
-	})
+func deleteAllSearchRules(searchRuleMgr meilisearch.ServiceManager) (ok bool, err error) {
+	task, err := searchRuleMgr.DeleteAllSearchRules()
 	if err != nil {
 		return false, err
 	}
-	for _, rule := range rules.Results {
-		if err := searchRuleMgr.DeleteSearchRule(rule.Uid); err != nil {
-			return false, err
-		}
+	if _, err := searchRuleMgr.WaitForTask(task.TaskUID, 0); err != nil {
+		return false, err
 	}
 	return true, nil
 }

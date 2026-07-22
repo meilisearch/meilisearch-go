@@ -6,11 +6,11 @@ import (
 )
 
 type SearchRulesRequest struct {
-	Description string      `json:"description,omitempty"`
-	Priority    *int        `json:"priority,omitempty"`
-	Active      *bool       `json:"active,omitempty"`
-	Conditions  []Condition `json:"conditions,omitempty"`
-	Actions     []Action    `json:"actions,omitempty"`
+	Description string                `json:"description,omitempty"`
+	Precedence  *int                  `json:"precedence,omitempty"`
+	Active      *bool                 `json:"active,omitempty"`
+	Conditions  *SearchRuleConditions `json:"conditions,omitempty"`
+	Actions     []Action              `json:"actions,omitempty"`
 }
 
 type SearchRulesResults struct {
@@ -21,30 +21,38 @@ type SearchRulesResults struct {
 }
 
 type SearchRulesParams struct {
-	Offset int64              `json:"offset"`
-	Limit  int64              `json:"limit"`
+	Offset int64              `json:"offset,omitempty"`
+	Limit  int64              `json:"limit,omitempty"`
 	Filter *SearchRulesFilter `json:"filter,omitempty"`
 }
 
 type SearchRulesFilter struct {
-	AttributePatterns []string `json:"attributePatterns,omitempty"`
-	Active            *bool    `json:"active,omitempty"`
+	Query  string `json:"query,omitempty"`
+	Active *bool  `json:"active,omitempty"`
 }
 
 type SearchRule struct {
-	Uid         string      `json:"uid"`
-	Description string      `json:"description"`
-	Priority    int         `json:"priority"`
-	Active      bool        `json:"active"`
-	Conditions  []Condition `json:"conditions"`
-	Actions     []Action    `json:"actions"`
+	Uid         string               `json:"uid"`
+	Description string               `json:"description"`
+	Precedence  int                  `json:"precedence"`
+	Active      bool                 `json:"active"`
+	Conditions  SearchRuleConditions `json:"conditions"`
+	Actions     []Action             `json:"actions"`
 }
 
-type Condition struct {
-	Scope   string     `json:"scope"`
-	IsEmpty *bool      `json:"isEmpty,omitempty"`
-	Start   *time.Time `json:"start,omitempty"`
-	End     *time.Time `json:"end,omitempty"`
+type SearchRuleConditions struct {
+	Query *QueryCondition `json:"query,omitempty"`
+	Time  *TimeCondition  `json:"time,omitempty"`
+}
+
+type QueryCondition struct {
+	IsEmpty *bool   `json:"isEmpty,omitempty"`
+	Words   *string `json:"words,omitempty"`
+}
+
+type TimeCondition struct {
+	Start *time.Time `json:"start,omitempty"`
+	End   *time.Time `json:"end,omitempty"`
 }
 
 type Action struct {
@@ -53,8 +61,8 @@ type Action struct {
 }
 
 type Selector struct {
-	IndexUid string `json:"indexUid"`
-	ID       string `json:"id,omitempty"`
+	IndexUid string `json:"indexUid,omitempty"`
+	ID       string `json:"id"`
 }
 
 type ActionDef struct {
