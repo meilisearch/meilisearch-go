@@ -26,15 +26,13 @@ func Test_ListSearchRule(t *testing.T) {
 	for i, uid := range uids {
 		_, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
 			Description: fmt.Sprintf("Rule %d for %s", i, uid),
-			Priority:    intPtr(i + 1),
+			Precedence:  intPtr(i + 1),
 			Active:      boolPtr(true),
-			Conditions: []meilisearch.Condition{
-				{
-					Scope:   "query",
+			Conditions: &meilisearch.Condition{
+				Query: &meilisearch.QueryCondition{
 					IsEmpty: boolPtr(true),
 				},
-				{
-					Scope: "time",
+				Time: &meilisearch.TimeCondition{
 					Start: &start,
 					End:   &end,
 				},
@@ -75,7 +73,7 @@ func Test_ListSearchRule(t *testing.T) {
 			assert.NotEmpty(t, rule.Uid)
 			assert.NotEmpty(t, rule.Description)
 			assert.True(t, rule.Active)
-			assert.Greater(t, rule.Priority, 0)
+			assert.Greater(t, rule.Precedence, 0)
 			assert.NotEmpty(t, rule.Conditions)
 			assert.NotEmpty(t, rule.Actions)
 		}
@@ -127,15 +125,13 @@ func Test_UpdateSearchRule(t *testing.T) {
 	t.Run("create new rule", func(t *testing.T) {
 		rule, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
 			Description: "Promotional campaign rules",
-			Priority:    intPtr(10),
+			Precedence:    intPtr(10),
 			Active:      boolPtr(true),
-			Conditions: []meilisearch.Condition{
-				{
-					Scope:   "query",
+			Conditions: &meilisearch.Condition{
+				Query: &meilisearch.QueryCondition{
 					IsEmpty: boolPtr(true),
 				},
-				{
-					Scope: "time",
+				Time: &meilisearch.TimeCondition{
 					Start: &start,
 					End:   &end,
 				},
@@ -157,7 +153,7 @@ func Test_UpdateSearchRule(t *testing.T) {
 		require.NotNil(t, rule)
 		assert.Equal(t, uid, rule.Uid)
 		assert.Equal(t, "Promotional campaign rules", rule.Description)
-		assert.Equal(t, 10, rule.Priority)
+		assert.Equal(t, 10, rule.Precedence)
 		assert.True(t, rule.Active)
 		assert.Len(t, rule.Conditions, 2)
 		assert.Len(t, rule.Actions, 1)
@@ -166,11 +162,10 @@ func Test_UpdateSearchRule(t *testing.T) {
 	t.Run("update existing rule", func(t *testing.T) {
 		updatedRule, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
 			Description: "Updated promotional campaign rules",
-			Priority:    intPtr(8),
+			Precedence:    intPtr(8),
 			Active:      boolPtr(false),
-			Conditions: []meilisearch.Condition{
-				{
-					Scope:   "query",
+			Conditions: &meilisearch.Condition{
+				Query: &meilisearch.QueryCondition{
 					IsEmpty: boolPtr(false),
 				},
 			},
@@ -201,7 +196,7 @@ func Test_UpdateSearchRule(t *testing.T) {
 		require.NotNil(t, updatedRule)
 		assert.Equal(t, uid, updatedRule.Uid)
 		assert.Equal(t, "Updated promotional campaign rules", updatedRule.Description)
-		assert.Equal(t, 8, updatedRule.Priority)
+		assert.Equal(t, 8, updatedRule.Precedence)
 		assert.False(t, updatedRule.Active)
 		assert.Len(t, updatedRule.Conditions, 1)
 		assert.Len(t, updatedRule.Actions, 2)
@@ -210,8 +205,43 @@ func Test_UpdateSearchRule(t *testing.T) {
 		fetchedRule, err := sv.GetSearchRule(uid)
 		require.NoError(t, err)
 		assert.Equal(t, updatedRule.Description, fetchedRule.Description)
-		assert.Equal(t, updatedRule.Priority, fetchedRule.Priority)
+		assert.Equal(t, updatedRule.Precedence, fetchedRule.Precedence)
 		assert.Equal(t, updatedRule.Active, fetchedRule.Active)
+	})
+
+	t.Run("create rule with filter condition", func(t *testing.T) {
+		rule, err := sv.UpdateSearchRule("test-filter", &meilisearch.SearchRulesRequest{
+			Description: "Filter condition rule",
+			Precedence: intPtr(1),
+			Active:     boolPtr(true),
+			Conditions: &meilisearch.Condition{
+				Filter: &meilisearch.FilterCondition{
+					Values: map[string]any{
+						"color":    "red",
+						"category": "shirt",
+					},
+				},
+			},
+			Actions: []meilisearch.Action{
+				{
+					Selector: meilisearch.Selector{
+						IndexUid: "products",
+						ID:       "123",
+					},
+					Action: meilisearch.ActionDef{
+						Type:     "pin",
+						Position: 1,
+					},
+				},
+			},
+		})
+
+		require.NoError(t, err)
+		require.NotNil(t, rule)
+
+		assert.NotNil(t, rule.Conditions.Filter)
+		assert.Equal(t, "red", rule.Conditions.Filter.Values["color"])
+		assert.Equal(t, "shirt", rule.Conditions.Filter.Values["category"])
 	})
 }
 
@@ -230,15 +260,13 @@ func Test_GetSearchRule(t *testing.T) {
 
 	want, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
 		Description: "Black Friday 2025 rules",
-		Priority:    intPtr(5),
+		Precedence:    intPtr(5),
 		Active:      boolPtr(true),
-		Conditions: []meilisearch.Condition{
-			{
-				Scope:   "query",
+		Conditions: &meilisearch.Condition{
+			Query: &meilisearch.QueryCondition{
 				IsEmpty: boolPtr(true),
 			},
-			{
-				Scope: "time",
+			Time: &meilisearch.TimeCondition{
 				Start: &start,
 				End:   &end,
 			},
@@ -261,6 +289,8 @@ func Test_GetSearchRule(t *testing.T) {
 	got, err := sv.GetSearchRule(uid)
 	require.NoError(t, err)
 	assert.Equal(t, want, got)
+	assert.False(t, got.LastUpdatedAt.IsZero())
+	assert.Equal(t, want.LastUpdatedAt, got.LastUpdatedAt)
 }
 
 func Test_DeleteSearchRule(t *testing.T) {
@@ -277,15 +307,13 @@ func Test_DeleteSearchRule(t *testing.T) {
 	end := start.Add(time.Hour * 1)
 	_, err = sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
 		Description: "Black Friday 2025 rules",
-		Priority:    intPtr(5),
+		Precedence:    intPtr(5),
 		Active:      boolPtr(true),
-		Conditions: []meilisearch.Condition{
-			{
-				Scope:   "query",
+		Conditions: &meilisearch.Condition{
+			Query: &meilisearch.QueryCondition{
 				IsEmpty: boolPtr(true),
 			},
-			{
-				Scope: "time",
+			Time: &meilisearch.TimeCondition{
 				Start: &start,
 				End:   &end,
 			},
