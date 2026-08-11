@@ -57,6 +57,8 @@ type StatsIndex struct {
 	NumberOfDocuments         int64            `json:"numberOfDocuments"`
 	IsIndexing                bool             `json:"isIndexing"`
 	FieldDistribution         map[string]int64 `json:"fieldDistribution"`
+	IndexSize                 any              `json:"indexSize"`
+	UsedIndexSize             any              `json:"usedIndexSize"`
 	RawDocumentDbSize         any              `json:"rawDocumentDbSize"`
 	AvgDocumentSize           any              `json:"avgDocumentSize"`
 	NumberOfEmbeddedDocuments int64            `json:"numberOfEmbeddedDocuments"`
