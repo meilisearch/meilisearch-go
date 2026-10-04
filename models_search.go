@@ -10,7 +10,25 @@ type SearchRulesRequest struct {
 	Precedence  *int        `json:"precedence,omitempty"`
 	Active      *bool       `json:"active,omitempty"`
 	Conditions  *Conditions `json:"conditions,omitempty"`
-	Actions     []Action    `json:"actions,omitempty"`
+	Actions     *Actions    `json:"actions,omitempty"`
+}
+
+type Actions struct {
+	Pin   []Pin   `json:"pin,omitempty"`
+	Scale []Scale `json:"scale,omitempty"`
+}
+
+type Pin struct {
+	ID       string `json:"id"`
+	Position int    `json:"position"`
+	IndexUid string `json:"indexUid,omitempty"`
+}
+
+type Scale struct {
+	Weight   float64     `json:"weight"`
+	Ids      []string    `json:"ids,omitempty"`
+	Filter   interface{} `json:"filter,omitempty"`
+	IndexUid string      `json:"indexUid,omitempty"`
 }
 
 type SearchRulesResults struct {
@@ -37,7 +55,7 @@ type SearchRule struct {
 	Precedence  int         `json:"precedence"`
 	Active      bool        `json:"active"`
 	Conditions  *Conditions `json:"conditions"`
-	Actions     []Action    `json:"actions"`
+	Actions     Actions     `json:"actions"`
 }
 
 type Conditions struct {
