@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"context"
 	"io"
 	"net/http"
 	"strings"
@@ -57,19 +58,19 @@ func TestGetTaskDocumentsDestinationValidation(t *testing.T) {
 
 	t.Run("dst is not a pointer", func(t *testing.T) {
 		var docs []taskDocumentTest
-		err := client.GetTaskDocuments(1, docs)
+		err := client.GetTaskDocuments(context.Background(), 1, docs)
 		require.ErrorContains(t, err, "dst must be a non-nil pointer to a slice")
 	})
 
 	t.Run("dst is a nil pointer", func(t *testing.T) {
 		var docs *[]taskDocumentTest
-		err := client.GetTaskDocuments(1, docs)
+		err := client.GetTaskDocuments(context.Background(), 1, docs)
 		require.ErrorContains(t, err, "dst must be a non-nil pointer to a slice")
 	})
 
 	t.Run("dst is a pointer to a non-slice", func(t *testing.T) {
 		var doc taskDocumentTest
-		err := client.GetTaskDocuments(1, &doc)
+		err := client.GetTaskDocuments(context.Background(), 1, &doc)
 		require.ErrorContains(t, err, "dst must point to a slice")
 	})
 }
@@ -81,7 +82,7 @@ func TestGetTaskDocumentsRequiresNDJSONContentType(t *testing.T) {
 	})
 
 	var docs []taskDocumentTest
-	err := client.GetTaskDocuments(1, &docs)
+	err := client.GetTaskDocuments(context.Background(), 1, &docs)
 	require.ErrorContains(t, err, `unexpected Content-Type "application/json"`)
 	var meiliErr *Error
 	require.ErrorAs(t, err, &meiliErr)
@@ -96,7 +97,7 @@ func TestGetTaskDocumentsDecodesNDJSON(t *testing.T) {
 	})
 
 	var docs []taskDocumentTest
-	err := client.GetTaskDocuments(42, &docs)
+	err := client.GetTaskDocuments(context.Background(), 42, &docs)
 	require.NoError(t, err)
 	require.Equal(t, []taskDocumentTest{
 		{ID: "1", Name: "Alice"},
@@ -112,7 +113,7 @@ func TestGetTaskDocumentsDecodesConcatenatedNDJSON(t *testing.T) {
 	})
 
 	var docs []taskDocumentTest
-	err := client.GetTaskDocuments(42, &docs)
+	err := client.GetTaskDocuments(context.Background(), 42, &docs)
 	require.NoError(t, err)
 	require.Equal(t, []taskDocumentTest{
 		{ID: "1", Name: "Alice"},
@@ -131,7 +132,7 @@ func TestGetTaskDocumentsDecodesEncodedNDJSON(t *testing.T) {
 	}, WithContentEncoding(GzipEncoding, DefaultCompression))
 
 	var docs []taskDocumentTest
-	err := client.GetTaskDocuments(1, &docs)
+	err := client.GetTaskDocuments(context.Background(), 1, &docs)
 	require.NoError(t, err)
 	require.Equal(t, []taskDocumentTest{{ID: "1", Name: "Alice"}}, docs)
 }
@@ -156,7 +157,7 @@ func TestGetTaskDocumentsDecodesResponseContentEncodings(t *testing.T) {
 			})
 
 			var docs []taskDocumentTest
-			err := client.GetTaskDocuments(1, &docs)
+			err := client.GetTaskDocuments(context.Background(), 1, &docs)
 			require.NoError(t, err)
 			require.Equal(t, []taskDocumentTest{{ID: "1", Name: "Alice"}}, docs)
 		})
@@ -170,7 +171,7 @@ func TestGetTaskDocumentsDecodesEmptyNDJSON(t *testing.T) {
 	})
 
 	docs := []taskDocumentTest{{ID: "stale", Name: "Stale"}}
-	err := client.GetTaskDocuments(42, &docs)
+	err := client.GetTaskDocuments(context.Background(), 42, &docs)
 	require.NoError(t, err)
 	require.NotNil(t, docs)
 	require.Empty(t, docs)
@@ -196,7 +197,7 @@ func TestGetTaskDocumentsResponseDecoderError(t *testing.T) {
 			})
 
 			var docs []taskDocumentTest
-			err := client.GetTaskDocuments(42, &docs)
+			err := client.GetTaskDocuments(context.Background(), 42, &docs)
 			require.ErrorContains(t, err, "failed to create response decoder")
 		})
 	}
@@ -211,7 +212,7 @@ func TestGetTaskDocumentsUnsupportedContentEncoding(t *testing.T) {
 	})
 
 	var docs []taskDocumentTest
-	err := client.GetTaskDocuments(42, &docs)
+	err := client.GetTaskDocuments(context.Background(), 42, &docs)
 	require.ErrorContains(t, err, `failed to create response decoder: unsupported Content-Encoding "compress"`)
 }
 
@@ -244,7 +245,7 @@ func TestGetTaskDocumentsAPIError(t *testing.T) {
 			}, tt.options...)
 
 			var docs []taskDocumentTest
-			err := client.GetTaskDocuments(42, &docs)
+			err := client.GetTaskDocuments(context.Background(), 42, &docs)
 			require.Error(t, err)
 
 			var meiliErr *Error
@@ -295,7 +296,7 @@ func TestGetTaskDocumentsDecodeError(t *testing.T) {
 	})
 
 	var docs []taskDocumentTest
-	err := client.GetTaskDocuments(42, &docs)
+	err := client.GetTaskDocuments(context.Background(), 42, &docs)
 	require.ErrorContains(t, err, "failed to decode NDJSON")
 }
 
@@ -306,6 +307,6 @@ func TestGetTaskDocumentsUnmarshalError(t *testing.T) {
 	})
 
 	var docs []taskDocumentTest
-	err := client.GetTaskDocuments(42, &docs)
+	err := client.GetTaskDocuments(context.Background(), 42, &docs)
 	require.ErrorContains(t, err, "failed to unmarshal NDJSON response")
 }

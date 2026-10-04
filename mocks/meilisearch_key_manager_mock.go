@@ -17,10 +17,19 @@ func NewMockmeilisearchKeyManager(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockmeilisearchKeyManager {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockmeilisearchKeyManager{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -39,73 +48,11 @@ func (_m *MockmeilisearchKeyManager) EXPECT() *MockmeilisearchKeyManager_Expecte
 }
 
 // CreateKey provides a mock function for the type MockmeilisearchKeyManager
-func (_mock *MockmeilisearchKeyManager) CreateKey(request *meilisearch.Key) (*meilisearch.Key, error) {
-	ret := _mock.Called(request)
-
-	if len(ret) == 0 {
-		panic("no return value specified for CreateKey")
-	}
-
-	var r0 *meilisearch.Key
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.Key) (*meilisearch.Key, error)); ok {
-		return returnFunc(request)
-	}
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.Key) *meilisearch.Key); ok {
-		r0 = returnFunc(request)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Key)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(*meilisearch.Key) error); ok {
-		r1 = returnFunc(request)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchKeyManager_CreateKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateKey'
-type MockmeilisearchKeyManager_CreateKey_Call struct {
-	*mock.Call
-}
-
-// CreateKey is a helper method to define mock.On call
-//   - request *meilisearch.Key
-func (_e *MockmeilisearchKeyManager_Expecter) CreateKey(request any) *MockmeilisearchKeyManager_CreateKey_Call {
-	return &MockmeilisearchKeyManager_CreateKey_Call{Call: _e.mock.On("CreateKey", request)}
-}
-
-func (_c *MockmeilisearchKeyManager_CreateKey_Call) Run(run func(request *meilisearch.Key)) *MockmeilisearchKeyManager_CreateKey_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *meilisearch.Key
-		if args[0] != nil {
-			arg0 = args[0].(*meilisearch.Key)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchKeyManager_CreateKey_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyManager_CreateKey_Call {
-	_c.Call.Return(key, err)
-	return _c
-}
-
-func (_c *MockmeilisearchKeyManager_CreateKey_Call) RunAndReturn(run func(request *meilisearch.Key) (*meilisearch.Key, error)) *MockmeilisearchKeyManager_CreateKey_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// CreateKeyWithContext provides a mock function for the type MockmeilisearchKeyManager
-func (_mock *MockmeilisearchKeyManager) CreateKeyWithContext(ctx context.Context, request *meilisearch.Key) (*meilisearch.Key, error) {
+func (_mock *MockmeilisearchKeyManager) CreateKey(ctx context.Context, request *meilisearch.Key) (*meilisearch.Key, error) {
 	ret := _mock.Called(ctx, request)
 
 	if len(ret) == 0 {
-		panic("no return value specified for CreateKeyWithContext")
+		panic("no return value specified for CreateKey")
 	}
 
 	var r0 *meilisearch.Key
@@ -128,19 +75,19 @@ func (_mock *MockmeilisearchKeyManager) CreateKeyWithContext(ctx context.Context
 	return r0, r1
 }
 
-// MockmeilisearchKeyManager_CreateKeyWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateKeyWithContext'
-type MockmeilisearchKeyManager_CreateKeyWithContext_Call struct {
+// MockmeilisearchKeyManager_CreateKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'CreateKey'
+type MockmeilisearchKeyManager_CreateKey_Call struct {
 	*mock.Call
 }
 
-// CreateKeyWithContext is a helper method to define mock.On call
+// CreateKey is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *meilisearch.Key
-func (_e *MockmeilisearchKeyManager_Expecter) CreateKeyWithContext(ctx any, request any) *MockmeilisearchKeyManager_CreateKeyWithContext_Call {
-	return &MockmeilisearchKeyManager_CreateKeyWithContext_Call{Call: _e.mock.On("CreateKeyWithContext", ctx, request)}
+func (_e *MockmeilisearchKeyManager_Expecter) CreateKey(ctx any, request any) *MockmeilisearchKeyManager_CreateKey_Call {
+	return &MockmeilisearchKeyManager_CreateKey_Call{Call: _e.mock.On("CreateKey", ctx, request)}
 }
 
-func (_c *MockmeilisearchKeyManager_CreateKeyWithContext_Call) Run(run func(ctx context.Context, request *meilisearch.Key)) *MockmeilisearchKeyManager_CreateKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_CreateKey_Call) Run(run func(ctx context.Context, request *meilisearch.Key)) *MockmeilisearchKeyManager_CreateKey_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -158,82 +105,22 @@ func (_c *MockmeilisearchKeyManager_CreateKeyWithContext_Call) Run(run func(ctx 
 	return _c
 }
 
-func (_c *MockmeilisearchKeyManager_CreateKeyWithContext_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyManager_CreateKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_CreateKey_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyManager_CreateKey_Call {
 	_c.Call.Return(key, err)
 	return _c
 }
 
-func (_c *MockmeilisearchKeyManager_CreateKeyWithContext_Call) RunAndReturn(run func(ctx context.Context, request *meilisearch.Key) (*meilisearch.Key, error)) *MockmeilisearchKeyManager_CreateKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_CreateKey_Call) RunAndReturn(run func(ctx context.Context, request *meilisearch.Key) (*meilisearch.Key, error)) *MockmeilisearchKeyManager_CreateKey_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DeleteKey provides a mock function for the type MockmeilisearchKeyManager
-func (_mock *MockmeilisearchKeyManager) DeleteKey(keyOrUID string) (bool, error) {
-	ret := _mock.Called(keyOrUID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for DeleteKey")
-	}
-
-	var r0 bool
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (bool, error)); ok {
-		return returnFunc(keyOrUID)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string) bool); ok {
-		r0 = returnFunc(keyOrUID)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(keyOrUID)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchKeyManager_DeleteKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteKey'
-type MockmeilisearchKeyManager_DeleteKey_Call struct {
-	*mock.Call
-}
-
-// DeleteKey is a helper method to define mock.On call
-//   - keyOrUID string
-func (_e *MockmeilisearchKeyManager_Expecter) DeleteKey(keyOrUID any) *MockmeilisearchKeyManager_DeleteKey_Call {
-	return &MockmeilisearchKeyManager_DeleteKey_Call{Call: _e.mock.On("DeleteKey", keyOrUID)}
-}
-
-func (_c *MockmeilisearchKeyManager_DeleteKey_Call) Run(run func(keyOrUID string)) *MockmeilisearchKeyManager_DeleteKey_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchKeyManager_DeleteKey_Call) Return(b bool, err error) *MockmeilisearchKeyManager_DeleteKey_Call {
-	_c.Call.Return(b, err)
-	return _c
-}
-
-func (_c *MockmeilisearchKeyManager_DeleteKey_Call) RunAndReturn(run func(keyOrUID string) (bool, error)) *MockmeilisearchKeyManager_DeleteKey_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// DeleteKeyWithContext provides a mock function for the type MockmeilisearchKeyManager
-func (_mock *MockmeilisearchKeyManager) DeleteKeyWithContext(ctx context.Context, keyOrUID string) (bool, error) {
+func (_mock *MockmeilisearchKeyManager) DeleteKey(ctx context.Context, keyOrUID string) (bool, error) {
 	ret := _mock.Called(ctx, keyOrUID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for DeleteKeyWithContext")
+		panic("no return value specified for DeleteKey")
 	}
 
 	var r0 bool
@@ -254,19 +141,19 @@ func (_mock *MockmeilisearchKeyManager) DeleteKeyWithContext(ctx context.Context
 	return r0, r1
 }
 
-// MockmeilisearchKeyManager_DeleteKeyWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteKeyWithContext'
-type MockmeilisearchKeyManager_DeleteKeyWithContext_Call struct {
+// MockmeilisearchKeyManager_DeleteKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteKey'
+type MockmeilisearchKeyManager_DeleteKey_Call struct {
 	*mock.Call
 }
 
-// DeleteKeyWithContext is a helper method to define mock.On call
+// DeleteKey is a helper method to define mock.On call
 //   - ctx context.Context
 //   - keyOrUID string
-func (_e *MockmeilisearchKeyManager_Expecter) DeleteKeyWithContext(ctx any, keyOrUID any) *MockmeilisearchKeyManager_DeleteKeyWithContext_Call {
-	return &MockmeilisearchKeyManager_DeleteKeyWithContext_Call{Call: _e.mock.On("DeleteKeyWithContext", ctx, keyOrUID)}
+func (_e *MockmeilisearchKeyManager_Expecter) DeleteKey(ctx any, keyOrUID any) *MockmeilisearchKeyManager_DeleteKey_Call {
+	return &MockmeilisearchKeyManager_DeleteKey_Call{Call: _e.mock.On("DeleteKey", ctx, keyOrUID)}
 }
 
-func (_c *MockmeilisearchKeyManager_DeleteKeyWithContext_Call) Run(run func(ctx context.Context, keyOrUID string)) *MockmeilisearchKeyManager_DeleteKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_DeleteKey_Call) Run(run func(ctx context.Context, keyOrUID string)) *MockmeilisearchKeyManager_DeleteKey_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -284,84 +171,22 @@ func (_c *MockmeilisearchKeyManager_DeleteKeyWithContext_Call) Run(run func(ctx 
 	return _c
 }
 
-func (_c *MockmeilisearchKeyManager_DeleteKeyWithContext_Call) Return(b bool, err error) *MockmeilisearchKeyManager_DeleteKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_DeleteKey_Call) Return(b bool, err error) *MockmeilisearchKeyManager_DeleteKey_Call {
 	_c.Call.Return(b, err)
 	return _c
 }
 
-func (_c *MockmeilisearchKeyManager_DeleteKeyWithContext_Call) RunAndReturn(run func(ctx context.Context, keyOrUID string) (bool, error)) *MockmeilisearchKeyManager_DeleteKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_DeleteKey_Call) RunAndReturn(run func(ctx context.Context, keyOrUID string) (bool, error)) *MockmeilisearchKeyManager_DeleteKey_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetKey provides a mock function for the type MockmeilisearchKeyManager
-func (_mock *MockmeilisearchKeyManager) GetKey(identifier string) (*meilisearch.Key, error) {
-	ret := _mock.Called(identifier)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetKey")
-	}
-
-	var r0 *meilisearch.Key
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*meilisearch.Key, error)); ok {
-		return returnFunc(identifier)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string) *meilisearch.Key); ok {
-		r0 = returnFunc(identifier)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Key)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(identifier)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchKeyManager_GetKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKey'
-type MockmeilisearchKeyManager_GetKey_Call struct {
-	*mock.Call
-}
-
-// GetKey is a helper method to define mock.On call
-//   - identifier string
-func (_e *MockmeilisearchKeyManager_Expecter) GetKey(identifier any) *MockmeilisearchKeyManager_GetKey_Call {
-	return &MockmeilisearchKeyManager_GetKey_Call{Call: _e.mock.On("GetKey", identifier)}
-}
-
-func (_c *MockmeilisearchKeyManager_GetKey_Call) Run(run func(identifier string)) *MockmeilisearchKeyManager_GetKey_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchKeyManager_GetKey_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyManager_GetKey_Call {
-	_c.Call.Return(key, err)
-	return _c
-}
-
-func (_c *MockmeilisearchKeyManager_GetKey_Call) RunAndReturn(run func(identifier string) (*meilisearch.Key, error)) *MockmeilisearchKeyManager_GetKey_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetKeyWithContext provides a mock function for the type MockmeilisearchKeyManager
-func (_mock *MockmeilisearchKeyManager) GetKeyWithContext(ctx context.Context, identifier string) (*meilisearch.Key, error) {
+func (_mock *MockmeilisearchKeyManager) GetKey(ctx context.Context, identifier string) (*meilisearch.Key, error) {
 	ret := _mock.Called(ctx, identifier)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetKeyWithContext")
+		panic("no return value specified for GetKey")
 	}
 
 	var r0 *meilisearch.Key
@@ -384,19 +209,19 @@ func (_mock *MockmeilisearchKeyManager) GetKeyWithContext(ctx context.Context, i
 	return r0, r1
 }
 
-// MockmeilisearchKeyManager_GetKeyWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKeyWithContext'
-type MockmeilisearchKeyManager_GetKeyWithContext_Call struct {
+// MockmeilisearchKeyManager_GetKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKey'
+type MockmeilisearchKeyManager_GetKey_Call struct {
 	*mock.Call
 }
 
-// GetKeyWithContext is a helper method to define mock.On call
+// GetKey is a helper method to define mock.On call
 //   - ctx context.Context
 //   - identifier string
-func (_e *MockmeilisearchKeyManager_Expecter) GetKeyWithContext(ctx any, identifier any) *MockmeilisearchKeyManager_GetKeyWithContext_Call {
-	return &MockmeilisearchKeyManager_GetKeyWithContext_Call{Call: _e.mock.On("GetKeyWithContext", ctx, identifier)}
+func (_e *MockmeilisearchKeyManager_Expecter) GetKey(ctx any, identifier any) *MockmeilisearchKeyManager_GetKey_Call {
+	return &MockmeilisearchKeyManager_GetKey_Call{Call: _e.mock.On("GetKey", ctx, identifier)}
 }
 
-func (_c *MockmeilisearchKeyManager_GetKeyWithContext_Call) Run(run func(ctx context.Context, identifier string)) *MockmeilisearchKeyManager_GetKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_GetKey_Call) Run(run func(ctx context.Context, identifier string)) *MockmeilisearchKeyManager_GetKey_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -414,84 +239,22 @@ func (_c *MockmeilisearchKeyManager_GetKeyWithContext_Call) Run(run func(ctx con
 	return _c
 }
 
-func (_c *MockmeilisearchKeyManager_GetKeyWithContext_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyManager_GetKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_GetKey_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyManager_GetKey_Call {
 	_c.Call.Return(key, err)
 	return _c
 }
 
-func (_c *MockmeilisearchKeyManager_GetKeyWithContext_Call) RunAndReturn(run func(ctx context.Context, identifier string) (*meilisearch.Key, error)) *MockmeilisearchKeyManager_GetKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_GetKey_Call) RunAndReturn(run func(ctx context.Context, identifier string) (*meilisearch.Key, error)) *MockmeilisearchKeyManager_GetKey_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetKeys provides a mock function for the type MockmeilisearchKeyManager
-func (_mock *MockmeilisearchKeyManager) GetKeys(param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error) {
-	ret := _mock.Called(param)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetKeys")
-	}
-
-	var r0 *meilisearch.KeysResults
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.KeysQuery) (*meilisearch.KeysResults, error)); ok {
-		return returnFunc(param)
-	}
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.KeysQuery) *meilisearch.KeysResults); ok {
-		r0 = returnFunc(param)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.KeysResults)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(*meilisearch.KeysQuery) error); ok {
-		r1 = returnFunc(param)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchKeyManager_GetKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKeys'
-type MockmeilisearchKeyManager_GetKeys_Call struct {
-	*mock.Call
-}
-
-// GetKeys is a helper method to define mock.On call
-//   - param *meilisearch.KeysQuery
-func (_e *MockmeilisearchKeyManager_Expecter) GetKeys(param any) *MockmeilisearchKeyManager_GetKeys_Call {
-	return &MockmeilisearchKeyManager_GetKeys_Call{Call: _e.mock.On("GetKeys", param)}
-}
-
-func (_c *MockmeilisearchKeyManager_GetKeys_Call) Run(run func(param *meilisearch.KeysQuery)) *MockmeilisearchKeyManager_GetKeys_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *meilisearch.KeysQuery
-		if args[0] != nil {
-			arg0 = args[0].(*meilisearch.KeysQuery)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchKeyManager_GetKeys_Call) Return(keysResults *meilisearch.KeysResults, err error) *MockmeilisearchKeyManager_GetKeys_Call {
-	_c.Call.Return(keysResults, err)
-	return _c
-}
-
-func (_c *MockmeilisearchKeyManager_GetKeys_Call) RunAndReturn(run func(param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error)) *MockmeilisearchKeyManager_GetKeys_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetKeysWithContext provides a mock function for the type MockmeilisearchKeyManager
-func (_mock *MockmeilisearchKeyManager) GetKeysWithContext(ctx context.Context, param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error) {
+func (_mock *MockmeilisearchKeyManager) GetKeys(ctx context.Context, param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error) {
 	ret := _mock.Called(ctx, param)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetKeysWithContext")
+		panic("no return value specified for GetKeys")
 	}
 
 	var r0 *meilisearch.KeysResults
@@ -514,19 +277,19 @@ func (_mock *MockmeilisearchKeyManager) GetKeysWithContext(ctx context.Context, 
 	return r0, r1
 }
 
-// MockmeilisearchKeyManager_GetKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKeysWithContext'
-type MockmeilisearchKeyManager_GetKeysWithContext_Call struct {
+// MockmeilisearchKeyManager_GetKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKeys'
+type MockmeilisearchKeyManager_GetKeys_Call struct {
 	*mock.Call
 }
 
-// GetKeysWithContext is a helper method to define mock.On call
+// GetKeys is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.KeysQuery
-func (_e *MockmeilisearchKeyManager_Expecter) GetKeysWithContext(ctx any, param any) *MockmeilisearchKeyManager_GetKeysWithContext_Call {
-	return &MockmeilisearchKeyManager_GetKeysWithContext_Call{Call: _e.mock.On("GetKeysWithContext", ctx, param)}
+func (_e *MockmeilisearchKeyManager_Expecter) GetKeys(ctx any, param any) *MockmeilisearchKeyManager_GetKeys_Call {
+	return &MockmeilisearchKeyManager_GetKeys_Call{Call: _e.mock.On("GetKeys", ctx, param)}
 }
 
-func (_c *MockmeilisearchKeyManager_GetKeysWithContext_Call) Run(run func(ctx context.Context, param *meilisearch.KeysQuery)) *MockmeilisearchKeyManager_GetKeysWithContext_Call {
+func (_c *MockmeilisearchKeyManager_GetKeys_Call) Run(run func(ctx context.Context, param *meilisearch.KeysQuery)) *MockmeilisearchKeyManager_GetKeys_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -544,90 +307,22 @@ func (_c *MockmeilisearchKeyManager_GetKeysWithContext_Call) Run(run func(ctx co
 	return _c
 }
 
-func (_c *MockmeilisearchKeyManager_GetKeysWithContext_Call) Return(keysResults *meilisearch.KeysResults, err error) *MockmeilisearchKeyManager_GetKeysWithContext_Call {
+func (_c *MockmeilisearchKeyManager_GetKeys_Call) Return(keysResults *meilisearch.KeysResults, err error) *MockmeilisearchKeyManager_GetKeys_Call {
 	_c.Call.Return(keysResults, err)
 	return _c
 }
 
-func (_c *MockmeilisearchKeyManager_GetKeysWithContext_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error)) *MockmeilisearchKeyManager_GetKeysWithContext_Call {
+func (_c *MockmeilisearchKeyManager_GetKeys_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error)) *MockmeilisearchKeyManager_GetKeys_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UpdateKey provides a mock function for the type MockmeilisearchKeyManager
-func (_mock *MockmeilisearchKeyManager) UpdateKey(keyOrUID string, request *meilisearch.Key) (*meilisearch.Key, error) {
-	ret := _mock.Called(keyOrUID, request)
-
-	if len(ret) == 0 {
-		panic("no return value specified for UpdateKey")
-	}
-
-	var r0 *meilisearch.Key
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.Key) (*meilisearch.Key, error)); ok {
-		return returnFunc(keyOrUID, request)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.Key) *meilisearch.Key); ok {
-		r0 = returnFunc(keyOrUID, request)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Key)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string, *meilisearch.Key) error); ok {
-		r1 = returnFunc(keyOrUID, request)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchKeyManager_UpdateKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateKey'
-type MockmeilisearchKeyManager_UpdateKey_Call struct {
-	*mock.Call
-}
-
-// UpdateKey is a helper method to define mock.On call
-//   - keyOrUID string
-//   - request *meilisearch.Key
-func (_e *MockmeilisearchKeyManager_Expecter) UpdateKey(keyOrUID any, request any) *MockmeilisearchKeyManager_UpdateKey_Call {
-	return &MockmeilisearchKeyManager_UpdateKey_Call{Call: _e.mock.On("UpdateKey", keyOrUID, request)}
-}
-
-func (_c *MockmeilisearchKeyManager_UpdateKey_Call) Run(run func(keyOrUID string, request *meilisearch.Key)) *MockmeilisearchKeyManager_UpdateKey_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		var arg1 *meilisearch.Key
-		if args[1] != nil {
-			arg1 = args[1].(*meilisearch.Key)
-		}
-		run(
-			arg0,
-			arg1,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchKeyManager_UpdateKey_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyManager_UpdateKey_Call {
-	_c.Call.Return(key, err)
-	return _c
-}
-
-func (_c *MockmeilisearchKeyManager_UpdateKey_Call) RunAndReturn(run func(keyOrUID string, request *meilisearch.Key) (*meilisearch.Key, error)) *MockmeilisearchKeyManager_UpdateKey_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// UpdateKeyWithContext provides a mock function for the type MockmeilisearchKeyManager
-func (_mock *MockmeilisearchKeyManager) UpdateKeyWithContext(ctx context.Context, keyOrUID string, request *meilisearch.Key) (*meilisearch.Key, error) {
+func (_mock *MockmeilisearchKeyManager) UpdateKey(ctx context.Context, keyOrUID string, request *meilisearch.Key) (*meilisearch.Key, error) {
 	ret := _mock.Called(ctx, keyOrUID, request)
 
 	if len(ret) == 0 {
-		panic("no return value specified for UpdateKeyWithContext")
+		panic("no return value specified for UpdateKey")
 	}
 
 	var r0 *meilisearch.Key
@@ -650,20 +345,20 @@ func (_mock *MockmeilisearchKeyManager) UpdateKeyWithContext(ctx context.Context
 	return r0, r1
 }
 
-// MockmeilisearchKeyManager_UpdateKeyWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateKeyWithContext'
-type MockmeilisearchKeyManager_UpdateKeyWithContext_Call struct {
+// MockmeilisearchKeyManager_UpdateKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateKey'
+type MockmeilisearchKeyManager_UpdateKey_Call struct {
 	*mock.Call
 }
 
-// UpdateKeyWithContext is a helper method to define mock.On call
+// UpdateKey is a helper method to define mock.On call
 //   - ctx context.Context
 //   - keyOrUID string
 //   - request *meilisearch.Key
-func (_e *MockmeilisearchKeyManager_Expecter) UpdateKeyWithContext(ctx any, keyOrUID any, request any) *MockmeilisearchKeyManager_UpdateKeyWithContext_Call {
-	return &MockmeilisearchKeyManager_UpdateKeyWithContext_Call{Call: _e.mock.On("UpdateKeyWithContext", ctx, keyOrUID, request)}
+func (_e *MockmeilisearchKeyManager_Expecter) UpdateKey(ctx any, keyOrUID any, request any) *MockmeilisearchKeyManager_UpdateKey_Call {
+	return &MockmeilisearchKeyManager_UpdateKey_Call{Call: _e.mock.On("UpdateKey", ctx, keyOrUID, request)}
 }
 
-func (_c *MockmeilisearchKeyManager_UpdateKeyWithContext_Call) Run(run func(ctx context.Context, keyOrUID string, request *meilisearch.Key)) *MockmeilisearchKeyManager_UpdateKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_UpdateKey_Call) Run(run func(ctx context.Context, keyOrUID string, request *meilisearch.Key)) *MockmeilisearchKeyManager_UpdateKey_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -686,12 +381,12 @@ func (_c *MockmeilisearchKeyManager_UpdateKeyWithContext_Call) Run(run func(ctx 
 	return _c
 }
 
-func (_c *MockmeilisearchKeyManager_UpdateKeyWithContext_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyManager_UpdateKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_UpdateKey_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyManager_UpdateKey_Call {
 	_c.Call.Return(key, err)
 	return _c
 }
 
-func (_c *MockmeilisearchKeyManager_UpdateKeyWithContext_Call) RunAndReturn(run func(ctx context.Context, keyOrUID string, request *meilisearch.Key) (*meilisearch.Key, error)) *MockmeilisearchKeyManager_UpdateKeyWithContext_Call {
+func (_c *MockmeilisearchKeyManager_UpdateKey_Call) RunAndReturn(run func(ctx context.Context, keyOrUID string, request *meilisearch.Key) (*meilisearch.Key, error)) *MockmeilisearchKeyManager_UpdateKey_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -17,10 +17,19 @@ func NewMockmeilisearchWebhookManager(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockmeilisearchWebhookManager {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockmeilisearchWebhookManager{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -39,73 +48,11 @@ func (_m *MockmeilisearchWebhookManager) EXPECT() *MockmeilisearchWebhookManager
 }
 
 // AddWebhook provides a mock function for the type MockmeilisearchWebhookManager
-func (_mock *MockmeilisearchWebhookManager) AddWebhook(params *meilisearch.AddWebhookRequest) (*meilisearch.Webhook, error) {
-	ret := _mock.Called(params)
-
-	if len(ret) == 0 {
-		panic("no return value specified for AddWebhook")
-	}
-
-	var r0 *meilisearch.Webhook
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.AddWebhookRequest) (*meilisearch.Webhook, error)); ok {
-		return returnFunc(params)
-	}
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.AddWebhookRequest) *meilisearch.Webhook); ok {
-		r0 = returnFunc(params)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Webhook)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(*meilisearch.AddWebhookRequest) error); ok {
-		r1 = returnFunc(params)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchWebhookManager_AddWebhook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddWebhook'
-type MockmeilisearchWebhookManager_AddWebhook_Call struct {
-	*mock.Call
-}
-
-// AddWebhook is a helper method to define mock.On call
-//   - params *meilisearch.AddWebhookRequest
-func (_e *MockmeilisearchWebhookManager_Expecter) AddWebhook(params any) *MockmeilisearchWebhookManager_AddWebhook_Call {
-	return &MockmeilisearchWebhookManager_AddWebhook_Call{Call: _e.mock.On("AddWebhook", params)}
-}
-
-func (_c *MockmeilisearchWebhookManager_AddWebhook_Call) Run(run func(params *meilisearch.AddWebhookRequest)) *MockmeilisearchWebhookManager_AddWebhook_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *meilisearch.AddWebhookRequest
-		if args[0] != nil {
-			arg0 = args[0].(*meilisearch.AddWebhookRequest)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookManager_AddWebhook_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookManager_AddWebhook_Call {
-	_c.Call.Return(webhook, err)
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookManager_AddWebhook_Call) RunAndReturn(run func(params *meilisearch.AddWebhookRequest) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookManager_AddWebhook_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// AddWebhookWithContext provides a mock function for the type MockmeilisearchWebhookManager
-func (_mock *MockmeilisearchWebhookManager) AddWebhookWithContext(ctx context.Context, params *meilisearch.AddWebhookRequest) (*meilisearch.Webhook, error) {
+func (_mock *MockmeilisearchWebhookManager) AddWebhook(ctx context.Context, params *meilisearch.AddWebhookRequest) (*meilisearch.Webhook, error) {
 	ret := _mock.Called(ctx, params)
 
 	if len(ret) == 0 {
-		panic("no return value specified for AddWebhookWithContext")
+		panic("no return value specified for AddWebhook")
 	}
 
 	var r0 *meilisearch.Webhook
@@ -128,19 +75,19 @@ func (_mock *MockmeilisearchWebhookManager) AddWebhookWithContext(ctx context.Co
 	return r0, r1
 }
 
-// MockmeilisearchWebhookManager_AddWebhookWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddWebhookWithContext'
-type MockmeilisearchWebhookManager_AddWebhookWithContext_Call struct {
+// MockmeilisearchWebhookManager_AddWebhook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'AddWebhook'
+type MockmeilisearchWebhookManager_AddWebhook_Call struct {
 	*mock.Call
 }
 
-// AddWebhookWithContext is a helper method to define mock.On call
+// AddWebhook is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *meilisearch.AddWebhookRequest
-func (_e *MockmeilisearchWebhookManager_Expecter) AddWebhookWithContext(ctx any, params any) *MockmeilisearchWebhookManager_AddWebhookWithContext_Call {
-	return &MockmeilisearchWebhookManager_AddWebhookWithContext_Call{Call: _e.mock.On("AddWebhookWithContext", ctx, params)}
+func (_e *MockmeilisearchWebhookManager_Expecter) AddWebhook(ctx any, params any) *MockmeilisearchWebhookManager_AddWebhook_Call {
+	return &MockmeilisearchWebhookManager_AddWebhook_Call{Call: _e.mock.On("AddWebhook", ctx, params)}
 }
 
-func (_c *MockmeilisearchWebhookManager_AddWebhookWithContext_Call) Run(run func(ctx context.Context, params *meilisearch.AddWebhookRequest)) *MockmeilisearchWebhookManager_AddWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_AddWebhook_Call) Run(run func(ctx context.Context, params *meilisearch.AddWebhookRequest)) *MockmeilisearchWebhookManager_AddWebhook_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -158,27 +105,27 @@ func (_c *MockmeilisearchWebhookManager_AddWebhookWithContext_Call) Run(run func
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookManager_AddWebhookWithContext_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookManager_AddWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_AddWebhook_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookManager_AddWebhook_Call {
 	_c.Call.Return(webhook, err)
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookManager_AddWebhookWithContext_Call) RunAndReturn(run func(ctx context.Context, params *meilisearch.AddWebhookRequest) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookManager_AddWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_AddWebhook_Call) RunAndReturn(run func(ctx context.Context, params *meilisearch.AddWebhookRequest) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookManager_AddWebhook_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // DeleteWebhook provides a mock function for the type MockmeilisearchWebhookManager
-func (_mock *MockmeilisearchWebhookManager) DeleteWebhook(uuid string) error {
-	ret := _mock.Called(uuid)
+func (_mock *MockmeilisearchWebhookManager) DeleteWebhook(ctx context.Context, uuid string) error {
+	ret := _mock.Called(ctx, uuid)
 
 	if len(ret) == 0 {
 		panic("no return value specified for DeleteWebhook")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(string) error); ok {
-		r0 = returnFunc(uuid)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) error); ok {
+		r0 = returnFunc(ctx, uuid)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -191,64 +138,13 @@ type MockmeilisearchWebhookManager_DeleteWebhook_Call struct {
 }
 
 // DeleteWebhook is a helper method to define mock.On call
-//   - uuid string
-func (_e *MockmeilisearchWebhookManager_Expecter) DeleteWebhook(uuid any) *MockmeilisearchWebhookManager_DeleteWebhook_Call {
-	return &MockmeilisearchWebhookManager_DeleteWebhook_Call{Call: _e.mock.On("DeleteWebhook", uuid)}
-}
-
-func (_c *MockmeilisearchWebhookManager_DeleteWebhook_Call) Run(run func(uuid string)) *MockmeilisearchWebhookManager_DeleteWebhook_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookManager_DeleteWebhook_Call) Return(err error) *MockmeilisearchWebhookManager_DeleteWebhook_Call {
-	_c.Call.Return(err)
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookManager_DeleteWebhook_Call) RunAndReturn(run func(uuid string) error) *MockmeilisearchWebhookManager_DeleteWebhook_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// DeleteWebhookWithContext provides a mock function for the type MockmeilisearchWebhookManager
-func (_mock *MockmeilisearchWebhookManager) DeleteWebhookWithContext(ctx context.Context, uuid string) error {
-	ret := _mock.Called(ctx, uuid)
-
-	if len(ret) == 0 {
-		panic("no return value specified for DeleteWebhookWithContext")
-	}
-
-	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) error); ok {
-		r0 = returnFunc(ctx, uuid)
-	} else {
-		r0 = ret.Error(0)
-	}
-	return r0
-}
-
-// MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'DeleteWebhookWithContext'
-type MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call struct {
-	*mock.Call
-}
-
-// DeleteWebhookWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockmeilisearchWebhookManager_Expecter) DeleteWebhookWithContext(ctx any, uuid any) *MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call {
-	return &MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call{Call: _e.mock.On("DeleteWebhookWithContext", ctx, uuid)}
+func (_e *MockmeilisearchWebhookManager_Expecter) DeleteWebhook(ctx any, uuid any) *MockmeilisearchWebhookManager_DeleteWebhook_Call {
+	return &MockmeilisearchWebhookManager_DeleteWebhook_Call{Call: _e.mock.On("DeleteWebhook", ctx, uuid)}
 }
 
-func (_c *MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call) Run(run func(ctx context.Context, uuid string)) *MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_DeleteWebhook_Call) Run(run func(ctx context.Context, uuid string)) *MockmeilisearchWebhookManager_DeleteWebhook_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -266,84 +162,22 @@ func (_c *MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call) Run(run f
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call) Return(err error) *MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_DeleteWebhook_Call) Return(err error) *MockmeilisearchWebhookManager_DeleteWebhook_Call {
 	_c.Call.Return(err)
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call) RunAndReturn(run func(ctx context.Context, uuid string) error) *MockmeilisearchWebhookManager_DeleteWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_DeleteWebhook_Call) RunAndReturn(run func(ctx context.Context, uuid string) error) *MockmeilisearchWebhookManager_DeleteWebhook_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetWebhook provides a mock function for the type MockmeilisearchWebhookManager
-func (_mock *MockmeilisearchWebhookManager) GetWebhook(uuid string) (*meilisearch.Webhook, error) {
-	ret := _mock.Called(uuid)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetWebhook")
-	}
-
-	var r0 *meilisearch.Webhook
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*meilisearch.Webhook, error)); ok {
-		return returnFunc(uuid)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string) *meilisearch.Webhook); ok {
-		r0 = returnFunc(uuid)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Webhook)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(uuid)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchWebhookManager_GetWebhook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetWebhook'
-type MockmeilisearchWebhookManager_GetWebhook_Call struct {
-	*mock.Call
-}
-
-// GetWebhook is a helper method to define mock.On call
-//   - uuid string
-func (_e *MockmeilisearchWebhookManager_Expecter) GetWebhook(uuid any) *MockmeilisearchWebhookManager_GetWebhook_Call {
-	return &MockmeilisearchWebhookManager_GetWebhook_Call{Call: _e.mock.On("GetWebhook", uuid)}
-}
-
-func (_c *MockmeilisearchWebhookManager_GetWebhook_Call) Run(run func(uuid string)) *MockmeilisearchWebhookManager_GetWebhook_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookManager_GetWebhook_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookManager_GetWebhook_Call {
-	_c.Call.Return(webhook, err)
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookManager_GetWebhook_Call) RunAndReturn(run func(uuid string) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookManager_GetWebhook_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetWebhookWithContext provides a mock function for the type MockmeilisearchWebhookManager
-func (_mock *MockmeilisearchWebhookManager) GetWebhookWithContext(ctx context.Context, uuid string) (*meilisearch.Webhook, error) {
+func (_mock *MockmeilisearchWebhookManager) GetWebhook(ctx context.Context, uuid string) (*meilisearch.Webhook, error) {
 	ret := _mock.Called(ctx, uuid)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetWebhookWithContext")
+		panic("no return value specified for GetWebhook")
 	}
 
 	var r0 *meilisearch.Webhook
@@ -366,19 +200,19 @@ func (_mock *MockmeilisearchWebhookManager) GetWebhookWithContext(ctx context.Co
 	return r0, r1
 }
 
-// MockmeilisearchWebhookManager_GetWebhookWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetWebhookWithContext'
-type MockmeilisearchWebhookManager_GetWebhookWithContext_Call struct {
+// MockmeilisearchWebhookManager_GetWebhook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetWebhook'
+type MockmeilisearchWebhookManager_GetWebhook_Call struct {
 	*mock.Call
 }
 
-// GetWebhookWithContext is a helper method to define mock.On call
+// GetWebhook is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockmeilisearchWebhookManager_Expecter) GetWebhookWithContext(ctx any, uuid any) *MockmeilisearchWebhookManager_GetWebhookWithContext_Call {
-	return &MockmeilisearchWebhookManager_GetWebhookWithContext_Call{Call: _e.mock.On("GetWebhookWithContext", ctx, uuid)}
+func (_e *MockmeilisearchWebhookManager_Expecter) GetWebhook(ctx any, uuid any) *MockmeilisearchWebhookManager_GetWebhook_Call {
+	return &MockmeilisearchWebhookManager_GetWebhook_Call{Call: _e.mock.On("GetWebhook", ctx, uuid)}
 }
 
-func (_c *MockmeilisearchWebhookManager_GetWebhookWithContext_Call) Run(run func(ctx context.Context, uuid string)) *MockmeilisearchWebhookManager_GetWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_GetWebhook_Call) Run(run func(ctx context.Context, uuid string)) *MockmeilisearchWebhookManager_GetWebhook_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -396,77 +230,22 @@ func (_c *MockmeilisearchWebhookManager_GetWebhookWithContext_Call) Run(run func
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookManager_GetWebhookWithContext_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookManager_GetWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_GetWebhook_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookManager_GetWebhook_Call {
 	_c.Call.Return(webhook, err)
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookManager_GetWebhookWithContext_Call) RunAndReturn(run func(ctx context.Context, uuid string) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookManager_GetWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_GetWebhook_Call) RunAndReturn(run func(ctx context.Context, uuid string) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookManager_GetWebhook_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListWebhooks provides a mock function for the type MockmeilisearchWebhookManager
-func (_mock *MockmeilisearchWebhookManager) ListWebhooks() (*meilisearch.WebhookResults, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for ListWebhooks")
-	}
-
-	var r0 *meilisearch.WebhookResults
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*meilisearch.WebhookResults, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *meilisearch.WebhookResults); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.WebhookResults)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchWebhookManager_ListWebhooks_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListWebhooks'
-type MockmeilisearchWebhookManager_ListWebhooks_Call struct {
-	*mock.Call
-}
-
-// ListWebhooks is a helper method to define mock.On call
-func (_e *MockmeilisearchWebhookManager_Expecter) ListWebhooks() *MockmeilisearchWebhookManager_ListWebhooks_Call {
-	return &MockmeilisearchWebhookManager_ListWebhooks_Call{Call: _e.mock.On("ListWebhooks")}
-}
-
-func (_c *MockmeilisearchWebhookManager_ListWebhooks_Call) Run(run func()) *MockmeilisearchWebhookManager_ListWebhooks_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookManager_ListWebhooks_Call) Return(webhookResults *meilisearch.WebhookResults, err error) *MockmeilisearchWebhookManager_ListWebhooks_Call {
-	_c.Call.Return(webhookResults, err)
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookManager_ListWebhooks_Call) RunAndReturn(run func() (*meilisearch.WebhookResults, error)) *MockmeilisearchWebhookManager_ListWebhooks_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// ListWebhooksWithContext provides a mock function for the type MockmeilisearchWebhookManager
-func (_mock *MockmeilisearchWebhookManager) ListWebhooksWithContext(ctx context.Context) (*meilisearch.WebhookResults, error) {
+func (_mock *MockmeilisearchWebhookManager) ListWebhooks(ctx context.Context) (*meilisearch.WebhookResults, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for ListWebhooksWithContext")
+		panic("no return value specified for ListWebhooks")
 	}
 
 	var r0 *meilisearch.WebhookResults
@@ -489,18 +268,18 @@ func (_mock *MockmeilisearchWebhookManager) ListWebhooksWithContext(ctx context.
 	return r0, r1
 }
 
-// MockmeilisearchWebhookManager_ListWebhooksWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListWebhooksWithContext'
-type MockmeilisearchWebhookManager_ListWebhooksWithContext_Call struct {
+// MockmeilisearchWebhookManager_ListWebhooks_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListWebhooks'
+type MockmeilisearchWebhookManager_ListWebhooks_Call struct {
 	*mock.Call
 }
 
-// ListWebhooksWithContext is a helper method to define mock.On call
+// ListWebhooks is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchWebhookManager_Expecter) ListWebhooksWithContext(ctx any) *MockmeilisearchWebhookManager_ListWebhooksWithContext_Call {
-	return &MockmeilisearchWebhookManager_ListWebhooksWithContext_Call{Call: _e.mock.On("ListWebhooksWithContext", ctx)}
+func (_e *MockmeilisearchWebhookManager_Expecter) ListWebhooks(ctx any) *MockmeilisearchWebhookManager_ListWebhooks_Call {
+	return &MockmeilisearchWebhookManager_ListWebhooks_Call{Call: _e.mock.On("ListWebhooks", ctx)}
 }
 
-func (_c *MockmeilisearchWebhookManager_ListWebhooksWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchWebhookManager_ListWebhooksWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_ListWebhooks_Call) Run(run func(ctx context.Context)) *MockmeilisearchWebhookManager_ListWebhooks_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -513,90 +292,22 @@ func (_c *MockmeilisearchWebhookManager_ListWebhooksWithContext_Call) Run(run fu
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookManager_ListWebhooksWithContext_Call) Return(webhookResults *meilisearch.WebhookResults, err error) *MockmeilisearchWebhookManager_ListWebhooksWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_ListWebhooks_Call) Return(webhookResults *meilisearch.WebhookResults, err error) *MockmeilisearchWebhookManager_ListWebhooks_Call {
 	_c.Call.Return(webhookResults, err)
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookManager_ListWebhooksWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.WebhookResults, error)) *MockmeilisearchWebhookManager_ListWebhooksWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_ListWebhooks_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.WebhookResults, error)) *MockmeilisearchWebhookManager_ListWebhooks_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // UpdateWebhook provides a mock function for the type MockmeilisearchWebhookManager
-func (_mock *MockmeilisearchWebhookManager) UpdateWebhook(uuid string, params *meilisearch.UpdateWebhookRequest) (*meilisearch.Webhook, error) {
-	ret := _mock.Called(uuid, params)
-
-	if len(ret) == 0 {
-		panic("no return value specified for UpdateWebhook")
-	}
-
-	var r0 *meilisearch.Webhook
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.UpdateWebhookRequest) (*meilisearch.Webhook, error)); ok {
-		return returnFunc(uuid, params)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.UpdateWebhookRequest) *meilisearch.Webhook); ok {
-		r0 = returnFunc(uuid, params)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Webhook)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string, *meilisearch.UpdateWebhookRequest) error); ok {
-		r1 = returnFunc(uuid, params)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchWebhookManager_UpdateWebhook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateWebhook'
-type MockmeilisearchWebhookManager_UpdateWebhook_Call struct {
-	*mock.Call
-}
-
-// UpdateWebhook is a helper method to define mock.On call
-//   - uuid string
-//   - params *meilisearch.UpdateWebhookRequest
-func (_e *MockmeilisearchWebhookManager_Expecter) UpdateWebhook(uuid any, params any) *MockmeilisearchWebhookManager_UpdateWebhook_Call {
-	return &MockmeilisearchWebhookManager_UpdateWebhook_Call{Call: _e.mock.On("UpdateWebhook", uuid, params)}
-}
-
-func (_c *MockmeilisearchWebhookManager_UpdateWebhook_Call) Run(run func(uuid string, params *meilisearch.UpdateWebhookRequest)) *MockmeilisearchWebhookManager_UpdateWebhook_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		var arg1 *meilisearch.UpdateWebhookRequest
-		if args[1] != nil {
-			arg1 = args[1].(*meilisearch.UpdateWebhookRequest)
-		}
-		run(
-			arg0,
-			arg1,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookManager_UpdateWebhook_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookManager_UpdateWebhook_Call {
-	_c.Call.Return(webhook, err)
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookManager_UpdateWebhook_Call) RunAndReturn(run func(uuid string, params *meilisearch.UpdateWebhookRequest) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookManager_UpdateWebhook_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// UpdateWebhookWithContext provides a mock function for the type MockmeilisearchWebhookManager
-func (_mock *MockmeilisearchWebhookManager) UpdateWebhookWithContext(ctx context.Context, uuid string, params *meilisearch.UpdateWebhookRequest) (*meilisearch.Webhook, error) {
+func (_mock *MockmeilisearchWebhookManager) UpdateWebhook(ctx context.Context, uuid string, params *meilisearch.UpdateWebhookRequest) (*meilisearch.Webhook, error) {
 	ret := _mock.Called(ctx, uuid, params)
 
 	if len(ret) == 0 {
-		panic("no return value specified for UpdateWebhookWithContext")
+		panic("no return value specified for UpdateWebhook")
 	}
 
 	var r0 *meilisearch.Webhook
@@ -619,20 +330,20 @@ func (_mock *MockmeilisearchWebhookManager) UpdateWebhookWithContext(ctx context
 	return r0, r1
 }
 
-// MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateWebhookWithContext'
-type MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call struct {
+// MockmeilisearchWebhookManager_UpdateWebhook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateWebhook'
+type MockmeilisearchWebhookManager_UpdateWebhook_Call struct {
 	*mock.Call
 }
 
-// UpdateWebhookWithContext is a helper method to define mock.On call
+// UpdateWebhook is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
 //   - params *meilisearch.UpdateWebhookRequest
-func (_e *MockmeilisearchWebhookManager_Expecter) UpdateWebhookWithContext(ctx any, uuid any, params any) *MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call {
-	return &MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call{Call: _e.mock.On("UpdateWebhookWithContext", ctx, uuid, params)}
+func (_e *MockmeilisearchWebhookManager_Expecter) UpdateWebhook(ctx any, uuid any, params any) *MockmeilisearchWebhookManager_UpdateWebhook_Call {
+	return &MockmeilisearchWebhookManager_UpdateWebhook_Call{Call: _e.mock.On("UpdateWebhook", ctx, uuid, params)}
 }
 
-func (_c *MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call) Run(run func(ctx context.Context, uuid string, params *meilisearch.UpdateWebhookRequest)) *MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_UpdateWebhook_Call) Run(run func(ctx context.Context, uuid string, params *meilisearch.UpdateWebhookRequest)) *MockmeilisearchWebhookManager_UpdateWebhook_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -655,12 +366,12 @@ func (_c *MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call) Run(run f
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_UpdateWebhook_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookManager_UpdateWebhook_Call {
 	_c.Call.Return(webhook, err)
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call) RunAndReturn(run func(ctx context.Context, uuid string, params *meilisearch.UpdateWebhookRequest) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookManager_UpdateWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookManager_UpdateWebhook_Call) RunAndReturn(run func(ctx context.Context, uuid string, params *meilisearch.UpdateWebhookRequest) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookManager_UpdateWebhook_Call {
 	_c.Call.Return(run)
 	return _c
 }

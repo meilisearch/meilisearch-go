@@ -7,11 +7,7 @@ import (
 	"strconv"
 )
 
-func (m *meilisearch) ChatCompletionStream(workspace string, query *ChatCompletionQuery) (*Stream[*ChatCompletionStreamChunk], error) {
-	return m.ChatCompletionStreamWithContext(context.Background(), workspace, query)
-}
-
-func (m *meilisearch) ChatCompletionStreamWithContext(ctx context.Context, workspace string, query *ChatCompletionQuery) (*Stream[*ChatCompletionStreamChunk], error) {
+func (m *meilisearch) ChatCompletionStream(ctx context.Context, workspace string, query *ChatCompletionQuery) (*Stream[*ChatCompletionStreamChunk], error) {
 	if query == nil {
 		return nil, fmt.Errorf("query cannot be nil")
 	}
@@ -57,11 +53,7 @@ func (m *meilisearch) ChatCompletionStreamWithContext(ctx context.Context, works
 	return NewStream[*ChatCompletionStreamChunk](dec, m.client.jsonUnmarshal), nil
 }
 
-func (m *meilisearch) GetChatWorkspace(id string) (*ChatWorkspace, error) {
-	return m.GetChatWorkspaceWithContext(context.Background(), id)
-}
-
-func (m *meilisearch) GetChatWorkspaceWithContext(ctx context.Context, uid string) (*ChatWorkspace, error) {
+func (m *meilisearch) GetChatWorkspace(ctx context.Context, uid string) (*ChatWorkspace, error) {
 	resp := new(ChatWorkspace)
 	req := &internalRequest{
 		endpoint:            "/chats/" + uid,
@@ -77,11 +69,7 @@ func (m *meilisearch) GetChatWorkspaceWithContext(ctx context.Context, uid strin
 	return resp, nil
 }
 
-func (m *meilisearch) ListChatWorkspaces(query *ListChatWorkSpaceQuery) (*ListChatWorkspace, error) {
-	return m.ListChatWorkspacesWithContext(context.Background(), query)
-}
-
-func (m *meilisearch) ListChatWorkspacesWithContext(ctx context.Context, query *ListChatWorkSpaceQuery) (*ListChatWorkspace, error) {
+func (m *meilisearch) ListChatWorkspaces(ctx context.Context, query *ListChatWorkSpaceQuery) (*ListChatWorkspace, error) {
 	resp := new(ListChatWorkspace)
 	req := &internalRequest{
 		endpoint:            "/chats",
@@ -104,11 +92,7 @@ func (m *meilisearch) ListChatWorkspacesWithContext(ctx context.Context, query *
 	return resp, nil
 }
 
-func (m *meilisearch) GetChatWorkspaceSettings(id string) (*ChatWorkspaceSettings, error) {
-	return m.GetChatWorkspaceSettingsWithContext(context.Background(), id)
-}
-
-func (m *meilisearch) GetChatWorkspaceSettingsWithContext(ctx context.Context, uid string) (*ChatWorkspaceSettings, error) {
+func (m *meilisearch) GetChatWorkspaceSettings(ctx context.Context, uid string) (*ChatWorkspaceSettings, error) {
 	resp := new(ChatWorkspaceSettings)
 	req := &internalRequest{
 		endpoint:            "/chats/" + uid + "/settings",
@@ -124,11 +108,7 @@ func (m *meilisearch) GetChatWorkspaceSettingsWithContext(ctx context.Context, u
 	return resp, nil
 }
 
-func (m *meilisearch) UpdateChatWorkspace(id string, chatWorkspace *ChatWorkspaceSettings) (*ChatWorkspaceSettings, error) {
-	return m.UpdateChatWorkspaceWithContext(context.Background(), id, chatWorkspace)
-}
-
-func (m *meilisearch) UpdateChatWorkspaceWithContext(ctx context.Context, uid string, settings *ChatWorkspaceSettings) (*ChatWorkspaceSettings, error) {
+func (m *meilisearch) UpdateChatWorkspace(ctx context.Context, uid string, settings *ChatWorkspaceSettings) (*ChatWorkspaceSettings, error) {
 	resp := new(ChatWorkspaceSettings)
 	req := &internalRequest{
 		endpoint:            "/chats/" + uid + "/settings",
@@ -145,11 +125,7 @@ func (m *meilisearch) UpdateChatWorkspaceWithContext(ctx context.Context, uid st
 	return resp, nil
 }
 
-func (m *meilisearch) ResetChatWorkspace(id string) (*ChatWorkspaceSettings, error) {
-	return m.ResetChatWorkspaceWithContext(context.Background(), id)
-}
-
-func (m *meilisearch) ResetChatWorkspaceWithContext(ctx context.Context, uid string) (*ChatWorkspaceSettings, error) {
+func (m *meilisearch) ResetChatWorkspace(ctx context.Context, uid string) (*ChatWorkspaceSettings, error) {
 	resp := new(ChatWorkspaceSettings)
 	req := &internalRequest{
 		endpoint:            "/chats/" + uid + "/settings",

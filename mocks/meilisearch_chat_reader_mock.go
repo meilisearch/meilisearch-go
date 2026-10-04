@@ -17,10 +17,19 @@ func NewMockmeilisearchChatReader(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockmeilisearchChatReader {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockmeilisearchChatReader{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -39,79 +48,11 @@ func (_m *MockmeilisearchChatReader) EXPECT() *MockmeilisearchChatReader_Expecte
 }
 
 // ChatCompletionStream provides a mock function for the type MockmeilisearchChatReader
-func (_mock *MockmeilisearchChatReader) ChatCompletionStream(workspace string, query *meilisearch.ChatCompletionQuery) (*meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk], error) {
-	ret := _mock.Called(workspace, query)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ChatCompletionStream")
-	}
-
-	var r0 *meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk]
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.ChatCompletionQuery) (*meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk], error)); ok {
-		return returnFunc(workspace, query)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.ChatCompletionQuery) *meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk]); ok {
-		r0 = returnFunc(workspace, query)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk])
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string, *meilisearch.ChatCompletionQuery) error); ok {
-		r1 = returnFunc(workspace, query)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchChatReader_ChatCompletionStream_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ChatCompletionStream'
-type MockmeilisearchChatReader_ChatCompletionStream_Call struct {
-	*mock.Call
-}
-
-// ChatCompletionStream is a helper method to define mock.On call
-//   - workspace string
-//   - query *meilisearch.ChatCompletionQuery
-func (_e *MockmeilisearchChatReader_Expecter) ChatCompletionStream(workspace any, query any) *MockmeilisearchChatReader_ChatCompletionStream_Call {
-	return &MockmeilisearchChatReader_ChatCompletionStream_Call{Call: _e.mock.On("ChatCompletionStream", workspace, query)}
-}
-
-func (_c *MockmeilisearchChatReader_ChatCompletionStream_Call) Run(run func(workspace string, query *meilisearch.ChatCompletionQuery)) *MockmeilisearchChatReader_ChatCompletionStream_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		var arg1 *meilisearch.ChatCompletionQuery
-		if args[1] != nil {
-			arg1 = args[1].(*meilisearch.ChatCompletionQuery)
-		}
-		run(
-			arg0,
-			arg1,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchChatReader_ChatCompletionStream_Call) Return(stream *meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk], err error) *MockmeilisearchChatReader_ChatCompletionStream_Call {
-	_c.Call.Return(stream, err)
-	return _c
-}
-
-func (_c *MockmeilisearchChatReader_ChatCompletionStream_Call) RunAndReturn(run func(workspace string, query *meilisearch.ChatCompletionQuery) (*meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk], error)) *MockmeilisearchChatReader_ChatCompletionStream_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// ChatCompletionStreamWithContext provides a mock function for the type MockmeilisearchChatReader
-func (_mock *MockmeilisearchChatReader) ChatCompletionStreamWithContext(ctx context.Context, workspace string, query *meilisearch.ChatCompletionQuery) (*meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk], error) {
+func (_mock *MockmeilisearchChatReader) ChatCompletionStream(ctx context.Context, workspace string, query *meilisearch.ChatCompletionQuery) (*meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk], error) {
 	ret := _mock.Called(ctx, workspace, query)
 
 	if len(ret) == 0 {
-		panic("no return value specified for ChatCompletionStreamWithContext")
+		panic("no return value specified for ChatCompletionStream")
 	}
 
 	var r0 *meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk]
@@ -134,20 +75,20 @@ func (_mock *MockmeilisearchChatReader) ChatCompletionStreamWithContext(ctx cont
 	return r0, r1
 }
 
-// MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ChatCompletionStreamWithContext'
-type MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call struct {
+// MockmeilisearchChatReader_ChatCompletionStream_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ChatCompletionStream'
+type MockmeilisearchChatReader_ChatCompletionStream_Call struct {
 	*mock.Call
 }
 
-// ChatCompletionStreamWithContext is a helper method to define mock.On call
+// ChatCompletionStream is a helper method to define mock.On call
 //   - ctx context.Context
 //   - workspace string
 //   - query *meilisearch.ChatCompletionQuery
-func (_e *MockmeilisearchChatReader_Expecter) ChatCompletionStreamWithContext(ctx any, workspace any, query any) *MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call {
-	return &MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call{Call: _e.mock.On("ChatCompletionStreamWithContext", ctx, workspace, query)}
+func (_e *MockmeilisearchChatReader_Expecter) ChatCompletionStream(ctx any, workspace any, query any) *MockmeilisearchChatReader_ChatCompletionStream_Call {
+	return &MockmeilisearchChatReader_ChatCompletionStream_Call{Call: _e.mock.On("ChatCompletionStream", ctx, workspace, query)}
 }
 
-func (_c *MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call) Run(run func(ctx context.Context, workspace string, query *meilisearch.ChatCompletionQuery)) *MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call {
+func (_c *MockmeilisearchChatReader_ChatCompletionStream_Call) Run(run func(ctx context.Context, workspace string, query *meilisearch.ChatCompletionQuery)) *MockmeilisearchChatReader_ChatCompletionStream_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -170,214 +111,22 @@ func (_c *MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call) Run(ru
 	return _c
 }
 
-func (_c *MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call) Return(stream *meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk], err error) *MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call {
+func (_c *MockmeilisearchChatReader_ChatCompletionStream_Call) Return(stream *meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk], err error) *MockmeilisearchChatReader_ChatCompletionStream_Call {
 	_c.Call.Return(stream, err)
 	return _c
 }
 
-func (_c *MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call) RunAndReturn(run func(ctx context.Context, workspace string, query *meilisearch.ChatCompletionQuery) (*meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk], error)) *MockmeilisearchChatReader_ChatCompletionStreamWithContext_Call {
+func (_c *MockmeilisearchChatReader_ChatCompletionStream_Call) RunAndReturn(run func(ctx context.Context, workspace string, query *meilisearch.ChatCompletionQuery) (*meilisearch.Stream[*meilisearch.ChatCompletionStreamChunk], error)) *MockmeilisearchChatReader_ChatCompletionStream_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetChatWorkspace provides a mock function for the type MockmeilisearchChatReader
-func (_mock *MockmeilisearchChatReader) GetChatWorkspace(uid string) (*meilisearch.ChatWorkspace, error) {
-	ret := _mock.Called(uid)
+func (_mock *MockmeilisearchChatReader) GetChatWorkspace(ctx context.Context, uid string) (*meilisearch.ChatWorkspace, error) {
+	ret := _mock.Called(ctx, uid)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetChatWorkspace")
-	}
-
-	var r0 *meilisearch.ChatWorkspace
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*meilisearch.ChatWorkspace, error)); ok {
-		return returnFunc(uid)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string) *meilisearch.ChatWorkspace); ok {
-		r0 = returnFunc(uid)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.ChatWorkspace)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(uid)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchChatReader_GetChatWorkspace_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatWorkspace'
-type MockmeilisearchChatReader_GetChatWorkspace_Call struct {
-	*mock.Call
-}
-
-// GetChatWorkspace is a helper method to define mock.On call
-//   - uid string
-func (_e *MockmeilisearchChatReader_Expecter) GetChatWorkspace(uid any) *MockmeilisearchChatReader_GetChatWorkspace_Call {
-	return &MockmeilisearchChatReader_GetChatWorkspace_Call{Call: _e.mock.On("GetChatWorkspace", uid)}
-}
-
-func (_c *MockmeilisearchChatReader_GetChatWorkspace_Call) Run(run func(uid string)) *MockmeilisearchChatReader_GetChatWorkspace_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchChatReader_GetChatWorkspace_Call) Return(chatWorkspace *meilisearch.ChatWorkspace, err error) *MockmeilisearchChatReader_GetChatWorkspace_Call {
-	_c.Call.Return(chatWorkspace, err)
-	return _c
-}
-
-func (_c *MockmeilisearchChatReader_GetChatWorkspace_Call) RunAndReturn(run func(uid string) (*meilisearch.ChatWorkspace, error)) *MockmeilisearchChatReader_GetChatWorkspace_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetChatWorkspaceSettings provides a mock function for the type MockmeilisearchChatReader
-func (_mock *MockmeilisearchChatReader) GetChatWorkspaceSettings(uid string) (*meilisearch.ChatWorkspaceSettings, error) {
-	ret := _mock.Called(uid)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetChatWorkspaceSettings")
-	}
-
-	var r0 *meilisearch.ChatWorkspaceSettings
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*meilisearch.ChatWorkspaceSettings, error)); ok {
-		return returnFunc(uid)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string) *meilisearch.ChatWorkspaceSettings); ok {
-		r0 = returnFunc(uid)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.ChatWorkspaceSettings)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(uid)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchChatReader_GetChatWorkspaceSettings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatWorkspaceSettings'
-type MockmeilisearchChatReader_GetChatWorkspaceSettings_Call struct {
-	*mock.Call
-}
-
-// GetChatWorkspaceSettings is a helper method to define mock.On call
-//   - uid string
-func (_e *MockmeilisearchChatReader_Expecter) GetChatWorkspaceSettings(uid any) *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call {
-	return &MockmeilisearchChatReader_GetChatWorkspaceSettings_Call{Call: _e.mock.On("GetChatWorkspaceSettings", uid)}
-}
-
-func (_c *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call) Run(run func(uid string)) *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call) Return(chatWorkspaceSettings *meilisearch.ChatWorkspaceSettings, err error) *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call {
-	_c.Call.Return(chatWorkspaceSettings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call) RunAndReturn(run func(uid string) (*meilisearch.ChatWorkspaceSettings, error)) *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetChatWorkspaceSettingsWithContext provides a mock function for the type MockmeilisearchChatReader
-func (_mock *MockmeilisearchChatReader) GetChatWorkspaceSettingsWithContext(ctx context.Context, uid string) (*meilisearch.ChatWorkspaceSettings, error) {
-	ret := _mock.Called(ctx, uid)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetChatWorkspaceSettingsWithContext")
-	}
-
-	var r0 *meilisearch.ChatWorkspaceSettings
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (*meilisearch.ChatWorkspaceSettings, error)); ok {
-		return returnFunc(ctx, uid)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) *meilisearch.ChatWorkspaceSettings); ok {
-		r0 = returnFunc(ctx, uid)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.ChatWorkspaceSettings)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
-		r1 = returnFunc(ctx, uid)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchChatReader_GetChatWorkspaceSettingsWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatWorkspaceSettingsWithContext'
-type MockmeilisearchChatReader_GetChatWorkspaceSettingsWithContext_Call struct {
-	*mock.Call
-}
-
-// GetChatWorkspaceSettingsWithContext is a helper method to define mock.On call
-//   - ctx context.Context
-//   - uid string
-func (_e *MockmeilisearchChatReader_Expecter) GetChatWorkspaceSettingsWithContext(ctx any, uid any) *MockmeilisearchChatReader_GetChatWorkspaceSettingsWithContext_Call {
-	return &MockmeilisearchChatReader_GetChatWorkspaceSettingsWithContext_Call{Call: _e.mock.On("GetChatWorkspaceSettingsWithContext", ctx, uid)}
-}
-
-func (_c *MockmeilisearchChatReader_GetChatWorkspaceSettingsWithContext_Call) Run(run func(ctx context.Context, uid string)) *MockmeilisearchChatReader_GetChatWorkspaceSettingsWithContext_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 context.Context
-		if args[0] != nil {
-			arg0 = args[0].(context.Context)
-		}
-		var arg1 string
-		if args[1] != nil {
-			arg1 = args[1].(string)
-		}
-		run(
-			arg0,
-			arg1,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchChatReader_GetChatWorkspaceSettingsWithContext_Call) Return(chatWorkspaceSettings *meilisearch.ChatWorkspaceSettings, err error) *MockmeilisearchChatReader_GetChatWorkspaceSettingsWithContext_Call {
-	_c.Call.Return(chatWorkspaceSettings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchChatReader_GetChatWorkspaceSettingsWithContext_Call) RunAndReturn(run func(ctx context.Context, uid string) (*meilisearch.ChatWorkspaceSettings, error)) *MockmeilisearchChatReader_GetChatWorkspaceSettingsWithContext_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetChatWorkspaceWithContext provides a mock function for the type MockmeilisearchChatReader
-func (_mock *MockmeilisearchChatReader) GetChatWorkspaceWithContext(ctx context.Context, uid string) (*meilisearch.ChatWorkspace, error) {
-	ret := _mock.Called(ctx, uid)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetChatWorkspaceWithContext")
 	}
 
 	var r0 *meilisearch.ChatWorkspace
@@ -400,19 +149,19 @@ func (_mock *MockmeilisearchChatReader) GetChatWorkspaceWithContext(ctx context.
 	return r0, r1
 }
 
-// MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatWorkspaceWithContext'
-type MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call struct {
+// MockmeilisearchChatReader_GetChatWorkspace_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatWorkspace'
+type MockmeilisearchChatReader_GetChatWorkspace_Call struct {
 	*mock.Call
 }
 
-// GetChatWorkspaceWithContext is a helper method to define mock.On call
+// GetChatWorkspace is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchChatReader_Expecter) GetChatWorkspaceWithContext(ctx any, uid any) *MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call {
-	return &MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call{Call: _e.mock.On("GetChatWorkspaceWithContext", ctx, uid)}
+func (_e *MockmeilisearchChatReader_Expecter) GetChatWorkspace(ctx any, uid any) *MockmeilisearchChatReader_GetChatWorkspace_Call {
+	return &MockmeilisearchChatReader_GetChatWorkspace_Call{Call: _e.mock.On("GetChatWorkspace", ctx, uid)}
 }
 
-func (_c *MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call) Run(run func(ctx context.Context, uid string)) *MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call {
+func (_c *MockmeilisearchChatReader_GetChatWorkspace_Call) Run(run func(ctx context.Context, uid string)) *MockmeilisearchChatReader_GetChatWorkspace_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -430,84 +179,90 @@ func (_c *MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call) Run(run fu
 	return _c
 }
 
-func (_c *MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call) Return(chatWorkspace *meilisearch.ChatWorkspace, err error) *MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call {
+func (_c *MockmeilisearchChatReader_GetChatWorkspace_Call) Return(chatWorkspace *meilisearch.ChatWorkspace, err error) *MockmeilisearchChatReader_GetChatWorkspace_Call {
 	_c.Call.Return(chatWorkspace, err)
 	return _c
 }
 
-func (_c *MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call) RunAndReturn(run func(ctx context.Context, uid string) (*meilisearch.ChatWorkspace, error)) *MockmeilisearchChatReader_GetChatWorkspaceWithContext_Call {
+func (_c *MockmeilisearchChatReader_GetChatWorkspace_Call) RunAndReturn(run func(ctx context.Context, uid string) (*meilisearch.ChatWorkspace, error)) *MockmeilisearchChatReader_GetChatWorkspace_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// ListChatWorkspaces provides a mock function for the type MockmeilisearchChatReader
-func (_mock *MockmeilisearchChatReader) ListChatWorkspaces(query *meilisearch.ListChatWorkSpaceQuery) (*meilisearch.ListChatWorkspace, error) {
-	ret := _mock.Called(query)
+// GetChatWorkspaceSettings provides a mock function for the type MockmeilisearchChatReader
+func (_mock *MockmeilisearchChatReader) GetChatWorkspaceSettings(ctx context.Context, uid string) (*meilisearch.ChatWorkspaceSettings, error) {
+	ret := _mock.Called(ctx, uid)
 
 	if len(ret) == 0 {
-		panic("no return value specified for ListChatWorkspaces")
+		panic("no return value specified for GetChatWorkspaceSettings")
 	}
 
-	var r0 *meilisearch.ListChatWorkspace
+	var r0 *meilisearch.ChatWorkspaceSettings
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.ListChatWorkSpaceQuery) (*meilisearch.ListChatWorkspace, error)); ok {
-		return returnFunc(query)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) (*meilisearch.ChatWorkspaceSettings, error)); ok {
+		return returnFunc(ctx, uid)
 	}
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.ListChatWorkSpaceQuery) *meilisearch.ListChatWorkspace); ok {
-		r0 = returnFunc(query)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string) *meilisearch.ChatWorkspaceSettings); ok {
+		r0 = returnFunc(ctx, uid)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.ListChatWorkspace)
+			r0 = ret.Get(0).(*meilisearch.ChatWorkspaceSettings)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(*meilisearch.ListChatWorkSpaceQuery) error); ok {
-		r1 = returnFunc(query)
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+		r1 = returnFunc(ctx, uid)
 	} else {
 		r1 = ret.Error(1)
 	}
 	return r0, r1
 }
 
-// MockmeilisearchChatReader_ListChatWorkspaces_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListChatWorkspaces'
-type MockmeilisearchChatReader_ListChatWorkspaces_Call struct {
+// MockmeilisearchChatReader_GetChatWorkspaceSettings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetChatWorkspaceSettings'
+type MockmeilisearchChatReader_GetChatWorkspaceSettings_Call struct {
 	*mock.Call
 }
 
-// ListChatWorkspaces is a helper method to define mock.On call
-//   - query *meilisearch.ListChatWorkSpaceQuery
-func (_e *MockmeilisearchChatReader_Expecter) ListChatWorkspaces(query any) *MockmeilisearchChatReader_ListChatWorkspaces_Call {
-	return &MockmeilisearchChatReader_ListChatWorkspaces_Call{Call: _e.mock.On("ListChatWorkspaces", query)}
+// GetChatWorkspaceSettings is a helper method to define mock.On call
+//   - ctx context.Context
+//   - uid string
+func (_e *MockmeilisearchChatReader_Expecter) GetChatWorkspaceSettings(ctx any, uid any) *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call {
+	return &MockmeilisearchChatReader_GetChatWorkspaceSettings_Call{Call: _e.mock.On("GetChatWorkspaceSettings", ctx, uid)}
 }
 
-func (_c *MockmeilisearchChatReader_ListChatWorkspaces_Call) Run(run func(query *meilisearch.ListChatWorkSpaceQuery)) *MockmeilisearchChatReader_ListChatWorkspaces_Call {
+func (_c *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call) Run(run func(ctx context.Context, uid string)) *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *meilisearch.ListChatWorkSpaceQuery
+		var arg0 context.Context
 		if args[0] != nil {
-			arg0 = args[0].(*meilisearch.ListChatWorkSpaceQuery)
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
 		}
 		run(
 			arg0,
+			arg1,
 		)
 	})
 	return _c
 }
 
-func (_c *MockmeilisearchChatReader_ListChatWorkspaces_Call) Return(listChatWorkspace *meilisearch.ListChatWorkspace, err error) *MockmeilisearchChatReader_ListChatWorkspaces_Call {
-	_c.Call.Return(listChatWorkspace, err)
+func (_c *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call) Return(chatWorkspaceSettings *meilisearch.ChatWorkspaceSettings, err error) *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call {
+	_c.Call.Return(chatWorkspaceSettings, err)
 	return _c
 }
 
-func (_c *MockmeilisearchChatReader_ListChatWorkspaces_Call) RunAndReturn(run func(query *meilisearch.ListChatWorkSpaceQuery) (*meilisearch.ListChatWorkspace, error)) *MockmeilisearchChatReader_ListChatWorkspaces_Call {
+func (_c *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call) RunAndReturn(run func(ctx context.Context, uid string) (*meilisearch.ChatWorkspaceSettings, error)) *MockmeilisearchChatReader_GetChatWorkspaceSettings_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// ListChatWorkspacesWithContext provides a mock function for the type MockmeilisearchChatReader
-func (_mock *MockmeilisearchChatReader) ListChatWorkspacesWithContext(ctx context.Context, query *meilisearch.ListChatWorkSpaceQuery) (*meilisearch.ListChatWorkspace, error) {
+// ListChatWorkspaces provides a mock function for the type MockmeilisearchChatReader
+func (_mock *MockmeilisearchChatReader) ListChatWorkspaces(ctx context.Context, query *meilisearch.ListChatWorkSpaceQuery) (*meilisearch.ListChatWorkspace, error) {
 	ret := _mock.Called(ctx, query)
 
 	if len(ret) == 0 {
-		panic("no return value specified for ListChatWorkspacesWithContext")
+		panic("no return value specified for ListChatWorkspaces")
 	}
 
 	var r0 *meilisearch.ListChatWorkspace
@@ -530,19 +285,19 @@ func (_mock *MockmeilisearchChatReader) ListChatWorkspacesWithContext(ctx contex
 	return r0, r1
 }
 
-// MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListChatWorkspacesWithContext'
-type MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call struct {
+// MockmeilisearchChatReader_ListChatWorkspaces_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListChatWorkspaces'
+type MockmeilisearchChatReader_ListChatWorkspaces_Call struct {
 	*mock.Call
 }
 
-// ListChatWorkspacesWithContext is a helper method to define mock.On call
+// ListChatWorkspaces is a helper method to define mock.On call
 //   - ctx context.Context
 //   - query *meilisearch.ListChatWorkSpaceQuery
-func (_e *MockmeilisearchChatReader_Expecter) ListChatWorkspacesWithContext(ctx any, query any) *MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call {
-	return &MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call{Call: _e.mock.On("ListChatWorkspacesWithContext", ctx, query)}
+func (_e *MockmeilisearchChatReader_Expecter) ListChatWorkspaces(ctx any, query any) *MockmeilisearchChatReader_ListChatWorkspaces_Call {
+	return &MockmeilisearchChatReader_ListChatWorkspaces_Call{Call: _e.mock.On("ListChatWorkspaces", ctx, query)}
 }
 
-func (_c *MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call) Run(run func(ctx context.Context, query *meilisearch.ListChatWorkSpaceQuery)) *MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call {
+func (_c *MockmeilisearchChatReader_ListChatWorkspaces_Call) Run(run func(ctx context.Context, query *meilisearch.ListChatWorkSpaceQuery)) *MockmeilisearchChatReader_ListChatWorkspaces_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -560,12 +315,12 @@ func (_c *MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call) Run(run 
 	return _c
 }
 
-func (_c *MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call) Return(listChatWorkspace *meilisearch.ListChatWorkspace, err error) *MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call {
+func (_c *MockmeilisearchChatReader_ListChatWorkspaces_Call) Return(listChatWorkspace *meilisearch.ListChatWorkspace, err error) *MockmeilisearchChatReader_ListChatWorkspaces_Call {
 	_c.Call.Return(listChatWorkspace, err)
 	return _c
 }
 
-func (_c *MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call) RunAndReturn(run func(ctx context.Context, query *meilisearch.ListChatWorkSpaceQuery) (*meilisearch.ListChatWorkspace, error)) *MockmeilisearchChatReader_ListChatWorkspacesWithContext_Call {
+func (_c *MockmeilisearchChatReader_ListChatWorkspaces_Call) RunAndReturn(run func(ctx context.Context, query *meilisearch.ListChatWorkSpaceQuery) (*meilisearch.ListChatWorkspace, error)) *MockmeilisearchChatReader_ListChatWorkspaces_Call {
 	_c.Call.Return(run)
 	return _c
 }

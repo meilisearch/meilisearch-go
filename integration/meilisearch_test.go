@@ -37,7 +37,7 @@ func Test_Version(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.client.Version()
+			gotResp, err := tt.client.Version(context.Background())
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "Version() should not return nil value")
 		})
@@ -65,7 +65,7 @@ func TestClient_TimeoutError(t *testing.T) {
 			ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 			defer cancel()
 			time.Sleep(2 * time.Second)
-			gotResp, err := tt.sv.VersionWithContext(ctx)
+			gotResp, err := tt.sv.Version(ctx)
 			require.Error(t, err)
 			require.Nil(t, gotResp)
 		})
@@ -102,7 +102,7 @@ func Test_GetStats(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.client.GetStats(tt.statsParam)
+			gotResp, err := tt.client.GetStats(context.Background(), tt.statsParam)
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "GetStats() should not return nil value")
 		})
@@ -132,10 +132,10 @@ func Test_GetKey(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.client.GetKeys(nil)
+			gotResp, err := tt.client.GetKeys(context.Background(), nil)
 			require.NoError(t, err)
 
-			gotKey, err := tt.client.GetKey(gotResp.Results[0].Key)
+			gotKey, err := tt.client.GetKey(context.Background(), gotResp.Results[0].Key)
 			require.NoError(t, err)
 			require.NotNil(t, gotKey.ExpiresAt)
 			require.NotNil(t, gotKey.CreatedAt)
@@ -201,7 +201,7 @@ func Test_GetKeys(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.args.client.GetKeys(tt.args.request)
+			gotResp, err := tt.args.client.GetKeys(context.Background(), tt.args.request)
 
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "GetKeys() should not return nil value")
@@ -321,10 +321,10 @@ func Test_CreateKey(t *testing.T) {
 			const Format = "2006-01-02T15:04:05"
 			t.Cleanup(cleanup(tt.client))
 
-			gotResp, err := tt.client.CreateKey(&tt.Key)
+			gotResp, err := tt.client.CreateKey(context.Background(), &tt.Key)
 			require.NoError(t, err)
 
-			gotKey, err := tt.client.GetKey(gotResp.Key)
+			gotKey, err := tt.client.GetKey(context.Background(), gotResp.Key)
 			require.NoError(t, err)
 			require.Equal(t, tt.Key.Name, gotKey.Name)
 			require.Equal(t, tt.Key.Description, gotKey.Description)
@@ -403,7 +403,7 @@ func Test_UpdateKey(t *testing.T) {
 			c := tt.client
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := c.CreateKey(&tt.keyToCreate)
+			gotResp, err := c.CreateKey(context.Background(), &tt.keyToCreate)
 			require.NoError(t, err)
 
 			if tt.keyToCreate.Description != "" {
@@ -419,7 +419,7 @@ func Test_UpdateKey(t *testing.T) {
 				require.Equal(t, tt.keyToCreate.ExpiresAt.Format(Format), gotResp.ExpiresAt.Format(Format))
 			}
 
-			gotKey, err := c.UpdateKey(gotResp.Key, &tt.keyToUpdate)
+			gotKey, err := c.UpdateKey(context.Background(), gotResp.Key, &tt.keyToUpdate)
 			require.NoError(t, err)
 
 			if tt.keyToUpdate.Description != "" {
@@ -516,14 +516,14 @@ func Test_DeleteKey(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
 
-			gotKey, err := c.CreateKey(&tt.Key)
+			gotKey, err := c.CreateKey(context.Background(), &tt.Key)
 			require.NoError(t, err)
 
-			gotResp, err := c.DeleteKey(gotKey.Key)
+			gotResp, err := c.DeleteKey(context.Background(), gotKey.Key)
 			require.NoError(t, err)
 			require.True(t, gotResp)
 
-			gotResp, err = c.DeleteKey(gotKey.Key)
+			gotResp, err = c.DeleteKey(context.Background(), gotKey.Key)
 			require.Error(t, err)
 			require.False(t, gotResp)
 		})
@@ -568,7 +568,7 @@ func Test_Health(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			gotResp, err := tt.client.Health()
+			gotResp, err := tt.client.Health(context.Background())
 			if tt.wantErr {
 				require.Error(t, err)
 			} else {
@@ -636,13 +636,13 @@ func Test_CreateDump(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			c := tt.client
 
-			task, err := c.CreateDump()
+			task, err := c.CreateDump(context.Background())
 			require.NoError(t, err)
 			if assert.NotNil(t, task, "CreateDump() should not return nil value") {
 				require.Equal(t, tt.wantResp.Status, task.Status, "CreateDump() got response status %v, want: %v", task.Status, tt.wantResp.Status)
 			}
 
-			taskInfo, err := c.WaitForTask(task.TaskUID, 0)
+			taskInfo, err := c.WaitForTask(context.Background(), task.TaskUID, 0)
 
 			require.NoError(t, err)
 			require.NotNil(t, taskInfo)
@@ -713,13 +713,13 @@ func Test_GetTask(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			taskInfo, err := i.AddDocuments(tt.args.document, nil)
+			taskInfo, err := i.AddDocuments(context.Background(), tt.args.document, nil)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(taskInfo.TaskUID, 0)
+			_, err = c.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 			require.NoError(t, err)
 
-			gotResp, err := c.GetTask(taskInfo.TaskUID)
+			gotResp, err := c.GetTask(context.Background(), taskInfo.TaskUID)
 			require.NoError(t, err)
 			require.NotNil(t, gotResp)
 			require.NotNil(t, gotResp.Details)
@@ -878,13 +878,13 @@ func Test_GetTasks(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			taskInfo, err := i.AddDocuments(tt.args.document, nil)
+			taskInfo, err := i.AddDocuments(context.Background(), tt.args.document, nil)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(taskInfo.TaskUID, 0)
+			_, err = c.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 			require.NoError(t, err)
 
-			gotResp, err := i.GetTasks(tt.args.query)
+			gotResp, err := i.GetTasks(context.Background(), tt.args.query)
 			require.NoError(t, err)
 			require.NotNil(t, (*gotResp).Results[0].Status)
 			require.NotZero(t, (*gotResp).Results[0].UID)
@@ -1100,13 +1100,13 @@ func Test_GetTasksUsingClient(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			taskInfo, err := i.AddDocuments(tt.args.document, nil)
+			taskInfo, err := i.AddDocuments(context.Background(), tt.args.document, nil)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(taskInfo.TaskUID, 0)
+			_, err = c.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 			require.NoError(t, err)
 
-			gotResp, err := c.GetTasks(tt.args.query)
+			gotResp, err := c.GetTasks(context.Background(), tt.args.query)
 			require.NoError(t, err)
 			require.NotNil(t, gotResp)
 			// require.Equal(t, tt.args.expectedResults, len((*gotResp).Results))
@@ -1164,44 +1164,44 @@ func Test_GetTasksUsingClientAllFailures(t *testing.T) {
 			t.Cleanup(cleanup(c))
 			i := c.Index("NOT_EXISTS")
 
-			_, err := c.DeleteIndex("NOT_EXISTS")
+			_, err := c.DeleteIndex(context.Background(), "NOT_EXISTS")
 			require.Error(t, err)
 
-			_, err = c.WaitForTask(math.MaxInt32, 0)
+			_, err = c.WaitForTask(context.Background(), math.MaxInt32, 0)
 			require.Error(t, err)
 
-			_, err = i.AddDocuments(tt.args.document, nil)
+			_, err = i.AddDocuments(context.Background(), tt.args.document, nil)
 			require.Error(t, err)
 
-			_, err = c.GetTasks(tt.args.query)
+			_, err = c.GetTasks(context.Background(), tt.args.query)
 			require.Error(t, err)
 
-			_, err = c.GetStats(nil)
+			_, err = c.GetStats(context.Background(), nil)
 			require.Error(t, err)
 
-			_, err = c.CreateKey(&meilisearch.Key{
+			_, err = c.CreateKey(context.Background(), &meilisearch.Key{
 				Name: "Wrong",
 			})
 			require.Error(t, err)
 
-			_, err = c.GetKey("Wrong")
+			_, err = c.GetKey(context.Background(), "Wrong")
 			require.Error(t, err)
 
-			_, err = c.UpdateKey("Wrong", &meilisearch.Key{
+			_, err = c.UpdateKey(context.Background(), "Wrong", &meilisearch.Key{
 				Name: "Wrong",
 			})
 			require.Error(t, err)
 
-			_, err = c.CreateDump()
+			_, err = c.CreateDump(context.Background())
 			require.Error(t, err)
 
-			_, err = c.GetTask(1)
+			_, err = c.GetTask(context.Background(), 1)
 			require.Error(t, err)
 
-			_, err = c.DeleteTasks(nil)
+			_, err = c.DeleteTasks(context.Background(), nil)
 			require.Error(t, err)
 
-			_, err = c.SwapIndexes([]*meilisearch.SwapIndexesParams{
+			_, err = c.SwapIndexes(context.Background(), []*meilisearch.SwapIndexesParams{
 				{Indexes: []string{"Wrong", "Worse"}},
 			})
 			require.Error(t, err)
@@ -1318,16 +1318,16 @@ func Test_CancelTasks(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := c.CancelTasks(tt.args.query)
+			gotResp, err := c.CancelTasks(context.Background(), tt.args.query)
 			if tt.args.query == nil {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
 
-				_, err = c.WaitForTask(gotResp.TaskUID, 0)
+				_, err = c.WaitForTask(context.Background(), gotResp.TaskUID, 0)
 				require.NoError(t, err)
 
-				gotTask, err := c.GetTask(gotResp.TaskUID)
+				gotTask, err := c.GetTask(context.Background(), gotResp.TaskUID)
 				require.NoError(t, err)
 
 				require.NotNil(t, gotResp.Status)
@@ -1452,13 +1452,13 @@ func Test_DeleteTasks(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := c.DeleteTasks(tt.args.query)
+			gotResp, err := c.DeleteTasks(context.Background(), tt.args.query)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(gotResp.TaskUID, 0)
+			_, err = c.WaitForTask(context.Background(), gotResp.TaskUID, 0)
 			require.NoError(t, err)
 
-			gotTask, err := c.GetTask(gotResp.TaskUID)
+			gotTask, err := c.GetTask(context.Background(), gotResp.TaskUID)
 			require.NoError(t, err)
 
 			require.NotNil(t, gotResp.Status)
@@ -1545,31 +1545,31 @@ func Test_SwapIndexes(t *testing.T) {
 
 			for _, params := range tt.args.query {
 				if params.Rename { // just create the first index
-					taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{
+					taskInfo, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 						Uid: params.Indexes[0],
 					})
 					require.NoError(t, err)
-					_, err = c.WaitForTask(taskInfo.TaskUID, 0)
+					_, err = c.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 					require.NoError(t, err)
 					continue
 				}
 				for _, idx := range params.Indexes {
-					taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{
+					taskInfo, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 						Uid: idx,
 					})
 					require.NoError(t, err)
-					_, err = c.WaitForTask(taskInfo.TaskUID, 0)
+					_, err = c.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 					require.NoError(t, err)
 				}
 			}
 
-			gotResp, err := c.SwapIndexes(tt.args.query)
+			gotResp, err := c.SwapIndexes(context.Background(), tt.args.query)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(gotResp.TaskUID, 0)
+			_, err = c.WaitForTask(context.Background(), gotResp.TaskUID, 0)
 			require.NoError(t, err)
 
-			gotTask, err := c.GetTask(gotResp.TaskUID)
+			gotTask, err := c.GetTask(context.Background(), gotResp.TaskUID)
 			require.NoError(t, err)
 
 			require.NotNil(t, gotResp.Status)
@@ -1636,17 +1636,17 @@ func Test_DefaultWaitForTask(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			taskInfo, err := c.Index(tt.args.UID).AddDocuments(tt.args.document, nil)
+			taskInfo, err := c.Index(tt.args.UID).AddDocuments(context.Background(), tt.args.document, nil)
 			require.NoError(t, err)
 
-			gotTask, err := c.WaitForTask(taskInfo.TaskUID, 0)
+			gotTask, err := c.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 			require.NoError(t, err)
 			require.Equal(t, tt.want, gotTask.Status)
 		})
 	}
 }
 
-func Test_WaitForTaskWithContext(t *testing.T) {
+func Test_WaitForTask(t *testing.T) {
 	sv := setup(t, "")
 	customSv := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
 		InsecureSkipVerify: true,
@@ -1743,13 +1743,13 @@ func Test_WaitForTaskWithContext(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			taskInfo, err := c.Index(tt.args.UID).AddDocuments(tt.args.document, nil)
+			taskInfo, err := c.Index(tt.args.UID).AddDocuments(context.Background(), tt.args.document, nil)
 			require.NoError(t, err)
 
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
 			defer cancelFunc()
 
-			gotTask, err := c.WaitForTaskWithContext(ctx, taskInfo.TaskUID, 0)
+			gotTask, err := c.WaitForTask(ctx, taskInfo.TaskUID, 0)
 			if tt.args.timeout < tt.args.interval {
 				require.Error(t, err)
 			} else {
@@ -1770,9 +1770,9 @@ func Test_ConnectionCloseByServer(t *testing.T) {
 		go func() {
 			defer g.Done()
 
-			_, _ = sv.Index("foo").Search("bar", &meilisearch.SearchRequest{})
+			_, _ = sv.Index("foo").Search(context.Background(), "bar", &meilisearch.SearchRequest{})
 			time.Sleep(5 * time.Second)
-			_, err := sv.Index("foo").Search("bar", &meilisearch.SearchRequest{})
+			_, err := sv.Index("foo").Search(context.Background(), "bar", &meilisearch.SearchRequest{})
 			var e *meilisearch.Error
 			if errors.As(err, &e) && e.ErrCode == meilisearch.CommunicationError {
 				require.NoErrorf(t, e, "unexpected meilisearch.Error")
@@ -2023,7 +2023,7 @@ func Test_GenerateTenantToken(t *testing.T) {
 				require.NoError(t, err)
 
 				if tt.wantFilter {
-					gotTask, err := c.Index(tt.args.IndexUIDS).UpdateFilterableAttributes(&tt.args.filter)
+					gotTask, err := c.Index(tt.args.IndexUIDS).UpdateFilterableAttributes(context.Background(), &tt.args.filter)
 					require.NoError(t, err, "UpdateFilterableAttributes() in TestGenerateTenantToken meilisearch.Error should be nil")
 					testWaitForIndexTask(t, c.Index(tt.args.IndexUIDS), gotTask)
 				} else {
@@ -2033,7 +2033,7 @@ func Test_GenerateTenantToken(t *testing.T) {
 
 				client := setup(t, "", meilisearch.WithAPIKey(token))
 
-				_, err = client.Index(tt.args.IndexUIDS).Search("", &meilisearch.SearchRequest{})
+				_, err = client.Index(tt.args.IndexUIDS).Search(context.Background(), "", &meilisearch.SearchRequest{})
 
 				require.NoError(t, err)
 			}
@@ -2044,7 +2044,7 @@ func Test_GenerateTenantToken(t *testing.T) {
 func TestClient_MultiSearch(t *testing.T) {
 	sv := setup(t, "")
 
-	feat, err := sv.ExperimentalFeatures().SetNetwork(true).Update()
+	feat, err := sv.ExperimentalFeatures().SetNetwork(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, feat)
 	require.True(t, feat.Network)
@@ -2355,7 +2355,7 @@ func TestClient_MultiSearch(t *testing.T) {
 			c := tt.args.client
 			t.Cleanup(cleanup(c))
 
-			got, err := c.MultiSearch(tt.args.queries)
+			got, err := c.MultiSearch(context.Background(), tt.args.queries)
 
 			if tt.wantErr {
 				require.Error(t, err)
@@ -2444,7 +2444,7 @@ func Test_CreateIndex(t *testing.T) {
 
 			t.Cleanup(cleanup(c))
 
-			info, err := c.CreateIndex(&meilisearch.IndexConfig{
+			info, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 				Uid:        tt.IndexUID,
 				PrimaryKey: tt.PrimaryKey,
 			})
@@ -2454,10 +2454,10 @@ func Test_CreateIndex(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				require.NotNil(t, info)
-				taskInfo, err := c.WaitForTask(info.TaskUID, 0)
+				taskInfo, err := c.WaitForTask(context.Background(), info.TaskUID, 0)
 				require.NoError(t, err)
 				require.Equal(t, taskInfo.Status, meilisearch.TaskStatusSucceeded)
-				got, err := c.GetIndex(tt.IndexUID)
+				got, err := c.GetIndex(context.Background(), tt.IndexUID)
 				require.NoError(t, err)
 				require.Equal(t, got.UID, tt.IndexUID)
 				require.Equal(t, got.PrimaryKey, tt.PrimaryKey)
@@ -2507,7 +2507,7 @@ func Test_ListIndex(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			for _, idx := range tt.Indexes {
-				info, err := c.CreateIndex(&meilisearch.IndexConfig{
+				info, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 					Uid:        idx,
 					PrimaryKey: "id", // Adding a default primary meilisearch.Key
 				})
@@ -2516,13 +2516,13 @@ func Test_ListIndex(t *testing.T) {
 				} else {
 					require.NoError(t, err)
 					require.NotNil(t, info)
-					taskInfo, err := c.WaitForTask(info.TaskUID, 0)
+					taskInfo, err := c.WaitForTask(context.Background(), info.TaskUID, 0)
 					require.NoError(t, err)
 					require.Equal(t, taskInfo.Status, meilisearch.TaskStatusSucceeded)
 				}
 			}
 
-			got, err := c.ListIndexes(nil)
+			got, err := c.ListIndexes(context.Background(), nil)
 			if tt.WantErr {
 				require.Error(t, err)
 			} else {
@@ -2566,26 +2566,26 @@ func Test_DeleteIndex(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			if len(tt.IndexUID) != 0 {
-				info, err := c.CreateIndex(&meilisearch.IndexConfig{
+				info, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 					Uid: tt.IndexUID,
 				})
 				if tt.WantErr {
 					require.Error(t, err)
 				} else {
 					require.NoError(t, err)
-					taskInfo, err := c.WaitForTask(info.TaskUID, 0)
+					taskInfo, err := c.WaitForTask(context.Background(), info.TaskUID, 0)
 					require.NoError(t, err)
 					require.Equal(t, taskInfo.Status, meilisearch.TaskStatusSucceeded)
 				}
 			}
 
-			info, err := c.DeleteIndex(tt.IndexUID)
+			info, err := c.DeleteIndex(context.Background(), tt.IndexUID)
 			if tt.WantErr {
 				require.Error(t, err)
 			} else {
 				require.NoError(t, err)
 				require.NotNil(t, info)
-				taskInfo, err := c.WaitForTask(info.TaskUID, 0)
+				taskInfo, err := c.WaitForTask(context.Background(), info.TaskUID, 0)
 				require.NoError(t, err)
 				require.Equal(t, taskInfo.Status, meilisearch.TaskStatusSucceeded)
 			}
@@ -2596,7 +2596,7 @@ func Test_DeleteIndex(t *testing.T) {
 
 func Test_CreateSnapshot(t *testing.T) {
 	c := setup(t, "")
-	taskInfo, err := c.CreateSnapshot()
+	taskInfo, err := c.CreateSnapshot(context.Background())
 	require.NoError(t, err)
 	testWaitForIndexTask(t, c.Index("indexUID"), taskInfo)
 }
@@ -2614,27 +2614,27 @@ func TestGetBatch(t *testing.T) {
 	c := setup(t, "")
 	indexUID := "indexUID"
 
-	info, err := c.CreateIndex(&meilisearch.IndexConfig{
+	info, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 		Uid: indexUID,
 	})
 
 	require.NoError(t, err)
-	taskInfo, err := c.WaitForTask(info.TaskUID, 0)
+	taskInfo, err := c.WaitForTask(context.Background(), info.TaskUID, 0)
 	require.NoError(t, err)
 	require.Equal(t, taskInfo.Status, meilisearch.TaskStatusSucceeded)
 
-	info, err = c.DeleteIndex(indexUID)
+	info, err = c.DeleteIndex(context.Background(), indexUID)
 	require.NoError(t, err)
-	taskInfo, err = c.WaitForTask(info.TaskUID, 0)
+	taskInfo, err = c.WaitForTask(context.Background(), info.TaskUID, 0)
 	require.NoError(t, err)
 	require.Equal(t, taskInfo.Status, meilisearch.TaskStatusSucceeded)
 
-	batches, err := c.GetBatches(nil)
+	batches, err := c.GetBatches(context.Background(), nil)
 	require.NoError(t, err)
 	require.NotEmpty(t, batches.Results)
 
 	for _, bt := range batches.Results {
-		batch, err := c.GetBatch(bt.UID)
+		batch, err := c.GetBatch(context.Background(), bt.UID)
 		require.NoError(t, err)
 
 		require.NotZero(t, batch.StartedAt)
@@ -2651,18 +2651,18 @@ func TestGetBatches(t *testing.T) {
 	c := setup(t, "")
 	indexUID := "indexUID"
 
-	info, err := c.CreateIndex(&meilisearch.IndexConfig{
+	info, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 		Uid: indexUID,
 	})
 
 	require.NoError(t, err)
-	taskInfo, err := c.WaitForTask(info.TaskUID, 0)
+	taskInfo, err := c.WaitForTask(context.Background(), info.TaskUID, 0)
 	require.NoError(t, err)
 	require.Equal(t, taskInfo.Status, meilisearch.TaskStatusSucceeded)
 
-	info, err = c.DeleteIndex(indexUID)
+	info, err = c.DeleteIndex(context.Background(), indexUID)
 	require.NoError(t, err)
-	taskInfo, err = c.WaitForTask(info.TaskUID, 0)
+	taskInfo, err = c.WaitForTask(context.Background(), info.TaskUID, 0)
 	require.NoError(t, err)
 	require.Equal(t, taskInfo.Status, meilisearch.TaskStatusSucceeded)
 
@@ -2693,7 +2693,7 @@ func TestGetBatches(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			batches, err := c.GetBatches(tt.params)
+			batches, err := c.GetBatches(context.Background(), tt.params)
 			require.NoError(t, err)
 			require.NotEmpty(t, batches.Results)
 
@@ -2768,7 +2768,7 @@ func TestExport(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			result, err := c.Export(tt.params)
+			result, err := c.Export(context.Background(), tt.params)
 			require.NoError(t, err)
 			require.NotZero(t, result.TaskUID)
 			require.Equal(t, meilisearch.TaskStatusEnqueued, result.Status)
@@ -2782,7 +2782,7 @@ func TestRenderTemplate(t *testing.T) {
 	c := setup(t, "")
 	t.Cleanup(cleanup(c))
 
-	exFeature, err := c.ExperimentalFeatures().SetRenderRoute(true).Update()
+	exFeature, err := c.ExperimentalFeatures().SetRenderRoute(true).Update(context.Background())
 	require.NoError(t, err)
 	require.True(t, exFeature.RenderRoute)
 
@@ -2816,7 +2816,7 @@ func TestRenderTemplate(t *testing.T) {
 		{
 			name: "rendering an inline document on an inline indexing fragment",
 			setup: func(t *testing.T) {
-				feat, err := c.ExperimentalFeatures().SetMultiModal(true).Update()
+				feat, err := c.ExperimentalFeatures().SetMultiModal(true).Update(context.Background())
 				require.NoError(t, err)
 				require.True(t, feat.MultiModal)
 			},
@@ -2853,7 +2853,7 @@ func TestRenderTemplate(t *testing.T) {
 			if tt.setup != nil {
 				tt.setup(t)
 			}
-			result, err := c.RenderTemplate(tt.params)
+			result, err := c.RenderTemplate(context.Background(), tt.params)
 			require.NoError(t, err)
 			require.Equal(t, tt.expected, result)
 		})

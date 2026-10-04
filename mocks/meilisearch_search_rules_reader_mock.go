@@ -17,10 +17,19 @@ func NewMockmeilisearchSearchRulesReader(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockmeilisearchSearchRulesReader {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockmeilisearchSearchRulesReader{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -39,73 +48,11 @@ func (_m *MockmeilisearchSearchRulesReader) EXPECT() *MockmeilisearchSearchRules
 }
 
 // GetSearchRule provides a mock function for the type MockmeilisearchSearchRulesReader
-func (_mock *MockmeilisearchSearchRulesReader) GetSearchRule(uid string) (*meilisearch.SearchRule, error) {
-	ret := _mock.Called(uid)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetSearchRule")
-	}
-
-	var r0 *meilisearch.SearchRule
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*meilisearch.SearchRule, error)); ok {
-		return returnFunc(uid)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string) *meilisearch.SearchRule); ok {
-		r0 = returnFunc(uid)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.SearchRule)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(uid)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSearchRulesReader_GetSearchRule_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchRule'
-type MockmeilisearchSearchRulesReader_GetSearchRule_Call struct {
-	*mock.Call
-}
-
-// GetSearchRule is a helper method to define mock.On call
-//   - uid string
-func (_e *MockmeilisearchSearchRulesReader_Expecter) GetSearchRule(uid any) *MockmeilisearchSearchRulesReader_GetSearchRule_Call {
-	return &MockmeilisearchSearchRulesReader_GetSearchRule_Call{Call: _e.mock.On("GetSearchRule", uid)}
-}
-
-func (_c *MockmeilisearchSearchRulesReader_GetSearchRule_Call) Run(run func(uid string)) *MockmeilisearchSearchRulesReader_GetSearchRule_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSearchRulesReader_GetSearchRule_Call) Return(searchRule *meilisearch.SearchRule, err error) *MockmeilisearchSearchRulesReader_GetSearchRule_Call {
-	_c.Call.Return(searchRule, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSearchRulesReader_GetSearchRule_Call) RunAndReturn(run func(uid string) (*meilisearch.SearchRule, error)) *MockmeilisearchSearchRulesReader_GetSearchRule_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetSearchRuleWithContext provides a mock function for the type MockmeilisearchSearchRulesReader
-func (_mock *MockmeilisearchSearchRulesReader) GetSearchRuleWithContext(ctx context.Context, uid string) (*meilisearch.SearchRule, error) {
+func (_mock *MockmeilisearchSearchRulesReader) GetSearchRule(ctx context.Context, uid string) (*meilisearch.SearchRule, error) {
 	ret := _mock.Called(ctx, uid)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetSearchRuleWithContext")
+		panic("no return value specified for GetSearchRule")
 	}
 
 	var r0 *meilisearch.SearchRule
@@ -128,19 +75,19 @@ func (_mock *MockmeilisearchSearchRulesReader) GetSearchRuleWithContext(ctx cont
 	return r0, r1
 }
 
-// MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchRuleWithContext'
-type MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call struct {
+// MockmeilisearchSearchRulesReader_GetSearchRule_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchRule'
+type MockmeilisearchSearchRulesReader_GetSearchRule_Call struct {
 	*mock.Call
 }
 
-// GetSearchRuleWithContext is a helper method to define mock.On call
+// GetSearchRule is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uid string
-func (_e *MockmeilisearchSearchRulesReader_Expecter) GetSearchRuleWithContext(ctx any, uid any) *MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call {
-	return &MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call{Call: _e.mock.On("GetSearchRuleWithContext", ctx, uid)}
+func (_e *MockmeilisearchSearchRulesReader_Expecter) GetSearchRule(ctx any, uid any) *MockmeilisearchSearchRulesReader_GetSearchRule_Call {
+	return &MockmeilisearchSearchRulesReader_GetSearchRule_Call{Call: _e.mock.On("GetSearchRule", ctx, uid)}
 }
 
-func (_c *MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call) Run(run func(ctx context.Context, uid string)) *MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call {
+func (_c *MockmeilisearchSearchRulesReader_GetSearchRule_Call) Run(run func(ctx context.Context, uid string)) *MockmeilisearchSearchRulesReader_GetSearchRule_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -158,84 +105,22 @@ func (_c *MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call) Run(ru
 	return _c
 }
 
-func (_c *MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call) Return(searchRule *meilisearch.SearchRule, err error) *MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call {
+func (_c *MockmeilisearchSearchRulesReader_GetSearchRule_Call) Return(searchRule *meilisearch.SearchRule, err error) *MockmeilisearchSearchRulesReader_GetSearchRule_Call {
 	_c.Call.Return(searchRule, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call) RunAndReturn(run func(ctx context.Context, uid string) (*meilisearch.SearchRule, error)) *MockmeilisearchSearchRulesReader_GetSearchRuleWithContext_Call {
+func (_c *MockmeilisearchSearchRulesReader_GetSearchRule_Call) RunAndReturn(run func(ctx context.Context, uid string) (*meilisearch.SearchRule, error)) *MockmeilisearchSearchRulesReader_GetSearchRule_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListSearchRules provides a mock function for the type MockmeilisearchSearchRulesReader
-func (_mock *MockmeilisearchSearchRulesReader) ListSearchRules(params *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error) {
-	ret := _mock.Called(params)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ListSearchRules")
-	}
-
-	var r0 *meilisearch.SearchRulesResults
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error)); ok {
-		return returnFunc(params)
-	}
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.SearchRulesParams) *meilisearch.SearchRulesResults); ok {
-		r0 = returnFunc(params)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.SearchRulesResults)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(*meilisearch.SearchRulesParams) error); ok {
-		r1 = returnFunc(params)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSearchRulesReader_ListSearchRules_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListSearchRules'
-type MockmeilisearchSearchRulesReader_ListSearchRules_Call struct {
-	*mock.Call
-}
-
-// ListSearchRules is a helper method to define mock.On call
-//   - params *meilisearch.SearchRulesParams
-func (_e *MockmeilisearchSearchRulesReader_Expecter) ListSearchRules(params any) *MockmeilisearchSearchRulesReader_ListSearchRules_Call {
-	return &MockmeilisearchSearchRulesReader_ListSearchRules_Call{Call: _e.mock.On("ListSearchRules", params)}
-}
-
-func (_c *MockmeilisearchSearchRulesReader_ListSearchRules_Call) Run(run func(params *meilisearch.SearchRulesParams)) *MockmeilisearchSearchRulesReader_ListSearchRules_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *meilisearch.SearchRulesParams
-		if args[0] != nil {
-			arg0 = args[0].(*meilisearch.SearchRulesParams)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSearchRulesReader_ListSearchRules_Call) Return(searchRulesResults *meilisearch.SearchRulesResults, err error) *MockmeilisearchSearchRulesReader_ListSearchRules_Call {
-	_c.Call.Return(searchRulesResults, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSearchRulesReader_ListSearchRules_Call) RunAndReturn(run func(params *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error)) *MockmeilisearchSearchRulesReader_ListSearchRules_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// ListSearchRulesWithContext provides a mock function for the type MockmeilisearchSearchRulesReader
-func (_mock *MockmeilisearchSearchRulesReader) ListSearchRulesWithContext(ctx context.Context, params *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error) {
+func (_mock *MockmeilisearchSearchRulesReader) ListSearchRules(ctx context.Context, params *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error) {
 	ret := _mock.Called(ctx, params)
 
 	if len(ret) == 0 {
-		panic("no return value specified for ListSearchRulesWithContext")
+		panic("no return value specified for ListSearchRules")
 	}
 
 	var r0 *meilisearch.SearchRulesResults
@@ -258,19 +143,19 @@ func (_mock *MockmeilisearchSearchRulesReader) ListSearchRulesWithContext(ctx co
 	return r0, r1
 }
 
-// MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListSearchRulesWithContext'
-type MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call struct {
+// MockmeilisearchSearchRulesReader_ListSearchRules_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListSearchRules'
+type MockmeilisearchSearchRulesReader_ListSearchRules_Call struct {
 	*mock.Call
 }
 
-// ListSearchRulesWithContext is a helper method to define mock.On call
+// ListSearchRules is a helper method to define mock.On call
 //   - ctx context.Context
 //   - params *meilisearch.SearchRulesParams
-func (_e *MockmeilisearchSearchRulesReader_Expecter) ListSearchRulesWithContext(ctx any, params any) *MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call {
-	return &MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call{Call: _e.mock.On("ListSearchRulesWithContext", ctx, params)}
+func (_e *MockmeilisearchSearchRulesReader_Expecter) ListSearchRules(ctx any, params any) *MockmeilisearchSearchRulesReader_ListSearchRules_Call {
+	return &MockmeilisearchSearchRulesReader_ListSearchRules_Call{Call: _e.mock.On("ListSearchRules", ctx, params)}
 }
 
-func (_c *MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call) Run(run func(ctx context.Context, params *meilisearch.SearchRulesParams)) *MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call {
+func (_c *MockmeilisearchSearchRulesReader_ListSearchRules_Call) Run(run func(ctx context.Context, params *meilisearch.SearchRulesParams)) *MockmeilisearchSearchRulesReader_ListSearchRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -288,12 +173,12 @@ func (_c *MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call) Run(
 	return _c
 }
 
-func (_c *MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call) Return(searchRulesResults *meilisearch.SearchRulesResults, err error) *MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call {
+func (_c *MockmeilisearchSearchRulesReader_ListSearchRules_Call) Return(searchRulesResults *meilisearch.SearchRulesResults, err error) *MockmeilisearchSearchRulesReader_ListSearchRules_Call {
 	_c.Call.Return(searchRulesResults, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call) RunAndReturn(run func(ctx context.Context, params *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error)) *MockmeilisearchSearchRulesReader_ListSearchRulesWithContext_Call {
+func (_c *MockmeilisearchSearchRulesReader_ListSearchRules_Call) RunAndReturn(run func(ctx context.Context, params *meilisearch.SearchRulesParams) (*meilisearch.SearchRulesResults, error)) *MockmeilisearchSearchRulesReader_ListSearchRules_Call {
 	_c.Call.Return(run)
 	return _c
 }

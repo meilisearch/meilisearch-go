@@ -35,7 +35,7 @@ func main() {
 	}
 
 	fmt.Printf("Adding %d movies to the index...\n", len(movies))
-	task, err := index.AddDocuments(movies, &meilisearch.DocumentOptions{PrimaryKey: meilisearch.StringPtr("id")})
+	task, err := index.AddDocuments(context.Background(), movies, &meilisearch.DocumentOptions{PrimaryKey: meilisearch.StringPtr("id")})
 	if err != nil {
 		log.Fatalf("Failed to add documents: %v", err)
 	}
@@ -44,7 +44,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	_, err = client.WaitForTaskWithContext(ctx, task.TaskUID, 100*time.Millisecond)
+	_, err = client.WaitForTask(ctx, task.TaskUID, 100*time.Millisecond)
 	if err != nil {
 		log.Fatalf("Failed to index documents: %v", err)
 	}
@@ -52,13 +52,13 @@ func main() {
 
 	// Configure filterable and faceted attributes (after index exists)
 	fmt.Println("Configuring filterable/faceted attributes...")
-	settingsTask, err := index.UpdateSettings(&meilisearch.Settings{
+	settingsTask, err := index.UpdateSettings(context.Background(), &meilisearch.Settings{
 		FilterableAttributes: []string{"year", "genres"},
 	})
 	if err == nil {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		_, err = client.WaitForTaskWithContext(ctx, settingsTask.TaskUID, 100*time.Millisecond)
+		_, err = client.WaitForTask(ctx, settingsTask.TaskUID, 100*time.Millisecond)
 	}
 	if err != nil {
 		log.Fatalf("Failed to apply settings: %v", err)
@@ -67,7 +67,7 @@ func main() {
 
 	// Simple search
 	fmt.Println("\n1. Simple search for 'action':")
-	searchResult, err := index.Search("action", &meilisearch.SearchRequest{
+	searchResult, err := index.Search(context.Background(), "action", &meilisearch.SearchRequest{
 		Limit: 5,
 	})
 	if err != nil {
@@ -87,7 +87,7 @@ func main() {
 
 	// Search with filters and facets
 	fmt.Println("\n2. Advanced search with filters and facets:")
-	searchResult, err = index.Search("drama", &meilisearch.SearchRequest{
+	searchResult, err = index.Search(context.Background(), "drama", &meilisearch.SearchRequest{
 		Filter:                "year > 1990",
 		Facets:                []string{"genres", "year"},
 		AttributesToHighlight: []string{"title", "overview"},

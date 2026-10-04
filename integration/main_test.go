@@ -2,6 +2,7 @@ package integration
 
 import (
 	"bufio"
+	"context"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
@@ -139,7 +140,7 @@ func cleanupNetwork(services ...meilisearch.ServiceManager) func() {
 }
 
 func getPrivateKey(sv meilisearch.ServiceManager) (key string) {
-	list, err := sv.GetKeys(nil)
+	list, err := sv.GetKeys(context.Background(), nil)
 	if err != nil {
 		return ""
 	}
@@ -152,7 +153,7 @@ func getPrivateKey(sv meilisearch.ServiceManager) (key string) {
 }
 
 func getPrivateUIDKey(sv meilisearch.ServiceManager) (key string) {
-	list, err := sv.GetKeys(nil)
+	list, err := sv.GetKeys(context.Background(), nil)
 	if err != nil {
 		return ""
 	}
@@ -165,14 +166,14 @@ func getPrivateUIDKey(sv meilisearch.ServiceManager) (key string) {
 }
 
 func deleteAllIndexes(sv meilisearch.ServiceManager) (ok bool, err error) {
-	list, err := sv.ListIndexes(nil)
+	list, err := sv.ListIndexes(context.Background(), nil)
 	if err != nil {
 		return false, err
 	}
 
 	for _, index := range list.Results {
-		task, _ := sv.DeleteIndex(index.UID)
-		_, err := sv.WaitForTask(task.TaskUID, 0)
+		task, _ := sv.DeleteIndex(context.Background(), index.UID)
+		_, err := sv.WaitForTask(context.Background(), task.TaskUID, 0)
 		if err != nil {
 			return false, err
 		}
@@ -182,7 +183,7 @@ func deleteAllIndexes(sv meilisearch.ServiceManager) (ok bool, err error) {
 }
 
 func resetNetwork(sv meilisearch.ServiceManager) (ok bool, err error) {
-	_, err = sv.UpdateNetwork(&meilisearch.UpdateNetworkRequest{
+	_, err = sv.UpdateNetwork(context.Background(), &meilisearch.UpdateNetworkRequest{
 		Self:    meilisearch.Null[string](),
 		Leader:  meilisearch.Null[string](),
 		Remotes: meilisearch.Null[map[string]meilisearch.Opt[meilisearch.UpdateRemote]](),
@@ -194,23 +195,23 @@ func resetNetwork(sv meilisearch.ServiceManager) (ok bool, err error) {
 }
 
 func deleteAllSearchRules(sv meilisearch.ServiceManager) (ok bool, err error) {
-	task, err := sv.DeleteSearchRule(nil)
+	task, err := sv.DeleteSearchRule(context.Background(), nil)
 	if err != nil {
 		return false, err
 	}
-	if _, err := sv.WaitForTask(task.TaskUID, 0); err != nil {
+	if _, err := sv.WaitForTask(context.Background(), task.TaskUID, 0); err != nil {
 		return false, err
 	}
 	return true, nil
 }
 
 func deleteAllWebhooks(webhookMgr meilisearch.WebhookManager) (ok bool, err error) {
-	list, err := webhookMgr.ListWebhooks()
+	list, err := webhookMgr.ListWebhooks(context.Background())
 	if err != nil {
 		return false, err
 	}
 	for _, webhook := range list.Result {
-		if err := webhookMgr.DeleteWebhook(webhook.UUID); err != nil {
+		if err := webhookMgr.DeleteWebhook(context.Background(), webhook.UUID); err != nil {
 			return false, err
 		}
 	}
@@ -218,7 +219,7 @@ func deleteAllWebhooks(webhookMgr meilisearch.WebhookManager) (ok bool, err erro
 }
 
 func deleteAllChatWorkspaces(chatMgr meilisearch.ChatManager) (ok bool, err error) {
-	list, err := chatMgr.ListChatWorkspaces(&meilisearch.ListChatWorkSpaceQuery{
+	list, err := chatMgr.ListChatWorkspaces(context.Background(), &meilisearch.ListChatWorkSpaceQuery{
 		Limit:  1000,
 		Offset: 0,
 	})
@@ -227,7 +228,7 @@ func deleteAllChatWorkspaces(chatMgr meilisearch.ChatManager) (ok bool, err erro
 	}
 
 	for _, work := range list.Results {
-		_, err := chatMgr.ResetChatWorkspace(work.UID)
+		_, err := chatMgr.ResetChatWorkspace(context.Background(), work.UID)
 		if err != nil {
 			return false, err
 		}
@@ -237,14 +238,14 @@ func deleteAllChatWorkspaces(chatMgr meilisearch.ChatManager) (ok bool, err erro
 }
 
 func deleteAllKeys(sv meilisearch.ServiceManager) (ok bool, err error) {
-	list, err := sv.GetKeys(nil)
+	list, err := sv.GetKeys(context.Background(), nil)
 	if err != nil {
 		return false, err
 	}
 
 	for _, key := range list.Results {
 		if strings.Contains(key.Description, "Test") || (key.Description == "") {
-			_, err = sv.DeleteKey(key.Key)
+			_, err = sv.DeleteKey(context.Background(), key.Key)
 			if err != nil {
 				return false, err
 			}
@@ -275,14 +276,14 @@ func getEnvOrSkip(t *testing.T, key string) string {
 
 func testWaitForIndexTask(t *testing.T, i meilisearch.IndexManager, u *meilisearch.TaskInfo) {
 	t.Helper()
-	r, err := i.WaitForTask(u.TaskUID, 0)
+	r, err := i.WaitForTask(context.Background(), u.TaskUID, 0)
 	require.NoError(t, err)
 	assertSuccessTask(t, r)
 }
 
 func testWaitForTask(t *testing.T, sv meilisearch.ServiceManager, u *meilisearch.Task) {
 	t.Helper()
-	r, err := sv.WaitForTask(u.TaskUID, 0)
+	r, err := sv.WaitForTask(context.Background(), u.TaskUID, 0)
 	require.NoError(t, err)
 	assertSuccessTask(t, r)
 }
@@ -294,24 +295,24 @@ func assertSuccessTask(t *testing.T, u *meilisearch.Task) {
 
 func testWaitForBatchTask(t *testing.T, i meilisearch.IndexManager, u []meilisearch.TaskInfo) {
 	for _, id := range u {
-		_, err := i.WaitForTask(id.TaskUID, 0)
+		_, err := i.WaitForTask(context.Background(), id.TaskUID, 0)
 		require.NoError(t, err)
 	}
 }
 
 func setUpEmptyIndex(sv meilisearch.ServiceManager,
 	index *meilisearch.IndexConfig) (resp *meilisearch.IndexResult, err error) {
-	task, err := sv.CreateIndex(index)
+	task, err := sv.CreateIndex(context.Background(), index)
 	if err != nil {
 		fmt.Println(err)
 		return nil, err
 	}
-	finalTask, _ := sv.WaitForTask(task.TaskUID, 0)
+	finalTask, _ := sv.WaitForTask(context.Background(), task.TaskUID, 0)
 	if finalTask.Status != "succeeded" {
 		cleanup(sv)
 		return setUpEmptyIndex(sv, index)
 	}
-	return sv.GetIndex(index.Uid)
+	return sv.GetIndex(context.Background(), index.Uid)
 }
 
 func setUpBasicIndex(sv meilisearch.ServiceManager, indexUID string) {
@@ -326,12 +327,12 @@ func setUpBasicIndex(sv meilisearch.ServiceManager, indexUID string) {
 		{"book_id": 42, "title": "The Hitchhiker's Guide to the Galaxy"},
 	}
 
-	task, err := index.AddDocuments(documents, nil)
+	task, err := index.AddDocuments(context.Background(), documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := index.WaitForTask(task.TaskUID, 0)
+	finalTask, _ := index.WaitForTask(context.Background(), task.TaskUID, 0)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -352,11 +353,11 @@ func setupMovieIndex(t *testing.T, client meilisearch.ServiceManager, uid string
 
 	require.NoError(t, json.NewDecoder(testdata).Decode(&tests))
 
-	task, err := idx.AddDocuments(tests, nil)
+	task, err := idx.AddDocuments(context.Background(), tests, nil)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, idx, task)
 
-	task, err = idx.UpdateFilterableAttributes(&[]interface{}{"id", "title", "overview"})
+	task, err = idx.UpdateFilterableAttributes(context.Background(), &[]interface{}{"id", "title", "overview"})
 	require.NoError(t, err)
 	testWaitForIndexTask(t, idx, task)
 
@@ -378,11 +379,11 @@ func setupComicIndex(t *testing.T, client meilisearch.ServiceManager, uid string
 
 	require.NoError(t, json.NewDecoder(testdata).Decode(&tests))
 
-	task, err := idx.AddDocuments(tests, nil)
+	task, err := idx.AddDocuments(context.Background(), tests, nil)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, idx, task)
 
-	task, err = idx.UpdateFilterableAttributes(&[]interface{}{"id", "title", "overview"})
+	task, err = idx.UpdateFilterableAttributes(context.Background(), &[]interface{}{"id", "title", "overview"})
 	require.NoError(t, err)
 	testWaitForIndexTask(t, idx, task)
 
@@ -400,7 +401,7 @@ func setUpIndexesWithForeignKeys(t *testing.T, client meilisearch.ServiceManager
 		{"id": 3, "name": "Antoine de Saint-Exupéry"},
 	}
 
-	task, err := authorsIndex.AddDocuments(authors, nil)
+	task, err := authorsIndex.AddDocuments(context.Background(), authors, nil)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, authorsIndex, task)
 
@@ -413,7 +414,7 @@ func setUpIndexesWithForeignKeys(t *testing.T, client meilisearch.ServiceManager
 		{"id": 104, "title": "Emma", "author": 1},
 	}
 
-	task, err = booksIndex.AddDocuments(books, nil)
+	task, err = booksIndex.AddDocuments(context.Background(), books, nil)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, booksIndex, task)
 }
@@ -445,12 +446,12 @@ func setUpIndexForFaceting(client meilisearch.ServiceManager) {
 		{BookID: 1039, Title: "The Girl in the white shirt", Tag: "white shirt", Year: 1999},
 		{BookID: 1050, Title: "星の王子さま", Tag: "物語", Year: 1943},
 	}
-	task, err := idx.AddDocuments(booksTest, nil)
+	task, err := idx.AddDocuments(context.Background(), booksTest, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := idx.WaitForTask(task.TaskUID, 0)
+	finalTask, _ := idx.WaitForTask(context.Background(), task.TaskUID, 0)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -468,12 +469,12 @@ func setUpIndexWithNestedFields(client meilisearch.ServiceManager, indexUID stri
 		{"id": 6, "title": "Harry Potter and the Half-Blood Prince", "info": map[string]interface{}{"comment": "The best book", "reviewNb": 1000}},
 		{"id": 7, "title": "The Hitchhiker's Guide to the Galaxy"},
 	}
-	task, err := index.AddDocuments(documents, nil)
+	task, err := index.AddDocuments(context.Background(), documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ := index.WaitForTask(task.TaskUID, 0)
+	finalTask, _ := index.WaitForTask(context.Background(), task.TaskUID, 0)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -481,7 +482,7 @@ func setUpIndexWithNestedFields(client meilisearch.ServiceManager, indexUID stri
 
 func setUpIndexWithVector(client meilisearch.ServiceManager, indexUID string) (resp *meilisearch.IndexResult, err error) {
 	idx := client.Index(indexUID)
-	taskInfo, err := idx.UpdateSettings(&meilisearch.Settings{
+	taskInfo, err := idx.UpdateSettings(context.Background(), &meilisearch.Settings{
 		Embedders: map[string]meilisearch.Embedder{
 			"default": {
 				Source:     meilisearch.UserProvidedEmbedderSource,
@@ -492,7 +493,7 @@ func setUpIndexWithVector(client meilisearch.ServiceManager, indexUID string) (r
 	if err != nil {
 		return nil, err
 	}
-	settingsTask, err := idx.WaitForTask(taskInfo.TaskUID, 0)
+	settingsTask, err := idx.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 	if err != nil {
 		return nil, err
 	}
@@ -505,30 +506,30 @@ func setUpIndexWithVector(client meilisearch.ServiceManager, indexUID string) (r
 		{"book_id": 456, "title": "Le Petit Prince", "_vectors": map[string]interface{}{"default": []float64{2.4, 8.5, 1.6}}},
 	}
 
-	taskInfo, err = idx.AddDocuments(documents, nil)
+	taskInfo, err = idx.AddDocuments(context.Background(), documents, nil)
 	if err != nil {
 		return nil, err
 	}
 
-	finalTask, _ := idx.WaitForTask(taskInfo.TaskUID, 0)
+	finalTask, _ := idx.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 	if finalTask.Status != meilisearch.TaskStatusSucceeded {
 		return nil, fmt.Errorf("add documents task failed: %#+v", finalTask)
 	}
 
-	return client.GetIndex(indexUID)
+	return client.GetIndex(context.Background(), indexUID)
 }
 
 func setUpDistinctIndex(client meilisearch.ServiceManager, indexUID string) {
 	idx := client.Index(indexUID)
 
 	atters := []interface{}{"product_id", "title", "sku", "url"}
-	task, err := idx.UpdateFilterableAttributes(&atters)
+	task, err := idx.UpdateFilterableAttributes(context.Background(), &atters)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
 
-	finalTask, _ := idx.WaitForTask(task.TaskUID, 0)
+	finalTask, _ := idx.WaitForTask(context.Background(), task.TaskUID, 0)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}
@@ -541,12 +542,12 @@ func setUpDistinctIndex(client meilisearch.ServiceManager, indexUID string) {
 		{"product_id": 4, "title": "yellow shirt", "sku": "sku9064", "url": "https://example.com/products/p4"},
 		{"product_id": 42, "title": "gray shirt", "sku": "sku964", "url": "https://example.com/products/p42"},
 	}
-	task, err = idx.AddDocuments(documents, nil)
+	task, err = idx.AddDocuments(context.Background(), documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	finalTask, _ = idx.WaitForTask(task.TaskUID, 0)
+	finalTask, _ = idx.WaitForTask(context.Background(), task.TaskUID, 0)
 	if finalTask.Status != "succeeded" {
 		os.Exit(1)
 	}

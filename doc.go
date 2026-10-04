@@ -20,7 +20,7 @@
 //		{"id": 5, "title": "Moana", "genres": []string{"Fantasy", "Action"}},
 //		{"id": 6, "title": "Philadelphia", "genres": []string{"Drama"}},
 //	}
-//	task, err := idx.AddDocuments(documents, nil)
+//	task, err := idx.AddDocuments(context.Background(), documents, nil)
 //	if err != nil {
 //		fmt.Println(err)
 //		os.Exit(1)

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -37,7 +38,7 @@ func main() {
 	indexUID := "task_demo"
 	fmt.Println("1. Creating index to generate tasks...")
 
-	createTask, err := client.CreateIndex(&meilisearch.IndexConfig{
+	createTask, err := client.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 		Uid:        indexUID,
 		PrimaryKey: "id",
 	})
@@ -57,7 +58,7 @@ func main() {
 		{ID: 3, Title: "Third Document", Content: "This is the third document content"},
 	}
 
-	addTask, err := index.AddDocuments(documents, nil)
+	addTask, err := index.AddDocuments(context.Background(), documents, nil)
 	if err != nil {
 		log.Fatalf("Failed to add documents: %v", err)
 	}
@@ -70,7 +71,7 @@ func main() {
 		FilterableAttributes: []string{"id"},
 	}
 
-	settingsTask, err := index.UpdateSettings(settings)
+	settingsTask, err := index.UpdateSettings(context.Background(), settings)
 	if err != nil {
 		log.Fatalf("Failed to update settings: %v", err)
 	}
@@ -79,7 +80,7 @@ func main() {
 	// 4. Get specific task information
 	fmt.Println("\n4. Getting specific task information...")
 	if createTask != nil {
-		task, err := client.GetTask(createTask.TaskUID)
+		task, err := client.GetTask(context.Background(), createTask.TaskUID)
 		if err != nil {
 			log.Printf("Failed to get task: %v", err)
 		} else {
@@ -87,7 +88,7 @@ func main() {
 		}
 	}
 
-	task, err := client.GetTask(addTask.TaskUID)
+	task, err := client.GetTask(context.Background(), addTask.TaskUID)
 	if err != nil {
 		log.Printf("Failed to get add task: %v", err)
 	} else {
@@ -96,7 +97,7 @@ func main() {
 
 	// 5. List all tasks with pagination
 	fmt.Println("\n5. Listing all tasks...")
-	tasks, err := client.GetTasks(&meilisearch.TasksQuery{
+	tasks, err := client.GetTasks(context.Background(), &meilisearch.TasksQuery{
 		Limit: 10,
 		From:  0,
 		Statuses: []meilisearch.TaskStatus{
@@ -118,7 +119,7 @@ func main() {
 
 	// 6. Filter tasks by type
 	fmt.Println("\n6. Filtering tasks by type...")
-	documentTasks, err := client.GetTasks(&meilisearch.TasksQuery{
+	documentTasks, err := client.GetTasks(context.Background(), &meilisearch.TasksQuery{
 		Types: []meilisearch.TaskType{"documentAdditionOrUpdate"},
 		Limit: 5,
 	})
@@ -133,7 +134,7 @@ func main() {
 
 	// 7. Filter tasks by index
 	fmt.Println("\n7. Filtering tasks by index...")
-	indexTasks, err := client.GetTasks(&meilisearch.TasksQuery{
+	indexTasks, err := client.GetTasks(context.Background(), &meilisearch.TasksQuery{
 		IndexUIDS: []string{indexUID},
 		Limit:     5,
 	})
@@ -150,7 +151,7 @@ func main() {
 	fmt.Println("\n8. Waiting for task completion...")
 	fmt.Printf("Waiting for document addition task #%d to complete...\n", addTask.TaskUID)
 
-	finalTask, err := client.WaitForTask(addTask.TaskUID, 100*time.Millisecond)
+	finalTask, err := client.WaitForTask(context.Background(), addTask.TaskUID, 100*time.Millisecond)
 	if err != nil {
 		log.Printf("Failed to wait for task: %v", err)
 	} else {
@@ -171,7 +172,7 @@ func main() {
 	}
 
 	for _, taskUID := range allTaskUIDs {
-		task, err := client.GetTask(taskUID)
+		task, err := client.GetTask(context.Background(), taskUID)
 		if err != nil {
 			log.Printf("Failed to get task %d: %v", taskUID, err)
 			continue
@@ -192,7 +193,7 @@ func main() {
 
 	// 10. Get task statistics
 	fmt.Println("\n10. Task statistics...")
-	allTasks, err := client.GetTasks(&meilisearch.TasksQuery{
+	allTasks, err := client.GetTasks(context.Background(), &meilisearch.TasksQuery{
 		Limit: 100, // Get more tasks for statistics
 	})
 	if err != nil {

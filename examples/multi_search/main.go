@@ -71,7 +71,7 @@ func main() {
 	}
 
 	// Execute multi-search
-	results, err := client.MultiSearch(multiSearchRequest)
+	results, err := client.MultiSearch(context.Background(), multiSearchRequest)
 	if err != nil {
 		log.Fatalf("Multi-search failed: %v", err)
 	}
@@ -107,7 +107,7 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 	indexUID := "products"
 
 	// Create index
-	task, err := client.CreateIndex(&meilisearch.IndexConfig{
+	task, err := client.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 		Uid:        indexUID,
 		PrimaryKey: "id",
 	})
@@ -117,7 +117,7 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
-		_, err = client.WaitForTaskWithContext(ctx, task.TaskUID, 100*time.Millisecond)
+		_, err = client.WaitForTask(ctx, task.TaskUID, 100*time.Millisecond)
 		if err != nil {
 			return fmt.Errorf("index creation failed: %w", err)
 		}
@@ -125,7 +125,7 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 
 	// Configure filterable/sortable attributes required by the queries below
 	index := client.Index(indexUID)
-	settingsTask, err := index.UpdateSettings(&meilisearch.Settings{
+	settingsTask, err := index.UpdateSettings(context.Background(), &meilisearch.Settings{
 		FilterableAttributes: []string{"category", "in_stock", "price", "brand"},
 		SortableAttributes:   []string{"price"},
 	})
@@ -135,7 +135,7 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 	{
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
-		if _, err := client.WaitForTaskWithContext(ctx, settingsTask.TaskUID, 100*time.Millisecond); err != nil {
+		if _, err := client.WaitForTask(ctx, settingsTask.TaskUID, 100*time.Millisecond); err != nil {
 			return fmt.Errorf("settings update failed: %w", err)
 		}
 	}
@@ -150,7 +150,7 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 		{ID: 5, Name: "Bluetooth Headphones", Description: "Noise-canceling headphones", Category: "electronics", Price: 199.99, Brand: "AudioTech", Tags: []string{"headphones", "bluetooth", "audio"}, InStock: true},
 	}
 
-	addTask, err := index.AddDocuments(products, nil)
+	addTask, err := index.AddDocuments(context.Background(), products, nil)
 	if err != nil {
 		return fmt.Errorf("failed to add documents: %w", err)
 	}
@@ -158,7 +158,7 @@ func setupProductsIndex(client meilisearch.ServiceManager) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	_, err = client.WaitForTaskWithContext(ctx, addTask.TaskUID, 100*time.Millisecond)
+	_, err = client.WaitForTask(ctx, addTask.TaskUID, 100*time.Millisecond)
 	if err != nil {
 		return fmt.Errorf("failed to wait for document addition: %w", err)
 	}

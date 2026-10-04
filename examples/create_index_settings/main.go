@@ -30,7 +30,7 @@ func main() {
 	// 1. Create basic index
 	fmt.Println("1. Creating basic index:")
 	indexUID := "articles"
-	task, err := client.CreateIndex(&meilisearch.IndexConfig{
+	task, err := client.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 		Uid:        indexUID,
 		PrimaryKey: "id",
 	})
@@ -98,7 +98,7 @@ func main() {
 		},
 	}
 
-	settingsTask, err := index.UpdateSettings(settings)
+	settingsTask, err := index.UpdateSettings(context.Background(), settings)
 	if err != nil {
 		log.Fatalf("Failed to update settings: %v", err)
 	}
@@ -110,7 +110,7 @@ func main() {
 
 	// 3. Retrieve and display current settings
 	fmt.Println("\n3. Current index settings:")
-	currentSettings, err := index.GetSettings()
+	currentSettings, err := index.GetSettings(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to get settings: %v", err)
 	}
@@ -127,7 +127,7 @@ func waitForTask(client meilisearch.ServiceManager, taskUID int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	_, err := client.WaitForTaskWithContext(ctx, taskUID, 100*time.Millisecond)
+	_, err := client.WaitForTask(ctx, taskUID, 100*time.Millisecond)
 	return err
 }
 

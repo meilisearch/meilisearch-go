@@ -17,10 +17,19 @@ func NewMockmeilisearchDocumentReader(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockmeilisearchDocumentReader {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockmeilisearchDocumentReader{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -39,16 +48,16 @@ func (_m *MockmeilisearchDocumentReader) EXPECT() *MockmeilisearchDocumentReader
 }
 
 // GetDocument provides a mock function for the type MockmeilisearchDocumentReader
-func (_mock *MockmeilisearchDocumentReader) GetDocument(identifier string, request *meilisearch.DocumentQuery, documentPtr interface{}) error {
-	ret := _mock.Called(identifier, request, documentPtr)
+func (_mock *MockmeilisearchDocumentReader) GetDocument(ctx context.Context, identifier string, request *meilisearch.DocumentQuery, documentPtr interface{}) error {
+	ret := _mock.Called(ctx, identifier, request, documentPtr)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetDocument")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.DocumentQuery, interface{}) error); ok {
-		r0 = returnFunc(identifier, request, documentPtr)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, *meilisearch.DocumentQuery, interface{}) error); ok {
+		r0 = returnFunc(ctx, identifier, request, documentPtr)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -61,78 +70,15 @@ type MockmeilisearchDocumentReader_GetDocument_Call struct {
 }
 
 // GetDocument is a helper method to define mock.On call
-//   - identifier string
-//   - request *meilisearch.DocumentQuery
-//   - documentPtr interface{}
-func (_e *MockmeilisearchDocumentReader_Expecter) GetDocument(identifier any, request any, documentPtr any) *MockmeilisearchDocumentReader_GetDocument_Call {
-	return &MockmeilisearchDocumentReader_GetDocument_Call{Call: _e.mock.On("GetDocument", identifier, request, documentPtr)}
-}
-
-func (_c *MockmeilisearchDocumentReader_GetDocument_Call) Run(run func(identifier string, request *meilisearch.DocumentQuery, documentPtr interface{})) *MockmeilisearchDocumentReader_GetDocument_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		var arg1 *meilisearch.DocumentQuery
-		if args[1] != nil {
-			arg1 = args[1].(*meilisearch.DocumentQuery)
-		}
-		var arg2 interface{}
-		if args[2] != nil {
-			arg2 = args[2].(interface{})
-		}
-		run(
-			arg0,
-			arg1,
-			arg2,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchDocumentReader_GetDocument_Call) Return(err error) *MockmeilisearchDocumentReader_GetDocument_Call {
-	_c.Call.Return(err)
-	return _c
-}
-
-func (_c *MockmeilisearchDocumentReader_GetDocument_Call) RunAndReturn(run func(identifier string, request *meilisearch.DocumentQuery, documentPtr interface{}) error) *MockmeilisearchDocumentReader_GetDocument_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetDocumentWithContext provides a mock function for the type MockmeilisearchDocumentReader
-func (_mock *MockmeilisearchDocumentReader) GetDocumentWithContext(ctx context.Context, identifier string, request *meilisearch.DocumentQuery, documentPtr interface{}) error {
-	ret := _mock.Called(ctx, identifier, request, documentPtr)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetDocumentWithContext")
-	}
-
-	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string, *meilisearch.DocumentQuery, interface{}) error); ok {
-		r0 = returnFunc(ctx, identifier, request, documentPtr)
-	} else {
-		r0 = ret.Error(0)
-	}
-	return r0
-}
-
-// MockmeilisearchDocumentReader_GetDocumentWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDocumentWithContext'
-type MockmeilisearchDocumentReader_GetDocumentWithContext_Call struct {
-	*mock.Call
-}
-
-// GetDocumentWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - identifier string
 //   - request *meilisearch.DocumentQuery
 //   - documentPtr interface{}
-func (_e *MockmeilisearchDocumentReader_Expecter) GetDocumentWithContext(ctx any, identifier any, request any, documentPtr any) *MockmeilisearchDocumentReader_GetDocumentWithContext_Call {
-	return &MockmeilisearchDocumentReader_GetDocumentWithContext_Call{Call: _e.mock.On("GetDocumentWithContext", ctx, identifier, request, documentPtr)}
+func (_e *MockmeilisearchDocumentReader_Expecter) GetDocument(ctx any, identifier any, request any, documentPtr any) *MockmeilisearchDocumentReader_GetDocument_Call {
+	return &MockmeilisearchDocumentReader_GetDocument_Call{Call: _e.mock.On("GetDocument", ctx, identifier, request, documentPtr)}
 }
 
-func (_c *MockmeilisearchDocumentReader_GetDocumentWithContext_Call) Run(run func(ctx context.Context, identifier string, request *meilisearch.DocumentQuery, documentPtr interface{})) *MockmeilisearchDocumentReader_GetDocumentWithContext_Call {
+func (_c *MockmeilisearchDocumentReader_GetDocument_Call) Run(run func(ctx context.Context, identifier string, request *meilisearch.DocumentQuery, documentPtr interface{})) *MockmeilisearchDocumentReader_GetDocument_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -160,27 +106,27 @@ func (_c *MockmeilisearchDocumentReader_GetDocumentWithContext_Call) Run(run fun
 	return _c
 }
 
-func (_c *MockmeilisearchDocumentReader_GetDocumentWithContext_Call) Return(err error) *MockmeilisearchDocumentReader_GetDocumentWithContext_Call {
+func (_c *MockmeilisearchDocumentReader_GetDocument_Call) Return(err error) *MockmeilisearchDocumentReader_GetDocument_Call {
 	_c.Call.Return(err)
 	return _c
 }
 
-func (_c *MockmeilisearchDocumentReader_GetDocumentWithContext_Call) RunAndReturn(run func(ctx context.Context, identifier string, request *meilisearch.DocumentQuery, documentPtr interface{}) error) *MockmeilisearchDocumentReader_GetDocumentWithContext_Call {
+func (_c *MockmeilisearchDocumentReader_GetDocument_Call) RunAndReturn(run func(ctx context.Context, identifier string, request *meilisearch.DocumentQuery, documentPtr interface{}) error) *MockmeilisearchDocumentReader_GetDocument_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetDocuments provides a mock function for the type MockmeilisearchDocumentReader
-func (_mock *MockmeilisearchDocumentReader) GetDocuments(param *meilisearch.DocumentsQuery, resp *meilisearch.DocumentsResult) error {
-	ret := _mock.Called(param, resp)
+func (_mock *MockmeilisearchDocumentReader) GetDocuments(ctx context.Context, param *meilisearch.DocumentsQuery, resp *meilisearch.DocumentsResult) error {
+	ret := _mock.Called(ctx, param, resp)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetDocuments")
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.DocumentsQuery, *meilisearch.DocumentsResult) error); ok {
-		r0 = returnFunc(param, resp)
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.DocumentsQuery, *meilisearch.DocumentsResult) error); ok {
+		r0 = returnFunc(ctx, param, resp)
 	} else {
 		r0 = ret.Error(0)
 	}
@@ -193,71 +139,14 @@ type MockmeilisearchDocumentReader_GetDocuments_Call struct {
 }
 
 // GetDocuments is a helper method to define mock.On call
-//   - param *meilisearch.DocumentsQuery
-//   - resp *meilisearch.DocumentsResult
-func (_e *MockmeilisearchDocumentReader_Expecter) GetDocuments(param any, resp any) *MockmeilisearchDocumentReader_GetDocuments_Call {
-	return &MockmeilisearchDocumentReader_GetDocuments_Call{Call: _e.mock.On("GetDocuments", param, resp)}
-}
-
-func (_c *MockmeilisearchDocumentReader_GetDocuments_Call) Run(run func(param *meilisearch.DocumentsQuery, resp *meilisearch.DocumentsResult)) *MockmeilisearchDocumentReader_GetDocuments_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *meilisearch.DocumentsQuery
-		if args[0] != nil {
-			arg0 = args[0].(*meilisearch.DocumentsQuery)
-		}
-		var arg1 *meilisearch.DocumentsResult
-		if args[1] != nil {
-			arg1 = args[1].(*meilisearch.DocumentsResult)
-		}
-		run(
-			arg0,
-			arg1,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchDocumentReader_GetDocuments_Call) Return(err error) *MockmeilisearchDocumentReader_GetDocuments_Call {
-	_c.Call.Return(err)
-	return _c
-}
-
-func (_c *MockmeilisearchDocumentReader_GetDocuments_Call) RunAndReturn(run func(param *meilisearch.DocumentsQuery, resp *meilisearch.DocumentsResult) error) *MockmeilisearchDocumentReader_GetDocuments_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetDocumentsWithContext provides a mock function for the type MockmeilisearchDocumentReader
-func (_mock *MockmeilisearchDocumentReader) GetDocumentsWithContext(ctx context.Context, param *meilisearch.DocumentsQuery, resp *meilisearch.DocumentsResult) error {
-	ret := _mock.Called(ctx, param, resp)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetDocumentsWithContext")
-	}
-
-	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.DocumentsQuery, *meilisearch.DocumentsResult) error); ok {
-		r0 = returnFunc(ctx, param, resp)
-	} else {
-		r0 = ret.Error(0)
-	}
-	return r0
-}
-
-// MockmeilisearchDocumentReader_GetDocumentsWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDocumentsWithContext'
-type MockmeilisearchDocumentReader_GetDocumentsWithContext_Call struct {
-	*mock.Call
-}
-
-// GetDocumentsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.DocumentsQuery
 //   - resp *meilisearch.DocumentsResult
-func (_e *MockmeilisearchDocumentReader_Expecter) GetDocumentsWithContext(ctx any, param any, resp any) *MockmeilisearchDocumentReader_GetDocumentsWithContext_Call {
-	return &MockmeilisearchDocumentReader_GetDocumentsWithContext_Call{Call: _e.mock.On("GetDocumentsWithContext", ctx, param, resp)}
+func (_e *MockmeilisearchDocumentReader_Expecter) GetDocuments(ctx any, param any, resp any) *MockmeilisearchDocumentReader_GetDocuments_Call {
+	return &MockmeilisearchDocumentReader_GetDocuments_Call{Call: _e.mock.On("GetDocuments", ctx, param, resp)}
 }
 
-func (_c *MockmeilisearchDocumentReader_GetDocumentsWithContext_Call) Run(run func(ctx context.Context, param *meilisearch.DocumentsQuery, resp *meilisearch.DocumentsResult)) *MockmeilisearchDocumentReader_GetDocumentsWithContext_Call {
+func (_c *MockmeilisearchDocumentReader_GetDocuments_Call) Run(run func(ctx context.Context, param *meilisearch.DocumentsQuery, resp *meilisearch.DocumentsResult)) *MockmeilisearchDocumentReader_GetDocuments_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -280,12 +169,12 @@ func (_c *MockmeilisearchDocumentReader_GetDocumentsWithContext_Call) Run(run fu
 	return _c
 }
 
-func (_c *MockmeilisearchDocumentReader_GetDocumentsWithContext_Call) Return(err error) *MockmeilisearchDocumentReader_GetDocumentsWithContext_Call {
+func (_c *MockmeilisearchDocumentReader_GetDocuments_Call) Return(err error) *MockmeilisearchDocumentReader_GetDocuments_Call {
 	_c.Call.Return(err)
 	return _c
 }
 
-func (_c *MockmeilisearchDocumentReader_GetDocumentsWithContext_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.DocumentsQuery, resp *meilisearch.DocumentsResult) error) *MockmeilisearchDocumentReader_GetDocumentsWithContext_Call {
+func (_c *MockmeilisearchDocumentReader_GetDocuments_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.DocumentsQuery, resp *meilisearch.DocumentsResult) error) *MockmeilisearchDocumentReader_GetDocuments_Call {
 	_c.Call.Return(run)
 	return _c
 }

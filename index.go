@@ -47,11 +47,7 @@ func (i *index) GetIndexReader() IndexReader {
 	return i
 }
 
-func (i *index) FetchInfo() (*IndexResult, error) {
-	return i.FetchInfoWithContext(context.Background())
-}
-
-func (i *index) FetchInfoWithContext(ctx context.Context) (*IndexResult, error) {
+func (i *index) FetchInfo(ctx context.Context) (*IndexResult, error) {
 	resp := new(IndexResult)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid,
@@ -71,12 +67,8 @@ func (i *index) FetchInfoWithContext(ctx context.Context) (*IndexResult, error) 
 	return resp, nil
 }
 
-func (i *index) FetchPrimaryKey() (*string, error) {
-	return i.FetchPrimaryKeyWithContext(context.Background())
-}
-
-func (i *index) FetchPrimaryKeyWithContext(ctx context.Context) (*string, error) {
-	idx, err := i.FetchInfoWithContext(ctx)
+func (i *index) FetchPrimaryKey(ctx context.Context) (*string, error) {
+	idx, err := i.FetchInfo(ctx)
 	if err != nil {
 		return nil, err
 	}
@@ -84,11 +76,7 @@ func (i *index) FetchPrimaryKeyWithContext(ctx context.Context) (*string, error)
 	return &idx.PrimaryKey, nil
 }
 
-func (i *index) UpdateIndex(params *UpdateIndexRequestParams) (*TaskInfo, error) {
-	return i.UpdateIndexWithContext(context.Background(), params)
-}
-
-func (i *index) UpdateIndexWithContext(ctx context.Context, params *UpdateIndexRequestParams) (*TaskInfo, error) {
+func (i *index) UpdateIndex(ctx context.Context, params *UpdateIndexRequestParams) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 
 	req := &internalRequest{
@@ -116,11 +104,7 @@ func (i *index) UpdateIndexWithContext(ctx context.Context, params *UpdateIndexR
 	return resp, nil
 }
 
-func (i *index) Delete(uid string) (bool, error) {
-	return i.DeleteWithContext(context.Background(), uid)
-}
-
-func (i *index) DeleteWithContext(ctx context.Context, uid string) (bool, error) {
+func (i *index) Delete(ctx context.Context, uid string) (bool, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + uid,
@@ -138,11 +122,7 @@ func (i *index) DeleteWithContext(ctx context.Context, uid string) (bool, error)
 	return true, nil
 }
 
-func (i *index) GetStats(param *StatsParams) (*StatsIndex, error) {
-	return i.GetStatsWithContext(context.Background(), param)
-}
-
-func (i *index) GetStatsWithContext(ctx context.Context, param *StatsParams) (*StatsIndex, error) {
+func (i *index) GetStats(ctx context.Context, param *StatsParams) (*StatsIndex, error) {
 	resp := new(StatsIndex)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/stats",
@@ -165,11 +145,7 @@ func (i *index) GetStatsWithContext(ctx context.Context, param *StatsParams) (*S
 	return resp, nil
 }
 
-func (i *index) Compact() (*TaskInfo, error) {
-	return i.CompactWithContext(context.Background())
-}
-
-func (i *index) CompactWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) Compact(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/compact",

@@ -23,7 +23,7 @@ func main() {
 
 	// Test connection
 	fmt.Println("Testing connection to Meilisearch...")
-	health, err := client.Health()
+	health, err := client.Health(context.Background())
 	if err != nil {
 		log.Fatalf("Failed to connect to Meilisearch: %v", err)
 	}
@@ -37,7 +37,7 @@ func main() {
 	// List available chat workspaces and pick the first one
 	workspaceID := "default"
 	fmt.Println("\nListing chat workspaces...")
-	workspaces, err := client.ListChatWorkspaces(&meilisearch.ListChatWorkSpaceQuery{
+	workspaces, err := client.ListChatWorkspaces(context.Background(), &meilisearch.ListChatWorkSpaceQuery{
 		Limit:  10,
 		Offset: 0,
 	})
@@ -93,7 +93,7 @@ func performChatStream(client meilisearch.ServiceManager, workspaceID string, qu
 	}
 
 	// Start streaming chat completion
-	stream, err := client.ChatCompletionStreamWithContext(ctx, workspaceID, chatQuery)
+	stream, err := client.ChatCompletionStream(ctx, workspaceID, chatQuery)
 	if err != nil {
 		return fmt.Errorf("failed to start chat stream: %w", err)
 	}

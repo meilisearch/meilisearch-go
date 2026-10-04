@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"context"
 	"crypto/tls"
 	"testing"
 
@@ -45,7 +46,7 @@ func TestIndex_GetFilterableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetFilterableAttributes()
+			gotResp, err := i.GetFilterableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -91,7 +92,7 @@ func TestIndex_GetDisplayedAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetDisplayedAttributes()
+			gotResp, err := i.GetDisplayedAttributes(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -131,7 +132,7 @@ func TestIndex_GetDistinctAttribute(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetDistinctAttribute()
+			gotResp, err := i.GetDistinctAttribute(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -174,7 +175,7 @@ func TestIndex_GetRankingRules(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetRankingRules()
+			gotResp, err := i.GetRankingRules(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -217,7 +218,7 @@ func TestIndex_GetSearchableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSearchableAttributes()
+			gotResp, err := i.GetSearchableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -307,7 +308,7 @@ func TestIndex_GetSettings(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSettings()
+			gotResp, err := i.GetSettings(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -350,7 +351,7 @@ func TestIndex_GetStopWords(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetStopWords()
+			gotResp, err := i.GetStopWords(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -393,7 +394,7 @@ func TestIndex_GetSynonyms(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSynonyms()
+			gotResp, err := i.GetSynonyms(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -436,7 +437,7 @@ func TestIndex_GetSortableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSortableAttributes()
+			gotResp, err := i.GetSortableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -482,7 +483,7 @@ func TestIndex_GetTypoTolerance(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetTypoTolerance()
+			gotResp, err := i.GetTypoTolerance(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -528,7 +529,7 @@ func TestIndex_GetPagination(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetPagination()
+			gotResp, err := i.GetPagination(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -574,7 +575,7 @@ func TestIndex_GetFaceting(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetFaceting()
+			gotResp, err := i.GetFaceting(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -624,12 +625,12 @@ func TestIndex_ResetFilterableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetFilterableAttributes()
+			gotTask, err := i.ResetFilterableAttributes(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetFilterableAttributes()
+			gotResp, err := i.GetFilterableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -682,12 +683,12 @@ func TestIndex_ResetDisplayedAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetDisplayedAttributes()
+			gotTask, err := i.ResetDisplayedAttributes(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetDisplayedAttributes()
+			gotResp, err := i.GetDisplayedAttributes(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -737,12 +738,12 @@ func TestIndex_ResetDistinctAttribute(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetDistinctAttribute()
+			gotTask, err := i.ResetDistinctAttribute(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetDistinctAttribute()
+			gotResp, err := i.GetDistinctAttribute(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -795,12 +796,12 @@ func TestIndex_ResetRankingRules(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetRankingRules()
+			gotTask, err := i.ResetRankingRules(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetRankingRules()
+			gotResp, err := i.GetRankingRules(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -853,12 +854,12 @@ func TestIndex_ResetSearchableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetSearchableAttributes()
+			gotTask, err := i.ResetSearchableAttributes(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetSearchableAttributes()
+			gotResp, err := i.GetSearchableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -953,12 +954,12 @@ func TestIndex_ResetSettings(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetSettings()
+			gotTask, err := i.ResetSettings(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetSettings()
+			gotResp, err := i.GetSettings(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -1008,12 +1009,12 @@ func TestIndex_ResetStopWords(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetStopWords()
+			gotTask, err := i.ResetStopWords(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetStopWords()
+			gotResp, err := i.GetStopWords(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -1063,12 +1064,12 @@ func TestIndex_ResetSynonyms(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetSynonyms()
+			gotTask, err := i.ResetSynonyms(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetSynonyms()
+			gotResp, err := i.GetSynonyms(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -1118,12 +1119,12 @@ func TestIndex_ResetSortableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetSortableAttributes()
+			gotTask, err := i.ResetSortableAttributes(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetSortableAttributes()
+			gotResp, err := i.GetSortableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 		})
@@ -1176,12 +1177,12 @@ func TestIndex_ResetTypoTolerance(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetTypoTolerance()
+			gotTask, err := i.ResetTypoTolerance(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetTypoTolerance()
+			gotResp, err := i.GetTypoTolerance(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -1234,12 +1235,12 @@ func TestIndex_ResetPagination(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetPagination()
+			gotTask, err := i.ResetPagination(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetPagination()
+			gotResp, err := i.GetPagination(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -1292,12 +1293,12 @@ func TestIndex_ResetFaceting(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.ResetFaceting()
+			gotTask, err := i.ResetFaceting(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetFaceting()
+			gotResp, err := i.GetFaceting(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -1399,16 +1400,16 @@ func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetFilterableAttributes()
+			gotResp, err := i.GetFilterableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotTask, err := i.UpdateFilterableAttributes(&tt.args.request)
+			gotTask, err := i.UpdateFilterableAttributes(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err = i.GetFilterableAttributes()
+			gotResp, err = i.GetFilterableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -1468,16 +1469,16 @@ func TestIndex_UpdateDisplayedAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetDisplayedAttributes()
+			gotResp, err := i.GetDisplayedAttributes(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 
-			gotTask, err := i.UpdateDisplayedAttributes(&tt.args.request)
+			gotTask, err := i.UpdateDisplayedAttributes(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err = i.GetDisplayedAttributes()
+			gotResp, err = i.GetDisplayedAttributes(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -1530,16 +1531,16 @@ func TestIndex_UpdateDistinctAttribute(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetDistinctAttribute()
+			gotResp, err := i.GetDistinctAttribute(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotTask, err := i.UpdateDistinctAttribute(tt.args.request)
+			gotTask, err := i.UpdateDistinctAttribute(context.Background(), tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err = i.GetDistinctAttribute()
+			gotResp, err = i.GetDistinctAttribute(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -1613,16 +1614,16 @@ func TestIndex_UpdateRankingRules(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetRankingRules()
+			gotResp, err := i.GetRankingRules(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 
-			gotTask, err := i.UpdateRankingRules(&tt.args.request)
+			gotTask, err := i.UpdateRankingRules(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err = i.GetRankingRules()
+			gotResp, err = i.GetRankingRules(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -1633,7 +1634,7 @@ func TestIndex_UpdateSettingsForeignKeys(t *testing.T) {
 	c := setup(t, "")
 	t.Cleanup(cleanup(c))
 
-	ex, err := c.ExperimentalFeatures().SetForeignKeys(true).Update()
+	ex, err := c.ExperimentalFeatures().SetForeignKeys(true).Update(context.Background())
 	require.NoError(t, err)
 	require.True(t, ex.ForeignKeys, "expected foreignKeys to be true")
 
@@ -1647,13 +1648,13 @@ func TestIndex_UpdateSettingsForeignKeys(t *testing.T) {
 		},
 	}
 
-	task, err := idx.UpdateSettings(&meilisearch.Settings{
+	task, err := idx.UpdateSettings(context.Background(), &meilisearch.Settings{
 		ForeignKeys: want,
 	})
 	require.NoError(t, err)
 	testWaitForIndexTask(t, idx, task)
 
-	got, err := idx.GetForeignKeys()
+	got, err := idx.GetForeignKeys(context.Background())
 	require.NoError(t, err)
 	assert.Equal(t, want, got)
 }
@@ -1711,16 +1712,16 @@ func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSearchableAttributes()
+			gotResp, err := i.GetSearchableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 
-			gotTask, err := i.UpdateSearchableAttributes(&tt.args.request)
+			gotTask, err := i.UpdateSearchableAttributes(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err = i.GetSearchableAttributes()
+			gotResp, err = i.GetSearchableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -1936,12 +1937,12 @@ func TestIndex_UpdateSettings(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.UpdateSettings(&tt.args.request)
+			gotTask, err := i.UpdateSettings(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetSettings()
+			gotResp, err := i.GetSettings(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -3196,25 +3197,25 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			_, err := i.GetSettings()
+			_, err := i.GetSettings(context.Background())
 			require.NoError(t, err)
 
-			gotTask, err := i.UpdateSettings(&tt.args.firstRequest)
+			gotTask, err := i.UpdateSettings(context.Background(), &tt.args.firstRequest)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetSettings()
+			gotResp, err := i.GetSettings(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.firstResponse, gotResp)
 
-			gotTask, err = i.UpdateSettings(&tt.args.secondRequest)
+			gotTask, err = i.UpdateSettings(context.Background(), &tt.args.secondRequest)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err = i.GetSettings()
+			gotResp, err = i.GetSettings(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.secondResponse, gotResp)
 		})
@@ -3271,16 +3272,16 @@ func TestIndex_UpdateStopWords(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetStopWords()
+			gotResp, err := i.GetStopWords(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotTask, err := i.UpdateStopWords(&tt.args.request)
+			gotTask, err := i.UpdateStopWords(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err = i.GetStopWords()
+			gotResp, err = i.GetStopWords(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -3337,16 +3338,16 @@ func TestIndex_UpdateSynonyms(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSynonyms()
+			gotResp, err := i.GetSynonyms(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotTask, err := i.UpdateSynonyms(&tt.args.request)
+			gotTask, err := i.UpdateSynonyms(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err = i.GetSynonyms()
+			gotResp, err = i.GetSynonyms(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -3403,16 +3404,16 @@ func TestIndex_UpdateSortableAttributes(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetSortableAttributes()
+			gotResp, err := i.GetSortableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Empty(t, gotResp)
 
-			gotTask, err := i.UpdateSortableAttributes(&tt.args.request)
+			gotTask, err := i.UpdateSortableAttributes(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err = i.GetSortableAttributes()
+			gotResp, err = i.GetSortableAttributes(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -3629,12 +3630,12 @@ func TestIndex_UpdateTypoTolerance(t *testing.T) {
 			c := tt.args.client
 			i := c.Index(tt.args.UID)
 
-			gotTask, err := i.UpdateTypoTolerance(&tt.args.request)
+			gotTask, err := i.UpdateTypoTolerance(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetTypoTolerance()
+			gotResp, err := i.GetTypoTolerance(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -3694,16 +3695,16 @@ func TestIndex_UpdatePagination(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetPagination()
+			gotResp, err := i.GetPagination(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 
-			gotTask, err := i.UpdatePagination(&tt.args.request)
+			gotTask, err := i.UpdatePagination(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err = i.GetPagination()
+			gotResp, err = i.GetPagination(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -3833,12 +3834,12 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.UpdateFaceting(&tt.args.request)
+			gotTask, err := i.UpdateFaceting(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetFaceting()
+			gotResp, err := i.GetFaceting(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.args.request, gotResp)
 		})
@@ -4056,16 +4057,16 @@ func TestIndex_UpdateSettingsEmbedders(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			feat := c.ExperimentalFeatures().SetCompositeEmbedders(true)
-			resp, err := feat.Update()
+			resp, err := feat.Update(context.Background())
 			require.NoError(t, err)
 			require.True(t, resp.CompositeEmbedders)
 
-			gotTask, err := i.UpdateSettings(&tt.args.request)
+			gotTask, err := i.UpdateSettings(context.Background(), &tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetEmbedders()
+			gotResp, err := i.GetEmbedders(context.Background())
 			require.NoError(t, err)
 			require.NotNil(t, gotResp)
 			assert.Equal(t, gotResp["default"].Source, tt.args.request.Embedders["default"].Source)
@@ -4079,7 +4080,7 @@ func TestIndex_GetEmbedders(t *testing.T) {
 
 	indexID := "newIndexUID"
 	i := c.Index(indexID)
-	task, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: indexID})
+	task, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{Uid: indexID})
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
@@ -4089,13 +4090,13 @@ func TestIndex_GetEmbedders(t *testing.T) {
 			Dimensions: 3,
 		},
 	}
-	task, err = i.UpdateSettings(&meilisearch.Settings{
+	task, err = i.UpdateSettings(context.Background(), &meilisearch.Settings{
 		Embedders: expected,
 	})
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err := i.GetEmbedders()
+	got, err := i.GetEmbedders(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, expected, got)
 }
@@ -4235,29 +4236,29 @@ func TestIndex_UpdateEmbedders(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			i := c.Index(tt.indexID)
-			taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: tt.indexID})
+			taskInfo, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{Uid: tt.indexID})
 			require.NoError(t, err)
 			testWaitForIndexTask(t, i, taskInfo)
 
 			if tt.experimental {
-				result, err := c.ExperimentalFeatures().SetMultiModal(true).Update()
+				result, err := c.ExperimentalFeatures().SetMultiModal(true).Update(context.Background())
 				require.NoError(t, err)
 				require.True(t, result.MultiModal)
 			}
 
-			taskInfo, err = i.UpdateSettings(&meilisearch.Settings{
+			taskInfo, err = i.UpdateSettings(context.Background(), &meilisearch.Settings{
 				Embedders: tt.initialEmbed,
 			})
 			require.NoError(t, err)
 			testWaitForIndexTask(t, i, taskInfo)
 
-			taskInfo, err = i.UpdateEmbedders(tt.updatedEmbed)
+			taskInfo, err = i.UpdateEmbedders(context.Background(), tt.updatedEmbed)
 			require.NoError(t, err)
-			task, err := i.WaitForTask(taskInfo.TaskUID, 0)
+			task, err := i.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 			require.NoError(t, err)
 			require.Equal(t, meilisearch.TaskStatusSucceeded, task.Status)
 
-			got, err := i.GetEmbedders()
+			got, err := i.GetEmbedders(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.updatedEmbed, got)
 		})
@@ -4270,11 +4271,11 @@ func TestIndex_ResetEmbedders(t *testing.T) {
 
 	indexID := "newIndexUID"
 	i := c.Index(indexID)
-	taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: indexID})
+	taskInfo, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{Uid: indexID})
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, taskInfo)
 
-	taskInfo, err = i.UpdateSettings(&meilisearch.Settings{
+	taskInfo, err = i.UpdateSettings(context.Background(), &meilisearch.Settings{
 		Embedders: map[string]meilisearch.Embedder{
 			"default": {
 				Source:     "userProvided",
@@ -4285,13 +4286,13 @@ func TestIndex_ResetEmbedders(t *testing.T) {
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, taskInfo)
 
-	taskInfo, err = i.ResetEmbedders()
+	taskInfo, err = i.ResetEmbedders(context.Background())
 	require.NoError(t, err)
-	task, err := i.WaitForTask(taskInfo.TaskUID, 0)
+	task, err := i.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 	require.NoError(t, err)
 	require.Equal(t, meilisearch.TaskStatusSucceeded, task.Status)
 
-	got, err := i.GetEmbedders()
+	got, err := i.GetEmbedders(context.Background())
 	require.NoError(t, err)
 	require.Empty(t, got)
 }
@@ -4305,19 +4306,19 @@ func Test_Dictionary(t *testing.T) {
 
 	words := []string{"J. R. R.", "W. E. B."}
 
-	task, err := i.UpdateDictionary(words)
+	task, err := i.UpdateDictionary(context.Background(), words)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err := i.GetDictionary()
+	got, err := i.GetDictionary(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, words, got)
 
-	task, err = i.ResetDictionary()
+	task, err = i.ResetDictionary(context.Background())
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err = i.GetDictionary()
+	got, err = i.GetDictionary(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, got, []string{})
 }
@@ -4328,25 +4329,25 @@ func Test_SearchCutoffMs(t *testing.T) {
 
 	indexID := "newIndexUID"
 	i := c.Index(indexID)
-	taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: indexID})
+	taskInfo, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{Uid: indexID})
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, taskInfo)
 
 	n := int64(250)
 
-	task, err := i.UpdateSearchCutoffMs(n)
+	task, err := i.UpdateSearchCutoffMs(context.Background(), n)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err := i.GetSearchCutoffMs()
+	got, err := i.GetSearchCutoffMs(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, n, got)
 
-	task, err = i.ResetSearchCutoffMs()
+	task, err = i.ResetSearchCutoffMs(context.Background())
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err = i.GetSearchCutoffMs()
+	got, err = i.GetSearchCutoffMs(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, int64(0), got)
 }
@@ -4359,19 +4360,19 @@ func Test_SeparatorTokens(t *testing.T) {
 
 	tokens := []string{"|", "&hellip;"}
 
-	task, err := i.UpdateSeparatorTokens(tokens)
+	task, err := i.UpdateSeparatorTokens(context.Background(), tokens)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err := i.GetSeparatorTokens()
+	got, err := i.GetSeparatorTokens(context.Background())
 	require.NoError(t, err)
 	require.ElementsMatchf(t, tokens, got, "tokens is not match with got")
 
-	task, err = i.ResetSeparatorTokens()
+	task, err = i.ResetSeparatorTokens(context.Background())
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err = i.GetSeparatorTokens()
+	got, err = i.GetSeparatorTokens(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, got, []string{})
 }
@@ -4384,19 +4385,19 @@ func Test_NonSeparatorTokens(t *testing.T) {
 
 	tokens := []string{"@", "#"}
 
-	task, err := i.UpdateNonSeparatorTokens(tokens)
+	task, err := i.UpdateNonSeparatorTokens(context.Background(), tokens)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err := i.GetNonSeparatorTokens()
+	got, err := i.GetNonSeparatorTokens(context.Background())
 	require.NoError(t, err)
 	require.ElementsMatchf(t, tokens, got, "tokens is not match with got")
 
-	task, err = i.ResetNonSeparatorTokens()
+	task, err = i.ResetNonSeparatorTokens(context.Background())
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err = i.GetNonSeparatorTokens()
+	got, err = i.GetNonSeparatorTokens(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, got, []string{})
 }
@@ -4434,7 +4435,7 @@ func TestIndex_UpdateForeignKeys(t *testing.T) {
 			c := setup(t, "")
 			t.Cleanup(cleanup(c))
 
-			ex, err := c.ExperimentalFeatures().SetForeignKeys(true).Update()
+			ex, err := c.ExperimentalFeatures().SetForeignKeys(true).Update(context.Background())
 			require.NoError(t, err)
 			require.True(t, ex.ForeignKeys, "expected foreignKeys to be true")
 
@@ -4442,11 +4443,11 @@ func TestIndex_UpdateForeignKeys(t *testing.T) {
 
 			i := c.Index("books")
 
-			task, err := i.UpdateForeignKeys(tt.args)
+			task, err := i.UpdateForeignKeys(context.Background(), tt.args)
 			require.NoError(t, err)
 			testWaitForIndexTask(t, i, task)
 
-			got, err := i.GetForeignKeys()
+			got, err := i.GetForeignKeys(context.Background())
 			require.NoError(t, err)
 			assert.Equal(t, tt.want, got)
 		})
@@ -4457,7 +4458,7 @@ func TestIndex_ResetForeignKeys(t *testing.T) {
 	c := setup(t, "")
 	t.Cleanup(cleanup(c))
 
-	ex, err := c.ExperimentalFeatures().SetForeignKeys(true).Update()
+	ex, err := c.ExperimentalFeatures().SetForeignKeys(true).Update(context.Background())
 	require.NoError(t, err)
 	require.True(t, ex.ForeignKeys, "expected foreignKeys to be true")
 
@@ -4470,19 +4471,19 @@ func TestIndex_ResetForeignKeys(t *testing.T) {
 			ForeignIndexUid: "authors",
 		},
 	}
-	task, err := i.UpdateForeignKeys(foreignKeys)
+	task, err := i.UpdateForeignKeys(context.Background(), foreignKeys)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err := i.GetForeignKeys()
+	got, err := i.GetForeignKeys(context.Background())
 	require.NoError(t, err)
 	assert.Equal(t, foreignKeys, got)
 
-	task, err = i.ResetForeignKeys()
+	task, err = i.ResetForeignKeys(context.Background())
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err = i.GetForeignKeys()
+	got, err = i.GetForeignKeys(context.Background())
 	require.NoError(t, err)
 	assert.Empty(t, got)
 }
@@ -4496,23 +4497,23 @@ func Test_ProximityPrecision(t *testing.T) {
 
 	i := c.Index(indexID)
 
-	got, err := i.GetProximityPrecision()
+	got, err := i.GetProximityPrecision(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, meilisearch.ByWord, got)
 
-	task, err := i.UpdateProximityPrecision(meilisearch.ByAttribute)
+	task, err := i.UpdateProximityPrecision(context.Background(), meilisearch.ByAttribute)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err = i.GetProximityPrecision()
+	got, err = i.GetProximityPrecision(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, meilisearch.ByAttribute, got)
 
-	task, err = i.ResetProximityPrecision()
+	task, err = i.ResetProximityPrecision(context.Background())
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
-	got, err = i.GetProximityPrecision()
+	got, err = i.GetProximityPrecision(context.Background())
 	require.NoError(t, err)
 	require.Equal(t, meilisearch.ByWord, got)
 }
@@ -4523,14 +4524,14 @@ func Test_LocalizedAttributes(t *testing.T) {
 
 	indexID := "newIndexUID"
 	i := c.Index(indexID)
-	taskInfo, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: indexID})
+	taskInfo, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{Uid: indexID})
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, taskInfo)
 
 	defer t.Cleanup(cleanup(c))
 
 	t.Run("Test valid locate", func(t *testing.T) {
-		got, err := i.GetLocalizedAttributes()
+		got, err := i.GetLocalizedAttributes(context.Background())
 		require.NoError(t, err)
 		require.Len(t, got, 0)
 
@@ -4539,22 +4540,22 @@ func Test_LocalizedAttributes(t *testing.T) {
 			AttributePatterns: []string{"*_ja"},
 		}
 
-		task, err := i.UpdateLocalizedAttributes([]*meilisearch.LocalizedAttributes{localized})
+		task, err := i.UpdateLocalizedAttributes(context.Background(), []*meilisearch.LocalizedAttributes{localized})
 		require.NoError(t, err)
 		testWaitForIndexTask(t, i, task)
 
-		got, err = i.GetLocalizedAttributes()
+		got, err = i.GetLocalizedAttributes(context.Background())
 		require.NoError(t, err)
 		require.NotNil(t, got)
 
 		require.Equal(t, localized.Locales, got[0].Locales)
 		require.Equal(t, localized.AttributePatterns, got[0].AttributePatterns)
 
-		task, err = i.ResetLocalizedAttributes()
+		task, err = i.ResetLocalizedAttributes(context.Background())
 		require.NoError(t, err)
 		testWaitForIndexTask(t, i, task)
 
-		got, err = i.GetLocalizedAttributes()
+		got, err = i.GetLocalizedAttributes(context.Background())
 		require.NoError(t, err)
 		require.Len(t, got, 0)
 	})
@@ -4565,7 +4566,7 @@ func Test_LocalizedAttributes(t *testing.T) {
 			AttributePatterns: []string{"*_ja"},
 		}
 
-		_, err := i.UpdateLocalizedAttributes([]*meilisearch.LocalizedAttributes{invalidLocalized})
+		_, err := i.UpdateLocalizedAttributes(context.Background(), []*meilisearch.LocalizedAttributes{invalidLocalized})
 		require.Error(t, err)
 	})
 }
@@ -4609,7 +4610,7 @@ func TestIndex_GetPrefixSearch(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetPrefixSearch()
+			gotResp, err := i.GetPrefixSearch(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -4661,12 +4662,12 @@ func TestIndex_UpdatePrefixSearch(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.UpdatePrefixSearch(tt.args.request)
+			gotTask, err := i.UpdatePrefixSearch(context.Background(), tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetPrefixSearch()
+			gotResp, err := i.GetPrefixSearch(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -4716,15 +4717,15 @@ func TestIndex_ResetPrefixSearch(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			// First update to a non-default value
-			_, err := i.UpdatePrefixSearch("disabled")
+			_, err := i.UpdatePrefixSearch(context.Background(), "disabled")
 			require.NoError(t, err)
 
-			gotTask, err := i.ResetPrefixSearch()
+			gotTask, err := i.ResetPrefixSearch(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetPrefixSearch()
+			gotResp, err := i.GetPrefixSearch(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -4770,7 +4771,7 @@ func TestIndex_GetFacetSearch(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetFacetSearch()
+			gotResp, err := i.GetFacetSearch(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -4822,12 +4823,12 @@ func TestIndex_UpdateFacetSearch(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotTask, err := i.UpdateFacetSearch(tt.args.request)
+			gotTask, err := i.UpdateFacetSearch(context.Background(), tt.args.request)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetFacetSearch()
+			gotResp, err := i.GetFacetSearch(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
@@ -4877,15 +4878,15 @@ func TestIndex_ResetFacetSearch(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			// First update to a non-default value
-			_, err := i.UpdateFacetSearch(false)
+			_, err := i.UpdateFacetSearch(context.Background(), false)
 			require.NoError(t, err)
 
-			gotTask, err := i.ResetFacetSearch()
+			gotTask, err := i.ResetFacetSearch(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, i, gotTask)
 
-			gotResp, err := i.GetFacetSearch()
+			gotResp, err := i.GetFacetSearch(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
