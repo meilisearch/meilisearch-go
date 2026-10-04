@@ -6,11 +6,7 @@ import (
 	"net/http"
 )
 
-func (m *meilisearch) AddWebhook(params *AddWebhookRequest) (*Webhook, error) {
-	return m.AddWebhookWithContext(context.Background(), params)
-}
-
-func (m *meilisearch) AddWebhookWithContext(ctx context.Context, params *AddWebhookRequest) (*Webhook, error) {
+func (m *meilisearch) AddWebhook(ctx context.Context, params *AddWebhookRequest) (*Webhook, error) {
 	resp := new(Webhook)
 	req := &internalRequest{
 		endpoint:            "/webhooks",
@@ -27,11 +23,7 @@ func (m *meilisearch) AddWebhookWithContext(ctx context.Context, params *AddWebh
 	return resp, nil
 }
 
-func (m *meilisearch) ListWebhooks() (*WebhookResults, error) {
-	return m.ListWebhooksWithContext(context.Background())
-}
-
-func (m *meilisearch) ListWebhooksWithContext(ctx context.Context) (*WebhookResults, error) {
+func (m *meilisearch) ListWebhooks(ctx context.Context) (*WebhookResults, error) {
 	resp := new(WebhookResults)
 	req := &internalRequest{
 		endpoint:            "/webhooks",
@@ -47,11 +39,7 @@ func (m *meilisearch) ListWebhooksWithContext(ctx context.Context) (*WebhookResu
 	return resp, nil
 }
 
-func (m *meilisearch) GetWebhook(uuid string) (*Webhook, error) {
-	return m.GetWebhookWithContext(context.Background(), uuid)
-}
-
-func (m *meilisearch) GetWebhookWithContext(ctx context.Context, uuid string) (*Webhook, error) {
+func (m *meilisearch) GetWebhook(ctx context.Context, uuid string) (*Webhook, error) {
 	resp := new(Webhook)
 	req := &internalRequest{
 		endpoint:            fmt.Sprintf("/webhooks/%s", uuid),
@@ -67,11 +55,7 @@ func (m *meilisearch) GetWebhookWithContext(ctx context.Context, uuid string) (*
 	return resp, nil
 }
 
-func (m *meilisearch) UpdateWebhook(uuid string, params *UpdateWebhookRequest) (*Webhook, error) {
-	return m.UpdateWebhookWithContext(context.Background(), uuid, params)
-}
-
-func (m *meilisearch) UpdateWebhookWithContext(ctx context.Context, uuid string, params *UpdateWebhookRequest) (*Webhook, error) {
+func (m *meilisearch) UpdateWebhook(ctx context.Context, uuid string, params *UpdateWebhookRequest) (*Webhook, error) {
 	resp := new(Webhook)
 	req := &internalRequest{
 		endpoint:            fmt.Sprintf("/webhooks/%s", uuid),
@@ -88,11 +72,7 @@ func (m *meilisearch) UpdateWebhookWithContext(ctx context.Context, uuid string,
 	return resp, nil
 }
 
-func (m *meilisearch) DeleteWebhook(uuid string) error {
-	return m.DeleteWebhookWithContext(context.Background(), uuid)
-}
-
-func (m *meilisearch) DeleteWebhookWithContext(ctx context.Context, uuid string) error {
+func (m *meilisearch) DeleteWebhook(ctx context.Context, uuid string) error {
 	req := &internalRequest{
 		endpoint:            fmt.Sprintf("/webhooks/%s", uuid),
 		method:              http.MethodDelete,

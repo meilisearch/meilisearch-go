@@ -17,10 +17,19 @@ func NewMockmeilisearchWebhookReader(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockmeilisearchWebhookReader {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockmeilisearchWebhookReader{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -39,73 +48,11 @@ func (_m *MockmeilisearchWebhookReader) EXPECT() *MockmeilisearchWebhookReader_E
 }
 
 // GetWebhook provides a mock function for the type MockmeilisearchWebhookReader
-func (_mock *MockmeilisearchWebhookReader) GetWebhook(uuid string) (*meilisearch.Webhook, error) {
-	ret := _mock.Called(uuid)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetWebhook")
-	}
-
-	var r0 *meilisearch.Webhook
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*meilisearch.Webhook, error)); ok {
-		return returnFunc(uuid)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string) *meilisearch.Webhook); ok {
-		r0 = returnFunc(uuid)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Webhook)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(uuid)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchWebhookReader_GetWebhook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetWebhook'
-type MockmeilisearchWebhookReader_GetWebhook_Call struct {
-	*mock.Call
-}
-
-// GetWebhook is a helper method to define mock.On call
-//   - uuid string
-func (_e *MockmeilisearchWebhookReader_Expecter) GetWebhook(uuid any) *MockmeilisearchWebhookReader_GetWebhook_Call {
-	return &MockmeilisearchWebhookReader_GetWebhook_Call{Call: _e.mock.On("GetWebhook", uuid)}
-}
-
-func (_c *MockmeilisearchWebhookReader_GetWebhook_Call) Run(run func(uuid string)) *MockmeilisearchWebhookReader_GetWebhook_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookReader_GetWebhook_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookReader_GetWebhook_Call {
-	_c.Call.Return(webhook, err)
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookReader_GetWebhook_Call) RunAndReturn(run func(uuid string) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookReader_GetWebhook_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetWebhookWithContext provides a mock function for the type MockmeilisearchWebhookReader
-func (_mock *MockmeilisearchWebhookReader) GetWebhookWithContext(ctx context.Context, uuid string) (*meilisearch.Webhook, error) {
+func (_mock *MockmeilisearchWebhookReader) GetWebhook(ctx context.Context, uuid string) (*meilisearch.Webhook, error) {
 	ret := _mock.Called(ctx, uuid)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetWebhookWithContext")
+		panic("no return value specified for GetWebhook")
 	}
 
 	var r0 *meilisearch.Webhook
@@ -128,19 +75,19 @@ func (_mock *MockmeilisearchWebhookReader) GetWebhookWithContext(ctx context.Con
 	return r0, r1
 }
 
-// MockmeilisearchWebhookReader_GetWebhookWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetWebhookWithContext'
-type MockmeilisearchWebhookReader_GetWebhookWithContext_Call struct {
+// MockmeilisearchWebhookReader_GetWebhook_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetWebhook'
+type MockmeilisearchWebhookReader_GetWebhook_Call struct {
 	*mock.Call
 }
 
-// GetWebhookWithContext is a helper method to define mock.On call
+// GetWebhook is a helper method to define mock.On call
 //   - ctx context.Context
 //   - uuid string
-func (_e *MockmeilisearchWebhookReader_Expecter) GetWebhookWithContext(ctx any, uuid any) *MockmeilisearchWebhookReader_GetWebhookWithContext_Call {
-	return &MockmeilisearchWebhookReader_GetWebhookWithContext_Call{Call: _e.mock.On("GetWebhookWithContext", ctx, uuid)}
+func (_e *MockmeilisearchWebhookReader_Expecter) GetWebhook(ctx any, uuid any) *MockmeilisearchWebhookReader_GetWebhook_Call {
+	return &MockmeilisearchWebhookReader_GetWebhook_Call{Call: _e.mock.On("GetWebhook", ctx, uuid)}
 }
 
-func (_c *MockmeilisearchWebhookReader_GetWebhookWithContext_Call) Run(run func(ctx context.Context, uuid string)) *MockmeilisearchWebhookReader_GetWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookReader_GetWebhook_Call) Run(run func(ctx context.Context, uuid string)) *MockmeilisearchWebhookReader_GetWebhook_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -158,77 +105,22 @@ func (_c *MockmeilisearchWebhookReader_GetWebhookWithContext_Call) Run(run func(
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookReader_GetWebhookWithContext_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookReader_GetWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookReader_GetWebhook_Call) Return(webhook *meilisearch.Webhook, err error) *MockmeilisearchWebhookReader_GetWebhook_Call {
 	_c.Call.Return(webhook, err)
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookReader_GetWebhookWithContext_Call) RunAndReturn(run func(ctx context.Context, uuid string) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookReader_GetWebhookWithContext_Call {
+func (_c *MockmeilisearchWebhookReader_GetWebhook_Call) RunAndReturn(run func(ctx context.Context, uuid string) (*meilisearch.Webhook, error)) *MockmeilisearchWebhookReader_GetWebhook_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // ListWebhooks provides a mock function for the type MockmeilisearchWebhookReader
-func (_mock *MockmeilisearchWebhookReader) ListWebhooks() (*meilisearch.WebhookResults, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for ListWebhooks")
-	}
-
-	var r0 *meilisearch.WebhookResults
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*meilisearch.WebhookResults, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *meilisearch.WebhookResults); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.WebhookResults)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchWebhookReader_ListWebhooks_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListWebhooks'
-type MockmeilisearchWebhookReader_ListWebhooks_Call struct {
-	*mock.Call
-}
-
-// ListWebhooks is a helper method to define mock.On call
-func (_e *MockmeilisearchWebhookReader_Expecter) ListWebhooks() *MockmeilisearchWebhookReader_ListWebhooks_Call {
-	return &MockmeilisearchWebhookReader_ListWebhooks_Call{Call: _e.mock.On("ListWebhooks")}
-}
-
-func (_c *MockmeilisearchWebhookReader_ListWebhooks_Call) Run(run func()) *MockmeilisearchWebhookReader_ListWebhooks_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookReader_ListWebhooks_Call) Return(webhookResults *meilisearch.WebhookResults, err error) *MockmeilisearchWebhookReader_ListWebhooks_Call {
-	_c.Call.Return(webhookResults, err)
-	return _c
-}
-
-func (_c *MockmeilisearchWebhookReader_ListWebhooks_Call) RunAndReturn(run func() (*meilisearch.WebhookResults, error)) *MockmeilisearchWebhookReader_ListWebhooks_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// ListWebhooksWithContext provides a mock function for the type MockmeilisearchWebhookReader
-func (_mock *MockmeilisearchWebhookReader) ListWebhooksWithContext(ctx context.Context) (*meilisearch.WebhookResults, error) {
+func (_mock *MockmeilisearchWebhookReader) ListWebhooks(ctx context.Context) (*meilisearch.WebhookResults, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for ListWebhooksWithContext")
+		panic("no return value specified for ListWebhooks")
 	}
 
 	var r0 *meilisearch.WebhookResults
@@ -251,18 +143,18 @@ func (_mock *MockmeilisearchWebhookReader) ListWebhooksWithContext(ctx context.C
 	return r0, r1
 }
 
-// MockmeilisearchWebhookReader_ListWebhooksWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListWebhooksWithContext'
-type MockmeilisearchWebhookReader_ListWebhooksWithContext_Call struct {
+// MockmeilisearchWebhookReader_ListWebhooks_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ListWebhooks'
+type MockmeilisearchWebhookReader_ListWebhooks_Call struct {
 	*mock.Call
 }
 
-// ListWebhooksWithContext is a helper method to define mock.On call
+// ListWebhooks is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchWebhookReader_Expecter) ListWebhooksWithContext(ctx any) *MockmeilisearchWebhookReader_ListWebhooksWithContext_Call {
-	return &MockmeilisearchWebhookReader_ListWebhooksWithContext_Call{Call: _e.mock.On("ListWebhooksWithContext", ctx)}
+func (_e *MockmeilisearchWebhookReader_Expecter) ListWebhooks(ctx any) *MockmeilisearchWebhookReader_ListWebhooks_Call {
+	return &MockmeilisearchWebhookReader_ListWebhooks_Call{Call: _e.mock.On("ListWebhooks", ctx)}
 }
 
-func (_c *MockmeilisearchWebhookReader_ListWebhooksWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchWebhookReader_ListWebhooksWithContext_Call {
+func (_c *MockmeilisearchWebhookReader_ListWebhooks_Call) Run(run func(ctx context.Context)) *MockmeilisearchWebhookReader_ListWebhooks_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -275,12 +167,12 @@ func (_c *MockmeilisearchWebhookReader_ListWebhooksWithContext_Call) Run(run fun
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookReader_ListWebhooksWithContext_Call) Return(webhookResults *meilisearch.WebhookResults, err error) *MockmeilisearchWebhookReader_ListWebhooksWithContext_Call {
+func (_c *MockmeilisearchWebhookReader_ListWebhooks_Call) Return(webhookResults *meilisearch.WebhookResults, err error) *MockmeilisearchWebhookReader_ListWebhooks_Call {
 	_c.Call.Return(webhookResults, err)
 	return _c
 }
 
-func (_c *MockmeilisearchWebhookReader_ListWebhooksWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.WebhookResults, error)) *MockmeilisearchWebhookReader_ListWebhooksWithContext_Call {
+func (_c *MockmeilisearchWebhookReader_ListWebhooks_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.WebhookResults, error)) *MockmeilisearchWebhookReader_ListWebhooks_Call {
 	_c.Call.Return(run)
 	return _c
 }

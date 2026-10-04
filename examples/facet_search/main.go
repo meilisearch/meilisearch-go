@@ -51,7 +51,7 @@ func main() {
 
 	// Basic faceted search
 	fmt.Println("1. Basic faceted search with distribution:")
-	searchResult, err := client.Index("books").Search("fiction", &meilisearch.SearchRequest{
+	searchResult, err := client.Index("books").Search(context.Background(), "fiction", &meilisearch.SearchRequest{
 		Facets: []string{"genre", "language", "publish_year"},
 		Limit:  5,
 	})
@@ -63,7 +63,7 @@ func main() {
 
 	// Advanced faceted search with filters
 	fmt.Println("\n2. Faceted search with filters:")
-	searchResult, err = client.Index("books").Search("", &meilisearch.SearchRequest{
+	searchResult, err = client.Index("books").Search(context.Background(), "", &meilisearch.SearchRequest{
 		Filter: "genre = fantasy AND publish_year > 2000",
 		Facets: []string{"language", "rating", "publisher"},
 		Sort:   []string{"rating:desc"},
@@ -77,7 +77,7 @@ func main() {
 
 	// Facet search with specific facet query
 	fmt.Println("\n3. Facet-specific search:")
-	facetRaw, err := client.Index("books").FacetSearch(&meilisearch.FacetSearchRequest{
+	facetRaw, err := client.Index("books").FacetSearch(context.Background(), &meilisearch.FacetSearchRequest{
 		FacetName:  "genre",
 		FacetQuery: "sci",
 		Q:          "space",
@@ -113,7 +113,7 @@ func setupBooksIndex(client meilisearch.ServiceManager) error {
 	indexUID := "books"
 
 	// Create index
-	task, err := client.CreateIndex(&meilisearch.IndexConfig{
+	task, err := client.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 		Uid:        indexUID,
 		PrimaryKey: "id",
 	})
@@ -123,7 +123,7 @@ func setupBooksIndex(client meilisearch.ServiceManager) error {
 		ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 		defer cancel()
 
-		_, err = client.WaitForTaskWithContext(ctx, task.TaskUID, 100*time.Millisecond)
+		_, err = client.WaitForTask(ctx, task.TaskUID, 100*time.Millisecond)
 		if err != nil {
 			return fmt.Errorf("index creation failed: %w", err)
 		}
@@ -136,7 +136,7 @@ func setupBooksIndex(client meilisearch.ServiceManager) error {
 		SortableAttributes:   []string{"rating", "publish_year", "pages"},
 	}
 
-	settingsTask, err := index.UpdateSettings(settings)
+	settingsTask, err := index.UpdateSettings(context.Background(), settings)
 	if err != nil {
 		return fmt.Errorf("failed to update settings: %w", err)
 	}
@@ -144,7 +144,7 @@ func setupBooksIndex(client meilisearch.ServiceManager) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	_, err = client.WaitForTaskWithContext(ctx, settingsTask.TaskUID, 100*time.Millisecond)
+	_, err = client.WaitForTask(ctx, settingsTask.TaskUID, 100*time.Millisecond)
 	if err != nil {
 		return fmt.Errorf("failed to wait for settings update: %w", err)
 	}
@@ -158,12 +158,12 @@ func setupBooksIndex(client meilisearch.ServiceManager) error {
 		{ID: 5, Title: "Harry Potter", Author: "J.K. Rowling", Genre: "fantasy", Language: "English", PublishYear: 1997, Rating: 4.8, Pages: 309, Publisher: "Bloomsbury", Tags: []string{"magic", "school"}, InPrint: true},
 	}
 
-	addTask, err := index.AddDocuments(books, nil)
+	addTask, err := index.AddDocuments(context.Background(), books, nil)
 	if err != nil {
 		return fmt.Errorf("failed to add documents: %w", err)
 	}
 
-	_, err = client.WaitForTaskWithContext(ctx, addTask.TaskUID, 100*time.Millisecond)
+	_, err = client.WaitForTask(ctx, addTask.TaskUID, 100*time.Millisecond)
 	if err != nil {
 		return fmt.Errorf("failed to wait for document addition: %w", err)
 	}

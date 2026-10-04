@@ -18,10 +18,19 @@ func NewMockmeilisearchSearchReader(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockmeilisearchSearchReader {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockmeilisearchSearchReader{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -40,73 +49,11 @@ func (_m *MockmeilisearchSearchReader) EXPECT() *MockmeilisearchSearchReader_Exp
 }
 
 // FacetSearch provides a mock function for the type MockmeilisearchSearchReader
-func (_mock *MockmeilisearchSearchReader) FacetSearch(request *meilisearch.FacetSearchRequest) (*json.RawMessage, error) {
-	ret := _mock.Called(request)
-
-	if len(ret) == 0 {
-		panic("no return value specified for FacetSearch")
-	}
-
-	var r0 *json.RawMessage
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.FacetSearchRequest) (*json.RawMessage, error)); ok {
-		return returnFunc(request)
-	}
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.FacetSearchRequest) *json.RawMessage); ok {
-		r0 = returnFunc(request)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*json.RawMessage)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(*meilisearch.FacetSearchRequest) error); ok {
-		r1 = returnFunc(request)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSearchReader_FacetSearch_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FacetSearch'
-type MockmeilisearchSearchReader_FacetSearch_Call struct {
-	*mock.Call
-}
-
-// FacetSearch is a helper method to define mock.On call
-//   - request *meilisearch.FacetSearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) FacetSearch(request any) *MockmeilisearchSearchReader_FacetSearch_Call {
-	return &MockmeilisearchSearchReader_FacetSearch_Call{Call: _e.mock.On("FacetSearch", request)}
-}
-
-func (_c *MockmeilisearchSearchReader_FacetSearch_Call) Run(run func(request *meilisearch.FacetSearchRequest)) *MockmeilisearchSearchReader_FacetSearch_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *meilisearch.FacetSearchRequest
-		if args[0] != nil {
-			arg0 = args[0].(*meilisearch.FacetSearchRequest)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_FacetSearch_Call) Return(rawMessage *json.RawMessage, err error) *MockmeilisearchSearchReader_FacetSearch_Call {
-	_c.Call.Return(rawMessage, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_FacetSearch_Call) RunAndReturn(run func(request *meilisearch.FacetSearchRequest) (*json.RawMessage, error)) *MockmeilisearchSearchReader_FacetSearch_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// FacetSearchWithContext provides a mock function for the type MockmeilisearchSearchReader
-func (_mock *MockmeilisearchSearchReader) FacetSearchWithContext(ctx context.Context, request *meilisearch.FacetSearchRequest) (*json.RawMessage, error) {
+func (_mock *MockmeilisearchSearchReader) FacetSearch(ctx context.Context, request *meilisearch.FacetSearchRequest) (*json.RawMessage, error) {
 	ret := _mock.Called(ctx, request)
 
 	if len(ret) == 0 {
-		panic("no return value specified for FacetSearchWithContext")
+		panic("no return value specified for FacetSearch")
 	}
 
 	var r0 *json.RawMessage
@@ -129,19 +76,19 @@ func (_mock *MockmeilisearchSearchReader) FacetSearchWithContext(ctx context.Con
 	return r0, r1
 }
 
-// MockmeilisearchSearchReader_FacetSearchWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FacetSearchWithContext'
-type MockmeilisearchSearchReader_FacetSearchWithContext_Call struct {
+// MockmeilisearchSearchReader_FacetSearch_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'FacetSearch'
+type MockmeilisearchSearchReader_FacetSearch_Call struct {
 	*mock.Call
 }
 
-// FacetSearchWithContext is a helper method to define mock.On call
+// FacetSearch is a helper method to define mock.On call
 //   - ctx context.Context
 //   - request *meilisearch.FacetSearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) FacetSearchWithContext(ctx any, request any) *MockmeilisearchSearchReader_FacetSearchWithContext_Call {
-	return &MockmeilisearchSearchReader_FacetSearchWithContext_Call{Call: _e.mock.On("FacetSearchWithContext", ctx, request)}
+func (_e *MockmeilisearchSearchReader_Expecter) FacetSearch(ctx any, request any) *MockmeilisearchSearchReader_FacetSearch_Call {
+	return &MockmeilisearchSearchReader_FacetSearch_Call{Call: _e.mock.On("FacetSearch", ctx, request)}
 }
 
-func (_c *MockmeilisearchSearchReader_FacetSearchWithContext_Call) Run(run func(ctx context.Context, request *meilisearch.FacetSearchRequest)) *MockmeilisearchSearchReader_FacetSearchWithContext_Call {
+func (_c *MockmeilisearchSearchReader_FacetSearch_Call) Run(run func(ctx context.Context, request *meilisearch.FacetSearchRequest)) *MockmeilisearchSearchReader_FacetSearch_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -159,352 +106,22 @@ func (_c *MockmeilisearchSearchReader_FacetSearchWithContext_Call) Run(run func(
 	return _c
 }
 
-func (_c *MockmeilisearchSearchReader_FacetSearchWithContext_Call) Return(rawMessage *json.RawMessage, err error) *MockmeilisearchSearchReader_FacetSearchWithContext_Call {
+func (_c *MockmeilisearchSearchReader_FacetSearch_Call) Return(rawMessage *json.RawMessage, err error) *MockmeilisearchSearchReader_FacetSearch_Call {
 	_c.Call.Return(rawMessage, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSearchReader_FacetSearchWithContext_Call) RunAndReturn(run func(ctx context.Context, request *meilisearch.FacetSearchRequest) (*json.RawMessage, error)) *MockmeilisearchSearchReader_FacetSearchWithContext_Call {
+func (_c *MockmeilisearchSearchReader_FacetSearch_Call) RunAndReturn(run func(ctx context.Context, request *meilisearch.FacetSearchRequest) (*json.RawMessage, error)) *MockmeilisearchSearchReader_FacetSearch_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // Search provides a mock function for the type MockmeilisearchSearchReader
-func (_mock *MockmeilisearchSearchReader) Search(query string, request *meilisearch.SearchRequest) (*meilisearch.SearchResponse, error) {
-	ret := _mock.Called(query, request)
+func (_mock *MockmeilisearchSearchReader) Search(ctx context.Context, query string, request *meilisearch.SearchRequest) (*meilisearch.SearchResponse, error) {
+	ret := _mock.Called(ctx, query, request)
 
 	if len(ret) == 0 {
 		panic("no return value specified for Search")
-	}
-
-	var r0 *meilisearch.SearchResponse
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.SearchRequest) (*meilisearch.SearchResponse, error)); ok {
-		return returnFunc(query, request)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.SearchRequest) *meilisearch.SearchResponse); ok {
-		r0 = returnFunc(query, request)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.SearchResponse)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string, *meilisearch.SearchRequest) error); ok {
-		r1 = returnFunc(query, request)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSearchReader_Search_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Search'
-type MockmeilisearchSearchReader_Search_Call struct {
-	*mock.Call
-}
-
-// Search is a helper method to define mock.On call
-//   - query string
-//   - request *meilisearch.SearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) Search(query any, request any) *MockmeilisearchSearchReader_Search_Call {
-	return &MockmeilisearchSearchReader_Search_Call{Call: _e.mock.On("Search", query, request)}
-}
-
-func (_c *MockmeilisearchSearchReader_Search_Call) Run(run func(query string, request *meilisearch.SearchRequest)) *MockmeilisearchSearchReader_Search_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		var arg1 *meilisearch.SearchRequest
-		if args[1] != nil {
-			arg1 = args[1].(*meilisearch.SearchRequest)
-		}
-		run(
-			arg0,
-			arg1,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_Search_Call) Return(searchResponse *meilisearch.SearchResponse, err error) *MockmeilisearchSearchReader_Search_Call {
-	_c.Call.Return(searchResponse, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_Search_Call) RunAndReturn(run func(query string, request *meilisearch.SearchRequest) (*meilisearch.SearchResponse, error)) *MockmeilisearchSearchReader_Search_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// SearchRaw provides a mock function for the type MockmeilisearchSearchReader
-func (_mock *MockmeilisearchSearchReader) SearchRaw(query string, request *meilisearch.SearchRequest) (*json.RawMessage, error) {
-	ret := _mock.Called(query, request)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SearchRaw")
-	}
-
-	var r0 *json.RawMessage
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.SearchRequest) (*json.RawMessage, error)); ok {
-		return returnFunc(query, request)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string, *meilisearch.SearchRequest) *json.RawMessage); ok {
-		r0 = returnFunc(query, request)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*json.RawMessage)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string, *meilisearch.SearchRequest) error); ok {
-		r1 = returnFunc(query, request)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSearchReader_SearchRaw_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchRaw'
-type MockmeilisearchSearchReader_SearchRaw_Call struct {
-	*mock.Call
-}
-
-// SearchRaw is a helper method to define mock.On call
-//   - query string
-//   - request *meilisearch.SearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) SearchRaw(query any, request any) *MockmeilisearchSearchReader_SearchRaw_Call {
-	return &MockmeilisearchSearchReader_SearchRaw_Call{Call: _e.mock.On("SearchRaw", query, request)}
-}
-
-func (_c *MockmeilisearchSearchReader_SearchRaw_Call) Run(run func(query string, request *meilisearch.SearchRequest)) *MockmeilisearchSearchReader_SearchRaw_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		var arg1 *meilisearch.SearchRequest
-		if args[1] != nil {
-			arg1 = args[1].(*meilisearch.SearchRequest)
-		}
-		run(
-			arg0,
-			arg1,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_SearchRaw_Call) Return(rawMessage *json.RawMessage, err error) *MockmeilisearchSearchReader_SearchRaw_Call {
-	_c.Call.Return(rawMessage, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_SearchRaw_Call) RunAndReturn(run func(query string, request *meilisearch.SearchRequest) (*json.RawMessage, error)) *MockmeilisearchSearchReader_SearchRaw_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// SearchRawWithContext provides a mock function for the type MockmeilisearchSearchReader
-func (_mock *MockmeilisearchSearchReader) SearchRawWithContext(ctx context.Context, query string, request *meilisearch.SearchRequest) (*json.RawMessage, error) {
-	ret := _mock.Called(ctx, query, request)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SearchRawWithContext")
-	}
-
-	var r0 *json.RawMessage
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string, *meilisearch.SearchRequest) (*json.RawMessage, error)); ok {
-		return returnFunc(ctx, query, request)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string, *meilisearch.SearchRequest) *json.RawMessage); ok {
-		r0 = returnFunc(ctx, query, request)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*json.RawMessage)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, string, *meilisearch.SearchRequest) error); ok {
-		r1 = returnFunc(ctx, query, request)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSearchReader_SearchRawWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchRawWithContext'
-type MockmeilisearchSearchReader_SearchRawWithContext_Call struct {
-	*mock.Call
-}
-
-// SearchRawWithContext is a helper method to define mock.On call
-//   - ctx context.Context
-//   - query string
-//   - request *meilisearch.SearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) SearchRawWithContext(ctx any, query any, request any) *MockmeilisearchSearchReader_SearchRawWithContext_Call {
-	return &MockmeilisearchSearchReader_SearchRawWithContext_Call{Call: _e.mock.On("SearchRawWithContext", ctx, query, request)}
-}
-
-func (_c *MockmeilisearchSearchReader_SearchRawWithContext_Call) Run(run func(ctx context.Context, query string, request *meilisearch.SearchRequest)) *MockmeilisearchSearchReader_SearchRawWithContext_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 context.Context
-		if args[0] != nil {
-			arg0 = args[0].(context.Context)
-		}
-		var arg1 string
-		if args[1] != nil {
-			arg1 = args[1].(string)
-		}
-		var arg2 *meilisearch.SearchRequest
-		if args[2] != nil {
-			arg2 = args[2].(*meilisearch.SearchRequest)
-		}
-		run(
-			arg0,
-			arg1,
-			arg2,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_SearchRawWithContext_Call) Return(rawMessage *json.RawMessage, err error) *MockmeilisearchSearchReader_SearchRawWithContext_Call {
-	_c.Call.Return(rawMessage, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_SearchRawWithContext_Call) RunAndReturn(run func(ctx context.Context, query string, request *meilisearch.SearchRequest) (*json.RawMessage, error)) *MockmeilisearchSearchReader_SearchRawWithContext_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// SearchSimilarDocuments provides a mock function for the type MockmeilisearchSearchReader
-func (_mock *MockmeilisearchSearchReader) SearchSimilarDocuments(param *meilisearch.SimilarDocumentQuery, resp *meilisearch.SimilarDocumentResult) error {
-	ret := _mock.Called(param, resp)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SearchSimilarDocuments")
-	}
-
-	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.SimilarDocumentQuery, *meilisearch.SimilarDocumentResult) error); ok {
-		r0 = returnFunc(param, resp)
-	} else {
-		r0 = ret.Error(0)
-	}
-	return r0
-}
-
-// MockmeilisearchSearchReader_SearchSimilarDocuments_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchSimilarDocuments'
-type MockmeilisearchSearchReader_SearchSimilarDocuments_Call struct {
-	*mock.Call
-}
-
-// SearchSimilarDocuments is a helper method to define mock.On call
-//   - param *meilisearch.SimilarDocumentQuery
-//   - resp *meilisearch.SimilarDocumentResult
-func (_e *MockmeilisearchSearchReader_Expecter) SearchSimilarDocuments(param any, resp any) *MockmeilisearchSearchReader_SearchSimilarDocuments_Call {
-	return &MockmeilisearchSearchReader_SearchSimilarDocuments_Call{Call: _e.mock.On("SearchSimilarDocuments", param, resp)}
-}
-
-func (_c *MockmeilisearchSearchReader_SearchSimilarDocuments_Call) Run(run func(param *meilisearch.SimilarDocumentQuery, resp *meilisearch.SimilarDocumentResult)) *MockmeilisearchSearchReader_SearchSimilarDocuments_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *meilisearch.SimilarDocumentQuery
-		if args[0] != nil {
-			arg0 = args[0].(*meilisearch.SimilarDocumentQuery)
-		}
-		var arg1 *meilisearch.SimilarDocumentResult
-		if args[1] != nil {
-			arg1 = args[1].(*meilisearch.SimilarDocumentResult)
-		}
-		run(
-			arg0,
-			arg1,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_SearchSimilarDocuments_Call) Return(err error) *MockmeilisearchSearchReader_SearchSimilarDocuments_Call {
-	_c.Call.Return(err)
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_SearchSimilarDocuments_Call) RunAndReturn(run func(param *meilisearch.SimilarDocumentQuery, resp *meilisearch.SimilarDocumentResult) error) *MockmeilisearchSearchReader_SearchSimilarDocuments_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// SearchSimilarDocumentsWithContext provides a mock function for the type MockmeilisearchSearchReader
-func (_mock *MockmeilisearchSearchReader) SearchSimilarDocumentsWithContext(ctx context.Context, param *meilisearch.SimilarDocumentQuery, resp *meilisearch.SimilarDocumentResult) error {
-	ret := _mock.Called(ctx, param, resp)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SearchSimilarDocumentsWithContext")
-	}
-
-	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.SimilarDocumentQuery, *meilisearch.SimilarDocumentResult) error); ok {
-		r0 = returnFunc(ctx, param, resp)
-	} else {
-		r0 = ret.Error(0)
-	}
-	return r0
-}
-
-// MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchSimilarDocumentsWithContext'
-type MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call struct {
-	*mock.Call
-}
-
-// SearchSimilarDocumentsWithContext is a helper method to define mock.On call
-//   - ctx context.Context
-//   - param *meilisearch.SimilarDocumentQuery
-//   - resp *meilisearch.SimilarDocumentResult
-func (_e *MockmeilisearchSearchReader_Expecter) SearchSimilarDocumentsWithContext(ctx any, param any, resp any) *MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call {
-	return &MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call{Call: _e.mock.On("SearchSimilarDocumentsWithContext", ctx, param, resp)}
-}
-
-func (_c *MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call) Run(run func(ctx context.Context, param *meilisearch.SimilarDocumentQuery, resp *meilisearch.SimilarDocumentResult)) *MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 context.Context
-		if args[0] != nil {
-			arg0 = args[0].(context.Context)
-		}
-		var arg1 *meilisearch.SimilarDocumentQuery
-		if args[1] != nil {
-			arg1 = args[1].(*meilisearch.SimilarDocumentQuery)
-		}
-		var arg2 *meilisearch.SimilarDocumentResult
-		if args[2] != nil {
-			arg2 = args[2].(*meilisearch.SimilarDocumentResult)
-		}
-		run(
-			arg0,
-			arg1,
-			arg2,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call) Return(err error) *MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call {
-	_c.Call.Return(err)
-	return _c
-}
-
-func (_c *MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.SimilarDocumentQuery, resp *meilisearch.SimilarDocumentResult) error) *MockmeilisearchSearchReader_SearchSimilarDocumentsWithContext_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// SearchWithContext provides a mock function for the type MockmeilisearchSearchReader
-func (_mock *MockmeilisearchSearchReader) SearchWithContext(ctx context.Context, query string, request *meilisearch.SearchRequest) (*meilisearch.SearchResponse, error) {
-	ret := _mock.Called(ctx, query, request)
-
-	if len(ret) == 0 {
-		panic("no return value specified for SearchWithContext")
 	}
 
 	var r0 *meilisearch.SearchResponse
@@ -527,20 +144,20 @@ func (_mock *MockmeilisearchSearchReader) SearchWithContext(ctx context.Context,
 	return r0, r1
 }
 
-// MockmeilisearchSearchReader_SearchWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchWithContext'
-type MockmeilisearchSearchReader_SearchWithContext_Call struct {
+// MockmeilisearchSearchReader_Search_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'Search'
+type MockmeilisearchSearchReader_Search_Call struct {
 	*mock.Call
 }
 
-// SearchWithContext is a helper method to define mock.On call
+// Search is a helper method to define mock.On call
 //   - ctx context.Context
 //   - query string
 //   - request *meilisearch.SearchRequest
-func (_e *MockmeilisearchSearchReader_Expecter) SearchWithContext(ctx any, query any, request any) *MockmeilisearchSearchReader_SearchWithContext_Call {
-	return &MockmeilisearchSearchReader_SearchWithContext_Call{Call: _e.mock.On("SearchWithContext", ctx, query, request)}
+func (_e *MockmeilisearchSearchReader_Expecter) Search(ctx any, query any, request any) *MockmeilisearchSearchReader_Search_Call {
+	return &MockmeilisearchSearchReader_Search_Call{Call: _e.mock.On("Search", ctx, query, request)}
 }
 
-func (_c *MockmeilisearchSearchReader_SearchWithContext_Call) Run(run func(ctx context.Context, query string, request *meilisearch.SearchRequest)) *MockmeilisearchSearchReader_SearchWithContext_Call {
+func (_c *MockmeilisearchSearchReader_Search_Call) Run(run func(ctx context.Context, query string, request *meilisearch.SearchRequest)) *MockmeilisearchSearchReader_Search_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -563,12 +180,149 @@ func (_c *MockmeilisearchSearchReader_SearchWithContext_Call) Run(run func(ctx c
 	return _c
 }
 
-func (_c *MockmeilisearchSearchReader_SearchWithContext_Call) Return(searchResponse *meilisearch.SearchResponse, err error) *MockmeilisearchSearchReader_SearchWithContext_Call {
+func (_c *MockmeilisearchSearchReader_Search_Call) Return(searchResponse *meilisearch.SearchResponse, err error) *MockmeilisearchSearchReader_Search_Call {
 	_c.Call.Return(searchResponse, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSearchReader_SearchWithContext_Call) RunAndReturn(run func(ctx context.Context, query string, request *meilisearch.SearchRequest) (*meilisearch.SearchResponse, error)) *MockmeilisearchSearchReader_SearchWithContext_Call {
+func (_c *MockmeilisearchSearchReader_Search_Call) RunAndReturn(run func(ctx context.Context, query string, request *meilisearch.SearchRequest) (*meilisearch.SearchResponse, error)) *MockmeilisearchSearchReader_Search_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SearchRaw provides a mock function for the type MockmeilisearchSearchReader
+func (_mock *MockmeilisearchSearchReader) SearchRaw(ctx context.Context, query string, request *meilisearch.SearchRequest) (*json.RawMessage, error) {
+	ret := _mock.Called(ctx, query, request)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SearchRaw")
+	}
+
+	var r0 *json.RawMessage
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, *meilisearch.SearchRequest) (*json.RawMessage, error)); ok {
+		return returnFunc(ctx, query, request)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, string, *meilisearch.SearchRequest) *json.RawMessage); ok {
+		r0 = returnFunc(ctx, query, request)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*json.RawMessage)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, string, *meilisearch.SearchRequest) error); ok {
+		r1 = returnFunc(ctx, query, request)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSearchReader_SearchRaw_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchRaw'
+type MockmeilisearchSearchReader_SearchRaw_Call struct {
+	*mock.Call
+}
+
+// SearchRaw is a helper method to define mock.On call
+//   - ctx context.Context
+//   - query string
+//   - request *meilisearch.SearchRequest
+func (_e *MockmeilisearchSearchReader_Expecter) SearchRaw(ctx any, query any, request any) *MockmeilisearchSearchReader_SearchRaw_Call {
+	return &MockmeilisearchSearchReader_SearchRaw_Call{Call: _e.mock.On("SearchRaw", ctx, query, request)}
+}
+
+func (_c *MockmeilisearchSearchReader_SearchRaw_Call) Run(run func(ctx context.Context, query string, request *meilisearch.SearchRequest)) *MockmeilisearchSearchReader_SearchRaw_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 string
+		if args[1] != nil {
+			arg1 = args[1].(string)
+		}
+		var arg2 *meilisearch.SearchRequest
+		if args[2] != nil {
+			arg2 = args[2].(*meilisearch.SearchRequest)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSearchReader_SearchRaw_Call) Return(rawMessage *json.RawMessage, err error) *MockmeilisearchSearchReader_SearchRaw_Call {
+	_c.Call.Return(rawMessage, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSearchReader_SearchRaw_Call) RunAndReturn(run func(ctx context.Context, query string, request *meilisearch.SearchRequest) (*json.RawMessage, error)) *MockmeilisearchSearchReader_SearchRaw_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// SearchSimilarDocuments provides a mock function for the type MockmeilisearchSearchReader
+func (_mock *MockmeilisearchSearchReader) SearchSimilarDocuments(ctx context.Context, param *meilisearch.SimilarDocumentQuery, resp *meilisearch.SimilarDocumentResult) error {
+	ret := _mock.Called(ctx, param, resp)
+
+	if len(ret) == 0 {
+		panic("no return value specified for SearchSimilarDocuments")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.SimilarDocumentQuery, *meilisearch.SimilarDocumentResult) error); ok {
+		r0 = returnFunc(ctx, param, resp)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockmeilisearchSearchReader_SearchSimilarDocuments_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'SearchSimilarDocuments'
+type MockmeilisearchSearchReader_SearchSimilarDocuments_Call struct {
+	*mock.Call
+}
+
+// SearchSimilarDocuments is a helper method to define mock.On call
+//   - ctx context.Context
+//   - param *meilisearch.SimilarDocumentQuery
+//   - resp *meilisearch.SimilarDocumentResult
+func (_e *MockmeilisearchSearchReader_Expecter) SearchSimilarDocuments(ctx any, param any, resp any) *MockmeilisearchSearchReader_SearchSimilarDocuments_Call {
+	return &MockmeilisearchSearchReader_SearchSimilarDocuments_Call{Call: _e.mock.On("SearchSimilarDocuments", ctx, param, resp)}
+}
+
+func (_c *MockmeilisearchSearchReader_SearchSimilarDocuments_Call) Run(run func(ctx context.Context, param *meilisearch.SimilarDocumentQuery, resp *meilisearch.SimilarDocumentResult)) *MockmeilisearchSearchReader_SearchSimilarDocuments_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 *meilisearch.SimilarDocumentQuery
+		if args[1] != nil {
+			arg1 = args[1].(*meilisearch.SimilarDocumentQuery)
+		}
+		var arg2 *meilisearch.SimilarDocumentResult
+		if args[2] != nil {
+			arg2 = args[2].(*meilisearch.SimilarDocumentResult)
+		}
+		run(
+			arg0,
+			arg1,
+			arg2,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSearchReader_SearchSimilarDocuments_Call) Return(err error) *MockmeilisearchSearchReader_SearchSimilarDocuments_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockmeilisearchSearchReader_SearchSimilarDocuments_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.SimilarDocumentQuery, resp *meilisearch.SimilarDocumentResult) error) *MockmeilisearchSearchReader_SearchSimilarDocuments_Call {
 	_c.Call.Return(run)
 	return _c
 }

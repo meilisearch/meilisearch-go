@@ -53,7 +53,7 @@ func main() {
 		{ID: 3, Name: "Charlie Brown", Email: "charlie@example.com", Role: "moderator", Active: false, JoinDate: "2023-03-10"},
 	}
 
-	task, err := index.AddDocuments(users, &meilisearch.DocumentOptions{PrimaryKey: meilisearch.StringPtr("id")})
+	task, err := index.AddDocuments(context.Background(), users, &meilisearch.DocumentOptions{PrimaryKey: meilisearch.StringPtr("id")})
 	if err != nil {
 		log.Fatalf("Failed to add documents: %v", err)
 	}
@@ -74,7 +74,7 @@ func main() {
 		JoinDate: "2023-04-05",
 	}
 
-	task, err = index.AddDocuments([]User{newUser}, nil)
+	task, err = index.AddDocuments(context.Background(), []User{newUser}, nil)
 	if err != nil {
 		log.Fatalf("Failed to add single document: %v", err)
 	}
@@ -91,7 +91,7 @@ func main() {
 		{ID: 3, Name: "Charlie Brown", Email: "charlie@example.com", Role: "moderator", Active: true, JoinDate: "2023-03-10"}, // Activating user
 	}
 
-	task, err = index.UpdateDocuments(updatedUsers, nil)
+	task, err = index.UpdateDocuments(context.Background(), updatedUsers, nil)
 	if err != nil {
 		log.Fatalf("Failed to update documents: %v", err)
 	}
@@ -104,7 +104,7 @@ func main() {
 	// 4. Get document by ID
 	fmt.Println("\n4. Getting document by ID:")
 	var doc User
-	err = index.GetDocument("2", nil, &doc)
+	err = index.GetDocument(context.Background(), "2", nil, &doc)
 	if err != nil {
 		log.Fatalf("Failed to get document: %v", err)
 	}
@@ -113,7 +113,7 @@ func main() {
 	// 5. Get multiple documents
 	fmt.Println("\n5. Getting multiple documents:")
 	var docs meilisearch.DocumentsResult
-	err = index.GetDocuments(&meilisearch.DocumentsQuery{
+	err = index.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{
 		Limit:  10,
 		Offset: 0,
 	}, &docs)
@@ -127,7 +127,7 @@ func main() {
 
 	// 6. Delete documents
 	fmt.Println("\n6. Deleting documents:")
-	task, err = index.DeleteDocument("4", nil)
+	task, err = index.DeleteDocument(context.Background(), "4", nil)
 	if err != nil {
 		log.Fatalf("Failed to delete document: %v", err)
 	}
@@ -139,7 +139,7 @@ func main() {
 
 	// 7. Delete multiple documents
 	fmt.Println("\n7. Deleting multiple documents:")
-	task, err = index.DeleteDocuments([]string{"1", "3"}, nil)
+	task, err = index.DeleteDocuments(context.Background(), []string{"1", "3"}, nil)
 	if err != nil {
 		log.Fatalf("Failed to delete documents: %v", err)
 	}
@@ -152,7 +152,7 @@ func main() {
 	// 8. Final document count
 	fmt.Println("\n8. Final document count:")
 	var finalDocs meilisearch.DocumentsResult
-	err = index.GetDocuments(&meilisearch.DocumentsQuery{Limit: 100}, &finalDocs)
+	err = index.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{Limit: 100}, &finalDocs)
 	if err != nil {
 		log.Fatalf("Failed to get final documents: %v", err)
 	}
@@ -164,7 +164,7 @@ func main() {
 func createIndex(client meilisearch.ServiceManager, indexUID string) error {
 	fmt.Printf("Creating index '%s'...\n", indexUID)
 
-	task, err := client.CreateIndex(&meilisearch.IndexConfig{
+	task, err := client.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 		Uid:        indexUID,
 		PrimaryKey: "id",
 	})
@@ -180,7 +180,7 @@ func waitForTask(client meilisearch.ServiceManager, taskUID int64) error {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	_, err := client.WaitForTaskWithContext(ctx, taskUID, 100*time.Millisecond)
+	_, err := client.WaitForTask(ctx, taskUID, 100*time.Millisecond)
 	return err
 }
 

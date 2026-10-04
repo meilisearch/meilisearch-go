@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"context"
 	"crypto/tls"
 	"encoding/json"
 	"testing"
@@ -119,11 +120,11 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 
 			require.NotNil(t, tt.Request)
 			require.NotEmpty(t, tt.Request.IndexUID)
-			got, err := i.Search(tt.Query, tt.Request)
+			got, err := i.Search(context.Background(), tt.Query, tt.Request)
 			require.NoError(t, err, "Search request failed unexpectedly")
 			require.Equal(t, len(tt.Response.Hits), len(got.Hits))
 
-			gotJson, err := i.SearchRaw(tt.Query, tt.Request)
+			gotJson, err := i.SearchRaw(context.Background(), tt.Query, tt.Request)
 			require.NoError(t, err)
 
 			var resp meilisearch.SearchResponse
@@ -132,11 +133,11 @@ func TestIndex_SearchWithContentEncoding(t *testing.T) {
 			require.Equal(t, len(tt.Response.Hits), len(resp.Hits))
 
 			filterableAttrs := []interface{}{"tag"}
-			task, err := i.UpdateFilterableAttributes(&filterableAttrs)
+			task, err := i.UpdateFilterableAttributes(context.Background(), &filterableAttrs)
 			require.NoError(t, err)
 			testWaitForIndexTask(t, i, task)
 
-			gotJson, err = i.FacetSearch(tt.FacetRequest)
+			gotJson, err = i.FacetSearch(context.Background(), tt.FacetRequest)
 			require.NoError(t, err)
 			var gotFacet meilisearch.FacetSearchResponse
 			err = json.Unmarshal(*gotJson, &gotFacet)
@@ -203,7 +204,7 @@ func TestIndex_SearchRaw(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotRaw, err := i.SearchRaw(tt.args.query, tt.args.request)
+			gotRaw, err := i.SearchRaw(context.Background(), tt.args.query, tt.args.request)
 
 			if tt.wantErr {
 				require.Error(t, err)
@@ -321,7 +322,7 @@ func TestIndex_Search(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			got, err := i.Search(tt.args.query, tt.args.request)
+			got, err := i.Search(context.Background(), tt.args.query, tt.args.request)
 
 			if tt.wantErr {
 				require.Error(t, err)
@@ -482,11 +483,11 @@ func TestIndex_SearchFacets(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
+			updateFilter, err := i.UpdateFilterableAttributes(context.Background(), &tt.args.filterableAttributes)
 			require.NoError(t, err)
 			testWaitForIndexTask(t, i, updateFilter)
 
-			got, err := i.Search(tt.args.query, tt.args.request)
+			got, err := i.Search(context.Background(), tt.args.query, tt.args.request)
 			if tt.wantErr {
 				require.Error(t, err)
 				require.Nil(t, tt.want)
@@ -584,11 +585,11 @@ func TestIndex_SearchWithFilters(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
+			updateFilter, err := i.UpdateFilterableAttributes(context.Background(), &tt.args.filterableAttributes)
 			require.NoError(t, err)
 			testWaitForIndexTask(t, i, updateFilter)
 
-			got, err := i.Search(tt.args.query, tt.args.request)
+			got, err := i.Search(context.Background(), tt.args.query, tt.args.request)
 			if tt.wantErr {
 				require.Error(t, err)
 				require.Nil(t, tt.want)
@@ -665,11 +666,11 @@ func TestIndex_SearchWithSort(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			updateFilter, err := i.UpdateSortableAttributes(&tt.args.sortableAttributes)
+			updateFilter, err := i.UpdateSortableAttributes(context.Background(), &tt.args.sortableAttributes)
 			require.NoError(t, err)
 			testWaitForIndexTask(t, i, updateFilter)
 
-			got, err := i.Search(tt.args.query, tt.args.request)
+			got, err := i.Search(context.Background(), tt.args.query, tt.args.request)
 			if tt.wantErr {
 				require.Error(t, err)
 				require.Nil(t, tt.want)
@@ -746,18 +747,18 @@ func TestIndex_SearchOnNestedFields(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			if tt.args.searchableAttribute != nil {
-				gotTask, err := i.UpdateSearchableAttributes(&tt.args.searchableAttribute)
+				gotTask, err := i.UpdateSearchableAttributes(context.Background(), &tt.args.searchableAttribute)
 				require.NoError(t, err)
 				testWaitForIndexTask(t, i, gotTask)
 			}
 
 			if tt.args.sortableAttribute != nil {
-				gotTask, err := i.UpdateSortableAttributes(&tt.args.sortableAttribute)
+				gotTask, err := i.UpdateSortableAttributes(context.Background(), &tt.args.sortableAttribute)
 				require.NoError(t, err)
 				testWaitForIndexTask(t, i, gotTask)
 			}
 
-			got, err := i.Search(tt.args.query, tt.args.request)
+			got, err := i.Search(context.Background(), tt.args.query, tt.args.request)
 			if tt.wantErr {
 				require.Error(t, err)
 				require.Nil(t, tt.want)
@@ -928,7 +929,7 @@ func TestIndex_SearchWithPagination(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			got, err := i.Search(tt.args.query, tt.args.request)
+			got, err := i.Search(context.Background(), tt.args.query, tt.args.request)
 			if tt.wantErr {
 				require.Error(t, err)
 				require.Nil(t, tt.want)
@@ -983,7 +984,7 @@ func TestIndex_SearchWithShowRankingScore(t *testing.T) {
 	i := c.Index(testArg.UID)
 	t.Cleanup(cleanup(c))
 
-	got, err := i.Search(testArg.query, &testArg.request)
+	got, err := i.Search(context.Background(), testArg.query, &testArg.request)
 	require.NoError(t, err)
 	require.NotNil(t, got)
 
@@ -1022,7 +1023,7 @@ func TestIndex_SearchWithShowRankingScoreDetails(t *testing.T) {
 	i := c.Index(testArg.UID)
 	t.Cleanup(cleanup(c))
 
-	got, err := i.Search(testArg.query, &testArg.request)
+	got, err := i.Search(context.Background(), testArg.query, &testArg.request)
 	require.NoError(t, err)
 	require.NotNil(t, got)
 	require.Greater(t, len(got.Hits), 0, "expected at least one hit")
@@ -1068,7 +1069,7 @@ func TestIndex_SearchWithVectorStore(t *testing.T) {
 			c := tt.client
 			t.Cleanup(cleanup(c))
 
-			got, err := i.Search(tt.query, &tt.request)
+			got, err := i.Search(context.Background(), tt.query, &tt.request)
 			require.NoError(t, err)
 			require.Greater(t, len(got.Hits), 0, "expected at least one hit")
 
@@ -1114,7 +1115,7 @@ func TestIndex_SearchWithPersonalize(t *testing.T) {
 			t.Cleanup(cleanup(c))
 			i := c.Index(tt.UID)
 
-			got, err := i.Search(tt.query, &tt.request)
+			got, err := i.Search(context.Background(), tt.query, &tt.request)
 			require.NoError(t, err)
 			require.NotNil(t, got)
 			require.Greater(t, len(got.Hits), 0, "expected at least one hit")
@@ -1149,7 +1150,7 @@ func TestIndex_SearchWithDistinct(t *testing.T) {
 			t.Cleanup(cleanup(c))
 			i := c.Index(tt.UID)
 
-			got, err := i.Search(tt.query, &tt.request)
+			got, err := i.Search(context.Background(), tt.query, &tt.request)
 			require.NoError(t, err)
 			require.NotNil(t, got.Hits)
 		})
@@ -1206,7 +1207,7 @@ func TestIndex_SearchSimilarDocuments(t *testing.T) {
 			c := tt.client
 			t.Cleanup(cleanup(c))
 
-			err = i.SearchSimilarDocuments(tt.request, tt.resp)
+			err = i.SearchSimilarDocuments(context.Background(), tt.request, tt.resp)
 			if tt.wantErr {
 				require.Error(t, err)
 				return
@@ -1327,12 +1328,12 @@ func TestIndex_FacetSearch(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			if len(tt.args.filterableAttributes) > 0 {
-				updateFilter, err := i.UpdateFilterableAttributes(&tt.args.filterableAttributes)
+				updateFilter, err := i.UpdateFilterableAttributes(context.Background(), &tt.args.filterableAttributes)
 				require.NoError(t, err)
 				testWaitForIndexTask(t, i, updateFilter)
 			}
 
-			gotRaw, err := i.FacetSearch(tt.args.request)
+			gotRaw, err := i.FacetSearch(context.Background(), tt.args.request)
 
 			if tt.wantErr {
 				require.Error(t, err)
@@ -1371,7 +1372,7 @@ func TestIndex_ShowPerformanceDetails(t *testing.T) {
 
 	idx := sv.Index("indexUID")
 
-	resp, err := idx.Search("Pride", &meilisearch.SearchRequest{
+	resp, err := idx.Search(context.Background(), "Pride", &meilisearch.SearchRequest{
 		ShowPerformanceDetails: true,
 	})
 	require.NoError(t, err)
@@ -1396,7 +1397,7 @@ func TestIndex_SearchWithRequestBuilder(t *testing.T) {
 		WithShowRankingScore(true).
 		Build()
 
-	resp, err := idx.Search(req.Query, req)
+	resp, err := idx.Search(context.Background(), req.Query, req)
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.NotEmpty(t, resp.Hits)

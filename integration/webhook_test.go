@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"context"
 	"fmt"
 	"testing"
 
@@ -16,7 +17,7 @@ func Test_AddWebhook(t *testing.T) {
 		URL:     "http://example.com",
 		Headers: map[string]string{"FOO": "BAR", "BAR": ""},
 	}
-	result, err := sv.AddWebhook(webhook)
+	result, err := sv.AddWebhook(context.Background(), webhook)
 	require.NoError(t, err)
 	require.Equal(t, webhook.URL, result.URL)
 	require.Equal(t, webhook.Headers, result.Headers)
@@ -28,12 +29,12 @@ func Test_GetWebhook(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupWebhook(sv))
 
-	wb, err := sv.AddWebhook(&meilisearch.AddWebhookRequest{
+	wb, err := sv.AddWebhook(context.Background(), &meilisearch.AddWebhookRequest{
 		URL:     "http://example.com",
 		Headers: map[string]string{"FOO": "BAR"},
 	})
 	require.NoError(t, err)
-	got, err := sv.GetWebhook(wb.UUID)
+	got, err := sv.GetWebhook(context.Background(), wb.UUID)
 	require.NoError(t, err)
 	require.Equal(t, wb, got)
 }
@@ -42,19 +43,19 @@ func Test_UpdateWebhook(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupWebhook(sv))
 
-	wb, err := sv.AddWebhook(&meilisearch.AddWebhookRequest{
+	wb, err := sv.AddWebhook(context.Background(), &meilisearch.AddWebhookRequest{
 		URL:     "http://example.com",
 		Headers: map[string]string{"FOO": "BAR"},
 	})
 	require.NoError(t, err)
 
-	updatedWb, err := sv.UpdateWebhook(wb.UUID, &meilisearch.UpdateWebhookRequest{
+	updatedWb, err := sv.UpdateWebhook(context.Background(), wb.UUID, &meilisearch.UpdateWebhookRequest{
 		URL:     "http://update.com",
 		Headers: map[string]string{"FOO": "UPDATED", "BAR": ""},
 	})
 	require.NoError(t, err)
 
-	got, err := sv.GetWebhook(wb.UUID)
+	got, err := sv.GetWebhook(context.Background(), wb.UUID)
 	require.NoError(t, err)
 	require.Equal(t, updatedWb, got)
 }
@@ -65,13 +66,13 @@ func Test_ListWebhooks(t *testing.T) {
 
 	n := 5
 	for i := 0; i < n; i++ {
-		_, err := sv.AddWebhook(&meilisearch.AddWebhookRequest{
+		_, err := sv.AddWebhook(context.Background(), &meilisearch.AddWebhookRequest{
 			URL:     fmt.Sprintf("http://example_%d.com", i),
 			Headers: map[string]string{"FOO": "BAR"},
 		})
 		require.NoError(t, err)
 	}
-	result, err := sv.ListWebhooks()
+	result, err := sv.ListWebhooks(context.Background())
 	require.NoError(t, err)
 	require.Len(t, result.Result, n)
 }
@@ -80,12 +81,12 @@ func Test_DeleteWebhook(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupWebhook(sv))
 
-	wb, err := sv.AddWebhook(&meilisearch.AddWebhookRequest{
+	wb, err := sv.AddWebhook(context.Background(), &meilisearch.AddWebhookRequest{
 		URL:     "http://example.com",
 		Headers: map[string]string{"FOO": "BAR"},
 	})
 	require.NoError(t, err)
 
-	err = sv.DeleteWebhook(wb.UUID)
+	err = sv.DeleteWebhook(context.Background(), wb.UUID)
 	require.NoError(t, err)
 }

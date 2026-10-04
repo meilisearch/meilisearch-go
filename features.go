@@ -74,11 +74,7 @@ func (ef *ExperimentalFeatures) SetForeignKeys(enable bool) *ExperimentalFeature
 	return ef
 }
 
-func (ef *ExperimentalFeatures) Get() (*ExperimentalFeaturesResult, error) {
-	return ef.GetWithContext(context.Background())
-}
-
-func (ef *ExperimentalFeatures) GetWithContext(ctx context.Context) (*ExperimentalFeaturesResult, error) {
+func (ef *ExperimentalFeatures) Get(ctx context.Context) (*ExperimentalFeaturesResult, error) {
 	resp := new(ExperimentalFeaturesResult)
 	req := &internalRequest{
 		endpoint:            "/experimental-features",
@@ -97,11 +93,7 @@ func (ef *ExperimentalFeatures) GetWithContext(ctx context.Context) (*Experiment
 	return resp, nil
 }
 
-func (ef *ExperimentalFeatures) Update() (*ExperimentalFeaturesResult, error) {
-	return ef.UpdateWithContext(context.Background())
-}
-
-func (ef *ExperimentalFeatures) UpdateWithContext(ctx context.Context) (*ExperimentalFeaturesResult, error) {
+func (ef *ExperimentalFeatures) Update(ctx context.Context) (*ExperimentalFeaturesResult, error) {
 	request := ExperimentalFeaturesBase{
 		LogsRoute:               ef.LogsRoute,
 		Metrics:                 ef.Metrics,

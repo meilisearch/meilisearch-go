@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"context"
 	"crypto/tls"
 	"testing"
 
@@ -91,7 +92,7 @@ func TestIndex_Delete(t *testing.T) {
 			}
 			for k := range tt.args.deleteUid {
 				i := c.Index(tt.args.deleteUid[k])
-				gotResp, err := i.Delete(tt.args.deleteUid[k])
+				gotResp, err := i.Delete(context.Background(), tt.args.deleteUid[k])
 				require.True(t, gotResp)
 				require.NoError(t, err)
 			}
@@ -187,7 +188,7 @@ func TestIndex_GetStats(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.GetStats(tt.statsParam)
+			gotResp, err := i.GetStats(context.Background(), tt.statsParam)
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp.NumberOfDocuments, gotResp.NumberOfDocuments)
 			require.Equal(t, tt.wantResp.IsIndexing, gotResp.IsIndexing)
@@ -240,15 +241,15 @@ func Test_newIndex(t *testing.T) {
 
 			gotIdx := c.Index(tt.args.uid)
 
-			task, err := c.CreateIndex(&meilisearch.IndexConfig{Uid: tt.args.uid})
+			task, err := c.CreateIndex(context.Background(), &meilisearch.IndexConfig{Uid: tt.args.uid})
 			require.NoError(t, err)
 
 			testWaitForIndexTask(t, gotIdx, task)
 
-			gotIdxResult, err := gotIdx.FetchInfo()
+			gotIdxResult, err := gotIdx.FetchInfo(context.Background())
 			require.NoError(t, err)
 
-			wantIdxResult, err := tt.want.FetchInfo()
+			wantIdxResult, err := tt.want.FetchInfo(context.Background())
 			require.NoError(t, err)
 
 			require.Equal(t, gotIdxResult.UID, wantIdxResult.UID)
@@ -314,7 +315,7 @@ func TestIndex_FetchInfo(t *testing.T) {
 
 			i := c.Index(tt.args.UID)
 
-			gotResp, err := i.FetchInfo()
+			gotResp, err := i.FetchInfo(context.Background())
 
 			if tt.wantResp == nil {
 				require.Error(t, err)
@@ -371,7 +372,7 @@ func TestIndex_FetchPrimaryKey(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotPrimaryKey, err := i.FetchPrimaryKey()
+			gotPrimaryKey, err := i.FetchPrimaryKey(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, &tt.wantPrimaryKey, gotPrimaryKey)
 		})
@@ -455,10 +456,10 @@ func TestIndex_UpdateIndex(t *testing.T) {
 			createdAt := i.CreatedAt
 			updatedAt := i.UpdatedAt
 
-			gotResp, err := i.UpdateIndex(tt.args.params)
+			gotResp, err := i.UpdateIndex(context.Background(), tt.args.params)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(gotResp.TaskUID, 0)
+			_, err = c.WaitForTask(context.Background(), gotResp.TaskUID, 0)
 			require.NoError(t, err)
 
 			require.NoError(t, err)
@@ -471,7 +472,7 @@ func TestIndex_UpdateIndex(t *testing.T) {
 			} else {
 				indexUID = tt.args.config.Uid
 			}
-			gotIndex, err := c.GetIndex(indexUID)
+			gotIndex, err := c.GetIndex(context.Background(), indexUID)
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp.PrimaryKey, gotIndex.PrimaryKey)
 			// Make sure that timestamps were correctly updated as well
@@ -525,7 +526,7 @@ func TestIndex_Compact(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Cleanup(cleanup(tt.client))
 			idx := setupMovieIndex(t, tt.client, "movies")
-			gotTask, err := idx.Compact()
+			gotTask, err := idx.Compact(context.Background())
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
 			testWaitForIndexTask(t, idx, gotTask)

@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"context"
 	"testing"
 
 	"github.com/meilisearch/meilisearch-go"
@@ -12,7 +13,7 @@ func Test_GetChatWorkspace(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupChat(sv))
 
-	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update()
+	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.True(t, resp.ChatCompletions)
@@ -22,7 +23,7 @@ func Test_GetChatWorkspace(t *testing.T) {
 
 	uid := "test-workspace"
 
-	workspace, err := chat.UpdateChatWorkspace(uid, &meilisearch.ChatWorkspaceSettings{
+	workspace, err := chat.UpdateChatWorkspace(context.Background(), uid, &meilisearch.ChatWorkspaceSettings{
 		Source: meilisearch.OpenaiChatSource,
 		ApiKey: "test-api-key",
 		Prompts: &meilisearch.ChatWorkspaceSettingsPrompts{
@@ -35,7 +36,7 @@ func Test_GetChatWorkspace(t *testing.T) {
 	chatReader := sv.ChatReader()
 	require.NotNil(t, chatReader)
 
-	got, err := chatReader.GetChatWorkspace(uid)
+	got, err := chatReader.GetChatWorkspace(context.Background(), uid)
 	require.NoError(t, err)
 	require.NotNil(t, got)
 	assert.Equal(t, uid, got.UID)
@@ -45,7 +46,7 @@ func Test_GetChatWorkspaceSettings(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupChat(sv))
 
-	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update()
+	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.True(t, resp.ChatCompletions)
@@ -55,7 +56,7 @@ func Test_GetChatWorkspaceSettings(t *testing.T) {
 
 	uid := "test-workspace"
 
-	want, err := chat.UpdateChatWorkspace(uid, &meilisearch.ChatWorkspaceSettings{
+	want, err := chat.UpdateChatWorkspace(context.Background(), uid, &meilisearch.ChatWorkspaceSettings{
 		Source: meilisearch.OpenaiChatSource,
 		ApiKey: "test-api-key",
 		Prompts: &meilisearch.ChatWorkspaceSettingsPrompts{
@@ -65,7 +66,7 @@ func Test_GetChatWorkspaceSettings(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, want)
 
-	got, err := chat.GetChatWorkspaceSettings(uid)
+	got, err := chat.GetChatWorkspaceSettings(context.Background(), uid)
 	require.NoError(t, err)
 	require.NotNil(t, got)
 
@@ -76,7 +77,7 @@ func Test_GetChatWorkspaceSettings(t *testing.T) {
 func Test_ListChatWorkspace(t *testing.T) {
 	sv := setup(t, "")
 
-	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update()
+	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.True(t, resp.ChatCompletions)
@@ -157,13 +158,13 @@ func Test_ListChatWorkspace(t *testing.T) {
 
 			if tt.reqs != nil {
 				for uid, settings := range tt.reqs {
-					resp, err := chat.UpdateChatWorkspace(uid, settings)
+					resp, err := chat.UpdateChatWorkspace(context.Background(), uid, settings)
 					require.NoError(t, err)
 					require.NotNil(t, resp)
 				}
 			}
 
-			listResp, err := chat.ListChatWorkspaces(tt.query)
+			listResp, err := chat.ListChatWorkspaces(context.Background(), tt.query)
 			require.NoError(t, err)
 			require.NotNil(t, listResp)
 
@@ -177,7 +178,7 @@ func Test_ListChatWorkspace(t *testing.T) {
 func Test_UpdateChatWorkspaceSettings(t *testing.T) {
 	sv := setup(t, "")
 
-	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update()
+	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.True(t, resp.ChatCompletions)
@@ -223,11 +224,11 @@ func Test_UpdateChatWorkspaceSettings(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			t.Cleanup(cleanupChat(sv))
 
-			resp, err := chat.UpdateChatWorkspace(tt.uid, tt.req)
+			resp, err := chat.UpdateChatWorkspace(context.Background(), tt.uid, tt.req)
 			require.NoError(t, err)
 			require.NotNil(t, resp)
 
-			got, err := chat.GetChatWorkspaceSettings(tt.uid)
+			got, err := chat.GetChatWorkspaceSettings(context.Background(), tt.uid)
 			require.NoError(t, err)
 			require.NotNil(t, got)
 
@@ -246,7 +247,7 @@ func Test_UpdateChatWorkspaceSettings(t *testing.T) {
 func Test_ResetChatWorkspaceSettings(t *testing.T) {
 	sv := setup(t, "")
 
-	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update()
+	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.True(t, resp.ChatCompletions)
@@ -256,7 +257,7 @@ func Test_ResetChatWorkspaceSettings(t *testing.T) {
 
 	uid := "test-workspace"
 
-	want, err := chat.UpdateChatWorkspace(uid, &meilisearch.ChatWorkspaceSettings{
+	want, err := chat.UpdateChatWorkspace(context.Background(), uid, &meilisearch.ChatWorkspaceSettings{
 		Source: meilisearch.OpenaiChatSource,
 		ApiKey: "test-api-key",
 		Prompts: &meilisearch.ChatWorkspaceSettingsPrompts{
@@ -266,7 +267,7 @@ func Test_ResetChatWorkspaceSettings(t *testing.T) {
 	require.NoError(t, err)
 	require.NotNil(t, want)
 
-	got, err := chat.ResetChatWorkspace(uid)
+	got, err := chat.ResetChatWorkspace(context.Background(), uid)
 	require.NoError(t, err)
 	require.NotNil(t, got)
 	assert.Equal(t, meilisearch.OpenaiChatSource, got.Source)
@@ -276,7 +277,7 @@ func Test_ChatCompletionStream(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupChat(sv))
 
-	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update()
+	resp, err := sv.ExperimentalFeatures().SetChatCompletions(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.True(t, resp.ChatCompletions)
@@ -286,7 +287,7 @@ func Test_ChatCompletionStream(t *testing.T) {
 
 	uid := "test-workspace"
 
-	_, err = chat.UpdateChatWorkspace(uid, &meilisearch.ChatWorkspaceSettings{
+	_, err = chat.UpdateChatWorkspace(context.Background(), uid, &meilisearch.ChatWorkspaceSettings{
 		Source:       meilisearch.OpenaiChatSource,
 		OrgId:        "example org id",
 		ApiVersion:   "v1",
@@ -308,7 +309,7 @@ func Test_ChatCompletionStream(t *testing.T) {
 		Stream: true,
 	}
 
-	stream, err := chat.ChatCompletionStream(uid, query)
+	stream, err := chat.ChatCompletionStream(context.Background(), uid, query)
 	require.NoError(t, err)
 	require.NotNil(t, stream)
 	defer func() { _ = stream.Close() }()

@@ -72,13 +72,13 @@ func TestIndex_GetTask(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			task, err := i.AddDocuments(tt.args.document, nil)
+			task, err := i.AddDocuments(context.Background(), tt.args.document, nil)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(task.TaskUID, 0)
+			_, err = c.WaitForTask(context.Background(), task.TaskUID, 0)
 			require.NoError(t, err)
 
-			gotResp, err := i.GetTask(task.TaskUID)
+			gotResp, err := i.GetTask(context.Background(), task.TaskUID)
 			require.NoError(t, err)
 			require.NotNil(t, gotResp)
 			require.GreaterOrEqual(t, gotResp.UID, tt.args.taskUID)
@@ -168,13 +168,13 @@ func TestIndex_GetTasks(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			task, err := i.AddDocuments(tt.args.document, nil)
+			task, err := i.AddDocuments(context.Background(), tt.args.document, nil)
 			require.NoError(t, err)
 
-			_, err = c.WaitForTask(task.TaskUID, 0)
+			_, err = c.WaitForTask(context.Background(), task.TaskUID, 0)
 			require.NoError(t, err)
 
-			gotResp, err := i.GetTasks(tt.args.query)
+			gotResp, err := i.GetTasks(context.Background(), tt.args.query)
 			require.NoError(t, err)
 			require.NotNil(t, (*gotResp).Results[0].Status)
 			require.NotNil(t, (*gotResp).Results[0].Type)
@@ -267,13 +267,13 @@ func TestIndex_WaitForTask(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			task, err := i.AddDocuments(tt.args.document, nil)
+			task, err := i.AddDocuments(context.Background(), tt.args.document, nil)
 			require.NoError(t, err)
 
 			ctx, cancelFunc := context.WithTimeout(context.Background(), tt.args.timeout)
 			defer cancelFunc()
 
-			gotTask, err := i.WaitForTaskWithContext(ctx, task.TaskUID, 0)
+			gotTask, err := i.WaitForTask(ctx, task.TaskUID, 0)
 			if tt.args.timeout < tt.args.interval {
 				require.Error(t, err)
 			} else {
@@ -290,10 +290,10 @@ func TestGetTaskDocuments(t *testing.T) {
 
 	// The /tasks/{task_id}/documents route is gated by an experimental
 	// feature in Meilisearch v1.13. Enable it before issuing the request.
-	_, err := sv.ExperimentalFeatures().SetGetTaskDocumentsRoute(true).Update()
+	_, err := sv.ExperimentalFeatures().SetGetTaskDocumentsRoute(true).Update(context.Background())
 	require.NoError(t, err)
 	t.Cleanup(func() {
-		_, _ = sv.ExperimentalFeatures().SetGetTaskDocumentsRoute(false).Update()
+		_, _ = sv.ExperimentalFeatures().SetGetTaskDocumentsRoute(false).Update(context.Background())
 	})
 
 	uid := "TestGetTaskDocuments"
@@ -312,15 +312,15 @@ func TestGetTaskDocuments(t *testing.T) {
 		})
 	}
 
-	task, err := i.AddDocuments(documents, nil)
+	task, err := i.AddDocuments(context.Background(), documents, nil)
 	require.NoError(t, err)
 
 	var docs []docTest
-	err = sv.GetTaskDocuments(task.TaskUID, &docs)
+	err = sv.GetTaskDocuments(context.Background(), task.TaskUID, &docs)
 	require.NoError(t, err)
 	require.NotEmpty(t, docs)
 
 	// Drain the task so cleanup is deterministic.
-	_, err = sv.WaitForTask(task.TaskUID, 0)
+	_, err = sv.WaitForTask(context.Background(), task.TaskUID, 0)
 	require.NoError(t, err)
 }

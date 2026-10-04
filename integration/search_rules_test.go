@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"context"
 	"fmt"
 	"testing"
 	"time"
@@ -14,7 +15,7 @@ func Test_ListSearchRule(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupSearchRules(sv))
 
-	resp, err := sv.ExperimentalFeatures().SetDynamicSearchRules(true).Update()
+	resp, err := sv.ExperimentalFeatures().SetDynamicSearchRules(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.True(t, resp.DynamicSearchRules)
@@ -24,7 +25,7 @@ func Test_ListSearchRule(t *testing.T) {
 	end := start.Add(time.Hour * 24)
 
 	for i, uid := range uids {
-		task, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
+		task, err := sv.UpdateSearchRule(context.Background(), uid, &meilisearch.SearchRulesRequest{
 			Description: fmt.Sprintf("Rule %d for %s", i, uid),
 			Precedence:  intPtr(i + 1),
 			Active:      boolPtr(true),
@@ -55,7 +56,7 @@ func Test_ListSearchRule(t *testing.T) {
 	}
 
 	t.Run("list all rules with pagination", func(t *testing.T) {
-		results, err := sv.ListSearchRules(&meilisearch.SearchRulesParams{
+		results, err := sv.ListSearchRules(context.Background(), &meilisearch.SearchRulesParams{
 			Offset: 0,
 			Limit:  20,
 		})
@@ -90,7 +91,7 @@ func Test_ListSearchRule(t *testing.T) {
 	})
 
 	t.Run("list rules with filter", func(t *testing.T) {
-		results, err := sv.ListSearchRules(&meilisearch.SearchRulesParams{
+		results, err := sv.ListSearchRules(context.Background(), &meilisearch.SearchRulesParams{
 			Offset: 0,
 			Limit:  20,
 			Filter: &meilisearch.SearchRulesFilter{
@@ -103,7 +104,7 @@ func Test_ListSearchRule(t *testing.T) {
 	})
 
 	t.Run("list rules with attribute patterns filter", func(t *testing.T) {
-		results, err := sv.ListSearchRules(&meilisearch.SearchRulesParams{
+		results, err := sv.ListSearchRules(context.Background(), &meilisearch.SearchRulesParams{
 			Offset: 0,
 			Limit:  20,
 			Filter: &meilisearch.SearchRulesFilter{
@@ -120,7 +121,7 @@ func Test_UpdateSearchRule(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupSearchRules(sv))
 
-	resp, err := sv.ExperimentalFeatures().SetDynamicSearchRules(true).Update()
+	resp, err := sv.ExperimentalFeatures().SetDynamicSearchRules(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.True(t, resp.DynamicSearchRules)
@@ -130,7 +131,7 @@ func Test_UpdateSearchRule(t *testing.T) {
 	end := start.Add(time.Hour * 2)
 
 	t.Run("create new rule", func(t *testing.T) {
-		task, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
+		task, err := sv.UpdateSearchRule(context.Background(), uid, &meilisearch.SearchRulesRequest{
 			Description: "Promotional campaign rules",
 			Precedence:  intPtr(10),
 			Active:      boolPtr(true),
@@ -155,7 +156,7 @@ func Test_UpdateSearchRule(t *testing.T) {
 
 		testWaitForTask(t, sv, task)
 
-		rule, err := sv.GetSearchRule(uid)
+		rule, err := sv.GetSearchRule(context.Background(), uid)
 		require.NoError(t, err)
 
 		assert.Equal(t, uid, rule.Uid)
@@ -167,7 +168,7 @@ func Test_UpdateSearchRule(t *testing.T) {
 	})
 
 	t.Run("update existing rule", func(t *testing.T) {
-		task, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
+		task, err := sv.UpdateSearchRule(context.Background(), uid, &meilisearch.SearchRulesRequest{
 			Description: "Updated promotional campaign rules",
 			Precedence:  intPtr(8),
 			Active:      boolPtr(false),
@@ -187,7 +188,7 @@ func Test_UpdateSearchRule(t *testing.T) {
 
 		testWaitForTask(t, sv, task)
 
-		rule, err := sv.GetSearchRule(uid)
+		rule, err := sv.GetSearchRule(context.Background(), uid)
 		require.NoError(t, err)
 
 		require.NotNil(t, rule)
@@ -203,16 +204,16 @@ func Test_UpdateSearchRule(t *testing.T) {
 	})
 
 	t.Run("update description preserves actions", func(t *testing.T) {
-		before, err := sv.GetSearchRule(uid)
+		before, err := sv.GetSearchRule(context.Background(), uid)
 		require.NoError(t, err)
 
-		task, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
+		task, err := sv.UpdateSearchRule(context.Background(), uid, &meilisearch.SearchRulesRequest{
 			Description: "Description-only update",
 		})
 		require.NoError(t, err)
 		testWaitForTask(t, sv, task)
 
-		rule, err := sv.GetSearchRule(uid)
+		rule, err := sv.GetSearchRule(context.Background(), uid)
 		require.NoError(t, err)
 		assert.Equal(t, "Description-only update", rule.Description)
 		assert.Equal(t, before.Actions, rule.Actions)
@@ -259,11 +260,11 @@ func Test_UpdateSearchRule(t *testing.T) {
 
 		for _, tc := range cases {
 			t.Run(tc.name, func(t *testing.T) {
-				task, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{Actions: &tc.actions})
+				task, err := sv.UpdateSearchRule(context.Background(), uid, &meilisearch.SearchRulesRequest{Actions: &tc.actions})
 				require.NoError(t, err)
 				testWaitForTask(t, sv, task)
 
-				rule, err := sv.GetSearchRule(uid)
+				rule, err := sv.GetSearchRule(context.Background(), uid)
 				require.NoError(t, err)
 				assert.Equal(t, tc.actions, rule.Actions)
 			})
@@ -271,18 +272,18 @@ func Test_UpdateSearchRule(t *testing.T) {
 	})
 
 	t.Run("clear actions", func(t *testing.T) {
-		task, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{Actions: &meilisearch.Actions{}})
+		task, err := sv.UpdateSearchRule(context.Background(), uid, &meilisearch.SearchRulesRequest{Actions: &meilisearch.Actions{}})
 		require.NoError(t, err)
 		testWaitForTask(t, sv, task)
 
-		rule, err := sv.GetSearchRule(uid)
+		rule, err := sv.GetSearchRule(context.Background(), uid)
 		require.NoError(t, err)
 		assert.Empty(t, rule.Actions.Pin)
 		assert.Empty(t, rule.Actions.Scale)
 	})
 
 	t.Run("reject reserved rule uid", func(t *testing.T) {
-		task, err := sv.UpdateSearchRule("__meilisearch_metadata", &meilisearch.SearchRulesRequest{
+		task, err := sv.UpdateSearchRule(context.Background(), "__meilisearch_metadata", &meilisearch.SearchRulesRequest{
 			Actions: &meilisearch.Actions{Pin: []meilisearch.Pin{{ID: "123", Position: 0}}},
 		})
 		require.Error(t, err)
@@ -295,7 +296,7 @@ func Test_GetSearchRule(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupSearchRules(sv))
 
-	resp, err := sv.ExperimentalFeatures().SetDynamicSearchRules(true).Update()
+	resp, err := sv.ExperimentalFeatures().SetDynamicSearchRules(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.True(t, resp.DynamicSearchRules)
@@ -304,7 +305,7 @@ func Test_GetSearchRule(t *testing.T) {
 	start := time.Now()
 	end := start.Add(time.Hour * 1)
 
-	task, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
+	task, err := sv.UpdateSearchRule(context.Background(), uid, &meilisearch.SearchRulesRequest{
 		Description: "Black Friday 2025 rules",
 		Precedence:  intPtr(5),
 		Active:      boolPtr(true),
@@ -325,7 +326,7 @@ func Test_GetSearchRule(t *testing.T) {
 
 	testWaitForTask(t, sv, task)
 
-	rule, err := sv.GetSearchRule(uid)
+	rule, err := sv.GetSearchRule(context.Background(), uid)
 	require.NoError(t, err)
 	require.NotNil(t, rule)
 	assert.Equal(t, uid, rule.Uid)
@@ -337,7 +338,7 @@ func Test_DeleteSearchRule(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupSearchRules(sv))
 
-	resp, err := sv.ExperimentalFeatures().SetDynamicSearchRules(true).Update()
+	resp, err := sv.ExperimentalFeatures().SetDynamicSearchRules(true).Update(context.Background())
 	require.NoError(t, err)
 	require.NotNil(t, resp)
 	require.True(t, resp.DynamicSearchRules)
@@ -347,7 +348,7 @@ func Test_DeleteSearchRule(t *testing.T) {
 		start := time.Now()
 		end := start.Add(time.Hour * 1)
 
-		task, err := sv.UpdateSearchRule(uid, &meilisearch.SearchRulesRequest{
+		task, err := sv.UpdateSearchRule(context.Background(), uid, &meilisearch.SearchRulesRequest{
 			Description: "Black Friday 2025 rules",
 			Precedence:  intPtr(5),
 			Active:      boolPtr(true),
@@ -368,18 +369,18 @@ func Test_DeleteSearchRule(t *testing.T) {
 
 		testWaitForTask(t, sv, task)
 
-		task, err = sv.DeleteSearchRule(&uid)
+		task, err = sv.DeleteSearchRule(context.Background(), &uid)
 		require.NoError(t, err)
 
 		testWaitForTask(t, sv, task)
 
-		got, err := sv.GetSearchRule(uid)
+		got, err := sv.GetSearchRule(context.Background(), uid)
 		require.Error(t, err)
 		assert.Nil(t, got)
 	})
 
 	t.Run("bulk delete", func(t *testing.T) {
-		task, err := sv.DeleteSearchRule(nil)
+		task, err := sv.DeleteSearchRule(context.Background(), nil)
 		require.NoError(t, err)
 		testWaitForTask(t, sv, task)
 	})

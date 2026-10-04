@@ -8,19 +8,11 @@ import (
 	"time"
 )
 
-func (i *index) GetTask(taskUID int64) (*Task, error) {
-	return i.GetTaskWithContext(context.Background(), taskUID)
-}
-
-func (i *index) GetTaskWithContext(ctx context.Context, taskUID int64) (*Task, error) {
+func (i *index) GetTask(ctx context.Context, taskUID int64) (*Task, error) {
 	return getTask(ctx, i.client, taskUID)
 }
 
-func (i *index) GetTasks(param *TasksQuery) (*TaskResult, error) {
-	return i.GetTasksWithContext(context.Background(), param)
-}
-
-func (i *index) GetTasksWithContext(ctx context.Context, param *TasksQuery) (*TaskResult, error) {
+func (i *index) GetTasks(ctx context.Context, param *TasksQuery) (*TaskResult, error) {
 	resp := new(TaskResult)
 	req := &internalRequest{
 		endpoint:            "/tasks",
@@ -70,10 +62,6 @@ func (i *index) GetTasksWithContext(ctx context.Context, param *TasksQuery) (*Ta
 	return resp, nil
 }
 
-func (i *index) WaitForTask(taskUID int64, interval time.Duration) (*Task, error) {
-	return waitForTask(context.Background(), i.client, taskUID, interval)
-}
-
-func (i *index) WaitForTaskWithContext(ctx context.Context, taskUID int64, interval time.Duration) (*Task, error) {
+func (i *index) WaitForTask(ctx context.Context, taskUID int64, interval time.Duration) (*Task, error) {
 	return waitForTask(ctx, i.client, taskUID, interval)
 }

@@ -6,11 +6,7 @@ import (
 	"net/http"
 )
 
-func (i *index) Search(query string, request *SearchRequest) (*SearchResponse, error) {
-	return i.SearchWithContext(context.Background(), query, request)
-}
-
-func (i *index) SearchWithContext(ctx context.Context, query string, request *SearchRequest) (*SearchResponse, error) {
+func (i *index) Search(ctx context.Context, query string, request *SearchRequest) (*SearchResponse, error) {
 	if request == nil {
 		return nil, ErrNoSearchRequest
 	}
@@ -44,11 +40,7 @@ func (i *index) SearchWithContext(ctx context.Context, query string, request *Se
 	return resp, nil
 }
 
-func (i *index) SearchRaw(query string, request *SearchRequest) (*json.RawMessage, error) {
-	return i.SearchRawWithContext(context.Background(), query, request)
-}
-
-func (i *index) SearchRawWithContext(ctx context.Context, query string, request *SearchRequest) (*json.RawMessage, error) {
+func (i *index) SearchRaw(ctx context.Context, query string, request *SearchRequest) (*json.RawMessage, error) {
 	if request == nil {
 		return nil, ErrNoSearchRequest
 	}
@@ -82,11 +74,7 @@ func (i *index) SearchRawWithContext(ctx context.Context, query string, request 
 	return resp, nil
 }
 
-func (i *index) FacetSearch(request *FacetSearchRequest) (*json.RawMessage, error) {
-	return i.FacetSearchWithContext(context.Background(), request)
-}
-
-func (i *index) FacetSearchWithContext(ctx context.Context, request *FacetSearchRequest) (*json.RawMessage, error) {
+func (i *index) FacetSearch(ctx context.Context, request *FacetSearchRequest) (*json.RawMessage, error) {
 	if request == nil {
 		return nil, ErrNoFacetSearchRequest
 	}
@@ -110,11 +98,7 @@ func (i *index) FacetSearchWithContext(ctx context.Context, request *FacetSearch
 	return resp, nil
 }
 
-func (i *index) SearchSimilarDocuments(param *SimilarDocumentQuery, resp *SimilarDocumentResult) error {
-	return i.SearchSimilarDocumentsWithContext(context.Background(), param, resp)
-}
-
-func (i *index) SearchSimilarDocumentsWithContext(ctx context.Context, param *SimilarDocumentQuery, resp *SimilarDocumentResult) error {
+func (i *index) SearchSimilarDocuments(ctx context.Context, param *SimilarDocumentQuery, resp *SimilarDocumentResult) error {
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/similar",
 		method:              http.MethodPost,

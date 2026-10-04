@@ -44,7 +44,7 @@ func New(host string, options ...Option) ServiceManager {
 func Connect(host string, options ...Option) (ServiceManager, error) {
 	meili := New(host, options...)
 
-	resp, err := meili.HealthWithContext(context.Background())
+	resp, err := meili.Health(context.Background())
 
 	if err != nil {
 		return nil, err
@@ -93,19 +93,11 @@ func (m *meilisearch) Index(uid string) IndexManager {
 	return newIndex(m.client, uid)
 }
 
-func (m *meilisearch) GetIndex(indexID string) (*IndexResult, error) {
-	return m.GetIndexWithContext(context.Background(), indexID)
+func (m *meilisearch) GetIndex(ctx context.Context, indexID string) (*IndexResult, error) {
+	return newIndex(m.client, indexID).FetchInfo(ctx)
 }
 
-func (m *meilisearch) GetIndexWithContext(ctx context.Context, indexID string) (*IndexResult, error) {
-	return newIndex(m.client, indexID).FetchInfoWithContext(ctx)
-}
-
-func (m *meilisearch) GetRawIndex(uid string) (map[string]interface{}, error) {
-	return m.GetRawIndexWithContext(context.Background(), uid)
-}
-
-func (m *meilisearch) GetRawIndexWithContext(ctx context.Context, uid string) (map[string]interface{}, error) {
+func (m *meilisearch) GetRawIndex(ctx context.Context, uid string) (map[string]interface{}, error) {
 	resp := map[string]interface{}{}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + uid,
@@ -121,11 +113,7 @@ func (m *meilisearch) GetRawIndexWithContext(ctx context.Context, uid string) (m
 	return resp, nil
 }
 
-func (m *meilisearch) ListIndexes(param *IndexesQuery) (*IndexesResults, error) {
-	return m.ListIndexesWithContext(context.Background(), param)
-}
-
-func (m *meilisearch) ListIndexesWithContext(ctx context.Context, param *IndexesQuery) (*IndexesResults, error) {
+func (m *meilisearch) ListIndexes(ctx context.Context, param *IndexesQuery) (*IndexesResults, error) {
 	resp := new(IndexesResults)
 	req := &internalRequest{
 		endpoint:            "/indexes",
@@ -153,11 +141,7 @@ func (m *meilisearch) ListIndexesWithContext(ctx context.Context, param *Indexes
 	return resp, nil
 }
 
-func (m *meilisearch) GetRawIndexes(param *IndexesQuery) (map[string]interface{}, error) {
-	return m.GetRawIndexesWithContext(context.Background(), param)
-}
-
-func (m *meilisearch) GetRawIndexesWithContext(ctx context.Context, param *IndexesQuery) (map[string]interface{}, error) {
+func (m *meilisearch) GetRawIndexes(ctx context.Context, param *IndexesQuery) (map[string]interface{}, error) {
 	resp := map[string]interface{}{}
 	req := &internalRequest{
 		endpoint:            "/indexes",
@@ -180,11 +164,7 @@ func (m *meilisearch) GetRawIndexesWithContext(ctx context.Context, param *Index
 	return resp, nil
 }
 
-func (m *meilisearch) CreateIndex(config *IndexConfig) (*TaskInfo, error) {
-	return m.CreateIndexWithContext(context.Background(), config)
-}
-
-func (m *meilisearch) CreateIndexWithContext(ctx context.Context, config *IndexConfig) (*TaskInfo, error) {
+func (m *meilisearch) CreateIndex(ctx context.Context, config *IndexConfig) (*TaskInfo, error) {
 	request := &CreateIndexRequest{
 		UID:        config.Uid,
 		PrimaryKey: config.PrimaryKey,
@@ -205,11 +185,7 @@ func (m *meilisearch) CreateIndexWithContext(ctx context.Context, config *IndexC
 	return resp, nil
 }
 
-func (m *meilisearch) DeleteIndex(uid string) (*TaskInfo, error) {
-	return m.DeleteIndexWithContext(context.Background(), uid)
-}
-
-func (m *meilisearch) DeleteIndexWithContext(ctx context.Context, uid string) (*TaskInfo, error) {
+func (m *meilisearch) DeleteIndex(ctx context.Context, uid string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + uid,
@@ -225,11 +201,7 @@ func (m *meilisearch) DeleteIndexWithContext(ctx context.Context, uid string) (*
 	return resp, nil
 }
 
-func (m *meilisearch) MultiSearch(queries *MultiSearchRequest) (*MultiSearchResponse, error) {
-	return m.MultiSearchWithContext(context.Background(), queries)
-}
-
-func (m *meilisearch) MultiSearchWithContext(ctx context.Context, queries *MultiSearchRequest) (*MultiSearchResponse, error) {
+func (m *meilisearch) MultiSearch(ctx context.Context, queries *MultiSearchRequest) (*MultiSearchResponse, error) {
 	resp := new(MultiSearchResponse)
 
 	for i := 0; i < len(queries.Queries); i++ {
@@ -253,11 +225,7 @@ func (m *meilisearch) MultiSearchWithContext(ctx context.Context, queries *Multi
 	return resp, nil
 }
 
-func (m *meilisearch) CreateKey(request *Key) (*Key, error) {
-	return m.CreateKeyWithContext(context.Background(), request)
-}
-
-func (m *meilisearch) CreateKeyWithContext(ctx context.Context, request *Key) (*Key, error) {
+func (m *meilisearch) CreateKey(ctx context.Context, request *Key) (*Key, error) {
 	parsedRequest := convertKeyToParsedKey(*request)
 	resp := new(Key)
 	req := &internalRequest{
@@ -275,11 +243,7 @@ func (m *meilisearch) CreateKeyWithContext(ctx context.Context, request *Key) (*
 	return resp, nil
 }
 
-func (m *meilisearch) GetKey(identifier string) (*Key, error) {
-	return m.GetKeyWithContext(context.Background(), identifier)
-}
-
-func (m *meilisearch) GetKeyWithContext(ctx context.Context, identifier string) (*Key, error) {
+func (m *meilisearch) GetKey(ctx context.Context, identifier string) (*Key, error) {
 	resp := new(Key)
 	req := &internalRequest{
 		endpoint:            "/keys/" + identifier,
@@ -295,11 +259,7 @@ func (m *meilisearch) GetKeyWithContext(ctx context.Context, identifier string) 
 	return resp, nil
 }
 
-func (m *meilisearch) GetKeys(param *KeysQuery) (*KeysResults, error) {
-	return m.GetKeysWithContext(context.Background(), param)
-}
-
-func (m *meilisearch) GetKeysWithContext(ctx context.Context, param *KeysQuery) (*KeysResults, error) {
+func (m *meilisearch) GetKeys(ctx context.Context, param *KeysQuery) (*KeysResults, error) {
 	resp := new(KeysResults)
 	req := &internalRequest{
 		endpoint:            "/keys",
@@ -322,11 +282,7 @@ func (m *meilisearch) GetKeysWithContext(ctx context.Context, param *KeysQuery) 
 	return resp, nil
 }
 
-func (m *meilisearch) UpdateKey(keyOrUID string, request *Key) (*Key, error) {
-	return m.UpdateKeyWithContext(context.Background(), keyOrUID, request)
-}
-
-func (m *meilisearch) UpdateKeyWithContext(ctx context.Context, keyOrUID string, request *Key) (*Key, error) {
+func (m *meilisearch) UpdateKey(ctx context.Context, keyOrUID string, request *Key) (*Key, error) {
 	parsedRequest := KeyUpdate{Name: request.Name, Description: request.Description}
 	resp := new(Key)
 	req := &internalRequest{
@@ -344,11 +300,7 @@ func (m *meilisearch) UpdateKeyWithContext(ctx context.Context, keyOrUID string,
 	return resp, nil
 }
 
-func (m *meilisearch) DeleteKey(keyOrUID string) (bool, error) {
-	return m.DeleteKeyWithContext(context.Background(), keyOrUID)
-}
-
-func (m *meilisearch) DeleteKeyWithContext(ctx context.Context, keyOrUID string) (bool, error) {
+func (m *meilisearch) DeleteKey(ctx context.Context, keyOrUID string) (bool, error) {
 	req := &internalRequest{
 		endpoint:            "/keys/" + keyOrUID,
 		method:              http.MethodDelete,
@@ -363,19 +315,11 @@ func (m *meilisearch) DeleteKeyWithContext(ctx context.Context, keyOrUID string)
 	return true, nil
 }
 
-func (m *meilisearch) GetTask(taskUID int64) (*Task, error) {
-	return m.GetTaskWithContext(context.Background(), taskUID)
-}
-
-func (m *meilisearch) GetTaskWithContext(ctx context.Context, taskUID int64) (*Task, error) {
+func (m *meilisearch) GetTask(ctx context.Context, taskUID int64) (*Task, error) {
 	return getTask(ctx, m.client, taskUID)
 }
 
-func (m *meilisearch) GetTasks(param *TasksQuery) (*TaskResult, error) {
-	return m.GetTasksWithContext(context.Background(), param)
-}
-
-func (m *meilisearch) GetTasksWithContext(ctx context.Context, param *TasksQuery) (*TaskResult, error) {
+func (m *meilisearch) GetTasks(ctx context.Context, param *TasksQuery) (*TaskResult, error) {
 	resp := new(TaskResult)
 	req := &internalRequest{
 		endpoint:            "/tasks",
@@ -395,11 +339,7 @@ func (m *meilisearch) GetTasksWithContext(ctx context.Context, param *TasksQuery
 	return resp, nil
 }
 
-func (m *meilisearch) CancelTasks(param *CancelTasksQuery) (*TaskInfo, error) {
-	return m.CancelTasksWithContext(context.Background(), param)
-}
-
-func (m *meilisearch) CancelTasksWithContext(ctx context.Context, param *CancelTasksQuery) (*TaskInfo, error) {
+func (m *meilisearch) CancelTasks(ctx context.Context, param *CancelTasksQuery) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/tasks/cancel",
@@ -429,11 +369,7 @@ func (m *meilisearch) CancelTasksWithContext(ctx context.Context, param *CancelT
 	return resp, nil
 }
 
-func (m *meilisearch) DeleteTasks(param *DeleteTasksQuery) (*TaskInfo, error) {
-	return m.DeleteTasksWithContext(context.Background(), param)
-}
-
-func (m *meilisearch) DeleteTasksWithContext(ctx context.Context, param *DeleteTasksQuery) (*TaskInfo, error) {
+func (m *meilisearch) DeleteTasks(ctx context.Context, param *DeleteTasksQuery) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/tasks",
@@ -466,11 +402,7 @@ func (m *meilisearch) DeleteTasksWithContext(ctx context.Context, param *DeleteT
 	return resp, nil
 }
 
-func (m *meilisearch) SwapIndexes(param []*SwapIndexesParams) (*TaskInfo, error) {
-	return m.SwapIndexesWithContext(context.Background(), param)
-}
-
-func (m *meilisearch) SwapIndexesWithContext(ctx context.Context, param []*SwapIndexesParams) (*TaskInfo, error) {
+func (m *meilisearch) SwapIndexes(ctx context.Context, param []*SwapIndexesParams) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/swap-indexes",
@@ -487,11 +419,7 @@ func (m *meilisearch) SwapIndexesWithContext(ctx context.Context, param []*SwapI
 	return resp, nil
 }
 
-func (m *meilisearch) WaitForTask(taskUID int64, interval time.Duration) (*Task, error) {
-	return waitForTask(context.Background(), m.client, taskUID, interval)
-}
-
-func (m *meilisearch) WaitForTaskWithContext(ctx context.Context, taskUID int64, interval time.Duration) (*Task, error) {
+func (m *meilisearch) WaitForTask(ctx context.Context, taskUID int64, interval time.Duration) (*Task, error) {
 	return waitForTask(ctx, m.client, taskUID, interval)
 }
 
@@ -547,11 +475,7 @@ func (m *meilisearch) GenerateTenantToken(
 	return tokenString, err
 }
 
-func (m *meilisearch) GetStats(param *StatsParams) (*Stats, error) {
-	return m.GetStatsWithContext(context.Background(), param)
-}
-
-func (m *meilisearch) GetStatsWithContext(ctx context.Context, param *StatsParams) (*Stats, error) {
+func (m *meilisearch) GetStats(ctx context.Context, param *StatsParams) (*Stats, error) {
 	resp := new(Stats)
 	req := &internalRequest{
 		endpoint:            "/stats",
@@ -574,11 +498,7 @@ func (m *meilisearch) GetStatsWithContext(ctx context.Context, param *StatsParam
 	return resp, nil
 }
 
-func (m *meilisearch) CreateDump() (*TaskInfo, error) {
-	return m.CreateDumpWithContext(context.Background())
-}
-
-func (m *meilisearch) CreateDumpWithContext(ctx context.Context) (*TaskInfo, error) {
+func (m *meilisearch) CreateDump(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/dumps",
@@ -595,11 +515,7 @@ func (m *meilisearch) CreateDumpWithContext(ctx context.Context) (*TaskInfo, err
 	return resp, nil
 }
 
-func (m *meilisearch) Version() (*Version, error) {
-	return m.VersionWithContext(context.Background())
-}
-
-func (m *meilisearch) VersionWithContext(ctx context.Context) (*Version, error) {
+func (m *meilisearch) Version(ctx context.Context) (*Version, error) {
 	resp := new(Version)
 	req := &internalRequest{
 		endpoint:            "/version",
@@ -615,15 +531,7 @@ func (m *meilisearch) VersionWithContext(ctx context.Context) (*Version, error) 
 	return resp, nil
 }
 
-func (m *meilisearch) Health() (*Health, error) {
-	return m.HealthWithContext(context.Background())
-}
-
-func (m *meilisearch) RenderTemplate(params *RenderTemplateParams) (*RenderTemplateResponse, error) {
-	return m.RenderTemplateWithContext(context.Background(), params)
-}
-
-func (m *meilisearch) RenderTemplateWithContext(ctx context.Context, params *RenderTemplateParams) (*RenderTemplateResponse, error) {
+func (m *meilisearch) RenderTemplate(ctx context.Context, params *RenderTemplateParams) (*RenderTemplateResponse, error) {
 	resp := new(RenderTemplateResponse)
 	req := &internalRequest{
 		endpoint:            "/render-template",
@@ -640,7 +548,7 @@ func (m *meilisearch) RenderTemplateWithContext(ctx context.Context, params *Ren
 	return resp, nil
 }
 
-func (m *meilisearch) HealthWithContext(ctx context.Context) (*Health, error) {
+func (m *meilisearch) Health(ctx context.Context) (*Health, error) {
 	resp := new(Health)
 	req := &internalRequest{
 		endpoint:            "/health",
@@ -656,11 +564,7 @@ func (m *meilisearch) HealthWithContext(ctx context.Context) (*Health, error) {
 	return resp, nil
 }
 
-func (m *meilisearch) CreateSnapshot() (*TaskInfo, error) {
-	return m.CreateSnapshotWithContext(context.Background())
-}
-
-func (m *meilisearch) CreateSnapshotWithContext(ctx context.Context) (*TaskInfo, error) {
+func (m *meilisearch) CreateSnapshot(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/snapshots",
@@ -679,7 +583,7 @@ func (m *meilisearch) CreateSnapshotWithContext(ctx context.Context) (*TaskInfo,
 }
 
 func (m *meilisearch) IsHealthy() bool {
-	res, err := m.HealthWithContext(context.Background())
+	res, err := m.Health(context.Background())
 	return err == nil && res.Status == "available"
 }
 
@@ -687,11 +591,7 @@ func (m *meilisearch) Close() {
 	m.client.client.CloseIdleConnections()
 }
 
-func (m *meilisearch) GetBatches(param *BatchesQuery) (*BatchesResults, error) {
-	return m.GetBatchesWithContext(context.Background(), param)
-}
-
-func (m *meilisearch) GetBatchesWithContext(ctx context.Context, param *BatchesQuery) (*BatchesResults, error) {
+func (m *meilisearch) GetBatches(ctx context.Context, param *BatchesQuery) (*BatchesResults, error) {
 	resp := new(BatchesResults)
 	req := &internalRequest{
 		endpoint:            "/batches",
@@ -752,11 +652,7 @@ func (m *meilisearch) GetBatchesWithContext(ctx context.Context, param *BatchesQ
 	return resp, nil
 }
 
-func (m *meilisearch) GetBatch(batchUID int) (*Batch, error) {
-	return m.GetBatchWithContext(context.Background(), batchUID)
-}
-
-func (m *meilisearch) GetBatchWithContext(ctx context.Context, batchUID int) (*Batch, error) {
+func (m *meilisearch) GetBatch(ctx context.Context, batchUID int) (*Batch, error) {
 	resp := new(Batch)
 	req := &internalRequest{
 		endpoint:            fmt.Sprintf("/batches/%d", batchUID),
@@ -773,11 +669,7 @@ func (m *meilisearch) GetBatchWithContext(ctx context.Context, batchUID int) (*B
 	return resp, nil
 }
 
-func (m *meilisearch) Export(param *ExportParams) (*TaskInfo, error) {
-	return m.ExportWithContext(context.Background(), param)
-}
-
-func (m *meilisearch) ExportWithContext(ctx context.Context, param *ExportParams) (*TaskInfo, error) {
+func (m *meilisearch) Export(ctx context.Context, param *ExportParams) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/export",

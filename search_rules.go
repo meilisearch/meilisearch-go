@@ -6,11 +6,7 @@ import (
 	"net/http"
 )
 
-func (m *meilisearch) UpdateSearchRule(uid string, params *SearchRulesRequest) (*Task, error) {
-	return m.UpdateSearchRuleWithContext(context.Background(), uid, params)
-}
-
-func (m *meilisearch) UpdateSearchRuleWithContext(ctx context.Context, uid string, params *SearchRulesRequest) (*Task, error) {
+func (m *meilisearch) UpdateSearchRule(ctx context.Context, uid string, params *SearchRulesRequest) (*Task, error) {
 	resp := new(Task)
 
 	req := &internalRequest{
@@ -30,11 +26,7 @@ func (m *meilisearch) UpdateSearchRuleWithContext(ctx context.Context, uid strin
 	return resp, nil
 }
 
-func (m *meilisearch) ListSearchRules(params *SearchRulesParams) (*SearchRulesResults, error) {
-	return m.ListSearchRulesWithContext(context.Background(), params)
-}
-
-func (m *meilisearch) ListSearchRulesWithContext(ctx context.Context, params *SearchRulesParams) (*SearchRulesResults, error) {
+func (m *meilisearch) ListSearchRules(ctx context.Context, params *SearchRulesParams) (*SearchRulesResults, error) {
 	resp := new(SearchRulesResults)
 
 	req := &internalRequest{
@@ -54,11 +46,7 @@ func (m *meilisearch) ListSearchRulesWithContext(ctx context.Context, params *Se
 	return resp, nil
 }
 
-func (m *meilisearch) GetSearchRule(uid string) (*SearchRule, error) {
-	return m.GetSearchRuleWithContext(context.Background(), uid)
-}
-
-func (m *meilisearch) GetSearchRuleWithContext(ctx context.Context, uid string) (*SearchRule, error) {
+func (m *meilisearch) GetSearchRule(ctx context.Context, uid string) (*SearchRule, error) {
 	resp := new(SearchRule)
 
 	req := &internalRequest{
@@ -77,11 +65,7 @@ func (m *meilisearch) GetSearchRuleWithContext(ctx context.Context, uid string) 
 	return resp, nil
 }
 
-func (m *meilisearch) DeleteSearchRule(uid *string) (*Task, error) {
-	return m.DeleteSearchRuleWithContext(context.Background(), uid)
-}
-
-func (m *meilisearch) DeleteSearchRuleWithContext(ctx context.Context, uid *string) (*Task, error) {
+func (m *meilisearch) DeleteSearchRule(ctx context.Context, uid *string) (*Task, error) {
 	endpoint := "/dynamic-search-rules"
 	if uid != nil {
 		endpoint += fmt.Sprintf("/%s", *uid)

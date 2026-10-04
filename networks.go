@@ -5,11 +5,7 @@ import (
 	"net/http"
 )
 
-func (m *meilisearch) UpdateNetwork(params *UpdateNetworkRequest) (any, error) {
-	return m.UpdateNetworkWithContext(context.Background(), params)
-}
-
-func (m *meilisearch) UpdateNetworkWithContext(ctx context.Context, params *UpdateNetworkRequest) (any, error) {
+func (m *meilisearch) UpdateNetwork(ctx context.Context, params *UpdateNetworkRequest) (any, error) {
 	var resp any
 	if params.Leader.Valid() {
 		resp = new(Task)
@@ -31,11 +27,7 @@ func (m *meilisearch) UpdateNetworkWithContext(ctx context.Context, params *Upda
 	return resp, nil
 }
 
-func (m *meilisearch) GetNetwork() (*Network, error) {
-	return m.GetNetworkWithContext(context.Background())
-}
-
-func (m *meilisearch) GetNetworkWithContext(ctx context.Context) (*Network, error) {
+func (m *meilisearch) GetNetwork(ctx context.Context) (*Network, error) {
 	resp := new(Network)
 	req := &internalRequest{
 		endpoint:            "/network",

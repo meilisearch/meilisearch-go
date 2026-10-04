@@ -17,10 +17,19 @@ func NewMockmeilisearchKeyReader(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockmeilisearchKeyReader {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockmeilisearchKeyReader{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -39,73 +48,11 @@ func (_m *MockmeilisearchKeyReader) EXPECT() *MockmeilisearchKeyReader_Expecter 
 }
 
 // GetKey provides a mock function for the type MockmeilisearchKeyReader
-func (_mock *MockmeilisearchKeyReader) GetKey(identifier string) (*meilisearch.Key, error) {
-	ret := _mock.Called(identifier)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetKey")
-	}
-
-	var r0 *meilisearch.Key
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(string) (*meilisearch.Key, error)); ok {
-		return returnFunc(identifier)
-	}
-	if returnFunc, ok := ret.Get(0).(func(string) *meilisearch.Key); ok {
-		r0 = returnFunc(identifier)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Key)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(string) error); ok {
-		r1 = returnFunc(identifier)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchKeyReader_GetKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKey'
-type MockmeilisearchKeyReader_GetKey_Call struct {
-	*mock.Call
-}
-
-// GetKey is a helper method to define mock.On call
-//   - identifier string
-func (_e *MockmeilisearchKeyReader_Expecter) GetKey(identifier any) *MockmeilisearchKeyReader_GetKey_Call {
-	return &MockmeilisearchKeyReader_GetKey_Call{Call: _e.mock.On("GetKey", identifier)}
-}
-
-func (_c *MockmeilisearchKeyReader_GetKey_Call) Run(run func(identifier string)) *MockmeilisearchKeyReader_GetKey_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 string
-		if args[0] != nil {
-			arg0 = args[0].(string)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchKeyReader_GetKey_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyReader_GetKey_Call {
-	_c.Call.Return(key, err)
-	return _c
-}
-
-func (_c *MockmeilisearchKeyReader_GetKey_Call) RunAndReturn(run func(identifier string) (*meilisearch.Key, error)) *MockmeilisearchKeyReader_GetKey_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetKeyWithContext provides a mock function for the type MockmeilisearchKeyReader
-func (_mock *MockmeilisearchKeyReader) GetKeyWithContext(ctx context.Context, identifier string) (*meilisearch.Key, error) {
+func (_mock *MockmeilisearchKeyReader) GetKey(ctx context.Context, identifier string) (*meilisearch.Key, error) {
 	ret := _mock.Called(ctx, identifier)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetKeyWithContext")
+		panic("no return value specified for GetKey")
 	}
 
 	var r0 *meilisearch.Key
@@ -128,19 +75,19 @@ func (_mock *MockmeilisearchKeyReader) GetKeyWithContext(ctx context.Context, id
 	return r0, r1
 }
 
-// MockmeilisearchKeyReader_GetKeyWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKeyWithContext'
-type MockmeilisearchKeyReader_GetKeyWithContext_Call struct {
+// MockmeilisearchKeyReader_GetKey_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKey'
+type MockmeilisearchKeyReader_GetKey_Call struct {
 	*mock.Call
 }
 
-// GetKeyWithContext is a helper method to define mock.On call
+// GetKey is a helper method to define mock.On call
 //   - ctx context.Context
 //   - identifier string
-func (_e *MockmeilisearchKeyReader_Expecter) GetKeyWithContext(ctx any, identifier any) *MockmeilisearchKeyReader_GetKeyWithContext_Call {
-	return &MockmeilisearchKeyReader_GetKeyWithContext_Call{Call: _e.mock.On("GetKeyWithContext", ctx, identifier)}
+func (_e *MockmeilisearchKeyReader_Expecter) GetKey(ctx any, identifier any) *MockmeilisearchKeyReader_GetKey_Call {
+	return &MockmeilisearchKeyReader_GetKey_Call{Call: _e.mock.On("GetKey", ctx, identifier)}
 }
 
-func (_c *MockmeilisearchKeyReader_GetKeyWithContext_Call) Run(run func(ctx context.Context, identifier string)) *MockmeilisearchKeyReader_GetKeyWithContext_Call {
+func (_c *MockmeilisearchKeyReader_GetKey_Call) Run(run func(ctx context.Context, identifier string)) *MockmeilisearchKeyReader_GetKey_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -158,84 +105,22 @@ func (_c *MockmeilisearchKeyReader_GetKeyWithContext_Call) Run(run func(ctx cont
 	return _c
 }
 
-func (_c *MockmeilisearchKeyReader_GetKeyWithContext_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyReader_GetKeyWithContext_Call {
+func (_c *MockmeilisearchKeyReader_GetKey_Call) Return(key *meilisearch.Key, err error) *MockmeilisearchKeyReader_GetKey_Call {
 	_c.Call.Return(key, err)
 	return _c
 }
 
-func (_c *MockmeilisearchKeyReader_GetKeyWithContext_Call) RunAndReturn(run func(ctx context.Context, identifier string) (*meilisearch.Key, error)) *MockmeilisearchKeyReader_GetKeyWithContext_Call {
+func (_c *MockmeilisearchKeyReader_GetKey_Call) RunAndReturn(run func(ctx context.Context, identifier string) (*meilisearch.Key, error)) *MockmeilisearchKeyReader_GetKey_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetKeys provides a mock function for the type MockmeilisearchKeyReader
-func (_mock *MockmeilisearchKeyReader) GetKeys(param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error) {
-	ret := _mock.Called(param)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetKeys")
-	}
-
-	var r0 *meilisearch.KeysResults
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.KeysQuery) (*meilisearch.KeysResults, error)); ok {
-		return returnFunc(param)
-	}
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.KeysQuery) *meilisearch.KeysResults); ok {
-		r0 = returnFunc(param)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.KeysResults)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(*meilisearch.KeysQuery) error); ok {
-		r1 = returnFunc(param)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchKeyReader_GetKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKeys'
-type MockmeilisearchKeyReader_GetKeys_Call struct {
-	*mock.Call
-}
-
-// GetKeys is a helper method to define mock.On call
-//   - param *meilisearch.KeysQuery
-func (_e *MockmeilisearchKeyReader_Expecter) GetKeys(param any) *MockmeilisearchKeyReader_GetKeys_Call {
-	return &MockmeilisearchKeyReader_GetKeys_Call{Call: _e.mock.On("GetKeys", param)}
-}
-
-func (_c *MockmeilisearchKeyReader_GetKeys_Call) Run(run func(param *meilisearch.KeysQuery)) *MockmeilisearchKeyReader_GetKeys_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *meilisearch.KeysQuery
-		if args[0] != nil {
-			arg0 = args[0].(*meilisearch.KeysQuery)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchKeyReader_GetKeys_Call) Return(keysResults *meilisearch.KeysResults, err error) *MockmeilisearchKeyReader_GetKeys_Call {
-	_c.Call.Return(keysResults, err)
-	return _c
-}
-
-func (_c *MockmeilisearchKeyReader_GetKeys_Call) RunAndReturn(run func(param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error)) *MockmeilisearchKeyReader_GetKeys_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetKeysWithContext provides a mock function for the type MockmeilisearchKeyReader
-func (_mock *MockmeilisearchKeyReader) GetKeysWithContext(ctx context.Context, param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error) {
+func (_mock *MockmeilisearchKeyReader) GetKeys(ctx context.Context, param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error) {
 	ret := _mock.Called(ctx, param)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetKeysWithContext")
+		panic("no return value specified for GetKeys")
 	}
 
 	var r0 *meilisearch.KeysResults
@@ -258,19 +143,19 @@ func (_mock *MockmeilisearchKeyReader) GetKeysWithContext(ctx context.Context, p
 	return r0, r1
 }
 
-// MockmeilisearchKeyReader_GetKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKeysWithContext'
-type MockmeilisearchKeyReader_GetKeysWithContext_Call struct {
+// MockmeilisearchKeyReader_GetKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetKeys'
+type MockmeilisearchKeyReader_GetKeys_Call struct {
 	*mock.Call
 }
 
-// GetKeysWithContext is a helper method to define mock.On call
+// GetKeys is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.KeysQuery
-func (_e *MockmeilisearchKeyReader_Expecter) GetKeysWithContext(ctx any, param any) *MockmeilisearchKeyReader_GetKeysWithContext_Call {
-	return &MockmeilisearchKeyReader_GetKeysWithContext_Call{Call: _e.mock.On("GetKeysWithContext", ctx, param)}
+func (_e *MockmeilisearchKeyReader_Expecter) GetKeys(ctx any, param any) *MockmeilisearchKeyReader_GetKeys_Call {
+	return &MockmeilisearchKeyReader_GetKeys_Call{Call: _e.mock.On("GetKeys", ctx, param)}
 }
 
-func (_c *MockmeilisearchKeyReader_GetKeysWithContext_Call) Run(run func(ctx context.Context, param *meilisearch.KeysQuery)) *MockmeilisearchKeyReader_GetKeysWithContext_Call {
+func (_c *MockmeilisearchKeyReader_GetKeys_Call) Run(run func(ctx context.Context, param *meilisearch.KeysQuery)) *MockmeilisearchKeyReader_GetKeys_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -288,12 +173,12 @@ func (_c *MockmeilisearchKeyReader_GetKeysWithContext_Call) Run(run func(ctx con
 	return _c
 }
 
-func (_c *MockmeilisearchKeyReader_GetKeysWithContext_Call) Return(keysResults *meilisearch.KeysResults, err error) *MockmeilisearchKeyReader_GetKeysWithContext_Call {
+func (_c *MockmeilisearchKeyReader_GetKeys_Call) Return(keysResults *meilisearch.KeysResults, err error) *MockmeilisearchKeyReader_GetKeys_Call {
 	_c.Call.Return(keysResults, err)
 	return _c
 }
 
-func (_c *MockmeilisearchKeyReader_GetKeysWithContext_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error)) *MockmeilisearchKeyReader_GetKeysWithContext_Call {
+func (_c *MockmeilisearchKeyReader_GetKeys_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.KeysQuery) (*meilisearch.KeysResults, error)) *MockmeilisearchKeyReader_GetKeys_Call {
 	_c.Call.Return(run)
 	return _c
 }

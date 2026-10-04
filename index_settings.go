@@ -5,11 +5,7 @@ import (
 	"net/http"
 )
 
-func (i *index) GetSettings() (*Settings, error) {
-	return i.GetSettingsWithContext(context.Background())
-}
-
-func (i *index) GetSettingsWithContext(ctx context.Context) (*Settings, error) {
+func (i *index) GetSettings(ctx context.Context) (*Settings, error) {
 	resp := new(Settings)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings",
@@ -25,11 +21,7 @@ func (i *index) GetSettingsWithContext(ctx context.Context) (*Settings, error) {
 	return resp, nil
 }
 
-func (i *index) UpdateSettings(request *Settings) (*TaskInfo, error) {
-	return i.UpdateSettingsWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateSettingsWithContext(ctx context.Context, request *Settings) (*TaskInfo, error) {
+func (i *index) UpdateSettings(ctx context.Context, request *Settings) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings",
@@ -46,11 +38,7 @@ func (i *index) UpdateSettingsWithContext(ctx context.Context, request *Settings
 	return resp, nil
 }
 
-func (i *index) ResetSettings() (*TaskInfo, error) {
-	return i.ResetSettingsWithContext(context.Background())
-}
-
-func (i *index) ResetSettingsWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetSettings(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings",
@@ -66,11 +54,7 @@ func (i *index) ResetSettingsWithContext(ctx context.Context) (*TaskInfo, error)
 	return resp, nil
 }
 
-func (i *index) GetRankingRules() (*[]string, error) {
-	return i.GetRankingRulesWithContext(context.Background())
-}
-
-func (i *index) GetRankingRulesWithContext(ctx context.Context) (*[]string, error) {
+func (i *index) GetRankingRules(ctx context.Context) (*[]string, error) {
 	resp := &[]string{}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/ranking-rules",
@@ -86,11 +70,7 @@ func (i *index) GetRankingRulesWithContext(ctx context.Context) (*[]string, erro
 	return resp, nil
 }
 
-func (i *index) UpdateRankingRules(request *[]string) (*TaskInfo, error) {
-	return i.UpdateRankingRulesWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateRankingRulesWithContext(ctx context.Context, request *[]string) (*TaskInfo, error) {
+func (i *index) UpdateRankingRules(ctx context.Context, request *[]string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/ranking-rules",
@@ -107,11 +87,7 @@ func (i *index) UpdateRankingRulesWithContext(ctx context.Context, request *[]st
 	return resp, nil
 }
 
-func (i *index) ResetRankingRules() (*TaskInfo, error) {
-	return i.ResetRankingRulesWithContext(context.Background())
-}
-
-func (i *index) ResetRankingRulesWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetRankingRules(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/ranking-rules",
@@ -127,11 +103,7 @@ func (i *index) ResetRankingRulesWithContext(ctx context.Context) (*TaskInfo, er
 	return resp, nil
 }
 
-func (i *index) GetDistinctAttribute() (*string, error) {
-	return i.GetDistinctAttributeWithContext(context.Background())
-}
-
-func (i *index) GetDistinctAttributeWithContext(ctx context.Context) (*string, error) {
+func (i *index) GetDistinctAttribute(ctx context.Context) (*string, error) {
 	resp := new(string)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/distinct-attribute",
@@ -147,11 +119,7 @@ func (i *index) GetDistinctAttributeWithContext(ctx context.Context) (*string, e
 	return resp, nil
 }
 
-func (i *index) UpdateDistinctAttribute(request string) (*TaskInfo, error) {
-	return i.UpdateDistinctAttributeWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateDistinctAttributeWithContext(ctx context.Context, request string) (*TaskInfo, error) {
+func (i *index) UpdateDistinctAttribute(ctx context.Context, request string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/distinct-attribute",
@@ -168,11 +136,7 @@ func (i *index) UpdateDistinctAttributeWithContext(ctx context.Context, request 
 	return resp, nil
 }
 
-func (i *index) ResetDistinctAttribute() (*TaskInfo, error) {
-	return i.ResetDistinctAttributeWithContext(context.Background())
-}
-
-func (i *index) ResetDistinctAttributeWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetDistinctAttribute(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/distinct-attribute",
@@ -188,11 +152,7 @@ func (i *index) ResetDistinctAttributeWithContext(ctx context.Context) (*TaskInf
 	return resp, nil
 }
 
-func (i *index) GetSearchableAttributes() (*[]string, error) {
-	return i.GetSearchableAttributesWithContext(context.Background())
-}
-
-func (i *index) GetSearchableAttributesWithContext(ctx context.Context) (*[]string, error) {
+func (i *index) GetSearchableAttributes(ctx context.Context) (*[]string, error) {
 	resp := &[]string{}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/searchable-attributes",
@@ -208,11 +168,7 @@ func (i *index) GetSearchableAttributesWithContext(ctx context.Context) (*[]stri
 	return resp, nil
 }
 
-func (i *index) UpdateSearchableAttributes(request *[]string) (*TaskInfo, error) {
-	return i.UpdateSearchableAttributesWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateSearchableAttributesWithContext(ctx context.Context, request *[]string) (*TaskInfo, error) {
+func (i *index) UpdateSearchableAttributes(ctx context.Context, request *[]string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/searchable-attributes",
@@ -229,11 +185,7 @@ func (i *index) UpdateSearchableAttributesWithContext(ctx context.Context, reque
 	return resp, nil
 }
 
-func (i *index) ResetSearchableAttributes() (*TaskInfo, error) {
-	return i.ResetSearchableAttributesWithContext(context.Background())
-}
-
-func (i *index) ResetSearchableAttributesWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetSearchableAttributes(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/searchable-attributes",
@@ -249,11 +201,7 @@ func (i *index) ResetSearchableAttributesWithContext(ctx context.Context) (*Task
 	return resp, nil
 }
 
-func (i *index) GetDisplayedAttributes() (*[]string, error) {
-	return i.GetDisplayedAttributesWithContext(context.Background())
-}
-
-func (i *index) GetDisplayedAttributesWithContext(ctx context.Context) (*[]string, error) {
+func (i *index) GetDisplayedAttributes(ctx context.Context) (*[]string, error) {
 	resp := &[]string{}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/displayed-attributes",
@@ -269,11 +217,7 @@ func (i *index) GetDisplayedAttributesWithContext(ctx context.Context) (*[]strin
 	return resp, nil
 }
 
-func (i *index) UpdateDisplayedAttributes(request *[]string) (*TaskInfo, error) {
-	return i.UpdateDisplayedAttributesWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateDisplayedAttributesWithContext(ctx context.Context, request *[]string) (*TaskInfo, error) {
+func (i *index) UpdateDisplayedAttributes(ctx context.Context, request *[]string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/displayed-attributes",
@@ -290,11 +234,7 @@ func (i *index) UpdateDisplayedAttributesWithContext(ctx context.Context, reques
 	return resp, nil
 }
 
-func (i *index) ResetDisplayedAttributes() (*TaskInfo, error) {
-	return i.ResetDisplayedAttributesWithContext(context.Background())
-}
-
-func (i *index) ResetDisplayedAttributesWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetDisplayedAttributes(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/displayed-attributes",
@@ -310,11 +250,7 @@ func (i *index) ResetDisplayedAttributesWithContext(ctx context.Context) (*TaskI
 	return resp, nil
 }
 
-func (i *index) GetStopWords() (*[]string, error) {
-	return i.GetStopWordsWithContext(context.Background())
-}
-
-func (i *index) GetStopWordsWithContext(ctx context.Context) (*[]string, error) {
+func (i *index) GetStopWords(ctx context.Context) (*[]string, error) {
 	resp := &[]string{}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/stop-words",
@@ -330,11 +266,7 @@ func (i *index) GetStopWordsWithContext(ctx context.Context) (*[]string, error) 
 	return resp, nil
 }
 
-func (i *index) UpdateStopWords(request *[]string) (*TaskInfo, error) {
-	return i.UpdateStopWordsWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateStopWordsWithContext(ctx context.Context, request *[]string) (*TaskInfo, error) {
+func (i *index) UpdateStopWords(ctx context.Context, request *[]string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/stop-words",
@@ -351,11 +283,7 @@ func (i *index) UpdateStopWordsWithContext(ctx context.Context, request *[]strin
 	return resp, nil
 }
 
-func (i *index) ResetStopWords() (*TaskInfo, error) {
-	return i.ResetStopWordsWithContext(context.Background())
-}
-
-func (i *index) ResetStopWordsWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetStopWords(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/stop-words",
@@ -371,11 +299,7 @@ func (i *index) ResetStopWordsWithContext(ctx context.Context) (*TaskInfo, error
 	return resp, nil
 }
 
-func (i *index) GetSynonyms() (*map[string][]string, error) {
-	return i.GetSynonymsWithContext(context.Background())
-}
-
-func (i *index) GetSynonymsWithContext(ctx context.Context) (*map[string][]string, error) {
+func (i *index) GetSynonyms(ctx context.Context) (*map[string][]string, error) {
 	resp := &map[string][]string{}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/synonyms",
@@ -391,11 +315,7 @@ func (i *index) GetSynonymsWithContext(ctx context.Context) (*map[string][]strin
 	return resp, nil
 }
 
-func (i *index) UpdateSynonyms(request *map[string][]string) (*TaskInfo, error) {
-	return i.UpdateSynonymsWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateSynonymsWithContext(ctx context.Context, request *map[string][]string) (*TaskInfo, error) {
+func (i *index) UpdateSynonyms(ctx context.Context, request *map[string][]string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/synonyms",
@@ -412,11 +332,7 @@ func (i *index) UpdateSynonymsWithContext(ctx context.Context, request *map[stri
 	return resp, nil
 }
 
-func (i *index) ResetSynonyms() (*TaskInfo, error) {
-	return i.ResetSynonymsWithContext(context.Background())
-}
-
-func (i *index) ResetSynonymsWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetSynonyms(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/synonyms",
@@ -432,11 +348,7 @@ func (i *index) ResetSynonymsWithContext(ctx context.Context) (*TaskInfo, error)
 	return resp, nil
 }
 
-func (i *index) GetFilterableAttributes() (*[]interface{}, error) {
-	return i.GetFilterableAttributesWithContext(context.Background())
-}
-
-func (i *index) GetFilterableAttributesWithContext(ctx context.Context) (*[]interface{}, error) {
+func (i *index) GetFilterableAttributes(ctx context.Context) (*[]interface{}, error) {
 	resp := &[]interface{}{}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/filterable-attributes",
@@ -452,11 +364,7 @@ func (i *index) GetFilterableAttributesWithContext(ctx context.Context) (*[]inte
 	return resp, nil
 }
 
-func (i *index) UpdateFilterableAttributes(request *[]interface{}) (*TaskInfo, error) {
-	return i.UpdateFilterableAttributesWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateFilterableAttributesWithContext(ctx context.Context, request *[]interface{}) (*TaskInfo, error) {
+func (i *index) UpdateFilterableAttributes(ctx context.Context, request *[]interface{}) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/filterable-attributes",
@@ -473,11 +381,7 @@ func (i *index) UpdateFilterableAttributesWithContext(ctx context.Context, reque
 	return resp, nil
 }
 
-func (i *index) ResetFilterableAttributes() (*TaskInfo, error) {
-	return i.ResetFilterableAttributesWithContext(context.Background())
-}
-
-func (i *index) ResetFilterableAttributesWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetFilterableAttributes(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/filterable-attributes",
@@ -493,11 +397,7 @@ func (i *index) ResetFilterableAttributesWithContext(ctx context.Context) (*Task
 	return resp, nil
 }
 
-func (i *index) GetSortableAttributes() (*[]string, error) {
-	return i.GetSortableAttributesWithContext(context.Background())
-}
-
-func (i *index) GetSortableAttributesWithContext(ctx context.Context) (*[]string, error) {
+func (i *index) GetSortableAttributes(ctx context.Context) (*[]string, error) {
 	resp := &[]string{}
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/sortable-attributes",
@@ -513,11 +413,7 @@ func (i *index) GetSortableAttributesWithContext(ctx context.Context) (*[]string
 	return resp, nil
 }
 
-func (i *index) UpdateSortableAttributes(request *[]string) (*TaskInfo, error) {
-	return i.UpdateSortableAttributesWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateSortableAttributesWithContext(ctx context.Context, request *[]string) (*TaskInfo, error) {
+func (i *index) UpdateSortableAttributes(ctx context.Context, request *[]string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/sortable-attributes",
@@ -534,11 +430,7 @@ func (i *index) UpdateSortableAttributesWithContext(ctx context.Context, request
 	return resp, nil
 }
 
-func (i *index) ResetSortableAttributes() (*TaskInfo, error) {
-	return i.ResetSortableAttributesWithContext(context.Background())
-}
-
-func (i *index) ResetSortableAttributesWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetSortableAttributes(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/sortable-attributes",
@@ -554,11 +446,7 @@ func (i *index) ResetSortableAttributesWithContext(ctx context.Context) (*TaskIn
 	return resp, nil
 }
 
-func (i *index) GetTypoTolerance() (*TypoTolerance, error) {
-	return i.GetTypoToleranceWithContext(context.Background())
-}
-
-func (i *index) GetTypoToleranceWithContext(ctx context.Context) (*TypoTolerance, error) {
+func (i *index) GetTypoTolerance(ctx context.Context) (*TypoTolerance, error) {
 	resp := new(TypoTolerance)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/typo-tolerance",
@@ -574,11 +462,7 @@ func (i *index) GetTypoToleranceWithContext(ctx context.Context) (*TypoTolerance
 	return resp, nil
 }
 
-func (i *index) UpdateTypoTolerance(request *TypoTolerance) (*TaskInfo, error) {
-	return i.UpdateTypoToleranceWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateTypoToleranceWithContext(ctx context.Context, request *TypoTolerance) (*TaskInfo, error) {
+func (i *index) UpdateTypoTolerance(ctx context.Context, request *TypoTolerance) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/typo-tolerance",
@@ -595,11 +479,7 @@ func (i *index) UpdateTypoToleranceWithContext(ctx context.Context, request *Typ
 	return resp, nil
 }
 
-func (i *index) ResetTypoTolerance() (*TaskInfo, error) {
-	return i.ResetTypoToleranceWithContext(context.Background())
-}
-
-func (i *index) ResetTypoToleranceWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetTypoTolerance(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/typo-tolerance",
@@ -615,11 +495,7 @@ func (i *index) ResetTypoToleranceWithContext(ctx context.Context) (*TaskInfo, e
 	return resp, nil
 }
 
-func (i *index) GetPagination() (*Pagination, error) {
-	return i.GetPaginationWithContext(context.Background())
-}
-
-func (i *index) GetPaginationWithContext(ctx context.Context) (*Pagination, error) {
+func (i *index) GetPagination(ctx context.Context) (*Pagination, error) {
 	resp := new(Pagination)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/pagination",
@@ -635,11 +511,7 @@ func (i *index) GetPaginationWithContext(ctx context.Context) (*Pagination, erro
 	return resp, nil
 }
 
-func (i *index) UpdatePagination(request *Pagination) (*TaskInfo, error) {
-	return i.UpdatePaginationWithContext(context.Background(), request)
-}
-
-func (i *index) UpdatePaginationWithContext(ctx context.Context, request *Pagination) (*TaskInfo, error) {
+func (i *index) UpdatePagination(ctx context.Context, request *Pagination) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/pagination",
@@ -656,11 +528,7 @@ func (i *index) UpdatePaginationWithContext(ctx context.Context, request *Pagina
 	return resp, nil
 }
 
-func (i *index) ResetPagination() (*TaskInfo, error) {
-	return i.ResetPaginationWithContext(context.Background())
-}
-
-func (i *index) ResetPaginationWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetPagination(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/pagination",
@@ -676,11 +544,7 @@ func (i *index) ResetPaginationWithContext(ctx context.Context) (*TaskInfo, erro
 	return resp, nil
 }
 
-func (i *index) GetFaceting() (*Faceting, error) {
-	return i.GetFacetingWithContext(context.Background())
-}
-
-func (i *index) GetFacetingWithContext(ctx context.Context) (*Faceting, error) {
+func (i *index) GetFaceting(ctx context.Context) (*Faceting, error) {
 	resp := new(Faceting)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/faceting",
@@ -696,11 +560,7 @@ func (i *index) GetFacetingWithContext(ctx context.Context) (*Faceting, error) {
 	return resp, nil
 }
 
-func (i *index) UpdateFaceting(request *Faceting) (*TaskInfo, error) {
-	return i.UpdateFacetingWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateFacetingWithContext(ctx context.Context, request *Faceting) (*TaskInfo, error) {
+func (i *index) UpdateFaceting(ctx context.Context, request *Faceting) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/faceting",
@@ -717,11 +577,7 @@ func (i *index) UpdateFacetingWithContext(ctx context.Context, request *Faceting
 	return resp, nil
 }
 
-func (i *index) ResetFaceting() (*TaskInfo, error) {
-	return i.ResetFacetingWithContext(context.Background())
-}
-
-func (i *index) ResetFacetingWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetFaceting(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/faceting",
@@ -737,11 +593,7 @@ func (i *index) ResetFacetingWithContext(ctx context.Context) (*TaskInfo, error)
 	return resp, nil
 }
 
-func (i *index) GetEmbedders() (map[string]Embedder, error) {
-	return i.GetEmbeddersWithContext(context.Background())
-}
-
-func (i *index) GetEmbeddersWithContext(ctx context.Context) (map[string]Embedder, error) {
+func (i *index) GetEmbedders(ctx context.Context) (map[string]Embedder, error) {
 	resp := make(map[string]Embedder)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/embedders",
@@ -757,11 +609,7 @@ func (i *index) GetEmbeddersWithContext(ctx context.Context) (map[string]Embedde
 	return resp, nil
 }
 
-func (i *index) UpdateEmbedders(request map[string]Embedder) (*TaskInfo, error) {
-	return i.UpdateEmbeddersWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateEmbeddersWithContext(ctx context.Context, request map[string]Embedder) (*TaskInfo, error) {
+func (i *index) UpdateEmbedders(ctx context.Context, request map[string]Embedder) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/embedders",
@@ -778,11 +626,7 @@ func (i *index) UpdateEmbeddersWithContext(ctx context.Context, request map[stri
 	return resp, nil
 }
 
-func (i *index) ResetEmbedders() (*TaskInfo, error) {
-	return i.ResetEmbeddersWithContext(context.Background())
-}
-
-func (i *index) ResetEmbeddersWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetEmbedders(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/embedders",
@@ -798,11 +642,7 @@ func (i *index) ResetEmbeddersWithContext(ctx context.Context) (*TaskInfo, error
 	return resp, nil
 }
 
-func (i *index) GetSearchCutoffMs() (int64, error) {
-	return i.GetSearchCutoffMsWithContext(context.Background())
-}
-
-func (i *index) GetSearchCutoffMsWithContext(ctx context.Context) (int64, error) {
+func (i *index) GetSearchCutoffMs(ctx context.Context) (int64, error) {
 	var resp int64
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/search-cutoff-ms",
@@ -818,11 +658,7 @@ func (i *index) GetSearchCutoffMsWithContext(ctx context.Context) (int64, error)
 	return resp, nil
 }
 
-func (i *index) UpdateSearchCutoffMs(request int64) (*TaskInfo, error) {
-	return i.UpdateSearchCutoffMsWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateSearchCutoffMsWithContext(ctx context.Context, request int64) (*TaskInfo, error) {
+func (i *index) UpdateSearchCutoffMs(ctx context.Context, request int64) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/search-cutoff-ms",
@@ -839,11 +675,7 @@ func (i *index) UpdateSearchCutoffMsWithContext(ctx context.Context, request int
 	return resp, nil
 }
 
-func (i *index) ResetSearchCutoffMs() (*TaskInfo, error) {
-	return i.ResetSearchCutoffMsWithContext(context.Background())
-}
-
-func (i *index) ResetSearchCutoffMsWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetSearchCutoffMs(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/search-cutoff-ms",
@@ -859,11 +691,7 @@ func (i *index) ResetSearchCutoffMsWithContext(ctx context.Context) (*TaskInfo, 
 	return resp, nil
 }
 
-func (i *index) GetDictionary() ([]string, error) {
-	return i.GetDictionaryWithContext(context.Background())
-}
-
-func (i *index) GetDictionaryWithContext(ctx context.Context) ([]string, error) {
+func (i *index) GetDictionary(ctx context.Context) ([]string, error) {
 	resp := make([]string, 0)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/dictionary",
@@ -879,11 +707,7 @@ func (i *index) GetDictionaryWithContext(ctx context.Context) ([]string, error) 
 	return resp, nil
 }
 
-func (i *index) UpdateDictionary(words []string) (*TaskInfo, error) {
-	return i.UpdateDictionaryWithContext(context.Background(), words)
-}
-
-func (i *index) UpdateDictionaryWithContext(ctx context.Context, words []string) (*TaskInfo, error) {
+func (i *index) UpdateDictionary(ctx context.Context, words []string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/dictionary",
@@ -900,11 +724,7 @@ func (i *index) UpdateDictionaryWithContext(ctx context.Context, words []string)
 	return resp, nil
 }
 
-func (i *index) ResetDictionary() (*TaskInfo, error) {
-	return i.ResetDictionaryWithContext(context.Background())
-}
-
-func (i *index) ResetDictionaryWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetDictionary(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/dictionary",
@@ -920,11 +740,7 @@ func (i *index) ResetDictionaryWithContext(ctx context.Context) (*TaskInfo, erro
 	return resp, nil
 }
 
-func (i *index) GetSeparatorTokens() ([]string, error) {
-	return i.GetSeparatorTokensWithContext(context.Background())
-}
-
-func (i *index) GetSeparatorTokensWithContext(ctx context.Context) ([]string, error) {
+func (i *index) GetSeparatorTokens(ctx context.Context) ([]string, error) {
 	resp := make([]string, 0)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/separator-tokens",
@@ -940,11 +756,7 @@ func (i *index) GetSeparatorTokensWithContext(ctx context.Context) ([]string, er
 	return resp, nil
 }
 
-func (i *index) UpdateSeparatorTokens(req []string) (*TaskInfo, error) {
-	return i.UpdateSeparatorTokensWithContext(context.Background(), req)
-}
-
-func (i *index) UpdateSeparatorTokensWithContext(ctx context.Context, tokens []string) (*TaskInfo, error) {
+func (i *index) UpdateSeparatorTokens(ctx context.Context, tokens []string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/separator-tokens",
@@ -961,11 +773,7 @@ func (i *index) UpdateSeparatorTokensWithContext(ctx context.Context, tokens []s
 	return resp, nil
 }
 
-func (i *index) ResetSeparatorTokens() (*TaskInfo, error) {
-	return i.ResetSeparatorTokensWithContext(context.Background())
-}
-
-func (i *index) ResetSeparatorTokensWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetSeparatorTokens(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/separator-tokens",
@@ -981,11 +789,7 @@ func (i *index) ResetSeparatorTokensWithContext(ctx context.Context) (*TaskInfo,
 	return resp, nil
 }
 
-func (i *index) GetNonSeparatorTokens() ([]string, error) {
-	return i.GetNonSeparatorTokensWithContext(context.Background())
-}
-
-func (i *index) GetNonSeparatorTokensWithContext(ctx context.Context) ([]string, error) {
+func (i *index) GetNonSeparatorTokens(ctx context.Context) ([]string, error) {
 	resp := make([]string, 0)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/non-separator-tokens",
@@ -1001,11 +805,7 @@ func (i *index) GetNonSeparatorTokensWithContext(ctx context.Context) ([]string,
 	return resp, nil
 }
 
-func (i *index) UpdateNonSeparatorTokens(req []string) (*TaskInfo, error) {
-	return i.UpdateNonSeparatorTokensWithContext(context.Background(), req)
-}
-
-func (i *index) UpdateNonSeparatorTokensWithContext(ctx context.Context, tokens []string) (*TaskInfo, error) {
+func (i *index) UpdateNonSeparatorTokens(ctx context.Context, tokens []string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/non-separator-tokens",
@@ -1022,11 +822,7 @@ func (i *index) UpdateNonSeparatorTokensWithContext(ctx context.Context, tokens 
 	return resp, nil
 }
 
-func (i *index) ResetNonSeparatorTokens() (*TaskInfo, error) {
-	return i.ResetNonSeparatorTokensWithContext(context.Background())
-}
-
-func (i *index) ResetNonSeparatorTokensWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetNonSeparatorTokens(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/non-separator-tokens",
@@ -1042,11 +838,7 @@ func (i *index) ResetNonSeparatorTokensWithContext(ctx context.Context) (*TaskIn
 	return resp, nil
 }
 
-func (i *index) GetProximityPrecision() (ProximityPrecisionType, error) {
-	return i.GetProximityPrecisionWithContext(context.Background())
-}
-
-func (i *index) GetProximityPrecisionWithContext(ctx context.Context) (ProximityPrecisionType, error) {
+func (i *index) GetProximityPrecision(ctx context.Context) (ProximityPrecisionType, error) {
 	resp := new(ProximityPrecisionType)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/proximity-precision",
@@ -1062,11 +854,7 @@ func (i *index) GetProximityPrecisionWithContext(ctx context.Context) (Proximity
 	return *resp, nil
 }
 
-func (i *index) UpdateProximityPrecision(proximityType ProximityPrecisionType) (*TaskInfo, error) {
-	return i.UpdateProximityPrecisionWithContext(context.Background(), proximityType)
-}
-
-func (i *index) UpdateProximityPrecisionWithContext(ctx context.Context, proximityType ProximityPrecisionType) (*TaskInfo, error) {
+func (i *index) UpdateProximityPrecision(ctx context.Context, proximityType ProximityPrecisionType) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/proximity-precision",
@@ -1083,11 +871,7 @@ func (i *index) UpdateProximityPrecisionWithContext(ctx context.Context, proximi
 	return resp, nil
 }
 
-func (i *index) ResetProximityPrecision() (*TaskInfo, error) {
-	return i.ResetProximityPrecisionWithContext(context.Background())
-}
-
-func (i *index) ResetProximityPrecisionWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetProximityPrecision(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/proximity-precision",
@@ -1103,11 +887,7 @@ func (i *index) ResetProximityPrecisionWithContext(ctx context.Context) (*TaskIn
 	return resp, nil
 }
 
-func (i *index) GetLocalizedAttributes() ([]*LocalizedAttributes, error) {
-	return i.GetLocalizedAttributesWithContext(context.Background())
-}
-
-func (i *index) GetLocalizedAttributesWithContext(ctx context.Context) ([]*LocalizedAttributes, error) {
+func (i *index) GetLocalizedAttributes(ctx context.Context) ([]*LocalizedAttributes, error) {
 	resp := make([]*LocalizedAttributes, 0)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/localized-attributes",
@@ -1123,11 +903,7 @@ func (i *index) GetLocalizedAttributesWithContext(ctx context.Context) ([]*Local
 	return resp, nil
 }
 
-func (i *index) UpdateLocalizedAttributes(request []*LocalizedAttributes) (*TaskInfo, error) {
-	return i.UpdateLocalizedAttributesWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateLocalizedAttributesWithContext(ctx context.Context, request []*LocalizedAttributes) (*TaskInfo, error) {
+func (i *index) UpdateLocalizedAttributes(ctx context.Context, request []*LocalizedAttributes) (*TaskInfo, error) {
 
 	resp := new(TaskInfo)
 	req := &internalRequest{
@@ -1145,11 +921,7 @@ func (i *index) UpdateLocalizedAttributesWithContext(ctx context.Context, reques
 	return resp, nil
 }
 
-func (i *index) ResetLocalizedAttributes() (*TaskInfo, error) {
-	return i.ResetLocalizedAttributesWithContext(context.Background())
-}
-
-func (i *index) ResetLocalizedAttributesWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetLocalizedAttributes(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/localized-attributes",
@@ -1165,11 +937,7 @@ func (i *index) ResetLocalizedAttributesWithContext(ctx context.Context) (*TaskI
 	return resp, nil
 }
 
-func (i *index) GetPrefixSearch() (*string, error) {
-	return i.GetPrefixSearchWithContext(context.Background())
-}
-
-func (i *index) GetPrefixSearchWithContext(ctx context.Context) (*string, error) {
+func (i *index) GetPrefixSearch(ctx context.Context) (*string, error) {
 	resp := new(string)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/prefix-search",
@@ -1185,11 +953,7 @@ func (i *index) GetPrefixSearchWithContext(ctx context.Context) (*string, error)
 	return resp, nil
 }
 
-func (i *index) UpdatePrefixSearch(request string) (*TaskInfo, error) {
-	return i.UpdatePrefixSearchWithContext(context.Background(), request)
-}
-
-func (i *index) UpdatePrefixSearchWithContext(ctx context.Context, request string) (*TaskInfo, error) {
+func (i *index) UpdatePrefixSearch(ctx context.Context, request string) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/prefix-search",
@@ -1206,11 +970,7 @@ func (i *index) UpdatePrefixSearchWithContext(ctx context.Context, request strin
 	return resp, nil
 }
 
-func (i *index) ResetPrefixSearch() (*TaskInfo, error) {
-	return i.ResetPrefixSearchWithContext(context.Background())
-}
-
-func (i *index) ResetPrefixSearchWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetPrefixSearch(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/prefix-search",
@@ -1226,11 +986,7 @@ func (i *index) ResetPrefixSearchWithContext(ctx context.Context) (*TaskInfo, er
 	return resp, nil
 }
 
-func (i *index) GetFacetSearch() (bool, error) {
-	return i.GetFacetSearchWithContext(context.Background())
-}
-
-func (i *index) GetFacetSearchWithContext(ctx context.Context) (bool, error) {
+func (i *index) GetFacetSearch(ctx context.Context) (bool, error) {
 	var resp bool
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/facet-search",
@@ -1246,11 +1002,7 @@ func (i *index) GetFacetSearchWithContext(ctx context.Context) (bool, error) {
 	return resp, nil
 }
 
-func (i *index) UpdateFacetSearch(request bool) (*TaskInfo, error) {
-	return i.UpdateFacetSearchWithContext(context.Background(), request)
-}
-
-func (i *index) UpdateFacetSearchWithContext(ctx context.Context, request bool) (*TaskInfo, error) {
+func (i *index) UpdateFacetSearch(ctx context.Context, request bool) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/facet-search",
@@ -1267,11 +1019,7 @@ func (i *index) UpdateFacetSearchWithContext(ctx context.Context, request bool) 
 	return resp, nil
 }
 
-func (i *index) ResetFacetSearch() (*TaskInfo, error) {
-	return i.ResetFacetSearchWithContext(context.Background())
-}
-
-func (i *index) ResetFacetSearchWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetFacetSearch(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/facet-search",
@@ -1287,11 +1035,7 @@ func (i *index) ResetFacetSearchWithContext(ctx context.Context) (*TaskInfo, err
 	return resp, nil
 }
 
-func (i *index) GetForeignKeys() ([]ForeignKey, error) {
-	return i.GetForeignKeysWithContext(context.Background())
-}
-
-func (i *index) GetForeignKeysWithContext(ctx context.Context) ([]ForeignKey, error) {
+func (i *index) GetForeignKeys(ctx context.Context) ([]ForeignKey, error) {
 	var resp []ForeignKey
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/foreign-keys",
@@ -1306,11 +1050,7 @@ func (i *index) GetForeignKeysWithContext(ctx context.Context) ([]ForeignKey, er
 	return resp, nil
 }
 
-func (i *index) UpdateForeignKeys(foreignKeys []ForeignKey) (*TaskInfo, error) {
-	return i.UpdateForeignKeysWithContext(context.Background(), foreignKeys)
-}
-
-func (i *index) UpdateForeignKeysWithContext(ctx context.Context, foreignKeys []ForeignKey) (*TaskInfo, error) {
+func (i *index) UpdateForeignKeys(ctx context.Context, foreignKeys []ForeignKey) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/foreign-keys",
@@ -1327,11 +1067,7 @@ func (i *index) UpdateForeignKeysWithContext(ctx context.Context, foreignKeys []
 	return resp, nil
 }
 
-func (i *index) ResetForeignKeys() (*TaskInfo, error) {
-	return i.ResetForeignKeysWithContext(context.Background())
-}
-
-func (i *index) ResetForeignKeysWithContext(ctx context.Context) (*TaskInfo, error) {
+func (i *index) ResetForeignKeys(ctx context.Context) (*TaskInfo, error) {
 	resp := new(TaskInfo)
 	req := &internalRequest{
 		endpoint:            "/indexes/" + i.uid + "/settings/foreign-keys",

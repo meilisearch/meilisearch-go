@@ -6,11 +6,7 @@ import (
 	"strconv"
 )
 
-func (m *meilisearch) GetTaskDocuments(taskUID int64, dst interface{}) error {
-	return m.GetTaskDocumentsWithContext(context.Background(), taskUID, dst)
-}
-
-func (m *meilisearch) GetTaskDocumentsWithContext(ctx context.Context, taskUID int64, dst interface{}) error {
+func (m *meilisearch) GetTaskDocuments(ctx context.Context, taskUID int64, dst interface{}) error {
 	req := &internalRequest{
 		endpoint:             "/tasks/" + strconv.FormatInt(taskUID, 10) + "/documents",
 		method:               http.MethodGet,

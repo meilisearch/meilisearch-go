@@ -18,10 +18,19 @@ func NewMockmeilisearchTaskReader(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockmeilisearchTaskReader {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockmeilisearchTaskReader{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -40,73 +49,11 @@ func (_m *MockmeilisearchTaskReader) EXPECT() *MockmeilisearchTaskReader_Expecte
 }
 
 // GetTask provides a mock function for the type MockmeilisearchTaskReader
-func (_mock *MockmeilisearchTaskReader) GetTask(taskUID int64) (*meilisearch.Task, error) {
-	ret := _mock.Called(taskUID)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetTask")
-	}
-
-	var r0 *meilisearch.Task
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(int64) (*meilisearch.Task, error)); ok {
-		return returnFunc(taskUID)
-	}
-	if returnFunc, ok := ret.Get(0).(func(int64) *meilisearch.Task); ok {
-		r0 = returnFunc(taskUID)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Task)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(int64) error); ok {
-		r1 = returnFunc(taskUID)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchTaskReader_GetTask_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTask'
-type MockmeilisearchTaskReader_GetTask_Call struct {
-	*mock.Call
-}
-
-// GetTask is a helper method to define mock.On call
-//   - taskUID int64
-func (_e *MockmeilisearchTaskReader_Expecter) GetTask(taskUID any) *MockmeilisearchTaskReader_GetTask_Call {
-	return &MockmeilisearchTaskReader_GetTask_Call{Call: _e.mock.On("GetTask", taskUID)}
-}
-
-func (_c *MockmeilisearchTaskReader_GetTask_Call) Run(run func(taskUID int64)) *MockmeilisearchTaskReader_GetTask_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 int64
-		if args[0] != nil {
-			arg0 = args[0].(int64)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchTaskReader_GetTask_Call) Return(task *meilisearch.Task, err error) *MockmeilisearchTaskReader_GetTask_Call {
-	_c.Call.Return(task, err)
-	return _c
-}
-
-func (_c *MockmeilisearchTaskReader_GetTask_Call) RunAndReturn(run func(taskUID int64) (*meilisearch.Task, error)) *MockmeilisearchTaskReader_GetTask_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetTaskWithContext provides a mock function for the type MockmeilisearchTaskReader
-func (_mock *MockmeilisearchTaskReader) GetTaskWithContext(ctx context.Context, taskUID int64) (*meilisearch.Task, error) {
+func (_mock *MockmeilisearchTaskReader) GetTask(ctx context.Context, taskUID int64) (*meilisearch.Task, error) {
 	ret := _mock.Called(ctx, taskUID)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetTaskWithContext")
+		panic("no return value specified for GetTask")
 	}
 
 	var r0 *meilisearch.Task
@@ -129,19 +76,19 @@ func (_mock *MockmeilisearchTaskReader) GetTaskWithContext(ctx context.Context, 
 	return r0, r1
 }
 
-// MockmeilisearchTaskReader_GetTaskWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTaskWithContext'
-type MockmeilisearchTaskReader_GetTaskWithContext_Call struct {
+// MockmeilisearchTaskReader_GetTask_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTask'
+type MockmeilisearchTaskReader_GetTask_Call struct {
 	*mock.Call
 }
 
-// GetTaskWithContext is a helper method to define mock.On call
+// GetTask is a helper method to define mock.On call
 //   - ctx context.Context
 //   - taskUID int64
-func (_e *MockmeilisearchTaskReader_Expecter) GetTaskWithContext(ctx any, taskUID any) *MockmeilisearchTaskReader_GetTaskWithContext_Call {
-	return &MockmeilisearchTaskReader_GetTaskWithContext_Call{Call: _e.mock.On("GetTaskWithContext", ctx, taskUID)}
+func (_e *MockmeilisearchTaskReader_Expecter) GetTask(ctx any, taskUID any) *MockmeilisearchTaskReader_GetTask_Call {
+	return &MockmeilisearchTaskReader_GetTask_Call{Call: _e.mock.On("GetTask", ctx, taskUID)}
 }
 
-func (_c *MockmeilisearchTaskReader_GetTaskWithContext_Call) Run(run func(ctx context.Context, taskUID int64)) *MockmeilisearchTaskReader_GetTaskWithContext_Call {
+func (_c *MockmeilisearchTaskReader_GetTask_Call) Run(run func(ctx context.Context, taskUID int64)) *MockmeilisearchTaskReader_GetTask_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -159,84 +106,22 @@ func (_c *MockmeilisearchTaskReader_GetTaskWithContext_Call) Run(run func(ctx co
 	return _c
 }
 
-func (_c *MockmeilisearchTaskReader_GetTaskWithContext_Call) Return(task *meilisearch.Task, err error) *MockmeilisearchTaskReader_GetTaskWithContext_Call {
+func (_c *MockmeilisearchTaskReader_GetTask_Call) Return(task *meilisearch.Task, err error) *MockmeilisearchTaskReader_GetTask_Call {
 	_c.Call.Return(task, err)
 	return _c
 }
 
-func (_c *MockmeilisearchTaskReader_GetTaskWithContext_Call) RunAndReturn(run func(ctx context.Context, taskUID int64) (*meilisearch.Task, error)) *MockmeilisearchTaskReader_GetTaskWithContext_Call {
+func (_c *MockmeilisearchTaskReader_GetTask_Call) RunAndReturn(run func(ctx context.Context, taskUID int64) (*meilisearch.Task, error)) *MockmeilisearchTaskReader_GetTask_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetTasks provides a mock function for the type MockmeilisearchTaskReader
-func (_mock *MockmeilisearchTaskReader) GetTasks(param *meilisearch.TasksQuery) (*meilisearch.TaskResult, error) {
-	ret := _mock.Called(param)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetTasks")
-	}
-
-	var r0 *meilisearch.TaskResult
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.TasksQuery) (*meilisearch.TaskResult, error)); ok {
-		return returnFunc(param)
-	}
-	if returnFunc, ok := ret.Get(0).(func(*meilisearch.TasksQuery) *meilisearch.TaskResult); ok {
-		r0 = returnFunc(param)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.TaskResult)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(*meilisearch.TasksQuery) error); ok {
-		r1 = returnFunc(param)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchTaskReader_GetTasks_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTasks'
-type MockmeilisearchTaskReader_GetTasks_Call struct {
-	*mock.Call
-}
-
-// GetTasks is a helper method to define mock.On call
-//   - param *meilisearch.TasksQuery
-func (_e *MockmeilisearchTaskReader_Expecter) GetTasks(param any) *MockmeilisearchTaskReader_GetTasks_Call {
-	return &MockmeilisearchTaskReader_GetTasks_Call{Call: _e.mock.On("GetTasks", param)}
-}
-
-func (_c *MockmeilisearchTaskReader_GetTasks_Call) Run(run func(param *meilisearch.TasksQuery)) *MockmeilisearchTaskReader_GetTasks_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 *meilisearch.TasksQuery
-		if args[0] != nil {
-			arg0 = args[0].(*meilisearch.TasksQuery)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchTaskReader_GetTasks_Call) Return(taskResult *meilisearch.TaskResult, err error) *MockmeilisearchTaskReader_GetTasks_Call {
-	_c.Call.Return(taskResult, err)
-	return _c
-}
-
-func (_c *MockmeilisearchTaskReader_GetTasks_Call) RunAndReturn(run func(param *meilisearch.TasksQuery) (*meilisearch.TaskResult, error)) *MockmeilisearchTaskReader_GetTasks_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetTasksWithContext provides a mock function for the type MockmeilisearchTaskReader
-func (_mock *MockmeilisearchTaskReader) GetTasksWithContext(ctx context.Context, param *meilisearch.TasksQuery) (*meilisearch.TaskResult, error) {
+func (_mock *MockmeilisearchTaskReader) GetTasks(ctx context.Context, param *meilisearch.TasksQuery) (*meilisearch.TaskResult, error) {
 	ret := _mock.Called(ctx, param)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetTasksWithContext")
+		panic("no return value specified for GetTasks")
 	}
 
 	var r0 *meilisearch.TaskResult
@@ -259,19 +144,19 @@ func (_mock *MockmeilisearchTaskReader) GetTasksWithContext(ctx context.Context,
 	return r0, r1
 }
 
-// MockmeilisearchTaskReader_GetTasksWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTasksWithContext'
-type MockmeilisearchTaskReader_GetTasksWithContext_Call struct {
+// MockmeilisearchTaskReader_GetTasks_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTasks'
+type MockmeilisearchTaskReader_GetTasks_Call struct {
 	*mock.Call
 }
 
-// GetTasksWithContext is a helper method to define mock.On call
+// GetTasks is a helper method to define mock.On call
 //   - ctx context.Context
 //   - param *meilisearch.TasksQuery
-func (_e *MockmeilisearchTaskReader_Expecter) GetTasksWithContext(ctx any, param any) *MockmeilisearchTaskReader_GetTasksWithContext_Call {
-	return &MockmeilisearchTaskReader_GetTasksWithContext_Call{Call: _e.mock.On("GetTasksWithContext", ctx, param)}
+func (_e *MockmeilisearchTaskReader_Expecter) GetTasks(ctx any, param any) *MockmeilisearchTaskReader_GetTasks_Call {
+	return &MockmeilisearchTaskReader_GetTasks_Call{Call: _e.mock.On("GetTasks", ctx, param)}
 }
 
-func (_c *MockmeilisearchTaskReader_GetTasksWithContext_Call) Run(run func(ctx context.Context, param *meilisearch.TasksQuery)) *MockmeilisearchTaskReader_GetTasksWithContext_Call {
+func (_c *MockmeilisearchTaskReader_GetTasks_Call) Run(run func(ctx context.Context, param *meilisearch.TasksQuery)) *MockmeilisearchTaskReader_GetTasks_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -289,90 +174,22 @@ func (_c *MockmeilisearchTaskReader_GetTasksWithContext_Call) Run(run func(ctx c
 	return _c
 }
 
-func (_c *MockmeilisearchTaskReader_GetTasksWithContext_Call) Return(taskResult *meilisearch.TaskResult, err error) *MockmeilisearchTaskReader_GetTasksWithContext_Call {
+func (_c *MockmeilisearchTaskReader_GetTasks_Call) Return(taskResult *meilisearch.TaskResult, err error) *MockmeilisearchTaskReader_GetTasks_Call {
 	_c.Call.Return(taskResult, err)
 	return _c
 }
 
-func (_c *MockmeilisearchTaskReader_GetTasksWithContext_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.TasksQuery) (*meilisearch.TaskResult, error)) *MockmeilisearchTaskReader_GetTasksWithContext_Call {
+func (_c *MockmeilisearchTaskReader_GetTasks_Call) RunAndReturn(run func(ctx context.Context, param *meilisearch.TasksQuery) (*meilisearch.TaskResult, error)) *MockmeilisearchTaskReader_GetTasks_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // WaitForTask provides a mock function for the type MockmeilisearchTaskReader
-func (_mock *MockmeilisearchTaskReader) WaitForTask(taskUID int64, interval time.Duration) (*meilisearch.Task, error) {
-	ret := _mock.Called(taskUID, interval)
-
-	if len(ret) == 0 {
-		panic("no return value specified for WaitForTask")
-	}
-
-	var r0 *meilisearch.Task
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(int64, time.Duration) (*meilisearch.Task, error)); ok {
-		return returnFunc(taskUID, interval)
-	}
-	if returnFunc, ok := ret.Get(0).(func(int64, time.Duration) *meilisearch.Task); ok {
-		r0 = returnFunc(taskUID, interval)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Task)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(int64, time.Duration) error); ok {
-		r1 = returnFunc(taskUID, interval)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchTaskReader_WaitForTask_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'WaitForTask'
-type MockmeilisearchTaskReader_WaitForTask_Call struct {
-	*mock.Call
-}
-
-// WaitForTask is a helper method to define mock.On call
-//   - taskUID int64
-//   - interval time.Duration
-func (_e *MockmeilisearchTaskReader_Expecter) WaitForTask(taskUID any, interval any) *MockmeilisearchTaskReader_WaitForTask_Call {
-	return &MockmeilisearchTaskReader_WaitForTask_Call{Call: _e.mock.On("WaitForTask", taskUID, interval)}
-}
-
-func (_c *MockmeilisearchTaskReader_WaitForTask_Call) Run(run func(taskUID int64, interval time.Duration)) *MockmeilisearchTaskReader_WaitForTask_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 int64
-		if args[0] != nil {
-			arg0 = args[0].(int64)
-		}
-		var arg1 time.Duration
-		if args[1] != nil {
-			arg1 = args[1].(time.Duration)
-		}
-		run(
-			arg0,
-			arg1,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchTaskReader_WaitForTask_Call) Return(task *meilisearch.Task, err error) *MockmeilisearchTaskReader_WaitForTask_Call {
-	_c.Call.Return(task, err)
-	return _c
-}
-
-func (_c *MockmeilisearchTaskReader_WaitForTask_Call) RunAndReturn(run func(taskUID int64, interval time.Duration) (*meilisearch.Task, error)) *MockmeilisearchTaskReader_WaitForTask_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// WaitForTaskWithContext provides a mock function for the type MockmeilisearchTaskReader
-func (_mock *MockmeilisearchTaskReader) WaitForTaskWithContext(ctx context.Context, taskUID int64, interval time.Duration) (*meilisearch.Task, error) {
+func (_mock *MockmeilisearchTaskReader) WaitForTask(ctx context.Context, taskUID int64, interval time.Duration) (*meilisearch.Task, error) {
 	ret := _mock.Called(ctx, taskUID, interval)
 
 	if len(ret) == 0 {
-		panic("no return value specified for WaitForTaskWithContext")
+		panic("no return value specified for WaitForTask")
 	}
 
 	var r0 *meilisearch.Task
@@ -395,20 +212,20 @@ func (_mock *MockmeilisearchTaskReader) WaitForTaskWithContext(ctx context.Conte
 	return r0, r1
 }
 
-// MockmeilisearchTaskReader_WaitForTaskWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'WaitForTaskWithContext'
-type MockmeilisearchTaskReader_WaitForTaskWithContext_Call struct {
+// MockmeilisearchTaskReader_WaitForTask_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'WaitForTask'
+type MockmeilisearchTaskReader_WaitForTask_Call struct {
 	*mock.Call
 }
 
-// WaitForTaskWithContext is a helper method to define mock.On call
+// WaitForTask is a helper method to define mock.On call
 //   - ctx context.Context
 //   - taskUID int64
 //   - interval time.Duration
-func (_e *MockmeilisearchTaskReader_Expecter) WaitForTaskWithContext(ctx any, taskUID any, interval any) *MockmeilisearchTaskReader_WaitForTaskWithContext_Call {
-	return &MockmeilisearchTaskReader_WaitForTaskWithContext_Call{Call: _e.mock.On("WaitForTaskWithContext", ctx, taskUID, interval)}
+func (_e *MockmeilisearchTaskReader_Expecter) WaitForTask(ctx any, taskUID any, interval any) *MockmeilisearchTaskReader_WaitForTask_Call {
+	return &MockmeilisearchTaskReader_WaitForTask_Call{Call: _e.mock.On("WaitForTask", ctx, taskUID, interval)}
 }
 
-func (_c *MockmeilisearchTaskReader_WaitForTaskWithContext_Call) Run(run func(ctx context.Context, taskUID int64, interval time.Duration)) *MockmeilisearchTaskReader_WaitForTaskWithContext_Call {
+func (_c *MockmeilisearchTaskReader_WaitForTask_Call) Run(run func(ctx context.Context, taskUID int64, interval time.Duration)) *MockmeilisearchTaskReader_WaitForTask_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -431,12 +248,12 @@ func (_c *MockmeilisearchTaskReader_WaitForTaskWithContext_Call) Run(run func(ct
 	return _c
 }
 
-func (_c *MockmeilisearchTaskReader_WaitForTaskWithContext_Call) Return(task *meilisearch.Task, err error) *MockmeilisearchTaskReader_WaitForTaskWithContext_Call {
+func (_c *MockmeilisearchTaskReader_WaitForTask_Call) Return(task *meilisearch.Task, err error) *MockmeilisearchTaskReader_WaitForTask_Call {
 	_c.Call.Return(task, err)
 	return _c
 }
 
-func (_c *MockmeilisearchTaskReader_WaitForTaskWithContext_Call) RunAndReturn(run func(ctx context.Context, taskUID int64, interval time.Duration) (*meilisearch.Task, error)) *MockmeilisearchTaskReader_WaitForTaskWithContext_Call {
+func (_c *MockmeilisearchTaskReader_WaitForTask_Call) RunAndReturn(run func(ctx context.Context, taskUID int64, interval time.Duration) (*meilisearch.Task, error)) *MockmeilisearchTaskReader_WaitForTask_Call {
 	_c.Call.Return(run)
 	return _c
 }

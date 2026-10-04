@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"context"
 	"testing"
 
 	"github.com/meilisearch/meilisearch-go"
@@ -11,11 +12,11 @@ func Test_GetNetwork(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanupNetwork(sv))
 
-	experimentalFeatures, err := sv.ExperimentalFeatures().SetNetwork(true).Update()
+	experimentalFeatures, err := sv.ExperimentalFeatures().SetNetwork(true).Update(context.Background())
 	require.NoError(t, err)
 	require.True(t, experimentalFeatures.Network)
 
-	network, err := sv.GetNetwork()
+	network, err := sv.GetNetwork(context.Background())
 	require.NoError(t, err)
 	require.NotEmpty(t, network.Version)
 	require.Empty(t, network.Remotes)
@@ -68,7 +69,7 @@ func Test_UpdateNetwork(t *testing.T) {
 		{
 			name: "RemoveNetworkLeader",
 			initializeNetwork: func(t *testing.T, sv meilisearch.ServiceManager) {
-				value, err := sv.UpdateNetwork(&meilisearch.UpdateNetworkRequest{
+				value, err := sv.UpdateNetwork(context.Background(), &meilisearch.UpdateNetworkRequest{
 					Self:   meilisearch.String("ms-00"),
 					Leader: meilisearch.String("ms-00"),
 					Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemote]{
@@ -132,7 +133,7 @@ func Test_UpdateNetwork(t *testing.T) {
 			sv := setup(t, "")
 			t.Cleanup(cleanupNetwork(sv))
 
-			experimentalFeatures, err := sv.ExperimentalFeatures().SetNetwork(true).Update()
+			experimentalFeatures, err := sv.ExperimentalFeatures().SetNetwork(true).Update(context.Background())
 			require.NoError(t, err)
 			require.True(t, experimentalFeatures.Network)
 
@@ -140,11 +141,11 @@ func Test_UpdateNetwork(t *testing.T) {
 				tt.initializeNetwork(t, sv)
 			}
 
-			value, err := sv.UpdateNetwork(tt.update)
+			value, err := sv.UpdateNetwork(context.Background(), tt.update)
 			require.NoError(t, err)
 
 			if updatedNetwork, ok := value.(*meilisearch.Network); ok {
-				network, err := sv.GetNetwork()
+				network, err := sv.GetNetwork(context.Background())
 				require.NoError(t, err)
 				require.Equal(t, tt.want.Self, updatedNetwork.Self)
 				require.Equal(t, tt.want.Leader, updatedNetwork.Leader)
@@ -152,7 +153,7 @@ func Test_UpdateNetwork(t *testing.T) {
 				require.Equal(t, updatedNetwork, network)
 			} else if task, ok := value.(*meilisearch.Task); ok {
 				testWaitForTask(t, sv, task)
-				network, err := sv.GetNetwork()
+				network, err := sv.GetNetwork(context.Background())
 				require.NoError(t, err)
 
 				require.Equal(t, tt.want.Self, network.Self)

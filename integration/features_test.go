@@ -1,6 +1,7 @@
 package integration
 
 import (
+	"context"
 	"crypto/tls"
 	"testing"
 
@@ -31,7 +32,7 @@ func TestGet_ExperimentalFeatures(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			ef := tt.client.ExperimentalFeatures()
-			gotResp, err := ef.Get()
+			gotResp, err := ef.Get(context.Background())
 			require.NoError(t, err)
 			require.NotNil(t, gotResp, "ExperimentalFeatures.Get() should not return nil value")
 		})
@@ -70,7 +71,7 @@ func TestUpdate_ExperimentalFeatures(t *testing.T) {
 			ef.SetChatCompletions(true)
 			ef.SetMultiModal(true)
 
-			gotResp, err := ef.Update()
+			gotResp, err := ef.Update(context.Background())
 			require.NoError(t, err)
 
 			require.Equal(t, true, gotResp.LogsRoute, "ExperimentalFeatures.Update() should return logsRoute as true")

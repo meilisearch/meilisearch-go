@@ -1,6 +1,7 @@
 package meilisearch
 
 import (
+	"context"
 	"fmt"
 	"os"
 )
@@ -21,7 +22,7 @@ func ExampleNew() {
 		{"id": 5, "title": "Moana", "genres": []string{"Fantasy", "Action"}},
 		{"id": 6, "title": "Philadelphia", "genres": []string{"Drama"}},
 	}
-	task, err := idx.AddDocuments(documents, nil)
+	task, err := idx.AddDocuments(context.Background(), documents, nil)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
@@ -37,7 +38,7 @@ func ExampleConnect() {
 		return
 	}
 
-	ver, err := meili.Version()
+	ver, err := meili.Version(context.Background())
 	if err != nil {
 		fmt.Println(err)
 		return

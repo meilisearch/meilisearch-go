@@ -2,6 +2,7 @@ package integration
 
 import (
 	"bytes"
+	"context"
 	"crypto/tls"
 	"testing"
 
@@ -13,7 +14,7 @@ func Test_GetDocumentsByIDs(t *testing.T) {
 	sv := setup(t, "")
 	t.Cleanup(cleanup(sv))
 
-	_, err := sv.CreateIndex(&meilisearch.IndexConfig{
+	_, err := sv.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 		Uid: "TestGetDocumentsByIDs",
 	})
 
@@ -25,13 +26,13 @@ func Test_GetDocumentsByIDs(t *testing.T) {
 	}
 	i := sv.Index("TestGetDocumentsByIDs")
 
-	ts, err := i.AddDocuments(request, nil)
+	ts, err := i.AddDocuments(context.Background(), request, nil)
 	require.NoError(t, err)
 
 	testWaitForIndexTask(t, i, ts)
 
 	var documents meilisearch.DocumentsResult
-	err = sv.Index("TestGetDocumentsByIDs").GetDocuments(&meilisearch.DocumentsQuery{Ids: []string{"1", "2", "3"}}, &documents)
+	err = sv.Index("TestGetDocumentsByIDs").GetDocuments(context.Background(), &meilisearch.DocumentsQuery{Ids: []string{"1", "2", "3"}}, &documents)
 	require.NoError(t, err)
 
 	results := meilisearch.Hits{
@@ -47,7 +48,7 @@ func Test_GetDocumentsWithQuery(t *testing.T) {
 	t.Cleanup(cleanup(sv))
 
 	indexUID := "TestGetDocumentsWithQuery"
-	_, err := sv.CreateIndex(&meilisearch.IndexConfig{
+	_, err := sv.CreateIndex(context.Background(), &meilisearch.IndexConfig{
 		Uid: indexUID,
 	})
 	require.NoError(t, err)
@@ -61,12 +62,12 @@ func Test_GetDocumentsWithQuery(t *testing.T) {
 	}
 
 	index := sv.Index(indexUID)
-	task, err := index.AddDocuments(testDocuments, nil)
+	task, err := index.AddDocuments(context.Background(), testDocuments, nil)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, index, task)
 
 	// Set sortable attributes for sorting tests
-	task, err = index.UpdateSortableAttributes(&[]string{"title", "rating", "year"})
+	task, err = index.UpdateSortableAttributes(context.Background(), &[]string{"title", "rating", "year"})
 	require.NoError(t, err)
 	testWaitForIndexTask(t, index, task)
 
@@ -151,7 +152,7 @@ func Test_GetDocumentsWithQuery(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			var documents meilisearch.DocumentsResult
-			err := index.GetDocuments(tt.query, &documents)
+			err := index.GetDocuments(context.Background(), tt.query, &documents)
 			require.NoError(t, err, "GetDocuments should not return an error for: %s", tt.description)
 			require.Len(t, documents.Results, tt.expectedCount, "Expected %d documents but got %d for: %s", tt.expectedCount, len(documents.Results), tt.description)
 
@@ -310,7 +311,7 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 			i := sv.Index("indexUID")
 
 			// Add Documents
-			gotResp, err := i.AddDocuments(tt.Request, nil)
+			gotResp, err := i.AddDocuments(context.Background(), tt.Request, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.Response.WantResp.TaskUID)
 			require.Equal(t, gotResp.Status, tt.Response.WantResp.Status)
@@ -322,12 +323,12 @@ func Test_AddOrUpdateDocumentsWithContentEncoding(t *testing.T) {
 
 			// Get Documents
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{Limit: 3}, &documents)
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{Limit: 3}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.Response.DocResp, documents)
 
 			// Update Documents
-			gotResp, err = i.UpdateDocuments(tt.Request, nil)
+			gotResp, err = i.UpdateDocuments(context.Background(), tt.Request, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.Response.WantResp.TaskUID)
 			require.Equal(t, gotResp.Status, tt.Response.WantResp.Status)
@@ -440,7 +441,7 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocuments(tt.args.documentsPtr, tt.args.options)
+			gotResp, err := i.AddDocuments(context.Background(), tt.args.documentsPtr, tt.args.options)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
 			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
@@ -451,11 +452,11 @@ func TestIndex_AddOrUpdateDocuments(t *testing.T) {
 			testWaitForIndexTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{Limit: 3}, &documents)
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{Limit: 3}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.resp.documentsRes, documents)
 
-			gotResp, err = i.UpdateDocuments(tt.args.documentsPtr, tt.args.options)
+			gotResp, err = i.UpdateDocuments(context.Background(), tt.args.documentsPtr, tt.args.options)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
 			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
@@ -544,7 +545,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocuments(tt.args.documentsPtr, &meilisearch.DocumentOptions{PrimaryKey: &tt.args.primaryKey})
+			gotResp, err := i.AddDocuments(context.Background(), tt.args.documentsPtr, &meilisearch.DocumentOptions{PrimaryKey: &tt.args.primaryKey})
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.resp.wantResp.TaskUID)
 			require.Equal(t, tt.resp.wantResp.Status, gotResp.Status)
@@ -555,7 +556,7 @@ func TestIndex_AddDocumentsWithPrimaryKey(t *testing.T) {
 			testWaitForIndexTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{Limit: 3}, &documents)
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{Limit: 3}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, tt.resp.documentsRes, documents)
 		})
@@ -655,7 +656,7 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, nil)
+			gotResp, err := i.AddDocumentsInBatches(context.Background(), tt.args.documentsPtr, tt.args.batchSize, nil)
 
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
@@ -669,14 +670,14 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 			testWaitForBatchTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{
 				Limit: 4,
 			}, &documents)
 
 			require.NoError(t, err)
 			require.Equal(t, tt.args.documentsPtr, documents.Results)
 
-			gotResp, err = i.UpdateDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, nil)
+			gotResp, err = i.UpdateDocumentsInBatches(context.Background(), tt.args.documentsPtr, tt.args.batchSize, nil)
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
 				require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
@@ -696,7 +697,7 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotResp, err := i.AddDocumentsInBatches(tt.args.documentsPtr, tt.args.batchSize, &meilisearch.DocumentOptions{PrimaryKey: &tt.args.primaryKey})
+			gotResp, err := i.AddDocumentsInBatches(context.Background(), tt.args.documentsPtr, tt.args.batchSize, &meilisearch.DocumentOptions{PrimaryKey: &tt.args.primaryKey})
 
 			require.NoError(t, err)
 			for i := 0; i < 2; i++ {
@@ -710,7 +711,7 @@ func TestIndex_AddOrUpdateDocumentsInBatches(t *testing.T) {
 			testWaitForBatchTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{
 				Limit: 4,
 			}, &documents)
 
@@ -778,9 +779,9 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 
 			if testReader {
 				reader := bytes.NewReader(tt.args.documents)
-				gotResp, err = i.AddDocumentsNdjsonFromReader(reader, nil)
+				gotResp, err = i.AddDocumentsNdjsonFromReader(context.Background(), reader, nil)
 			} else {
-				gotResp, err = i.AddDocumentsNdjson(tt.args.documents, nil)
+				gotResp, err = i.AddDocumentsNdjson(context.Background(), tt.args.documents, nil)
 			}
 
 			require.NoError(t, err)
@@ -792,12 +793,12 @@ func TestIndex_AddOrUpdateDocumentsNdjson(t *testing.T) {
 			testWaitForIndexTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 
 			if !testReader {
-				gotResp, err = i.UpdateDocumentsNdjson(tt.args.documents, nil)
+				gotResp, err = i.UpdateDocumentsNdjson(context.Background(), tt.args.documents, nil)
 				require.NoError(t, err)
 				require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 				require.Equal(t, tt.wantResp.Status, gotResp.Status)
@@ -886,9 +887,9 @@ func TestIndex_AddOrUpdateDocumentsCsvInBatches(t *testing.T) {
 			)
 
 			if testReader {
-				gotResp, err = i.AddDocumentsCsvFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize, nil)
+				gotResp, err = i.AddDocumentsCsvFromReaderInBatches(context.Background(), bytes.NewReader(tt.args.documents), tt.args.batchSize, nil)
 			} else {
-				gotResp, err = i.AddDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize, nil)
+				gotResp, err = i.AddDocumentsCsvInBatches(context.Background(), tt.args.documents, tt.args.batchSize, nil)
 			}
 
 			require.NoError(t, err)
@@ -902,12 +903,12 @@ func TestIndex_AddOrUpdateDocumentsCsvInBatches(t *testing.T) {
 			testWaitForBatchTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
 
 			if !testReader {
-				gotResp, err = i.UpdateDocumentsCsvInBatches(tt.args.documents, tt.args.batchSize, nil)
+				gotResp, err = i.UpdateDocumentsCsvInBatches(context.Background(), tt.args.documents, tt.args.batchSize, nil)
 				require.NoError(t, err)
 				for i := 0; i < 2; i++ {
 					require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
@@ -983,9 +984,9 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			)
 
 			if testReader {
-				gotResp, err = i.AddDocumentsCsvFromReader(bytes.NewReader(tt.args.documents), nil)
+				gotResp, err = i.AddDocumentsCsvFromReader(context.Background(), bytes.NewReader(tt.args.documents), nil)
 			} else {
-				gotResp, err = i.AddDocumentsCsv(tt.args.documents, nil)
+				gotResp, err = i.AddDocumentsCsv(context.Background(), tt.args.documents, nil)
 			}
 
 			require.NoError(t, err)
@@ -997,7 +998,7 @@ func TestIndex_AddDocumentsCsv(t *testing.T) {
 			testWaitForIndexTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
 		})
@@ -1122,9 +1123,9 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 			)
 
 			if testReader {
-				gotResp, err = i.AddDocumentsCsvFromReader(bytes.NewReader(tt.args.documents), tt.args.options)
+				gotResp, err = i.AddDocumentsCsvFromReader(context.Background(), bytes.NewReader(tt.args.documents), tt.args.options)
 			} else {
-				gotResp, err = i.AddDocumentsCsv(tt.args.documents, tt.args.options)
+				gotResp, err = i.AddDocumentsCsv(context.Background(), tt.args.documents, tt.args.options)
 			}
 
 			require.NoError(t, err)
@@ -1136,7 +1137,7 @@ func TestIndex_AddDocumentsCsvWithOptions(t *testing.T) {
 			testWaitForIndexTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, hitsToStringMaps(documents.Results))
 		})
@@ -1220,9 +1221,9 @@ func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
 			)
 
 			if testReader {
-				gotResp, err = i.AddDocumentsNdjsonFromReaderInBatches(bytes.NewReader(tt.args.documents), tt.args.batchSize, nil)
+				gotResp, err = i.AddDocumentsNdjsonFromReaderInBatches(context.Background(), bytes.NewReader(tt.args.documents), tt.args.batchSize, nil)
 			} else {
-				gotResp, err = i.AddDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize, nil)
+				gotResp, err = i.AddDocumentsNdjsonInBatches(context.Background(), tt.args.documents, tt.args.batchSize, nil)
 			}
 
 			require.NoError(t, err)
@@ -1236,12 +1237,12 @@ func TestIndex_AddOrUpdateDocumentsNdjsonInBatches(t *testing.T) {
 			testWaitForBatchTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Equal(t, wantDocs, documents.Results)
 
 			if !testReader {
-				gotResp, err = i.UpdateDocumentsNdjsonInBatches(tt.args.documents, tt.args.batchSize, nil)
+				gotResp, err = i.UpdateDocumentsNdjsonInBatches(context.Background(), tt.args.documents, tt.args.batchSize, nil)
 				require.NoError(t, err)
 				for i := 0; i < 2; i++ {
 					require.GreaterOrEqual(t, gotResp[i].TaskUID, tt.wantResp[i].TaskUID)
@@ -1308,7 +1309,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			setUpBasicIndex(tt.args.client, tt.args.UID)
-			gotResp, err := i.DeleteAllDocuments(&meilisearch.DocumentOptions{})
+			gotResp, err := i.DeleteAllDocuments(context.Background(), &meilisearch.DocumentOptions{})
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 			require.Equal(t, tt.wantResp.Status, gotResp.Status)
@@ -1318,7 +1319,7 @@ func TestIndex_DeleteAllDocuments(t *testing.T) {
 			testWaitForIndexTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{Limit: 5}, &documents)
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{Limit: 5}, &documents)
 			require.NoError(t, err)
 			require.Empty(t, documents.Results)
 		})
@@ -1450,13 +1451,13 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr, nil)
+			gotAddResp, err := i.AddDocuments(context.Background(), tt.args.documentsPtr, nil)
 			require.GreaterOrEqual(t, gotAddResp.TaskUID, tt.wantResp.TaskUID)
 			require.NoError(t, err)
 
 			testWaitForIndexTask(t, i, gotAddResp)
 
-			gotResp, err := i.DeleteDocument(tt.args.identifier, nil)
+			gotResp, err := i.DeleteDocument(context.Background(), tt.args.identifier, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 			require.Equal(t, tt.wantResp.Status, gotResp.Status)
@@ -1466,7 +1467,7 @@ func TestIndex_DeleteOneDocument(t *testing.T) {
 			testWaitForIndexTask(t, i, gotResp)
 
 			var document []map[string]interface{}
-			err = i.GetDocument(tt.args.identifier, nil, &document)
+			err = i.GetDocument(context.Background(), tt.args.identifier, nil, &document)
 			require.Error(t, err)
 			require.Empty(t, document)
 		})
@@ -1565,12 +1566,12 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr, nil)
+			gotAddResp, err := i.AddDocuments(context.Background(), tt.args.documentsPtr, nil)
 			require.NoError(t, err)
 
 			testWaitForIndexTask(t, i, gotAddResp)
 
-			gotResp, err := i.DeleteDocuments(tt.args.identifier, nil)
+			gotResp, err := i.DeleteDocuments(context.Background(), tt.args.identifier, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 			require.Equal(t, tt.wantResp.Status, gotResp.Status)
@@ -1581,7 +1582,7 @@ func TestIndex_DeleteDocuments(t *testing.T) {
 
 			var document docTest
 			for _, identifier := range tt.args.identifier {
-				err = i.GetDocument(identifier, nil, &document)
+				err = i.GetDocument(context.Background(), identifier, nil, &document)
 				require.Error(t, err)
 				require.Empty(t, document)
 			}
@@ -1757,18 +1758,18 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			i := c.Index(tt.args.UID)
 			t.Cleanup(cleanup(c))
 
-			gotAddResp, err := i.AddDocuments(tt.args.documentsPtr, nil)
+			gotAddResp, err := i.AddDocuments(context.Background(), tt.args.documentsPtr, nil)
 			require.NoError(t, err)
 
 			testWaitForIndexTask(t, i, gotAddResp)
 
 			if len(tt.args.filterToApply) != 0 {
-				gotTask, err := i.UpdateFilterableAttributes(&tt.args.filterToApply)
+				gotTask, err := i.UpdateFilterableAttributes(context.Background(), &tt.args.filterToApply)
 				require.NoError(t, err)
 				testWaitForIndexTask(t, i, gotTask)
 			}
 
-			gotResp, err := i.DeleteDocumentsByFilter(tt.args.filterToDelete, nil)
+			gotResp, err := i.DeleteDocumentsByFilter(context.Background(), tt.args.filterToDelete, nil)
 			require.NoError(t, err)
 			require.GreaterOrEqual(t, gotResp.TaskUID, tt.wantResp.TaskUID)
 			require.Equal(t, tt.wantResp.Status, gotResp.Status)
@@ -1778,7 +1779,7 @@ func TestIndex_DeleteDocumentsByFilter(t *testing.T) {
 			testWaitForIndexTask(t, i, gotResp)
 
 			var documents meilisearch.DocumentsResult
-			err = i.GetDocuments(&meilisearch.DocumentsQuery{}, &documents)
+			err = i.GetDocuments(context.Background(), &meilisearch.DocumentsQuery{}, &documents)
 			require.NoError(t, err)
 			require.Zero(t, len(documents.Results))
 		})
@@ -1790,7 +1791,7 @@ func TestIndex_UpdateDocumentsByFunction(t *testing.T) {
 
 	exp := c.ExperimentalFeatures()
 	exp.SetEditDocumentsByFunction(true)
-	res, err := exp.Update()
+	res, err := exp.Update(context.Background())
 	require.NoError(t, err)
 	require.True(t, res.EditDocumentsByFunction)
 
@@ -1798,7 +1799,7 @@ func TestIndex_UpdateDocumentsByFunction(t *testing.T) {
 	t.Cleanup(cleanup(c))
 
 	t.Run("Test Upper Case and Add Sparkles around Movie Titles", func(t *testing.T) {
-		task, err := idx.UpdateDocumentsByFunction(&meilisearch.UpdateDocumentByFunctionRequest{
+		task, err := idx.UpdateDocumentsByFunction(context.Background(), &meilisearch.UpdateDocumentByFunctionRequest{
 			Filter:   "id > 3000",
 			Function: "doc.title = `✨ ${doc.title.to_upper()} ✨`",
 		})
@@ -1807,7 +1808,7 @@ func TestIndex_UpdateDocumentsByFunction(t *testing.T) {
 	})
 
 	t.Run("Test User-defined Context", func(t *testing.T) {
-		task, err := idx.UpdateDocumentsByFunction(&meilisearch.UpdateDocumentByFunctionRequest{
+		task, err := idx.UpdateDocumentsByFunction(context.Background(), &meilisearch.UpdateDocumentByFunctionRequest{
 			Context: map[string]interface{}{
 				"idmax": 50,
 			},
@@ -1823,13 +1824,13 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 
 	// Setup a basic index
 	indexUID := "TestCustomMetadata"
-	_, err := sv.CreateIndex(&meilisearch.IndexConfig{Uid: indexUID, PrimaryKey: "id"})
+	_, err := sv.CreateIndex(context.Background(), &meilisearch.IndexConfig{Uid: indexUID, PrimaryKey: "id"})
 	require.NoError(t, err)
 	i := sv.Index(indexUID)
 
 	filterableAttributes := []interface{}{"id"}
 
-	task, err := i.UpdateFilterableAttributes(&filterableAttributes)
+	task, err := i.UpdateFilterableAttributes(context.Background(), &filterableAttributes)
 	require.NoError(t, err)
 	testWaitForIndexTask(t, i, task)
 
@@ -1848,7 +1849,7 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 			name: "AddDocuments with Metadata",
 			action: func(t *testing.T) *meilisearch.TaskInfo {
 				meta := "meta-add-docs"
-				task, err := i.AddDocuments(documents, &meilisearch.DocumentOptions{
+				task, err := i.AddDocuments(context.Background(), documents, &meilisearch.DocumentOptions{
 					TaskCustomMetadata: meta,
 				})
 				require.NoError(t, err)
@@ -1863,7 +1864,7 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 				updateDocs := []map[string]interface{}{
 					{"id": "1", "title": "Updated Document 1"},
 				}
-				task, err := i.UpdateDocuments(updateDocs, &meilisearch.DocumentOptions{
+				task, err := i.UpdateDocuments(context.Background(), updateDocs, &meilisearch.DocumentOptions{
 					TaskCustomMetadata: meta,
 				})
 				require.NoError(t, err)
@@ -1875,7 +1876,7 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 			name: "DeleteDocument (Single) with Metadata",
 			action: func(t *testing.T) *meilisearch.TaskInfo {
 				meta := "meta-delete-one"
-				task, err := i.DeleteDocument("1", &meilisearch.DocumentOptions{
+				task, err := i.DeleteDocument(context.Background(), "1", &meilisearch.DocumentOptions{
 					TaskCustomMetadata: meta,
 				})
 				require.NoError(t, err)
@@ -1887,7 +1888,7 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 			name: "DeleteDocuments (Batch) with Metadata",
 			action: func(t *testing.T) *meilisearch.TaskInfo {
 				meta := "meta-delete-batch"
-				task, err := i.DeleteDocuments([]string{"2"}, &meilisearch.DocumentOptions{
+				task, err := i.DeleteDocuments(context.Background(), []string{"2"}, &meilisearch.DocumentOptions{
 					TaskCustomMetadata: meta,
 				})
 				require.NoError(t, err)
@@ -1900,7 +1901,7 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 			action: func(t *testing.T) *meilisearch.TaskInfo {
 				meta := "meta-ndjson"
 				ndjson := []byte(`{"id": "3", "title": "Ndjson Doc"}`)
-				task, err := i.AddDocumentsNdjson(ndjson, &meilisearch.DocumentOptions{
+				task, err := i.AddDocumentsNdjson(context.Background(), ndjson, &meilisearch.DocumentOptions{
 					TaskCustomMetadata: meta,
 				})
 				require.NoError(t, err)
@@ -1912,7 +1913,7 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 			name: "DeleteAllDocuments with Metadata",
 			action: func(t *testing.T) *meilisearch.TaskInfo {
 				meta := "meta-delete-all"
-				task, err := i.DeleteAllDocuments(&meilisearch.DocumentOptions{
+				task, err := i.DeleteAllDocuments(context.Background(), &meilisearch.DocumentOptions{
 					TaskCustomMetadata: meta,
 				})
 				require.NoError(t, err)
@@ -1932,7 +1933,7 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 			testWaitForIndexTask(t, i, taskInfo)
 
 			// 3. Fetch the full task details from the engine
-			task, err := sv.GetTask(taskInfo.TaskUID)
+			task, err := sv.GetTask(context.Background(), taskInfo.TaskUID)
 			require.NoError(t, err)
 
 			// 4. Verify the metadata matches
@@ -1943,7 +1944,7 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 	// Special Case: UpdateDocumentsByFunction
 	t.Run("UpdateDocumentsByFunction with Metadata", func(t *testing.T) {
 		// Ensure we have a doc to update
-		setupTask, _ := i.AddDocuments([]map[string]interface{}{{"id": "99", "title": "Function Doc"}}, nil)
+		setupTask, _ := i.AddDocuments(context.Background(), []map[string]interface{}{{"id": "99", "title": "Function Doc"}}, nil)
 		testWaitForIndexTask(t, i, setupTask)
 
 		meta := "meta-function-update"
@@ -1951,11 +1952,11 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 		// Enable feature
 		exp := sv.ExperimentalFeatures()
 		exp.SetEditDocumentsByFunction(true)
-		_, err := exp.Update()
+		_, err := exp.Update(context.Background())
 		require.NoError(t, err)
 
 		// Perform Update
-		taskInfo, err := i.UpdateDocumentsByFunction(&meilisearch.UpdateDocumentByFunctionRequest{
+		taskInfo, err := i.UpdateDocumentsByFunction(context.Background(), &meilisearch.UpdateDocumentByFunctionRequest{
 			Filter:             "id = 99",
 			Function:           "doc.title = \"Updated Function\"",
 			TaskCustomMetadata: meta,
@@ -1965,7 +1966,7 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 		// Wait and Verify
 		testWaitForIndexTask(t, i, taskInfo)
 
-		task, err := sv.GetTask(taskInfo.TaskUID)
+		task, err := sv.GetTask(context.Background(), taskInfo.TaskUID)
 		require.NoError(t, err)
 		require.Equal(t, meta, task.CustomMetadata)
 	})
@@ -1973,19 +1974,19 @@ func TestIndex_DocumentOperationsWithCustomMetadata(t *testing.T) {
 	// Special Case: DeleteDocumentsByFilter
 	t.Run("DeleteDocumentsByFilter with Metadata", func(t *testing.T) {
 		// Ensure we have a doc to delete
-		setupTask, _ := i.AddDocuments([]map[string]interface{}{{"id": "99", "title": "Filter Doc"}}, nil)
+		setupTask, _ := i.AddDocuments(context.Background(), []map[string]interface{}{{"id": "99", "title": "Filter Doc"}}, nil)
 		testWaitForIndexTask(t, i, setupTask)
 
 		meta := "meta-delete-filter"
 		// Note: "id" was made filterable at the top of the test function
-		taskInfo, err := i.DeleteDocumentsByFilter("id = 99", &meilisearch.DocumentOptions{
+		taskInfo, err := i.DeleteDocumentsByFilter(context.Background(), "id = 99", &meilisearch.DocumentOptions{
 			TaskCustomMetadata: meta,
 		})
 		require.NoError(t, err)
 
 		testWaitForIndexTask(t, i, taskInfo)
 
-		task, err := sv.GetTask(taskInfo.TaskUID)
+		task, err := sv.GetTask(context.Background(), taskInfo.TaskUID)
 		require.NoError(t, err)
 		require.Equal(t, meta, task.CustomMetadata)
 	})

@@ -17,10 +17,19 @@ func NewMockmeilisearchSettingsReader(t interface {
 	mock.TestingT
 	Cleanup(func())
 }) *MockmeilisearchSettingsReader {
+	if helper, ok := t.(interface{ Helper() }); ok {
+		helper.Helper()
+	}
+
 	mock := &MockmeilisearchSettingsReader{}
 	mock.Mock.Test(t)
 
-	t.Cleanup(func() { mock.AssertExpectations(t) })
+	t.Cleanup(func() {
+		if helper, ok := t.(interface{ Helper() }); ok {
+			helper.Helper()
+		}
+		mock.AssertExpectations(t)
+	})
 
 	return mock
 }
@@ -39,66 +48,11 @@ func (_m *MockmeilisearchSettingsReader) EXPECT() *MockmeilisearchSettingsReader
 }
 
 // GetDictionary provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetDictionary() ([]string, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetDictionary")
-	}
-
-	var r0 []string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() []string); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetDictionary_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDictionary'
-type MockmeilisearchSettingsReader_GetDictionary_Call struct {
-	*mock.Call
-}
-
-// GetDictionary is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetDictionary() *MockmeilisearchSettingsReader_GetDictionary_Call {
-	return &MockmeilisearchSettingsReader_GetDictionary_Call{Call: _e.mock.On("GetDictionary")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetDictionary_Call) Run(run func()) *MockmeilisearchSettingsReader_GetDictionary_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetDictionary_Call) Return(strings []string, err error) *MockmeilisearchSettingsReader_GetDictionary_Call {
-	_c.Call.Return(strings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetDictionary_Call) RunAndReturn(run func() ([]string, error)) *MockmeilisearchSettingsReader_GetDictionary_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetDictionaryWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetDictionaryWithContext(ctx context.Context) ([]string, error) {
+func (_mock *MockmeilisearchSettingsReader) GetDictionary(ctx context.Context) ([]string, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetDictionaryWithContext")
+		panic("no return value specified for GetDictionary")
 	}
 
 	var r0 []string
@@ -121,18 +75,18 @@ func (_mock *MockmeilisearchSettingsReader) GetDictionaryWithContext(ctx context
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetDictionaryWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDictionaryWithContext'
-type MockmeilisearchSettingsReader_GetDictionaryWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetDictionary_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDictionary'
+type MockmeilisearchSettingsReader_GetDictionary_Call struct {
 	*mock.Call
 }
 
-// GetDictionaryWithContext is a helper method to define mock.On call
+// GetDictionary is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetDictionaryWithContext(ctx any) *MockmeilisearchSettingsReader_GetDictionaryWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetDictionaryWithContext_Call{Call: _e.mock.On("GetDictionaryWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetDictionary(ctx any) *MockmeilisearchSettingsReader_GetDictionary_Call {
+	return &MockmeilisearchSettingsReader_GetDictionary_Call{Call: _e.mock.On("GetDictionary", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetDictionaryWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetDictionaryWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetDictionary_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetDictionary_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -145,77 +99,22 @@ func (_c *MockmeilisearchSettingsReader_GetDictionaryWithContext_Call) Run(run f
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetDictionaryWithContext_Call) Return(strings []string, err error) *MockmeilisearchSettingsReader_GetDictionaryWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetDictionary_Call) Return(strings []string, err error) *MockmeilisearchSettingsReader_GetDictionary_Call {
 	_c.Call.Return(strings, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetDictionaryWithContext_Call) RunAndReturn(run func(ctx context.Context) ([]string, error)) *MockmeilisearchSettingsReader_GetDictionaryWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetDictionary_Call) RunAndReturn(run func(ctx context.Context) ([]string, error)) *MockmeilisearchSettingsReader_GetDictionary_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetDisplayedAttributes provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetDisplayedAttributes() (*[]string, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetDisplayedAttributes")
-	}
-
-	var r0 *[]string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*[]string, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *[]string); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*[]string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetDisplayedAttributes_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDisplayedAttributes'
-type MockmeilisearchSettingsReader_GetDisplayedAttributes_Call struct {
-	*mock.Call
-}
-
-// GetDisplayedAttributes is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetDisplayedAttributes() *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call {
-	return &MockmeilisearchSettingsReader_GetDisplayedAttributes_Call{Call: _e.mock.On("GetDisplayedAttributes")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call) Run(run func()) *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call {
-	_c.Call.Return(strings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call) RunAndReturn(run func() (*[]string, error)) *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetDisplayedAttributesWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetDisplayedAttributesWithContext(ctx context.Context) (*[]string, error) {
+func (_mock *MockmeilisearchSettingsReader) GetDisplayedAttributes(ctx context.Context) (*[]string, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetDisplayedAttributesWithContext")
+		panic("no return value specified for GetDisplayedAttributes")
 	}
 
 	var r0 *[]string
@@ -238,18 +137,18 @@ func (_mock *MockmeilisearchSettingsReader) GetDisplayedAttributesWithContext(ct
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDisplayedAttributesWithContext'
-type MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetDisplayedAttributes_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDisplayedAttributes'
+type MockmeilisearchSettingsReader_GetDisplayedAttributes_Call struct {
 	*mock.Call
 }
 
-// GetDisplayedAttributesWithContext is a helper method to define mock.On call
+// GetDisplayedAttributes is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetDisplayedAttributesWithContext(ctx any) *MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call{Call: _e.mock.On("GetDisplayedAttributesWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetDisplayedAttributes(ctx any) *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call {
+	return &MockmeilisearchSettingsReader_GetDisplayedAttributes_Call{Call: _e.mock.On("GetDisplayedAttributes", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -262,77 +161,22 @@ func (_c *MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call) 
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call {
 	_c.Call.Return(strings, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context) (*[]string, error)) *MockmeilisearchSettingsReader_GetDisplayedAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call) RunAndReturn(run func(ctx context.Context) (*[]string, error)) *MockmeilisearchSettingsReader_GetDisplayedAttributes_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetDistinctAttribute provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetDistinctAttribute() (*string, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetDistinctAttribute")
-	}
-
-	var r0 *string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*string, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *string); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetDistinctAttribute_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDistinctAttribute'
-type MockmeilisearchSettingsReader_GetDistinctAttribute_Call struct {
-	*mock.Call
-}
-
-// GetDistinctAttribute is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetDistinctAttribute() *MockmeilisearchSettingsReader_GetDistinctAttribute_Call {
-	return &MockmeilisearchSettingsReader_GetDistinctAttribute_Call{Call: _e.mock.On("GetDistinctAttribute")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetDistinctAttribute_Call) Run(run func()) *MockmeilisearchSettingsReader_GetDistinctAttribute_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetDistinctAttribute_Call) Return(s *string, err error) *MockmeilisearchSettingsReader_GetDistinctAttribute_Call {
-	_c.Call.Return(s, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetDistinctAttribute_Call) RunAndReturn(run func() (*string, error)) *MockmeilisearchSettingsReader_GetDistinctAttribute_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetDistinctAttributeWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetDistinctAttributeWithContext(ctx context.Context) (*string, error) {
+func (_mock *MockmeilisearchSettingsReader) GetDistinctAttribute(ctx context.Context) (*string, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetDistinctAttributeWithContext")
+		panic("no return value specified for GetDistinctAttribute")
 	}
 
 	var r0 *string
@@ -355,18 +199,18 @@ func (_mock *MockmeilisearchSettingsReader) GetDistinctAttributeWithContext(ctx 
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDistinctAttributeWithContext'
-type MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetDistinctAttribute_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetDistinctAttribute'
+type MockmeilisearchSettingsReader_GetDistinctAttribute_Call struct {
 	*mock.Call
 }
 
-// GetDistinctAttributeWithContext is a helper method to define mock.On call
+// GetDistinctAttribute is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetDistinctAttributeWithContext(ctx any) *MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call{Call: _e.mock.On("GetDistinctAttributeWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetDistinctAttribute(ctx any) *MockmeilisearchSettingsReader_GetDistinctAttribute_Call {
+	return &MockmeilisearchSettingsReader_GetDistinctAttribute_Call{Call: _e.mock.On("GetDistinctAttribute", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetDistinctAttribute_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetDistinctAttribute_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -379,77 +223,22 @@ func (_c *MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call) Ru
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call) Return(s *string, err error) *MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetDistinctAttribute_Call) Return(s *string, err error) *MockmeilisearchSettingsReader_GetDistinctAttribute_Call {
 	_c.Call.Return(s, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call) RunAndReturn(run func(ctx context.Context) (*string, error)) *MockmeilisearchSettingsReader_GetDistinctAttributeWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetDistinctAttribute_Call) RunAndReturn(run func(ctx context.Context) (*string, error)) *MockmeilisearchSettingsReader_GetDistinctAttribute_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetEmbedders provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetEmbedders() (map[string]meilisearch.Embedder, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetEmbedders")
-	}
-
-	var r0 map[string]meilisearch.Embedder
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (map[string]meilisearch.Embedder, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() map[string]meilisearch.Embedder); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[string]meilisearch.Embedder)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetEmbedders_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetEmbedders'
-type MockmeilisearchSettingsReader_GetEmbedders_Call struct {
-	*mock.Call
-}
-
-// GetEmbedders is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetEmbedders() *MockmeilisearchSettingsReader_GetEmbedders_Call {
-	return &MockmeilisearchSettingsReader_GetEmbedders_Call{Call: _e.mock.On("GetEmbedders")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetEmbedders_Call) Run(run func()) *MockmeilisearchSettingsReader_GetEmbedders_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetEmbedders_Call) Return(stringToEmbedder map[string]meilisearch.Embedder, err error) *MockmeilisearchSettingsReader_GetEmbedders_Call {
-	_c.Call.Return(stringToEmbedder, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetEmbedders_Call) RunAndReturn(run func() (map[string]meilisearch.Embedder, error)) *MockmeilisearchSettingsReader_GetEmbedders_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetEmbeddersWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetEmbeddersWithContext(ctx context.Context) (map[string]meilisearch.Embedder, error) {
+func (_mock *MockmeilisearchSettingsReader) GetEmbedders(ctx context.Context) (map[string]meilisearch.Embedder, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetEmbeddersWithContext")
+		panic("no return value specified for GetEmbedders")
 	}
 
 	var r0 map[string]meilisearch.Embedder
@@ -472,18 +261,18 @@ func (_mock *MockmeilisearchSettingsReader) GetEmbeddersWithContext(ctx context.
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetEmbeddersWithContext'
-type MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetEmbedders_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetEmbedders'
+type MockmeilisearchSettingsReader_GetEmbedders_Call struct {
 	*mock.Call
 }
 
-// GetEmbeddersWithContext is a helper method to define mock.On call
+// GetEmbedders is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetEmbeddersWithContext(ctx any) *MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call{Call: _e.mock.On("GetEmbeddersWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetEmbedders(ctx any) *MockmeilisearchSettingsReader_GetEmbedders_Call {
+	return &MockmeilisearchSettingsReader_GetEmbedders_Call{Call: _e.mock.On("GetEmbedders", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetEmbedders_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetEmbedders_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -496,75 +285,22 @@ func (_c *MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call) Run(run fu
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call) Return(stringToEmbedder map[string]meilisearch.Embedder, err error) *MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetEmbedders_Call) Return(stringToEmbedder map[string]meilisearch.Embedder, err error) *MockmeilisearchSettingsReader_GetEmbedders_Call {
 	_c.Call.Return(stringToEmbedder, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call) RunAndReturn(run func(ctx context.Context) (map[string]meilisearch.Embedder, error)) *MockmeilisearchSettingsReader_GetEmbeddersWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetEmbedders_Call) RunAndReturn(run func(ctx context.Context) (map[string]meilisearch.Embedder, error)) *MockmeilisearchSettingsReader_GetEmbedders_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetFacetSearch provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetFacetSearch() (bool, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetFacetSearch")
-	}
-
-	var r0 bool
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (bool, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() bool); ok {
-		r0 = returnFunc()
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetFacetSearch_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFacetSearch'
-type MockmeilisearchSettingsReader_GetFacetSearch_Call struct {
-	*mock.Call
-}
-
-// GetFacetSearch is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetFacetSearch() *MockmeilisearchSettingsReader_GetFacetSearch_Call {
-	return &MockmeilisearchSettingsReader_GetFacetSearch_Call{Call: _e.mock.On("GetFacetSearch")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetFacetSearch_Call) Run(run func()) *MockmeilisearchSettingsReader_GetFacetSearch_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetFacetSearch_Call) Return(b bool, err error) *MockmeilisearchSettingsReader_GetFacetSearch_Call {
-	_c.Call.Return(b, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetFacetSearch_Call) RunAndReturn(run func() (bool, error)) *MockmeilisearchSettingsReader_GetFacetSearch_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetFacetSearchWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetFacetSearchWithContext(ctx context.Context) (bool, error) {
+func (_mock *MockmeilisearchSettingsReader) GetFacetSearch(ctx context.Context) (bool, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetFacetSearchWithContext")
+		panic("no return value specified for GetFacetSearch")
 	}
 
 	var r0 bool
@@ -585,18 +321,18 @@ func (_mock *MockmeilisearchSettingsReader) GetFacetSearchWithContext(ctx contex
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFacetSearchWithContext'
-type MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetFacetSearch_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFacetSearch'
+type MockmeilisearchSettingsReader_GetFacetSearch_Call struct {
 	*mock.Call
 }
 
-// GetFacetSearchWithContext is a helper method to define mock.On call
+// GetFacetSearch is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetFacetSearchWithContext(ctx any) *MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call{Call: _e.mock.On("GetFacetSearchWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetFacetSearch(ctx any) *MockmeilisearchSettingsReader_GetFacetSearch_Call {
+	return &MockmeilisearchSettingsReader_GetFacetSearch_Call{Call: _e.mock.On("GetFacetSearch", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetFacetSearch_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetFacetSearch_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -609,77 +345,22 @@ func (_c *MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call) Run(run 
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call) Return(b bool, err error) *MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetFacetSearch_Call) Return(b bool, err error) *MockmeilisearchSettingsReader_GetFacetSearch_Call {
 	_c.Call.Return(b, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call) RunAndReturn(run func(ctx context.Context) (bool, error)) *MockmeilisearchSettingsReader_GetFacetSearchWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetFacetSearch_Call) RunAndReturn(run func(ctx context.Context) (bool, error)) *MockmeilisearchSettingsReader_GetFacetSearch_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetFaceting provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetFaceting() (*meilisearch.Faceting, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetFaceting")
-	}
-
-	var r0 *meilisearch.Faceting
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*meilisearch.Faceting, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *meilisearch.Faceting); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Faceting)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetFaceting_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFaceting'
-type MockmeilisearchSettingsReader_GetFaceting_Call struct {
-	*mock.Call
-}
-
-// GetFaceting is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetFaceting() *MockmeilisearchSettingsReader_GetFaceting_Call {
-	return &MockmeilisearchSettingsReader_GetFaceting_Call{Call: _e.mock.On("GetFaceting")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetFaceting_Call) Run(run func()) *MockmeilisearchSettingsReader_GetFaceting_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetFaceting_Call) Return(faceting *meilisearch.Faceting, err error) *MockmeilisearchSettingsReader_GetFaceting_Call {
-	_c.Call.Return(faceting, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetFaceting_Call) RunAndReturn(run func() (*meilisearch.Faceting, error)) *MockmeilisearchSettingsReader_GetFaceting_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetFacetingWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetFacetingWithContext(ctx context.Context) (*meilisearch.Faceting, error) {
+func (_mock *MockmeilisearchSettingsReader) GetFaceting(ctx context.Context) (*meilisearch.Faceting, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetFacetingWithContext")
+		panic("no return value specified for GetFaceting")
 	}
 
 	var r0 *meilisearch.Faceting
@@ -702,18 +383,18 @@ func (_mock *MockmeilisearchSettingsReader) GetFacetingWithContext(ctx context.C
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetFacetingWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFacetingWithContext'
-type MockmeilisearchSettingsReader_GetFacetingWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetFaceting_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFaceting'
+type MockmeilisearchSettingsReader_GetFaceting_Call struct {
 	*mock.Call
 }
 
-// GetFacetingWithContext is a helper method to define mock.On call
+// GetFaceting is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetFacetingWithContext(ctx any) *MockmeilisearchSettingsReader_GetFacetingWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetFacetingWithContext_Call{Call: _e.mock.On("GetFacetingWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetFaceting(ctx any) *MockmeilisearchSettingsReader_GetFaceting_Call {
+	return &MockmeilisearchSettingsReader_GetFaceting_Call{Call: _e.mock.On("GetFaceting", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetFacetingWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetFacetingWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetFaceting_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetFaceting_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -726,77 +407,22 @@ func (_c *MockmeilisearchSettingsReader_GetFacetingWithContext_Call) Run(run fun
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetFacetingWithContext_Call) Return(faceting *meilisearch.Faceting, err error) *MockmeilisearchSettingsReader_GetFacetingWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetFaceting_Call) Return(faceting *meilisearch.Faceting, err error) *MockmeilisearchSettingsReader_GetFaceting_Call {
 	_c.Call.Return(faceting, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetFacetingWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.Faceting, error)) *MockmeilisearchSettingsReader_GetFacetingWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetFaceting_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.Faceting, error)) *MockmeilisearchSettingsReader_GetFaceting_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetFilterableAttributes provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetFilterableAttributes() (*[]interface{}, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetFilterableAttributes")
-	}
-
-	var r0 *[]interface{}
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*[]interface{}, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *[]interface{}); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*[]interface{})
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetFilterableAttributes_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFilterableAttributes'
-type MockmeilisearchSettingsReader_GetFilterableAttributes_Call struct {
-	*mock.Call
-}
-
-// GetFilterableAttributes is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetFilterableAttributes() *MockmeilisearchSettingsReader_GetFilterableAttributes_Call {
-	return &MockmeilisearchSettingsReader_GetFilterableAttributes_Call{Call: _e.mock.On("GetFilterableAttributes")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetFilterableAttributes_Call) Run(run func()) *MockmeilisearchSettingsReader_GetFilterableAttributes_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetFilterableAttributes_Call) Return(ifaceVals *[]interface{}, err error) *MockmeilisearchSettingsReader_GetFilterableAttributes_Call {
-	_c.Call.Return(ifaceVals, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetFilterableAttributes_Call) RunAndReturn(run func() (*[]interface{}, error)) *MockmeilisearchSettingsReader_GetFilterableAttributes_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetFilterableAttributesWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetFilterableAttributesWithContext(ctx context.Context) (*[]interface{}, error) {
+func (_mock *MockmeilisearchSettingsReader) GetFilterableAttributes(ctx context.Context) (*[]interface{}, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetFilterableAttributesWithContext")
+		panic("no return value specified for GetFilterableAttributes")
 	}
 
 	var r0 *[]interface{}
@@ -819,18 +445,18 @@ func (_mock *MockmeilisearchSettingsReader) GetFilterableAttributesWithContext(c
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFilterableAttributesWithContext'
-type MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetFilterableAttributes_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetFilterableAttributes'
+type MockmeilisearchSettingsReader_GetFilterableAttributes_Call struct {
 	*mock.Call
 }
 
-// GetFilterableAttributesWithContext is a helper method to define mock.On call
+// GetFilterableAttributes is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetFilterableAttributesWithContext(ctx any) *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call{Call: _e.mock.On("GetFilterableAttributesWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetFilterableAttributes(ctx any) *MockmeilisearchSettingsReader_GetFilterableAttributes_Call {
+	return &MockmeilisearchSettingsReader_GetFilterableAttributes_Call{Call: _e.mock.On("GetFilterableAttributes", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetFilterableAttributes_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetFilterableAttributes_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -843,77 +469,22 @@ func (_c *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call) Return(ifaceVals *[]interface{}, err error) *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetFilterableAttributes_Call) Return(ifaceVals *[]interface{}, err error) *MockmeilisearchSettingsReader_GetFilterableAttributes_Call {
 	_c.Call.Return(ifaceVals, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context) (*[]interface{}, error)) *MockmeilisearchSettingsReader_GetFilterableAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetFilterableAttributes_Call) RunAndReturn(run func(ctx context.Context) (*[]interface{}, error)) *MockmeilisearchSettingsReader_GetFilterableAttributes_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetForeignKeys provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetForeignKeys() ([]meilisearch.ForeignKey, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetForeignKeys")
-	}
-
-	var r0 []meilisearch.ForeignKey
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]meilisearch.ForeignKey, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() []meilisearch.ForeignKey); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]meilisearch.ForeignKey)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetForeignKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeys'
-type MockmeilisearchSettingsReader_GetForeignKeys_Call struct {
-	*mock.Call
-}
-
-// GetForeignKeys is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetForeignKeys() *MockmeilisearchSettingsReader_GetForeignKeys_Call {
-	return &MockmeilisearchSettingsReader_GetForeignKeys_Call{Call: _e.mock.On("GetForeignKeys")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) Run(run func()) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
-	_c.Call.Return(foreignKeys, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) RunAndReturn(run func() ([]meilisearch.ForeignKey, error)) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetForeignKeysWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetForeignKeysWithContext(ctx context.Context) ([]meilisearch.ForeignKey, error) {
+func (_mock *MockmeilisearchSettingsReader) GetForeignKeys(ctx context.Context) ([]meilisearch.ForeignKey, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetForeignKeysWithContext")
+		panic("no return value specified for GetForeignKeys")
 	}
 
 	var r0 []meilisearch.ForeignKey
@@ -936,18 +507,18 @@ func (_mock *MockmeilisearchSettingsReader) GetForeignKeysWithContext(ctx contex
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeysWithContext'
-type MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetForeignKeys_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetForeignKeys'
+type MockmeilisearchSettingsReader_GetForeignKeys_Call struct {
 	*mock.Call
 }
 
-// GetForeignKeysWithContext is a helper method to define mock.On call
+// GetForeignKeys is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetForeignKeysWithContext(ctx any) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call{Call: _e.mock.On("GetForeignKeysWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetForeignKeys(ctx any) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
+	return &MockmeilisearchSettingsReader_GetForeignKeys_Call{Call: _e.mock.On("GetForeignKeys", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -960,77 +531,22 @@ func (_c *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call) Run(run 
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) Return(foreignKeys []meilisearch.ForeignKey, err error) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
 	_c.Call.Return(foreignKeys, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call) RunAndReturn(run func(ctx context.Context) ([]meilisearch.ForeignKey, error)) *MockmeilisearchSettingsReader_GetForeignKeysWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetForeignKeys_Call) RunAndReturn(run func(ctx context.Context) ([]meilisearch.ForeignKey, error)) *MockmeilisearchSettingsReader_GetForeignKeys_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetLocalizedAttributes provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetLocalizedAttributes() ([]*meilisearch.LocalizedAttributes, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetLocalizedAttributes")
-	}
-
-	var r0 []*meilisearch.LocalizedAttributes
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]*meilisearch.LocalizedAttributes, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() []*meilisearch.LocalizedAttributes); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]*meilisearch.LocalizedAttributes)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetLocalizedAttributes_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetLocalizedAttributes'
-type MockmeilisearchSettingsReader_GetLocalizedAttributes_Call struct {
-	*mock.Call
-}
-
-// GetLocalizedAttributes is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetLocalizedAttributes() *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call {
-	return &MockmeilisearchSettingsReader_GetLocalizedAttributes_Call{Call: _e.mock.On("GetLocalizedAttributes")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call) Run(run func()) *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call) Return(localizedAttributess []*meilisearch.LocalizedAttributes, err error) *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call {
-	_c.Call.Return(localizedAttributess, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call) RunAndReturn(run func() ([]*meilisearch.LocalizedAttributes, error)) *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetLocalizedAttributesWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetLocalizedAttributesWithContext(ctx context.Context) ([]*meilisearch.LocalizedAttributes, error) {
+func (_mock *MockmeilisearchSettingsReader) GetLocalizedAttributes(ctx context.Context) ([]*meilisearch.LocalizedAttributes, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetLocalizedAttributesWithContext")
+		panic("no return value specified for GetLocalizedAttributes")
 	}
 
 	var r0 []*meilisearch.LocalizedAttributes
@@ -1053,18 +569,18 @@ func (_mock *MockmeilisearchSettingsReader) GetLocalizedAttributesWithContext(ct
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetLocalizedAttributesWithContext'
-type MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetLocalizedAttributes_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetLocalizedAttributes'
+type MockmeilisearchSettingsReader_GetLocalizedAttributes_Call struct {
 	*mock.Call
 }
 
-// GetLocalizedAttributesWithContext is a helper method to define mock.On call
+// GetLocalizedAttributes is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetLocalizedAttributesWithContext(ctx any) *MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call{Call: _e.mock.On("GetLocalizedAttributesWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetLocalizedAttributes(ctx any) *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call {
+	return &MockmeilisearchSettingsReader_GetLocalizedAttributes_Call{Call: _e.mock.On("GetLocalizedAttributes", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -1077,77 +593,22 @@ func (_c *MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call) 
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call) Return(localizedAttributess []*meilisearch.LocalizedAttributes, err error) *MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call) Return(localizedAttributess []*meilisearch.LocalizedAttributes, err error) *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call {
 	_c.Call.Return(localizedAttributess, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context) ([]*meilisearch.LocalizedAttributes, error)) *MockmeilisearchSettingsReader_GetLocalizedAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call) RunAndReturn(run func(ctx context.Context) ([]*meilisearch.LocalizedAttributes, error)) *MockmeilisearchSettingsReader_GetLocalizedAttributes_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetNonSeparatorTokens provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetNonSeparatorTokens() ([]string, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetNonSeparatorTokens")
-	}
-
-	var r0 []string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() []string); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetNonSeparatorTokens'
-type MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call struct {
-	*mock.Call
-}
-
-// GetNonSeparatorTokens is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetNonSeparatorTokens() *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call {
-	return &MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call{Call: _e.mock.On("GetNonSeparatorTokens")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call) Run(run func()) *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call) Return(strings []string, err error) *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call {
-	_c.Call.Return(strings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call) RunAndReturn(run func() ([]string, error)) *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetNonSeparatorTokensWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetNonSeparatorTokensWithContext(ctx context.Context) ([]string, error) {
+func (_mock *MockmeilisearchSettingsReader) GetNonSeparatorTokens(ctx context.Context) ([]string, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetNonSeparatorTokensWithContext")
+		panic("no return value specified for GetNonSeparatorTokens")
 	}
 
 	var r0 []string
@@ -1170,18 +631,18 @@ func (_mock *MockmeilisearchSettingsReader) GetNonSeparatorTokensWithContext(ctx
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetNonSeparatorTokensWithContext'
-type MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetNonSeparatorTokens'
+type MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call struct {
 	*mock.Call
 }
 
-// GetNonSeparatorTokensWithContext is a helper method to define mock.On call
+// GetNonSeparatorTokens is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetNonSeparatorTokensWithContext(ctx any) *MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call{Call: _e.mock.On("GetNonSeparatorTokensWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetNonSeparatorTokens(ctx any) *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call {
+	return &MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call{Call: _e.mock.On("GetNonSeparatorTokens", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -1194,77 +655,22 @@ func (_c *MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call) R
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call) Return(strings []string, err error) *MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call) Return(strings []string, err error) *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call {
 	_c.Call.Return(strings, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call) RunAndReturn(run func(ctx context.Context) ([]string, error)) *MockmeilisearchSettingsReader_GetNonSeparatorTokensWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call) RunAndReturn(run func(ctx context.Context) ([]string, error)) *MockmeilisearchSettingsReader_GetNonSeparatorTokens_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetPagination provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetPagination() (*meilisearch.Pagination, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetPagination")
-	}
-
-	var r0 *meilisearch.Pagination
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*meilisearch.Pagination, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *meilisearch.Pagination); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Pagination)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetPagination_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPagination'
-type MockmeilisearchSettingsReader_GetPagination_Call struct {
-	*mock.Call
-}
-
-// GetPagination is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetPagination() *MockmeilisearchSettingsReader_GetPagination_Call {
-	return &MockmeilisearchSettingsReader_GetPagination_Call{Call: _e.mock.On("GetPagination")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetPagination_Call) Run(run func()) *MockmeilisearchSettingsReader_GetPagination_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetPagination_Call) Return(pagination *meilisearch.Pagination, err error) *MockmeilisearchSettingsReader_GetPagination_Call {
-	_c.Call.Return(pagination, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetPagination_Call) RunAndReturn(run func() (*meilisearch.Pagination, error)) *MockmeilisearchSettingsReader_GetPagination_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetPaginationWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetPaginationWithContext(ctx context.Context) (*meilisearch.Pagination, error) {
+func (_mock *MockmeilisearchSettingsReader) GetPagination(ctx context.Context) (*meilisearch.Pagination, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetPaginationWithContext")
+		panic("no return value specified for GetPagination")
 	}
 
 	var r0 *meilisearch.Pagination
@@ -1287,18 +693,18 @@ func (_mock *MockmeilisearchSettingsReader) GetPaginationWithContext(ctx context
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetPaginationWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPaginationWithContext'
-type MockmeilisearchSettingsReader_GetPaginationWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetPagination_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPagination'
+type MockmeilisearchSettingsReader_GetPagination_Call struct {
 	*mock.Call
 }
 
-// GetPaginationWithContext is a helper method to define mock.On call
+// GetPagination is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetPaginationWithContext(ctx any) *MockmeilisearchSettingsReader_GetPaginationWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetPaginationWithContext_Call{Call: _e.mock.On("GetPaginationWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetPagination(ctx any) *MockmeilisearchSettingsReader_GetPagination_Call {
+	return &MockmeilisearchSettingsReader_GetPagination_Call{Call: _e.mock.On("GetPagination", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetPaginationWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetPaginationWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetPagination_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetPagination_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -1311,77 +717,22 @@ func (_c *MockmeilisearchSettingsReader_GetPaginationWithContext_Call) Run(run f
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetPaginationWithContext_Call) Return(pagination *meilisearch.Pagination, err error) *MockmeilisearchSettingsReader_GetPaginationWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetPagination_Call) Return(pagination *meilisearch.Pagination, err error) *MockmeilisearchSettingsReader_GetPagination_Call {
 	_c.Call.Return(pagination, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetPaginationWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.Pagination, error)) *MockmeilisearchSettingsReader_GetPaginationWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetPagination_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.Pagination, error)) *MockmeilisearchSettingsReader_GetPagination_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetPrefixSearch provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetPrefixSearch() (*string, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetPrefixSearch")
-	}
-
-	var r0 *string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*string, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *string); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetPrefixSearch_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPrefixSearch'
-type MockmeilisearchSettingsReader_GetPrefixSearch_Call struct {
-	*mock.Call
-}
-
-// GetPrefixSearch is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetPrefixSearch() *MockmeilisearchSettingsReader_GetPrefixSearch_Call {
-	return &MockmeilisearchSettingsReader_GetPrefixSearch_Call{Call: _e.mock.On("GetPrefixSearch")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetPrefixSearch_Call) Run(run func()) *MockmeilisearchSettingsReader_GetPrefixSearch_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetPrefixSearch_Call) Return(s *string, err error) *MockmeilisearchSettingsReader_GetPrefixSearch_Call {
-	_c.Call.Return(s, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetPrefixSearch_Call) RunAndReturn(run func() (*string, error)) *MockmeilisearchSettingsReader_GetPrefixSearch_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetPrefixSearchWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetPrefixSearchWithContext(ctx context.Context) (*string, error) {
+func (_mock *MockmeilisearchSettingsReader) GetPrefixSearch(ctx context.Context) (*string, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetPrefixSearchWithContext")
+		panic("no return value specified for GetPrefixSearch")
 	}
 
 	var r0 *string
@@ -1404,18 +755,18 @@ func (_mock *MockmeilisearchSettingsReader) GetPrefixSearchWithContext(ctx conte
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPrefixSearchWithContext'
-type MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetPrefixSearch_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetPrefixSearch'
+type MockmeilisearchSettingsReader_GetPrefixSearch_Call struct {
 	*mock.Call
 }
 
-// GetPrefixSearchWithContext is a helper method to define mock.On call
+// GetPrefixSearch is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetPrefixSearchWithContext(ctx any) *MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call{Call: _e.mock.On("GetPrefixSearchWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetPrefixSearch(ctx any) *MockmeilisearchSettingsReader_GetPrefixSearch_Call {
+	return &MockmeilisearchSettingsReader_GetPrefixSearch_Call{Call: _e.mock.On("GetPrefixSearch", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetPrefixSearch_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetPrefixSearch_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -1428,75 +779,22 @@ func (_c *MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call) Run(run
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call) Return(s *string, err error) *MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetPrefixSearch_Call) Return(s *string, err error) *MockmeilisearchSettingsReader_GetPrefixSearch_Call {
 	_c.Call.Return(s, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call) RunAndReturn(run func(ctx context.Context) (*string, error)) *MockmeilisearchSettingsReader_GetPrefixSearchWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetPrefixSearch_Call) RunAndReturn(run func(ctx context.Context) (*string, error)) *MockmeilisearchSettingsReader_GetPrefixSearch_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetProximityPrecision provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetProximityPrecision() (meilisearch.ProximityPrecisionType, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetProximityPrecision")
-	}
-
-	var r0 meilisearch.ProximityPrecisionType
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (meilisearch.ProximityPrecisionType, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() meilisearch.ProximityPrecisionType); ok {
-		r0 = returnFunc()
-	} else {
-		r0 = ret.Get(0).(meilisearch.ProximityPrecisionType)
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetProximityPrecision_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetProximityPrecision'
-type MockmeilisearchSettingsReader_GetProximityPrecision_Call struct {
-	*mock.Call
-}
-
-// GetProximityPrecision is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetProximityPrecision() *MockmeilisearchSettingsReader_GetProximityPrecision_Call {
-	return &MockmeilisearchSettingsReader_GetProximityPrecision_Call{Call: _e.mock.On("GetProximityPrecision")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetProximityPrecision_Call) Run(run func()) *MockmeilisearchSettingsReader_GetProximityPrecision_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetProximityPrecision_Call) Return(proximityPrecisionType meilisearch.ProximityPrecisionType, err error) *MockmeilisearchSettingsReader_GetProximityPrecision_Call {
-	_c.Call.Return(proximityPrecisionType, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetProximityPrecision_Call) RunAndReturn(run func() (meilisearch.ProximityPrecisionType, error)) *MockmeilisearchSettingsReader_GetProximityPrecision_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetProximityPrecisionWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetProximityPrecisionWithContext(ctx context.Context) (meilisearch.ProximityPrecisionType, error) {
+func (_mock *MockmeilisearchSettingsReader) GetProximityPrecision(ctx context.Context) (meilisearch.ProximityPrecisionType, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetProximityPrecisionWithContext")
+		panic("no return value specified for GetProximityPrecision")
 	}
 
 	var r0 meilisearch.ProximityPrecisionType
@@ -1517,18 +815,18 @@ func (_mock *MockmeilisearchSettingsReader) GetProximityPrecisionWithContext(ctx
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetProximityPrecisionWithContext'
-type MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetProximityPrecision_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetProximityPrecision'
+type MockmeilisearchSettingsReader_GetProximityPrecision_Call struct {
 	*mock.Call
 }
 
-// GetProximityPrecisionWithContext is a helper method to define mock.On call
+// GetProximityPrecision is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetProximityPrecisionWithContext(ctx any) *MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call{Call: _e.mock.On("GetProximityPrecisionWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetProximityPrecision(ctx any) *MockmeilisearchSettingsReader_GetProximityPrecision_Call {
+	return &MockmeilisearchSettingsReader_GetProximityPrecision_Call{Call: _e.mock.On("GetProximityPrecision", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetProximityPrecision_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetProximityPrecision_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -1541,77 +839,22 @@ func (_c *MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call) R
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call) Return(proximityPrecisionType meilisearch.ProximityPrecisionType, err error) *MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetProximityPrecision_Call) Return(proximityPrecisionType meilisearch.ProximityPrecisionType, err error) *MockmeilisearchSettingsReader_GetProximityPrecision_Call {
 	_c.Call.Return(proximityPrecisionType, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call) RunAndReturn(run func(ctx context.Context) (meilisearch.ProximityPrecisionType, error)) *MockmeilisearchSettingsReader_GetProximityPrecisionWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetProximityPrecision_Call) RunAndReturn(run func(ctx context.Context) (meilisearch.ProximityPrecisionType, error)) *MockmeilisearchSettingsReader_GetProximityPrecision_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetRankingRules provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetRankingRules() (*[]string, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetRankingRules")
-	}
-
-	var r0 *[]string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*[]string, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *[]string); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*[]string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetRankingRules_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetRankingRules'
-type MockmeilisearchSettingsReader_GetRankingRules_Call struct {
-	*mock.Call
-}
-
-// GetRankingRules is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetRankingRules() *MockmeilisearchSettingsReader_GetRankingRules_Call {
-	return &MockmeilisearchSettingsReader_GetRankingRules_Call{Call: _e.mock.On("GetRankingRules")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetRankingRules_Call) Run(run func()) *MockmeilisearchSettingsReader_GetRankingRules_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetRankingRules_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetRankingRules_Call {
-	_c.Call.Return(strings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetRankingRules_Call) RunAndReturn(run func() (*[]string, error)) *MockmeilisearchSettingsReader_GetRankingRules_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetRankingRulesWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetRankingRulesWithContext(ctx context.Context) (*[]string, error) {
+func (_mock *MockmeilisearchSettingsReader) GetRankingRules(ctx context.Context) (*[]string, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetRankingRulesWithContext")
+		panic("no return value specified for GetRankingRules")
 	}
 
 	var r0 *[]string
@@ -1634,18 +877,18 @@ func (_mock *MockmeilisearchSettingsReader) GetRankingRulesWithContext(ctx conte
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetRankingRulesWithContext'
-type MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetRankingRules_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetRankingRules'
+type MockmeilisearchSettingsReader_GetRankingRules_Call struct {
 	*mock.Call
 }
 
-// GetRankingRulesWithContext is a helper method to define mock.On call
+// GetRankingRules is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetRankingRulesWithContext(ctx any) *MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call{Call: _e.mock.On("GetRankingRulesWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetRankingRules(ctx any) *MockmeilisearchSettingsReader_GetRankingRules_Call {
+	return &MockmeilisearchSettingsReader_GetRankingRules_Call{Call: _e.mock.On("GetRankingRules", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetRankingRules_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetRankingRules_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -1658,75 +901,22 @@ func (_c *MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call) Run(run
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetRankingRules_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetRankingRules_Call {
 	_c.Call.Return(strings, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call) RunAndReturn(run func(ctx context.Context) (*[]string, error)) *MockmeilisearchSettingsReader_GetRankingRulesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetRankingRules_Call) RunAndReturn(run func(ctx context.Context) (*[]string, error)) *MockmeilisearchSettingsReader_GetRankingRules_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetSearchCutoffMs provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSearchCutoffMs() (int64, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetSearchCutoffMs")
-	}
-
-	var r0 int64
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (int64, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() int64); ok {
-		r0 = returnFunc()
-	} else {
-		r0 = ret.Get(0).(int64)
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetSearchCutoffMs_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchCutoffMs'
-type MockmeilisearchSettingsReader_GetSearchCutoffMs_Call struct {
-	*mock.Call
-}
-
-// GetSearchCutoffMs is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSearchCutoffMs() *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call {
-	return &MockmeilisearchSettingsReader_GetSearchCutoffMs_Call{Call: _e.mock.On("GetSearchCutoffMs")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call) Run(run func()) *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call) Return(n int64, err error) *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call {
-	_c.Call.Return(n, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call) RunAndReturn(run func() (int64, error)) *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetSearchCutoffMsWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSearchCutoffMsWithContext(ctx context.Context) (int64, error) {
+func (_mock *MockmeilisearchSettingsReader) GetSearchCutoffMs(ctx context.Context) (int64, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetSearchCutoffMsWithContext")
+		panic("no return value specified for GetSearchCutoffMs")
 	}
 
 	var r0 int64
@@ -1747,18 +937,18 @@ func (_mock *MockmeilisearchSettingsReader) GetSearchCutoffMsWithContext(ctx con
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchCutoffMsWithContext'
-type MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetSearchCutoffMs_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchCutoffMs'
+type MockmeilisearchSettingsReader_GetSearchCutoffMs_Call struct {
 	*mock.Call
 }
 
-// GetSearchCutoffMsWithContext is a helper method to define mock.On call
+// GetSearchCutoffMs is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSearchCutoffMsWithContext(ctx any) *MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call{Call: _e.mock.On("GetSearchCutoffMsWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSearchCutoffMs(ctx any) *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call {
+	return &MockmeilisearchSettingsReader_GetSearchCutoffMs_Call{Call: _e.mock.On("GetSearchCutoffMs", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -1771,77 +961,22 @@ func (_c *MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call) Run(r
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call) Return(n int64, err error) *MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call) Return(n int64, err error) *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call {
 	_c.Call.Return(n, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call) RunAndReturn(run func(ctx context.Context) (int64, error)) *MockmeilisearchSettingsReader_GetSearchCutoffMsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call) RunAndReturn(run func(ctx context.Context) (int64, error)) *MockmeilisearchSettingsReader_GetSearchCutoffMs_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetSearchableAttributes provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSearchableAttributes() (*[]string, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetSearchableAttributes")
-	}
-
-	var r0 *[]string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*[]string, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *[]string); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*[]string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetSearchableAttributes_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchableAttributes'
-type MockmeilisearchSettingsReader_GetSearchableAttributes_Call struct {
-	*mock.Call
-}
-
-// GetSearchableAttributes is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSearchableAttributes() *MockmeilisearchSettingsReader_GetSearchableAttributes_Call {
-	return &MockmeilisearchSettingsReader_GetSearchableAttributes_Call{Call: _e.mock.On("GetSearchableAttributes")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSearchableAttributes_Call) Run(run func()) *MockmeilisearchSettingsReader_GetSearchableAttributes_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSearchableAttributes_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetSearchableAttributes_Call {
-	_c.Call.Return(strings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSearchableAttributes_Call) RunAndReturn(run func() (*[]string, error)) *MockmeilisearchSettingsReader_GetSearchableAttributes_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetSearchableAttributesWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSearchableAttributesWithContext(ctx context.Context) (*[]string, error) {
+func (_mock *MockmeilisearchSettingsReader) GetSearchableAttributes(ctx context.Context) (*[]string, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetSearchableAttributesWithContext")
+		panic("no return value specified for GetSearchableAttributes")
 	}
 
 	var r0 *[]string
@@ -1864,18 +999,18 @@ func (_mock *MockmeilisearchSettingsReader) GetSearchableAttributesWithContext(c
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchableAttributesWithContext'
-type MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetSearchableAttributes_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSearchableAttributes'
+type MockmeilisearchSettingsReader_GetSearchableAttributes_Call struct {
 	*mock.Call
 }
 
-// GetSearchableAttributesWithContext is a helper method to define mock.On call
+// GetSearchableAttributes is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSearchableAttributesWithContext(ctx any) *MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call{Call: _e.mock.On("GetSearchableAttributesWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSearchableAttributes(ctx any) *MockmeilisearchSettingsReader_GetSearchableAttributes_Call {
+	return &MockmeilisearchSettingsReader_GetSearchableAttributes_Call{Call: _e.mock.On("GetSearchableAttributes", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSearchableAttributes_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSearchableAttributes_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -1888,77 +1023,22 @@ func (_c *MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSearchableAttributes_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetSearchableAttributes_Call {
 	_c.Call.Return(strings, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context) (*[]string, error)) *MockmeilisearchSettingsReader_GetSearchableAttributesWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSearchableAttributes_Call) RunAndReturn(run func(ctx context.Context) (*[]string, error)) *MockmeilisearchSettingsReader_GetSearchableAttributes_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetSeparatorTokens provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSeparatorTokens() ([]string, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetSeparatorTokens")
-	}
-
-	var r0 []string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() ([]string, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() []string); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetSeparatorTokens_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSeparatorTokens'
-type MockmeilisearchSettingsReader_GetSeparatorTokens_Call struct {
-	*mock.Call
-}
-
-// GetSeparatorTokens is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSeparatorTokens() *MockmeilisearchSettingsReader_GetSeparatorTokens_Call {
-	return &MockmeilisearchSettingsReader_GetSeparatorTokens_Call{Call: _e.mock.On("GetSeparatorTokens")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSeparatorTokens_Call) Run(run func()) *MockmeilisearchSettingsReader_GetSeparatorTokens_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSeparatorTokens_Call) Return(strings []string, err error) *MockmeilisearchSettingsReader_GetSeparatorTokens_Call {
-	_c.Call.Return(strings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSeparatorTokens_Call) RunAndReturn(run func() ([]string, error)) *MockmeilisearchSettingsReader_GetSeparatorTokens_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetSeparatorTokensWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSeparatorTokensWithContext(ctx context.Context) ([]string, error) {
+func (_mock *MockmeilisearchSettingsReader) GetSeparatorTokens(ctx context.Context) ([]string, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetSeparatorTokensWithContext")
+		panic("no return value specified for GetSeparatorTokens")
 	}
 
 	var r0 []string
@@ -1981,18 +1061,18 @@ func (_mock *MockmeilisearchSettingsReader) GetSeparatorTokensWithContext(ctx co
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSeparatorTokensWithContext'
-type MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetSeparatorTokens_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSeparatorTokens'
+type MockmeilisearchSettingsReader_GetSeparatorTokens_Call struct {
 	*mock.Call
 }
 
-// GetSeparatorTokensWithContext is a helper method to define mock.On call
+// GetSeparatorTokens is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSeparatorTokensWithContext(ctx any) *MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call{Call: _e.mock.On("GetSeparatorTokensWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSeparatorTokens(ctx any) *MockmeilisearchSettingsReader_GetSeparatorTokens_Call {
+	return &MockmeilisearchSettingsReader_GetSeparatorTokens_Call{Call: _e.mock.On("GetSeparatorTokens", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSeparatorTokens_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSeparatorTokens_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -2005,77 +1085,22 @@ func (_c *MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call) Run(
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call) Return(strings []string, err error) *MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSeparatorTokens_Call) Return(strings []string, err error) *MockmeilisearchSettingsReader_GetSeparatorTokens_Call {
 	_c.Call.Return(strings, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call) RunAndReturn(run func(ctx context.Context) ([]string, error)) *MockmeilisearchSettingsReader_GetSeparatorTokensWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSeparatorTokens_Call) RunAndReturn(run func(ctx context.Context) ([]string, error)) *MockmeilisearchSettingsReader_GetSeparatorTokens_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetSettings provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSettings() (*meilisearch.Settings, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetSettings")
-	}
-
-	var r0 *meilisearch.Settings
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*meilisearch.Settings, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *meilisearch.Settings); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.Settings)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetSettings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSettings'
-type MockmeilisearchSettingsReader_GetSettings_Call struct {
-	*mock.Call
-}
-
-// GetSettings is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSettings() *MockmeilisearchSettingsReader_GetSettings_Call {
-	return &MockmeilisearchSettingsReader_GetSettings_Call{Call: _e.mock.On("GetSettings")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSettings_Call) Run(run func()) *MockmeilisearchSettingsReader_GetSettings_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSettings_Call) Return(settings *meilisearch.Settings, err error) *MockmeilisearchSettingsReader_GetSettings_Call {
-	_c.Call.Return(settings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSettings_Call) RunAndReturn(run func() (*meilisearch.Settings, error)) *MockmeilisearchSettingsReader_GetSettings_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetSettingsWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSettingsWithContext(ctx context.Context) (*meilisearch.Settings, error) {
+func (_mock *MockmeilisearchSettingsReader) GetSettings(ctx context.Context) (*meilisearch.Settings, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetSettingsWithContext")
+		panic("no return value specified for GetSettings")
 	}
 
 	var r0 *meilisearch.Settings
@@ -2098,18 +1123,18 @@ func (_mock *MockmeilisearchSettingsReader) GetSettingsWithContext(ctx context.C
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetSettingsWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSettingsWithContext'
-type MockmeilisearchSettingsReader_GetSettingsWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetSettings_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSettings'
+type MockmeilisearchSettingsReader_GetSettings_Call struct {
 	*mock.Call
 }
 
-// GetSettingsWithContext is a helper method to define mock.On call
+// GetSettings is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSettingsWithContext(ctx any) *MockmeilisearchSettingsReader_GetSettingsWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetSettingsWithContext_Call{Call: _e.mock.On("GetSettingsWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSettings(ctx any) *MockmeilisearchSettingsReader_GetSettings_Call {
+	return &MockmeilisearchSettingsReader_GetSettings_Call{Call: _e.mock.On("GetSettings", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSettingsWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSettingsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSettings_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSettings_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -2122,19 +1147,19 @@ func (_c *MockmeilisearchSettingsReader_GetSettingsWithContext_Call) Run(run fun
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSettingsWithContext_Call) Return(settings *meilisearch.Settings, err error) *MockmeilisearchSettingsReader_GetSettingsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSettings_Call) Return(settings *meilisearch.Settings, err error) *MockmeilisearchSettingsReader_GetSettings_Call {
 	_c.Call.Return(settings, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSettingsWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.Settings, error)) *MockmeilisearchSettingsReader_GetSettingsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSettings_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.Settings, error)) *MockmeilisearchSettingsReader_GetSettings_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetSortableAttributes provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSortableAttributes() (*[]string, error) {
-	ret := _mock.Called()
+func (_mock *MockmeilisearchSettingsReader) GetSortableAttributes(ctx context.Context) (*[]string, error) {
+	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetSortableAttributes")
@@ -2142,18 +1167,18 @@ func (_mock *MockmeilisearchSettingsReader) GetSortableAttributes() (*[]string, 
 
 	var r0 *[]string
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*[]string, error)); ok {
-		return returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(context.Context) (*[]string, error)); ok {
+		return returnFunc(ctx)
 	}
-	if returnFunc, ok := ret.Get(0).(func() *[]string); ok {
-		r0 = returnFunc()
+	if returnFunc, ok := ret.Get(0).(func(context.Context) *[]string); ok {
+		r0 = returnFunc(ctx)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(*[]string)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -2166,13 +1191,20 @@ type MockmeilisearchSettingsReader_GetSortableAttributes_Call struct {
 }
 
 // GetSortableAttributes is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSortableAttributes() *MockmeilisearchSettingsReader_GetSortableAttributes_Call {
-	return &MockmeilisearchSettingsReader_GetSortableAttributes_Call{Call: _e.mock.On("GetSortableAttributes")}
+//   - ctx context.Context
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSortableAttributes(ctx any) *MockmeilisearchSettingsReader_GetSortableAttributes_Call {
+	return &MockmeilisearchSettingsReader_GetSortableAttributes_Call{Call: _e.mock.On("GetSortableAttributes", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSortableAttributes_Call) Run(run func()) *MockmeilisearchSettingsReader_GetSortableAttributes_Call {
+func (_c *MockmeilisearchSettingsReader_GetSortableAttributes_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSortableAttributes_Call {
 	_c.Call.Run(func(args mock.Arguments) {
-		run()
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
 	})
 	return _c
 }
@@ -2182,17 +1214,17 @@ func (_c *MockmeilisearchSettingsReader_GetSortableAttributes_Call) Return(strin
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSortableAttributes_Call) RunAndReturn(run func() (*[]string, error)) *MockmeilisearchSettingsReader_GetSortableAttributes_Call {
+func (_c *MockmeilisearchSettingsReader_GetSortableAttributes_Call) RunAndReturn(run func(ctx context.Context) (*[]string, error)) *MockmeilisearchSettingsReader_GetSortableAttributes_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
-// GetSortableAttributesWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSortableAttributesWithContext(ctx context.Context) (*[]string, error) {
+// GetStopWords provides a mock function for the type MockmeilisearchSettingsReader
+func (_mock *MockmeilisearchSettingsReader) GetStopWords(ctx context.Context) (*[]string, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetSortableAttributesWithContext")
+		panic("no return value specified for GetStopWords")
 	}
 
 	var r0 *[]string
@@ -2209,68 +1241,6 @@ func (_mock *MockmeilisearchSettingsReader) GetSortableAttributesWithContext(ctx
 	}
 	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
 		r1 = returnFunc(ctx)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSortableAttributesWithContext'
-type MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call struct {
-	*mock.Call
-}
-
-// GetSortableAttributesWithContext is a helper method to define mock.On call
-//   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSortableAttributesWithContext(ctx any) *MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call{Call: _e.mock.On("GetSortableAttributesWithContext", ctx)}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		var arg0 context.Context
-		if args[0] != nil {
-			arg0 = args[0].(context.Context)
-		}
-		run(
-			arg0,
-		)
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call {
-	_c.Call.Return(strings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call) RunAndReturn(run func(ctx context.Context) (*[]string, error)) *MockmeilisearchSettingsReader_GetSortableAttributesWithContext_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetStopWords provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetStopWords() (*[]string, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetStopWords")
-	}
-
-	var r0 *[]string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*[]string, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *[]string); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*[]string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
 	} else {
 		r1 = ret.Error(1)
 	}
@@ -2283,67 +1253,12 @@ type MockmeilisearchSettingsReader_GetStopWords_Call struct {
 }
 
 // GetStopWords is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetStopWords() *MockmeilisearchSettingsReader_GetStopWords_Call {
-	return &MockmeilisearchSettingsReader_GetStopWords_Call{Call: _e.mock.On("GetStopWords")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetStopWords_Call) Run(run func()) *MockmeilisearchSettingsReader_GetStopWords_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetStopWords_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetStopWords_Call {
-	_c.Call.Return(strings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetStopWords_Call) RunAndReturn(run func() (*[]string, error)) *MockmeilisearchSettingsReader_GetStopWords_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetStopWordsWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetStopWordsWithContext(ctx context.Context) (*[]string, error) {
-	ret := _mock.Called(ctx)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetStopWordsWithContext")
-	}
-
-	var r0 *[]string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context) (*[]string, error)); ok {
-		return returnFunc(ctx)
-	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context) *[]string); ok {
-		r0 = returnFunc(ctx)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*[]string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
-		r1 = returnFunc(ctx)
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetStopWordsWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetStopWordsWithContext'
-type MockmeilisearchSettingsReader_GetStopWordsWithContext_Call struct {
-	*mock.Call
-}
-
-// GetStopWordsWithContext is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetStopWordsWithContext(ctx any) *MockmeilisearchSettingsReader_GetStopWordsWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetStopWordsWithContext_Call{Call: _e.mock.On("GetStopWordsWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetStopWords(ctx any) *MockmeilisearchSettingsReader_GetStopWords_Call {
+	return &MockmeilisearchSettingsReader_GetStopWords_Call{Call: _e.mock.On("GetStopWords", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetStopWordsWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetStopWordsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetStopWords_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetStopWords_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -2356,77 +1271,22 @@ func (_c *MockmeilisearchSettingsReader_GetStopWordsWithContext_Call) Run(run fu
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetStopWordsWithContext_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetStopWordsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetStopWords_Call) Return(strings *[]string, err error) *MockmeilisearchSettingsReader_GetStopWords_Call {
 	_c.Call.Return(strings, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetStopWordsWithContext_Call) RunAndReturn(run func(ctx context.Context) (*[]string, error)) *MockmeilisearchSettingsReader_GetStopWordsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetStopWords_Call) RunAndReturn(run func(ctx context.Context) (*[]string, error)) *MockmeilisearchSettingsReader_GetStopWords_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetSynonyms provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSynonyms() (*map[string][]string, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetSynonyms")
-	}
-
-	var r0 *map[string][]string
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*map[string][]string, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *map[string][]string); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*map[string][]string)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetSynonyms_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSynonyms'
-type MockmeilisearchSettingsReader_GetSynonyms_Call struct {
-	*mock.Call
-}
-
-// GetSynonyms is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSynonyms() *MockmeilisearchSettingsReader_GetSynonyms_Call {
-	return &MockmeilisearchSettingsReader_GetSynonyms_Call{Call: _e.mock.On("GetSynonyms")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSynonyms_Call) Run(run func()) *MockmeilisearchSettingsReader_GetSynonyms_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSynonyms_Call) Return(stringToStrings *map[string][]string, err error) *MockmeilisearchSettingsReader_GetSynonyms_Call {
-	_c.Call.Return(stringToStrings, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetSynonyms_Call) RunAndReturn(run func() (*map[string][]string, error)) *MockmeilisearchSettingsReader_GetSynonyms_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetSynonymsWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetSynonymsWithContext(ctx context.Context) (*map[string][]string, error) {
+func (_mock *MockmeilisearchSettingsReader) GetSynonyms(ctx context.Context) (*map[string][]string, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetSynonymsWithContext")
+		panic("no return value specified for GetSynonyms")
 	}
 
 	var r0 *map[string][]string
@@ -2449,18 +1309,18 @@ func (_mock *MockmeilisearchSettingsReader) GetSynonymsWithContext(ctx context.C
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetSynonymsWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSynonymsWithContext'
-type MockmeilisearchSettingsReader_GetSynonymsWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetSynonyms_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetSynonyms'
+type MockmeilisearchSettingsReader_GetSynonyms_Call struct {
 	*mock.Call
 }
 
-// GetSynonymsWithContext is a helper method to define mock.On call
+// GetSynonyms is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetSynonymsWithContext(ctx any) *MockmeilisearchSettingsReader_GetSynonymsWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetSynonymsWithContext_Call{Call: _e.mock.On("GetSynonymsWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetSynonyms(ctx any) *MockmeilisearchSettingsReader_GetSynonyms_Call {
+	return &MockmeilisearchSettingsReader_GetSynonyms_Call{Call: _e.mock.On("GetSynonyms", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSynonymsWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSynonymsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSynonyms_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetSynonyms_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -2473,77 +1333,22 @@ func (_c *MockmeilisearchSettingsReader_GetSynonymsWithContext_Call) Run(run fun
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSynonymsWithContext_Call) Return(stringToStrings *map[string][]string, err error) *MockmeilisearchSettingsReader_GetSynonymsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSynonyms_Call) Return(stringToStrings *map[string][]string, err error) *MockmeilisearchSettingsReader_GetSynonyms_Call {
 	_c.Call.Return(stringToStrings, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetSynonymsWithContext_Call) RunAndReturn(run func(ctx context.Context) (*map[string][]string, error)) *MockmeilisearchSettingsReader_GetSynonymsWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetSynonyms_Call) RunAndReturn(run func(ctx context.Context) (*map[string][]string, error)) *MockmeilisearchSettingsReader_GetSynonyms_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetTypoTolerance provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetTypoTolerance() (*meilisearch.TypoTolerance, error) {
-	ret := _mock.Called()
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetTypoTolerance")
-	}
-
-	var r0 *meilisearch.TypoTolerance
-	var r1 error
-	if returnFunc, ok := ret.Get(0).(func() (*meilisearch.TypoTolerance, error)); ok {
-		return returnFunc()
-	}
-	if returnFunc, ok := ret.Get(0).(func() *meilisearch.TypoTolerance); ok {
-		r0 = returnFunc()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*meilisearch.TypoTolerance)
-		}
-	}
-	if returnFunc, ok := ret.Get(1).(func() error); ok {
-		r1 = returnFunc()
-	} else {
-		r1 = ret.Error(1)
-	}
-	return r0, r1
-}
-
-// MockmeilisearchSettingsReader_GetTypoTolerance_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTypoTolerance'
-type MockmeilisearchSettingsReader_GetTypoTolerance_Call struct {
-	*mock.Call
-}
-
-// GetTypoTolerance is a helper method to define mock.On call
-func (_e *MockmeilisearchSettingsReader_Expecter) GetTypoTolerance() *MockmeilisearchSettingsReader_GetTypoTolerance_Call {
-	return &MockmeilisearchSettingsReader_GetTypoTolerance_Call{Call: _e.mock.On("GetTypoTolerance")}
-}
-
-func (_c *MockmeilisearchSettingsReader_GetTypoTolerance_Call) Run(run func()) *MockmeilisearchSettingsReader_GetTypoTolerance_Call {
-	_c.Call.Run(func(args mock.Arguments) {
-		run()
-	})
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetTypoTolerance_Call) Return(typoTolerance *meilisearch.TypoTolerance, err error) *MockmeilisearchSettingsReader_GetTypoTolerance_Call {
-	_c.Call.Return(typoTolerance, err)
-	return _c
-}
-
-func (_c *MockmeilisearchSettingsReader_GetTypoTolerance_Call) RunAndReturn(run func() (*meilisearch.TypoTolerance, error)) *MockmeilisearchSettingsReader_GetTypoTolerance_Call {
-	_c.Call.Return(run)
-	return _c
-}
-
-// GetTypoToleranceWithContext provides a mock function for the type MockmeilisearchSettingsReader
-func (_mock *MockmeilisearchSettingsReader) GetTypoToleranceWithContext(ctx context.Context) (*meilisearch.TypoTolerance, error) {
+func (_mock *MockmeilisearchSettingsReader) GetTypoTolerance(ctx context.Context) (*meilisearch.TypoTolerance, error) {
 	ret := _mock.Called(ctx)
 
 	if len(ret) == 0 {
-		panic("no return value specified for GetTypoToleranceWithContext")
+		panic("no return value specified for GetTypoTolerance")
 	}
 
 	var r0 *meilisearch.TypoTolerance
@@ -2566,18 +1371,18 @@ func (_mock *MockmeilisearchSettingsReader) GetTypoToleranceWithContext(ctx cont
 	return r0, r1
 }
 
-// MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTypoToleranceWithContext'
-type MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call struct {
+// MockmeilisearchSettingsReader_GetTypoTolerance_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetTypoTolerance'
+type MockmeilisearchSettingsReader_GetTypoTolerance_Call struct {
 	*mock.Call
 }
 
-// GetTypoToleranceWithContext is a helper method to define mock.On call
+// GetTypoTolerance is a helper method to define mock.On call
 //   - ctx context.Context
-func (_e *MockmeilisearchSettingsReader_Expecter) GetTypoToleranceWithContext(ctx any) *MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call {
-	return &MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call{Call: _e.mock.On("GetTypoToleranceWithContext", ctx)}
+func (_e *MockmeilisearchSettingsReader_Expecter) GetTypoTolerance(ctx any) *MockmeilisearchSettingsReader_GetTypoTolerance_Call {
+	return &MockmeilisearchSettingsReader_GetTypoTolerance_Call{Call: _e.mock.On("GetTypoTolerance", ctx)}
 }
 
-func (_c *MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetTypoTolerance_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsReader_GetTypoTolerance_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
@@ -2590,12 +1395,12 @@ func (_c *MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call) Run(ru
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call) Return(typoTolerance *meilisearch.TypoTolerance, err error) *MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetTypoTolerance_Call) Return(typoTolerance *meilisearch.TypoTolerance, err error) *MockmeilisearchSettingsReader_GetTypoTolerance_Call {
 	_c.Call.Return(typoTolerance, err)
 	return _c
 }
 
-func (_c *MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.TypoTolerance, error)) *MockmeilisearchSettingsReader_GetTypoToleranceWithContext_Call {
+func (_c *MockmeilisearchSettingsReader_GetTypoTolerance_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.TypoTolerance, error)) *MockmeilisearchSettingsReader_GetTypoTolerance_Call {
 	_c.Call.Return(run)
 	return _c
 }
