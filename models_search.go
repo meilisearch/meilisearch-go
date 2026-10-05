@@ -26,7 +26,7 @@ type Pin struct {
 
 type Scale struct {
 	Weight   float64     `json:"weight"`
-	Ids      []string    `json:"ids,omitempty"`
+	Ids      []string    `json:"ids"`
 	Filter   interface{} `json:"filter,omitempty"`
 	IndexUid string      `json:"indexUid,omitempty"`
 }
