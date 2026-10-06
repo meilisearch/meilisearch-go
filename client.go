@@ -400,44 +400,32 @@ func (c *client) do(req *http.Request, internalError *Error) (resp *http.Respons
 			return nil, internalError.WithErrCode(CommunicationError, err)
 		}
 
-		// Exit if retries are disabled
-		if c.disableRetry {
-			break
+		if c.disableRetry || !c.retryOnStatus[resp.StatusCode] {
+			return resp, nil
 		}
 
-		// Check if response status is retryable and we haven't exceeded max retries
-		if c.retryOnStatus[resp.StatusCode] && retriesCount < c.maxRetries {
-			retriesCount++
+		// Close response body to prevent memory leaks
+		_ = resp.Body.Close()
 
-			// Close response body to prevent memory leaks
-			_ = resp.Body.Close()
-
-			// Handle backoff with context cancellation support
-			backoff := c.retryBackoff(retriesCount)
-			timer := time.NewTimer(backoff)
-
-			select {
-			case <-req.Context().Done():
-				err := req.Context().Err()
-				timer.Stop()
-				return nil, internalError.WithErrCode(TimeoutError, err)
-			case <-timer.C:
-				// Retry after backoff
-				timer.Stop()
-			}
-
-			continue
+		if retriesCount >= c.maxRetries {
+			return nil, internalError.WithErrCode(MaxRetriesExceeded, nil)
 		}
+		retriesCount++
 
-		break
+		// Handle backoff with context cancellation support
+		backoff := c.retryBackoff(retriesCount)
+		timer := time.NewTimer(backoff)
+
+		select {
+		case <-req.Context().Done():
+			err := req.Context().Err()
+			timer.Stop()
+			return nil, internalError.WithErrCode(TimeoutError, err)
+		case <-timer.C:
+			// Retry after backoff
+			timer.Stop()
+		}
 	}
-
-	// Return error if retries exceeded the maximum limit
-	if !c.disableRetry && retriesCount >= c.maxRetries {
-		return nil, internalError.WithErrCode(MaxRetriesExceeded, nil)
-	}
-
-	return resp, nil
 }
 
 func (c *client) handleStatusCode(req *internalRequest, statusCode int, body []byte, internalError *Error) error {
