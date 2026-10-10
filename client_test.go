@@ -592,6 +592,38 @@ func TestClient_Coverage_EdgeCases(t *testing.T) {
 		require.Equal(t, TimeoutError, e.ErrCode)
 	})
 
+	t.Run("do - Success On Final Retry", func(t *testing.T) {
+		attempts := 0
+		retryHTTP := &http.Client{
+			Transport: &mockRoundTripper{
+				fn: func(req *http.Request) (*http.Response, error) {
+					attempts++
+					if attempts <= 3 { // initial attempt and first two retries
+						return &http.Response{
+							StatusCode: http.StatusBadGateway,
+							Body:       io.NopCloser(bytes.NewReader([]byte{})),
+						}, nil
+					}
+					return &http.Response{
+						StatusCode: http.StatusOK,
+						Body:       io.NopCloser(bytes.NewReader([]byte{})),
+					}, nil
+				},
+			},
+		}
+		cRetry := newClient(retryHTTP, "http://localhost", "key", &clientConfig{
+			maxRetries:    3,
+			retryOnStatus: map[int]bool{http.StatusBadGateway: true},
+		})
+		cRetry.retryBackoff = func(attempt uint8) time.Duration { return 0 }
+
+		req, _ := http.NewRequest(http.MethodGet, "http://localhost", nil)
+		resp, err := cRetry.do(req, &Error{})
+		require.NoError(t, err)
+		require.Equal(t, http.StatusOK, resp.StatusCode)
+		require.Equal(t, 4, attempts)
+	})
+
 	t.Run("do - GetBody Rewind Error", func(t *testing.T) {
 		req, _ := http.NewRequest(http.MethodPost, "http://localhost", nil)
 		req.GetBody = func() (io.ReadCloser, error) {
