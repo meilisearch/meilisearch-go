@@ -59,8 +59,14 @@ type SearchRule struct {
 }
 
 type Conditions struct {
-	Query *QueryCondition `json:"query,omitempty"`
-	Time  *TimeCondition  `json:"time,omitempty"`
+	Query  *QueryCondition  `json:"query,omitempty"`
+	Time   *TimeCondition   `json:"time,omitempty"`
+	Filter *FilterCondition `json:"filter,omitempty"`
+}
+
+// FilterCondition matches when the search filter sets the given fields to the given values.
+type FilterCondition struct {
+	Values map[string]interface{} `json:"values,omitempty"`
 }
 
 type QueryCondition struct {
@@ -124,6 +130,17 @@ type SearchRequest struct {
 	Locales                 []string                  `json:"locales,omitempty"`
 	Media                   map[string]any            `json:"media,omitempty"`
 	Personalize             *SearchRequestPersonalize `json:"personalize,omitempty"`
+	InlineRule              *SearchRequestInlineRule  `json:"inlineRule,omitempty"`
+}
+
+// SearchRequestInlineRule is a search rule sent with a query to preview its effect without saving it.
+type SearchRequestInlineRule struct {
+	Uid         string      `json:"uid"`
+	Description string      `json:"description,omitempty"`
+	Precedence  *int        `json:"precedence,omitempty"`
+	Active      *bool       `json:"active,omitempty"`
+	Conditions  *Conditions `json:"conditions,omitempty"`
+	Actions     *Actions    `json:"actions,omitempty"`
 }
 
 type SearchFederationOptions struct {
@@ -183,6 +200,21 @@ type SearchResponse struct {
 	IndexUID           string          `json:"indexUid,omitempty"`
 	QueryVector        *[]float32      `json:"queryVector,omitempty"`
 	PerformanceDetails map[string]any  `json:"performanceDetails,omitempty"`
+	Metadata           *SearchMetadata `json:"metadata,omitempty"`
+}
+
+// SearchMetadata is returned when the Meili-Include-Metadata header is set to true.
+type SearchMetadata struct {
+	QueryUID                    string                       `json:"queryUid,omitempty"`
+	IndexUID                    string                       `json:"indexUid,omitempty"`
+	InlineRuleConditionOutcomes *InlineRuleConditionOutcomes `json:"inlineRuleConditionOutcomes,omitempty"`
+}
+
+// InlineRuleConditionOutcomes reports which conditions of an inline rule matched.
+type InlineRuleConditionOutcomes struct {
+	SatisfiesActiveCondition     *bool           `json:"satisfiesActiveCondition,omitempty"`
+	SatisfiesQueryWordsCondition json.RawMessage `json:"satisfiesQueryWordsCondition,omitempty"`
+	SatisfiesFilterCondition     json.RawMessage `json:"satisfiesFilterCondition,omitempty"`
 }
 
 type MultiSearchResponse struct {
