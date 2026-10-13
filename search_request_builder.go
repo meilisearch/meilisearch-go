@@ -170,6 +170,12 @@ func (b *SearchRequestBuilder) WithMedia(m map[string]any) *SearchRequestBuilder
 	return b
 }
 
+// WithInlineRule sets an inline search rule to preview with this search.
+func (b *SearchRequestBuilder) WithInlineRule(r *SearchRequestInlineRule) *SearchRequestBuilder {
+	b.req.InlineRule = r
+	return b
+}
+
 func (b *SearchRequestBuilder) WithPersonalize(p *SearchRequestPersonalize) *SearchRequestBuilder {
 	b.req.Personalize = p
 	return b
