@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto/tls"
 	"encoding/json"
+	"strings"
 	"testing"
 
 	"github.com/meilisearch/meilisearch-go"
@@ -1404,4 +1405,50 @@ func TestIndex_SearchWithRequestBuilder(t *testing.T) {
 	require.Equal(t, int64(20), req.Limit)
 	require.Equal(t, []string{"book_id", "title"}, req.AttributesToRetrieve)
 	require.True(t, req.ShowRankingScore)
+}
+
+func TestIndex_SearchWithInlineRule(t *testing.T) {
+	sv := setup(t, "")
+
+	tests := []struct {
+		name    string
+		UID     string
+		client  meilisearch.ServiceManager
+		query   string
+		request meilisearch.SearchRequest
+	}{
+		{
+			name:   "search with inline rule pinning a document",
+			UID:    "indexUID",
+			client: sv,
+			query:  "Pride",
+			request: meilisearch.SearchRequest{
+				InlineRule: &meilisearch.SearchRequestInlineRule{
+					Uid: "pin-rule",
+					Actions: &meilisearch.Actions{
+						Pin: []meilisearch.Pin{
+							{ID: "1", Position: 0},
+						},
+					},
+				},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpBasicIndex(tt.client, tt.UID)
+			c := tt.client
+			t.Cleanup(cleanup(c))
+			i := c.Index(tt.UID)
+
+			got, err := i.Search(context.Background(), tt.query, &tt.request)
+			if err != nil && strings.Contains(err.Error(), "requires_enterprise_edition") {
+				t.Skip("inline rules need Meilisearch Enterprise Edition")
+			}
+			require.NoError(t, err)
+			require.NotNil(t, got)
+			require.Greater(t, len(got.Hits), 0, "expected at least one hit")
+		})
+	}
 }

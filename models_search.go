@@ -135,12 +135,11 @@ type SearchRequest struct {
 
 // SearchRequestInlineRule is a search rule sent with a query to preview its effect without saving it.
 type SearchRequestInlineRule struct {
-	Uid         string      `json:"uid"`
-	Description string      `json:"description,omitempty"`
-	Precedence  *int        `json:"precedence,omitempty"`
-	Active      *bool       `json:"active,omitempty"`
-	Conditions  *Conditions `json:"conditions,omitempty"`
-	Actions     *Actions    `json:"actions,omitempty"`
+	Uid        string      `json:"uid"`
+	Precedence *int        `json:"precedence,omitempty"`
+	Active     *bool       `json:"active,omitempty"`
+	Conditions *Conditions `json:"conditions,omitempty"`
+	Actions    *Actions    `json:"actions,omitempty"`
 }
 
 type SearchFederationOptions struct {
@@ -212,9 +211,11 @@ type SearchMetadata struct {
 
 // InlineRuleConditionOutcomes reports which conditions of an inline rule matched.
 type InlineRuleConditionOutcomes struct {
-	SatisfiesActiveCondition     *bool           `json:"satisfiesActiveCondition,omitempty"`
-	SatisfiesQueryWordsCondition json.RawMessage `json:"satisfiesQueryWordsCondition,omitempty"`
-	SatisfiesFilterCondition     json.RawMessage `json:"satisfiesFilterCondition,omitempty"`
+	SatisfiesActiveCondition     *bool                  `json:"satisfiesActiveCondition,omitempty"`
+	SatisfiesQueryWordsCondition map[string]interface{} `json:"satisfiesQueryWordsCondition,omitempty"`
+	SatisfiesFilterCondition     map[string]interface{} `json:"satisfiesFilterCondition,omitempty"`
+	SatisfiesTimeCondition       map[string]interface{} `json:"satisfiesTimeCondition,omitempty"`
+	SatisfiesQueryEmptyCondition map[string]interface{} `json:"satisfiesQueryEmptyCondition,omitempty"`
 }
 
 type MultiSearchResponse struct {
