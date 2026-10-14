@@ -185,16 +185,14 @@ func (h Hits) DecodeInto(vSlicePtr interface{}) error {
 	}
 
 	elemType := sv.Type().Elem()
-	out := reflect.MakeSlice(sv.Type(), 0, len(h))
+	out := reflect.MakeSlice(sv.Type(), len(h), len(h))
 
 	switch elemType.Kind() {
 	case reflect.Struct:
 		for i := range h {
-			elemPtr := reflect.New(elemType)
-			if err := h[i].DecodeInto(elemPtr.Interface()); err != nil {
+			if err := h[i].DecodeInto(out.Index(i).Addr().Interface()); err != nil {
 				return fmt.Errorf("decode hits[%d]: %w", i, err)
 			}
-			out = reflect.Append(out, elemPtr.Elem())
 		}
 
 	case reflect.Ptr:
@@ -206,7 +204,7 @@ func (h Hits) DecodeInto(vSlicePtr interface{}) error {
 				if err := h[i].DecodeInto(elemPtr.Interface()); err != nil {
 					return fmt.Errorf("decode hits[%d]: %w", i, err)
 				}
-				out = reflect.Append(out, elemPtr.Convert(elemType))
+				out.Index(i).Set(elemPtr.Convert(elemType))
 			}
 		case reflect.Map:
 			// *** FIX 1: use et (map type), not elemType (pointer type)
@@ -215,14 +213,14 @@ func (h Hits) DecodeInto(vSlicePtr interface{}) error {
 			}
 			for i := range h {
 				// allocate *map[string]V and initialize the map
-				mPtr := reflect.New(et)              // *map[string]V
-				mPtr.Elem().Set(reflect.MakeMap(et)) // init
+				mPtr := reflect.New(et)                                 // *map[string]V
+				mPtr.Elem().Set(reflect.MakeMapWithSize(et, len(h[i]))) // init
 				// decode into *map
 				if err := h[i].DecodeInto(mPtr.Interface()); err != nil {
 					return fmt.Errorf("decode hits[%d]: %w", i, err)
 				}
-				// append the pointer as required by [] *map[string]V
-				out = reflect.Append(out, mPtr.Convert(elemType))
+				// set the pointer as required by [] *map[string]V
+				out.Index(i).Set(mPtr.Convert(elemType))
 			}
 		default:
 			return fmt.Errorf("slice element must be struct, *struct, or *map[string]T, got %s", elemType)
@@ -234,14 +232,14 @@ func (h Hits) DecodeInto(vSlicePtr interface{}) error {
 		}
 		for i := range h {
 			// allocate *map[string]V and initialize
-			mPtr := reflect.New(elemType)              // *map[string]V
-			mPtr.Elem().Set(reflect.MakeMap(elemType)) // init
+			mPtr := reflect.New(elemType)                                 // *map[string]V
+			mPtr.Elem().Set(reflect.MakeMapWithSize(elemType, len(h[i]))) // init
 			// decode into *map
 			if err := h[i].DecodeInto(mPtr.Interface()); err != nil {
 				return fmt.Errorf("decode hits[%d]: %w", i, err)
 			}
-			// append the map value (dereferenced)
-			out = reflect.Append(out, mPtr.Elem())
+			// set the map value (dereferenced)
+			out.Index(i).Set(mPtr.Elem())
 		}
 
 	default:
