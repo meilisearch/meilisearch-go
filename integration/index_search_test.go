@@ -1413,11 +1413,12 @@ func TestIndex_SearchWithInlineRule(t *testing.T) {
 	require.NoError(t, err)
 
 	tests := []struct {
-		name    string
-		UID     string
-		client  meilisearch.ServiceManager
-		query   string
-		request meilisearch.SearchRequest
+		name         string
+		UID          string
+		client       meilisearch.ServiceManager
+		query        string
+		request      meilisearch.SearchRequest
+		wantMetadata bool
 	}{
 		{
 			name:   "search with inline rule pinning a document",
@@ -1435,6 +1436,21 @@ func TestIndex_SearchWithInlineRule(t *testing.T) {
 				},
 			},
 		},
+		{
+			name:   "search with inline rule from builder and metadata header",
+			UID:    "indexUID",
+			client: sv,
+			query:  "Pride",
+			request: *meilisearch.NewSearchRequestBuilder().WithInlineRule(&meilisearch.SearchRequestInlineRule{
+				Uid: "pin-rule",
+				Actions: &meilisearch.Actions{
+					Pin: []meilisearch.Pin{
+						{ID: "1", Position: 0},
+					},
+				},
+			}).Build(),
+			wantMetadata: true,
+		},
 	}
 
 	for _, tt := range tests {
@@ -1444,6 +1460,7 @@ func TestIndex_SearchWithInlineRule(t *testing.T) {
 			t.Cleanup(cleanup(c))
 			i := c.Index(tt.UID)
 
+			tt.request.IncludeMetadata = tt.wantMetadata
 			got, err := i.Search(context.Background(), tt.query, &tt.request)
 			if err != nil && strings.Contains(err.Error(), "requires_enterprise_edition") {
 				t.Skip("inline rules need Meilisearch Enterprise Edition")
@@ -1451,6 +1468,41 @@ func TestIndex_SearchWithInlineRule(t *testing.T) {
 			require.NoError(t, err)
 			require.NotNil(t, got)
 			require.Greater(t, len(got.Hits), 0, "expected at least one hit")
+			if tt.wantMetadata {
+				require.NotNil(t, got.Metadata)
+				require.Equal(t, tt.UID, got.Metadata.IndexUID)
+				require.NotNil(t, got.Metadata.InlineRuleConditionOutcomes)
+			}
 		})
 	}
+}
+
+func TestIndex_SearchWithMetadataHeader(t *testing.T) {
+	sv := setup(t, "")
+	t.Cleanup(cleanup(sv))
+	setUpBasicIndex(sv, "indexUID")
+	idx := sv.Index("indexUID")
+	ctx := context.Background()
+
+	resp, err := idx.Search(ctx, "Pride", &meilisearch.SearchRequest{IncludeMetadata: true})
+	require.NoError(t, err)
+	require.NotNil(t, resp.Metadata)
+	require.Equal(t, "indexUID", resp.Metadata.IndexUID)
+	require.NotEmpty(t, resp.Metadata.QueryUID)
+
+	resp, err = idx.Search(ctx, "Pride", &meilisearch.SearchRequest{})
+	require.NoError(t, err)
+	require.Nil(t, resp.Metadata)
+
+	raw, err := idx.SearchRaw(ctx, "Pride", &meilisearch.SearchRequest{IncludeMetadata: true})
+	require.NoError(t, err)
+	require.Contains(t, string(*raw), `"metadata"`)
+
+	multi, err := sv.MultiSearch(ctx, &meilisearch.MultiSearchRequest{
+		Queries:         []*meilisearch.SearchRequest{{IndexUID: "indexUID", Query: "Pride"}},
+		IncludeMetadata: true,
+	})
+	require.NoError(t, err)
+	require.Len(t, multi.Results, 1)
+	require.NotNil(t, multi.Results[0].Metadata)
 }
