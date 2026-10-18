@@ -131,6 +131,8 @@ type SearchRequest struct {
 	Media                   map[string]any            `json:"media,omitempty"`
 	Personalize             *SearchRequestPersonalize `json:"personalize,omitempty"`
 	InlineRule              *SearchRequestInlineRule  `json:"inlineRule,omitempty"`
+	// IncludeMetadata sends the Meili-Include-Metadata header so the response includes metadata.
+	IncludeMetadata bool `json:"-"`
 }
 
 // SearchRequestInlineRule is a search rule sent with a query to preview its effect without saving it.
@@ -168,6 +170,8 @@ type SearchRequestHybrid struct {
 type MultiSearchRequest struct {
 	Federation *MultiSearchFederation `json:"federation,omitempty"`
 	Queries    []*SearchRequest       `json:"queries"`
+	// IncludeMetadata sends the Meili-Include-Metadata header so the response includes metadata.
+	IncludeMetadata bool `json:"-"`
 }
 
 type MultiSearchFederation struct {
@@ -204,18 +208,9 @@ type SearchResponse struct {
 
 // SearchMetadata is returned when the Meili-Include-Metadata header is set to true.
 type SearchMetadata struct {
-	QueryUID                    string                       `json:"queryUid,omitempty"`
-	IndexUID                    string                       `json:"indexUid,omitempty"`
-	InlineRuleConditionOutcomes *InlineRuleConditionOutcomes `json:"inlineRuleConditionOutcomes,omitempty"`
-}
-
-// InlineRuleConditionOutcomes reports which conditions of an inline rule matched.
-type InlineRuleConditionOutcomes struct {
-	SatisfiesActiveCondition     *bool                  `json:"satisfiesActiveCondition,omitempty"`
-	SatisfiesQueryWordsCondition map[string]interface{} `json:"satisfiesQueryWordsCondition,omitempty"`
-	SatisfiesFilterCondition     map[string]interface{} `json:"satisfiesFilterCondition,omitempty"`
-	SatisfiesTimeCondition       map[string]interface{} `json:"satisfiesTimeCondition,omitempty"`
-	SatisfiesQueryEmptyCondition map[string]interface{} `json:"satisfiesQueryEmptyCondition,omitempty"`
+	QueryUID                    string                 `json:"queryUid,omitempty"`
+	IndexUID                    string                 `json:"indexUid,omitempty"`
+	InlineRuleConditionOutcomes map[string]interface{} `json:"inlineRuleConditionOutcomes,omitempty"`
 }
 
 type MultiSearchResponse struct {
