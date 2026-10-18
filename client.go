@@ -46,6 +46,7 @@ type internalRequest struct {
 	withRequest          interface{}
 	withResponse         interface{}
 	withQueryParams      map[string]string
+	withHeaders          map[string]string
 	withResponseEncoding bool
 
 	acceptedStatusCodes []int
@@ -360,6 +361,10 @@ func (c *client) sendRequest(
 	}
 
 	request.Header.Set("User-Agent", GetQualifiedVersion())
+
+	for k, v := range req.withHeaders {
+		request.Header.Set(k, v)
+	}
 
 	resp, err := c.do(request, internalError)
 	if err != nil {

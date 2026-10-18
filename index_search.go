@@ -33,6 +33,10 @@ func (i *index) Search(ctx context.Context, query string, request *SearchRequest
 		functionName:        "Search",
 	}
 
+	if request.IncludeMetadata {
+		req.withHeaders = map[string]string{"Meili-Include-Metadata": "true"}
+	}
+
 	if err := i.client.executeRequest(ctx, req); err != nil {
 		return nil, err
 	}
@@ -65,6 +69,10 @@ func (i *index) SearchRaw(ctx context.Context, query string, request *SearchRequ
 		withResponse:        resp,
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "SearchRaw",
+	}
+
+	if request.IncludeMetadata {
+		req.withHeaders = map[string]string{"Meili-Include-Metadata": "true"}
 	}
 
 	if err := i.client.executeRequest(ctx, req); err != nil {

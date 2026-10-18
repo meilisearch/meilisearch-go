@@ -218,6 +218,10 @@ func (m *meilisearch) MultiSearch(ctx context.Context, queries *MultiSearchReque
 		functionName:        "MultiSearch",
 	}
 
+	if queries.IncludeMetadata {
+		req.withHeaders = map[string]string{"Meili-Include-Metadata": "true"}
+	}
+
 	if err := m.client.executeRequest(ctx, req); err != nil {
 		return nil, err
 	}
