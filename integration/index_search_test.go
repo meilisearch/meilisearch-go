@@ -1409,6 +1409,8 @@ func TestIndex_SearchWithRequestBuilder(t *testing.T) {
 
 func TestIndex_SearchWithInlineRule(t *testing.T) {
 	sv := setup(t, "")
+	_, err := sv.ExperimentalFeatures().SetDynamicSearchRules(true).Update(context.Background())
+	require.NoError(t, err)
 
 	tests := []struct {
 		name    string
