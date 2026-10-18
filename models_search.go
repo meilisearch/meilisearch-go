@@ -207,9 +207,13 @@ type SearchResponse struct {
 }
 
 // SearchMetadata is returned when the Meili-Include-Metadata header is set to true.
+
 type SearchMetadata struct {
+	Query                       string                 `json:"query,omitempty"`
 	QueryUID                    string                 `json:"queryUid,omitempty"`
 	IndexUID                    string                 `json:"indexUid,omitempty"`
+	PrimaryKey                  string                 `json:"primaryKey,omitempty"`
+	Remote                      string                 `json:"remote,omitempty"`
 	InlineRuleConditionOutcomes map[string]interface{} `json:"inlineRuleConditionOutcomes,omitempty"`
 }
 
@@ -224,6 +228,7 @@ type MultiSearchResponse struct {
 	FacetDistribution  map[string]json.RawMessage `json:"facetDistribution,omitempty"`
 	FacetStats         map[string]json.RawMessage `json:"facetStats,omitempty"`
 	RemoteErrors       map[string]*RemoteError    `json:"remoteErrors,omitempty"`
+	Metadata           []SearchMetadata           `json:"metadata,omitempty"`
 }
 
 type RemoteError struct {
