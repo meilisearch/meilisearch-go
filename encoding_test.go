@@ -2,6 +2,8 @@ package meilisearch
 
 import (
 	"bytes"
+	"compress/gzip"
+	"compress/zlib"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -158,6 +160,53 @@ func TestEncoder_InvalidDecode(t *testing.T) {
 		err := enc.Decode([]byte("invalid data"), &decoded)
 		assert.Error(t, err)
 	}
+}
+
+func TestEncoder_DecodeReusesPooledReaderAndSurfacesResetError(t *testing.T) {
+	validPayload, err := json.Marshal(&mockData{Name: "John Doe", Age: 30})
+	require.NoError(t, err)
+
+	t.Run("Gzip", func(t *testing.T) {
+		compressed, err := io.ReadAll(mustEncode(t, newEncoding(GzipEncoding, DefaultCompression), validPayload))
+		require.NoError(t, err)
+
+		pooled, err := gzip.NewReader(bytes.NewReader(compressed))
+		require.NoError(t, err)
+		_, err = io.Copy(io.Discard, pooled)
+		require.NoError(t, err)
+
+		g := &gzipEncoder{gzReaderPool: &sync.Pool{}}
+		g.gzReaderPool.Put(pooled)
+
+		var decoded mockData
+		err = g.Decode([]byte("not gzip data"), &decoded)
+		require.Error(t, err)
+	})
+
+	t.Run("Deflate", func(t *testing.T) {
+		compressed, err := io.ReadAll(mustEncode(t, newEncoding(DeflateEncoding, DefaultCompression), validPayload))
+		require.NoError(t, err)
+
+		pooled, err := zlib.NewReader(bytes.NewReader(compressed))
+		require.NoError(t, err)
+		_, err = io.Copy(io.Discard, pooled)
+		require.NoError(t, err)
+
+		f := &flateEncoder{flReaderPool: &sync.Pool{}}
+		f.flReaderPool.Put(pooled)
+
+		var decoded mockData
+		err = f.Decode([]byte("not deflate data"), &decoded)
+		require.Error(t, err)
+	})
+}
+
+func mustEncode(t *testing.T, enc encoder, data []byte) io.Reader {
+	t.Helper()
+	encoded, err := enc.Encode(bytes.NewReader(data))
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = encoded.Close() })
+	return encoded
 }
 
 func TestCopyZeroAlloc(t *testing.T) {
