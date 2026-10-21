@@ -43,7 +43,8 @@ func newEncoding(ce ContentEncoding, level EncodingCompressionLevel) encoder {
 					return &gzipWriter{writer: w, err: err}
 				},
 			},
-			bufferPool: &sync.Pool{New: func() interface{} { return new(bytes.Buffer) }},
+			gzReaderPool: &sync.Pool{},
+			bufferPool:   &sync.Pool{New: func() interface{} { return new(bytes.Buffer) }},
 		}
 	case DeflateEncoding:
 		return &flateEncoder{
@@ -53,7 +54,8 @@ func newEncoding(ce ContentEncoding, level EncodingCompressionLevel) encoder {
 					return &flateWriter{writer: w, err: err}
 				},
 			},
-			bufferPool: &sync.Pool{New: func() interface{} { return new(bytes.Buffer) }},
+			flReaderPool: &sync.Pool{},
+			bufferPool:   &sync.Pool{New: func() interface{} { return new(bytes.Buffer) }},
 		}
 	case BrotliEncoding:
 		return &brotliEncoder{
@@ -62,7 +64,8 @@ func newEncoding(ce ContentEncoding, level EncodingCompressionLevel) encoder {
 					return brotli.NewWriterLevel(io.Discard, level.Int())
 				},
 			},
-			bufferPool: &sync.Pool{New: func() interface{} { return new(bytes.Buffer) }},
+			brReaderPool: &sync.Pool{New: func() interface{} { return brotli.NewReader(bytes.NewReader(nil)) }},
+			bufferPool:   &sync.Pool{New: func() interface{} { return new(bytes.Buffer) }},
 		}
 	default:
 		return nil
@@ -71,6 +74,7 @@ func newEncoding(ce ContentEncoding, level EncodingCompressionLevel) encoder {
 
 type gzipEncoder struct {
 	gzWriterPool *sync.Pool
+	gzReaderPool *sync.Pool
 	bufferPool   *sync.Pool
 }
 
@@ -102,13 +106,26 @@ func (g *gzipEncoder) Encode(rc io.Reader) (io.ReadCloser, error) {
 }
 
 func (g *gzipEncoder) Decode(data []byte, vPtr interface{}) error {
-	r, err := gzip.NewReader(bytes.NewReader(data))
-	if err != nil {
-		return err
+	br := bytes.NewReader(data)
+
+	var r *gzip.Reader
+	if pooled, ok := g.gzReaderPool.Get().(*gzip.Reader); ok {
+		if err := pooled.Reset(br); err != nil {
+			return err
+		}
+		r = pooled
+	} else {
+		var err error
+		r, err = gzip.NewReader(br)
+		if err != nil {
+			return err
+		}
 	}
 	defer func() {
 		_ = r.Close()
+		g.gzReaderPool.Put(r)
 	}()
+
 	return json.NewDecoder(r).Decode(vPtr)
 }
 
@@ -122,6 +139,7 @@ func (g *gzipEncoder) Decoder(r io.Reader) (streamDecoder, error) {
 
 type flateEncoder struct {
 	flWriterPool *sync.Pool
+	flReaderPool *sync.Pool
 	bufferPool   *sync.Pool
 }
 
@@ -153,13 +171,26 @@ func (f *flateEncoder) Encode(rc io.Reader) (io.ReadCloser, error) {
 }
 
 func (f *flateEncoder) Decode(data []byte, vPtr interface{}) error {
-	r, err := zlib.NewReader(bytes.NewBuffer(data))
-	if err != nil {
-		return err
+	br := bytes.NewReader(data)
+
+	var r io.ReadCloser
+	if pooled, ok := f.flReaderPool.Get().(zlib.Resetter); ok {
+		if err := pooled.Reset(br, nil); err != nil {
+			return err
+		}
+		r = pooled.(io.ReadCloser)
+	} else {
+		var err error
+		r, err = zlib.NewReader(br)
+		if err != nil {
+			return err
+		}
 	}
 	defer func() {
 		_ = r.Close()
+		f.flReaderPool.Put(r)
 	}()
+
 	return json.NewDecoder(r).Decode(vPtr)
 }
 
@@ -173,6 +204,7 @@ func (f *flateEncoder) Decoder(r io.Reader) (streamDecoder, error) {
 
 type brotliEncoder struct {
 	brWriterPool *sync.Pool
+	brReaderPool *sync.Pool
 	bufferPool   *sync.Pool
 }
 
@@ -196,7 +228,10 @@ func (b *brotliEncoder) Encode(rc io.Reader) (io.ReadCloser, error) {
 }
 
 func (b *brotliEncoder) Decode(data []byte, vPtr interface{}) error {
-	r := brotli.NewReader(bytes.NewBuffer(data))
+	r := b.brReaderPool.Get().(*brotli.Reader)
+	_ = r.Reset(bytes.NewReader(data))
+	defer b.brReaderPool.Put(r)
+
 	return json.NewDecoder(r).Decode(vPtr)
 }
 
