@@ -5,9 +5,10 @@ import (
 	"compress/gzip"
 	"compress/zlib"
 	"encoding/json"
-	"github.com/andybalholm/brotli"
 	"io"
 	"sync"
+
+	"github.com/andybalholm/brotli"
 )
 
 type encoder interface {
@@ -123,6 +124,7 @@ func (g *gzipEncoder) Decode(data []byte, vPtr interface{}) error {
 	}
 	defer func() {
 		_ = r.Close()
+		_ = r.Reset(bytes.NewReader(nil))
 		g.gzReaderPool.Put(r)
 	}()
 
@@ -188,6 +190,9 @@ func (f *flateEncoder) Decode(data []byte, vPtr interface{}) error {
 	}
 	defer func() {
 		_ = r.Close()
+		if resetter, ok := r.(zlib.Resetter); ok {
+			_ = resetter.Reset(bytes.NewReader(nil), nil)
+		}
 		f.flReaderPool.Put(r)
 	}()
 
@@ -230,7 +235,10 @@ func (b *brotliEncoder) Encode(rc io.Reader) (io.ReadCloser, error) {
 func (b *brotliEncoder) Decode(data []byte, vPtr interface{}) error {
 	r := b.brReaderPool.Get().(*brotli.Reader)
 	_ = r.Reset(bytes.NewReader(data))
-	defer b.brReaderPool.Put(r)
+	defer func() {
+		_ = r.Reset(nil)
+		b.brReaderPool.Put(r)
+	}()
 
 	return json.NewDecoder(r).Decode(vPtr)
 }
