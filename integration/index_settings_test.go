@@ -1305,6 +1305,36 @@ func TestIndex_ResetFaceting(t *testing.T) {
 	}
 }
 
+func TestIndex_ResetFacetingAfterSampledCount(t *testing.T) {
+	c := setup(t, "")
+	setUpIndexForFaceting(c)
+	i := c.Index("indexUID")
+	t.Cleanup(cleanup(c))
+
+	sampled := &meilisearch.Faceting{
+		MaxValuesPerFacet: 100,
+		SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+			"*":      meilisearch.SortFacetTypeAlpha,
+			"genres": meilisearch.SortFacetTypeSampledCount,
+		},
+	}
+	task, err := i.UpdateFaceting(context.Background(), sampled)
+	require.NoError(t, err)
+	testWaitForIndexTask(t, i, task)
+
+	got, err := i.GetFaceting(context.Background())
+	require.NoError(t, err)
+	require.Equal(t, sampled, got)
+
+	task, err = i.ResetFaceting(context.Background())
+	require.NoError(t, err)
+	testWaitForIndexTask(t, i, task)
+
+	got, err = i.GetFaceting(context.Background())
+	require.NoError(t, err)
+	require.Equal(t, &defaultFaceting, got)
+}
+
 func TestIndex_UpdateFilterableAttributes(t *testing.T) {
 	meili := setup(t, "")
 	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
@@ -3823,6 +3853,50 @@ func TestIndex_UpdateFaceting(t *testing.T) {
 			wantResp: &meilisearch.Faceting{
 				SortFacetValuesBy: map[string]meilisearch.SortFacetType{
 					"*": meilisearch.SortFacetTypeCount,
+				},
+			},
+		},
+		{
+			name: "TestIndexSortFacetValuesBySampledCountFaceting",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: meilisearch.Faceting{
+					MaxValuesPerFacet: 2,
+					SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+						"*":      meilisearch.SortFacetTypeAlpha,
+						"genres": meilisearch.SortFacetTypeSampledCount,
+					},
+				},
+			},
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &meilisearch.Faceting{
+				MaxValuesPerFacet: 2,
+				SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+					"*":      meilisearch.SortFacetTypeAlpha,
+					"genres": meilisearch.SortFacetTypeSampledCount,
+				},
+			},
+		},
+		{
+			name: "TestIndexSortFacetValuesAllIndexBySampledCountFaceting",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+				request: meilisearch.Faceting{
+					SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+						"*": meilisearch.SortFacetTypeSampledCount,
+					},
+				},
+			},
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &meilisearch.Faceting{
+				SortFacetValuesBy: map[string]meilisearch.SortFacetType{
+					"*": meilisearch.SortFacetTypeSampledCount,
 				},
 			},
 		},

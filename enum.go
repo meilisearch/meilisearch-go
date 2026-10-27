@@ -2,7 +2,7 @@ package meilisearch
 
 type (
 	TaskType               string // TaskType is the type of a task
-	SortFacetType          string // SortFacetType is type of facet sorting, alpha or count
+	SortFacetType          string // SortFacetType is type of facet sorting, alpha, count or sampledCount
 	TaskStatus             string // TaskStatus is the status of a task.
 	ProximityPrecisionType string // ProximityPrecisionType accepts one of the ByWord or ByAttribute
 	MatchingStrategy       string // MatchingStrategy one of the Last, All, Frequency
@@ -50,6 +50,9 @@ const (
 const (
 	SortFacetTypeAlpha SortFacetType = "alpha"
 	SortFacetTypeCount SortFacetType = "count"
+	// SortFacetTypeSampledCount sorts facet values by an approximate count
+	// computed on a sample of the documents (Meilisearch v1.56+).
+	SortFacetTypeSampledCount SortFacetType = "sampledCount"
 )
 
 const (
