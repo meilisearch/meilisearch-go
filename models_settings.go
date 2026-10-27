@@ -74,7 +74,7 @@ type Pagination struct {
 // Faceting is the type that represents the faceting setting in meilisearch
 type Faceting struct {
 	MaxValuesPerFacet int64 `json:"maxValuesPerFacet"`
-	// SortFacetValuesBy index_name: alpha|count
+	// SortFacetValuesBy index_name: alpha|count|sampledCount
 	SortFacetValuesBy map[string]SortFacetType `json:"sortFacetValuesBy"`
 }
 

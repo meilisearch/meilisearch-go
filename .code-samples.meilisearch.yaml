@@ -373,7 +373,7 @@ update_faceting_settings_1: |-
       MaxValuesPerFacet: 2,
       SortFacetValuesBy: {
          "*":      SortFacetTypeAlpha,
-         "genres": SortFacetTypeCount,
+         "genres": SortFacetTypeSampledCount,
       }
   })
 reset_faceting_settings_1: |-
