@@ -124,7 +124,7 @@ func (g *gzipEncoder) Decode(data []byte, vPtr interface{}) error {
 	}
 	defer func() {
 		_ = r.Close()
-		_ = r.Reset(bytes.NewReader(nil))
+		br.Reset(nil)
 		g.gzReaderPool.Put(r)
 	}()
 
@@ -190,9 +190,7 @@ func (f *flateEncoder) Decode(data []byte, vPtr interface{}) error {
 	}
 	defer func() {
 		_ = r.Close()
-		if resetter, ok := r.(zlib.Resetter); ok {
-			_ = resetter.Reset(bytes.NewReader(nil), nil)
-		}
+		br.Reset(nil)
 		f.flReaderPool.Put(r)
 	}()
 
@@ -236,6 +234,12 @@ func (b *brotliEncoder) Decode(data []byte, vPtr interface{}) error {
 	r := b.brReaderPool.Get().(*brotli.Reader)
 	_ = r.Reset(bytes.NewReader(data))
 	defer func() {
+		// brotli.Reader.Reset keeps compressed input that is buffered but not
+		// yet decoded. json.Decoder can stop before the stream ends, so read to
+		// the end and pool the reader only if that leaves nothing buffered.
+		if _, err := io.Copy(io.Discard, r); err != nil {
+			return
+		}
 		_ = r.Reset(nil)
 		b.brReaderPool.Put(r)
 	}()
