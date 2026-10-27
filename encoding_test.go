@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"compress/gzip"
 	"compress/zlib"
+	"crypto/rand"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -12,6 +13,7 @@ import (
 	"sync"
 	"testing"
 
+	"github.com/andybalholm/brotli"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -199,6 +201,35 @@ func TestEncoder_DecodeReusesPooledReaderAndSurfacesResetError(t *testing.T) {
 		err = f.Decode([]byte("not deflate data"), &decoded)
 		require.Error(t, err)
 	})
+}
+
+func TestBrotliDecode_DoesNotReuseUnreadInput(t *testing.T) {
+	compress := func(data []byte) []byte {
+		var buf bytes.Buffer
+		w := brotli.NewWriterOptions(&buf, brotli.WriterOptions{Quality: 6, LGWin: 10})
+		_, err := w.Write(data)
+		require.NoError(t, err)
+		require.NoError(t, w.Close())
+		return buf.Bytes()
+	}
+
+	trailing := make([]byte, 256<<10)
+	_, err := rand.Read(trailing)
+	require.NoError(t, err)
+	dirty := compress(append([]byte(`{"name":"first","age":1}`), trailing...))
+	clean := compress([]byte(`{"name":"second","age":2}`))
+
+	enc := newEncoding(BrotliEncoding, DefaultCompression)
+	// sync.Pool may drop items (always possible under -race), so repeat.
+	for i := 0; i < 10; i++ {
+		var first mockData
+		require.NoError(t, enc.Decode(dirty, &first))
+		require.Equal(t, mockData{Name: "first", Age: 1}, first)
+
+		var second mockData
+		require.NoError(t, enc.Decode(clean, &second))
+		require.Equal(t, mockData{Name: "second", Age: 2}, second)
+	}
 }
 
 func mustEncode(t *testing.T, enc encoder, data []byte) io.Reader {
