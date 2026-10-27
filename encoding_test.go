@@ -232,6 +232,22 @@ func TestBrotliDecode_DoesNotReuseUnreadInput(t *testing.T) {
 	}
 }
 
+func TestDrainForReuse(t *testing.T) {
+	t.Run("EndsWithinLimit", func(t *testing.T) {
+		assert.True(t, drainForReuse(bytes.NewReader(nil)))
+		assert.True(t, drainForReuse(bytes.NewReader(make([]byte, maxReuseDrain))))
+	})
+	t.Run("ExceedsLimit", func(t *testing.T) {
+		r := bytes.NewReader(make([]byte, 10*maxReuseDrain))
+		assert.False(t, drainForReuse(r))
+		// Stops at the limit instead of reading everything.
+		assert.Equal(t, 9*maxReuseDrain-1, r.Len())
+	})
+	t.Run("ReadError", func(t *testing.T) {
+		assert.False(t, drainForReuse(&errorReader{}))
+	})
+}
+
 func mustEncode(t *testing.T, enc encoder, data []byte) io.Reader {
 	t.Helper()
 	encoded, err := enc.Encode(bytes.NewReader(data))

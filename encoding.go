@@ -231,13 +231,16 @@ func (b *brotliEncoder) Encode(rc io.Reader) (io.ReadCloser, error) {
 }
 
 func (b *brotliEncoder) Decode(data []byte, vPtr interface{}) error {
+	br := bytes.NewReader(data)
 	r := b.brReaderPool.Get().(*brotli.Reader)
-	_ = r.Reset(bytes.NewReader(data))
+	_ = r.Reset(br)
 	defer func() {
 		// brotli.Reader.Reset keeps compressed input that is buffered but not
-		// yet decoded. json.Decoder can stop before the stream ends, so read to
-		// the end and pool the reader only if that leaves nothing buffered.
-		if _, err := io.Copy(io.Discard, r); err != nil {
+		// yet decoded. json.Decoder can stop before the stream ends, so pool the
+		// reader only if the stream ends cleanly within a bounded drain.
+		reusable := drainForReuse(r)
+		br.Reset(nil)
+		if !reusable {
 			return
 		}
 		_ = r.Reset(nil)
@@ -245,6 +248,17 @@ func (b *brotliEncoder) Decode(data []byte, vPtr interface{}) error {
 	}()
 
 	return json.NewDecoder(r).Decode(vPtr)
+}
+
+// maxReuseDrain caps how much trailing output drainForReuse decompresses, so
+// a small JSON value followed by a large compressed tail stays cheap.
+const maxReuseDrain = 64 << 10
+
+// drainForReuse reads what is left of r, up to maxReuseDrain bytes. It
+// reports whether r reached EOF cleanly within that limit.
+func drainForReuse(r io.Reader) bool {
+	_, err := io.CopyN(io.Discard, r, maxReuseDrain+1)
+	return err == io.EOF
 }
 
 func (b *brotliEncoder) Decoder(r io.Reader) (streamDecoder, error) {
