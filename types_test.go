@@ -668,3 +668,81 @@ func TestMultiSearchFederation_Distinct(t *testing.T) {
 		})
 	}
 }
+
+// Task network payloads returned by Meilisearch Enterprise Edition v1.56.1 with replication enabled.
+const (
+	taskNetworkReplicatedJSON = `{"origin":{"remoteName":"ms-0","taskUid":2,"networkVersion":"01a1b63b-3123-7a70-9cb4-8ca067076c72"}}`
+	taskNetworkLeaderJSON     = `{"remote_tasks":{"ms-1":{"taskUid":2,"error":null},"ms-2":{"error":{"message":"error sending request","code":"remote_could_not_send_request","type":"system","link":"https://docs.meilisearch.com/errors#remote_could_not_send_request"}}},"network_version":"01a1b63a-25cb-7b63-8511-3d245e0b9b9a"}`
+	taskNetworkImportJSON     = `{"import_from":{"remoteName":"ms-1","indexName":"movies","documentCount":3},"network_change":{"remoteName":"ms-1","taskUid":0,"networkVersion":"01a1b63c-f2aa-7700-a550-ec92232c08df"}}`
+)
+
+func TestTaskNetwork_UnmarshalJSON(t *testing.T) {
+	t.Parallel()
+
+	tests := []struct {
+		name string
+		in   string
+		want TaskNetwork
+	}{
+		{
+			name: "task replicated from the leader",
+			in:   taskNetworkReplicatedJSON,
+			want: TaskNetwork{
+				Origin: &Origin{RemoteName: "ms-0", TaskUID: 2, NetworkVersion: "01a1b63b-3123-7a70-9cb4-8ca067076c72"},
+			},
+		},
+		{
+			name: "task replicated to remotes, one of them failed",
+			in:   taskNetworkLeaderJSON,
+			want: TaskNetwork{
+				RemoteTasks: map[string]*TaskRemote{
+					"ms-1": {TaskUID: Int64Ptr(2)},
+					"ms-2": {Error: &APIErrorDetails{
+						Message: "error sending request",
+						Code:    APIErrCodeRemoteCouldNotSendRequest,
+						Type:    "system",
+						Link:    "https://docs.meilisearch.com/errors#remote_could_not_send_request",
+					}},
+				},
+				NetworkVersion: "01a1b63a-25cb-7b63-8511-3d245e0b9b9a",
+			},
+		},
+		{
+			name: "document import triggered by a network topology change",
+			in:   taskNetworkImportJSON,
+			want: TaskNetwork{
+				ImportFrom:    &ImportFrom{RemoteName: "ms-1", IndexName: "movies", DocumentCount: 3},
+				NetworkChange: &Origin{RemoteName: "ms-1", TaskUID: 0, NetworkVersion: "01a1b63c-f2aa-7700-a550-ec92232c08df"},
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			var got TaskNetwork
+			require.NoError(t, json.Unmarshal([]byte(tt.in), &got))
+			require.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestTaskResult_UnmarshalJSON_WithTaskNetworks(t *testing.T) {
+	t.Parallel()
+
+	payload := `{"results":[` +
+		`{"uid":3,"indexUid":"movies","status":"succeeded","type":"documentAdditionOrUpdate","network":` + taskNetworkReplicatedJSON + `},` +
+		`{"uid":2,"indexUid":"movies","status":"succeeded","type":"documentAdditionOrUpdate","network":` + taskNetworkLeaderJSON + `},` +
+		`{"uid":1,"indexUid":"movies","status":"succeeded","type":"documentAdditionOrUpdate","network":` + taskNetworkImportJSON + `},` +
+		`{"uid":0,"indexUid":null,"status":"succeeded","type":"networkTopologyChange"}` +
+		`],"total":4,"limit":20,"from":3,"next":null}`
+
+	var got TaskResult
+	require.NoError(t, json.Unmarshal([]byte(payload), &got))
+	require.Len(t, got.Results, 4)
+
+	require.Equal(t, int64(2), got.Results[0].TaskNetwork.Origin.TaskUID)
+	require.Equal(t, int64(2), *got.Results[1].TaskNetwork.RemoteTasks["ms-1"].TaskUID)
+	require.Equal(t, APIErrCodeRemoteCouldNotSendRequest, got.Results[1].TaskNetwork.RemoteTasks["ms-2"].Error.Code)
+	require.Equal(t, "movies", got.Results[2].TaskNetwork.ImportFrom.IndexName)
+	require.Equal(t, TaskNetwork{}, got.Results[3].TaskNetwork)
+}
