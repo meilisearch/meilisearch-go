@@ -24,15 +24,43 @@ func Test_GetNetwork(t *testing.T) {
 	require.Empty(t, network.Leader)
 }
 
+// setSingleNodeLeader configures a network made of the test instance only, as leader.
+func setSingleNodeLeader(t *testing.T, sv meilisearch.ServiceManager) {
+	value, err := sv.UpdateNetwork(context.Background(), &meilisearch.UpdateNetworkRequest{
+		Self:   meilisearch.String("ms-00"),
+		Leader: meilisearch.String("ms-00"),
+		Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemote]{
+			"ms-00": meilisearch.NewOpt(meilisearch.UpdateRemote{
+				URL:          meilisearch.String(getDefaultHost()),
+				SearchAPIKey: meilisearch.NewOpt(masterKey),
+				WriteAPIKey:  meilisearch.String(masterKey),
+			}),
+		}),
+		Shards: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemoteShard]{
+			"ms-00": meilisearch.NewOpt(meilisearch.UpdateRemoteShard{
+				Remotes: meilisearch.NewOpt([]string{"ms-00"}),
+			}),
+		}),
+	})
+	require.NoError(t, err)
+	task, ok := value.(*meilisearch.Task)
+	if !ok {
+		require.Failf(t, "unexpected type returned", "got %T", value)
+	}
+	testWaitForTask(t, sv, task)
+}
+
 func Test_UpdateNetwork(t *testing.T) {
 	tests := []struct {
 		name              string
 		initializeNetwork func(t *testing.T, sv meilisearch.ServiceManager)
 		update            *meilisearch.UpdateNetworkRequest
+		wantTask          bool
 		want              *meilisearch.Network
 	}{
 		{
-			name: "SetNetworkLeader",
+			name:     "SetNetworkLeader",
+			wantTask: true,
 			update: &meilisearch.UpdateNetworkRequest{
 				Self:   meilisearch.String("ms-00"),
 				Leader: meilisearch.String("ms-00"),
@@ -68,31 +96,8 @@ func Test_UpdateNetwork(t *testing.T) {
 			},
 		},
 		{
-			name: "RemoveNetworkLeader",
-			initializeNetwork: func(t *testing.T, sv meilisearch.ServiceManager) {
-				value, err := sv.UpdateNetwork(context.Background(), &meilisearch.UpdateNetworkRequest{
-					Self:   meilisearch.String("ms-00"),
-					Leader: meilisearch.String("ms-00"),
-					Remotes: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemote]{
-						"ms-00": meilisearch.NewOpt(meilisearch.UpdateRemote{
-							URL:          meilisearch.String(getDefaultHost()),
-							SearchAPIKey: meilisearch.NewOpt(masterKey),
-							WriteAPIKey:  meilisearch.String(masterKey),
-						}),
-					}),
-					Shards: meilisearch.NewOpt(map[string]meilisearch.Opt[meilisearch.UpdateRemoteShard]{
-						"ms-00": meilisearch.NewOpt(meilisearch.UpdateRemoteShard{
-							Remotes: meilisearch.NewOpt([]string{"ms-00"}),
-						}),
-					}),
-				})
-				require.NoError(t, err)
-				task, ok := value.(*meilisearch.Task)
-				if !ok {
-					require.Failf(t, "unexpected type returned", "got %T", value)
-				}
-				testWaitForTask(t, sv, task)
-			},
+			name:              "RemoveNetworkLeader",
+			initializeNetwork: setSingleNodeLeader,
 			update: &meilisearch.UpdateNetworkRequest{
 				Self:    meilisearch.String("new-self"),
 				Leader:  meilisearch.Null[string](),
@@ -128,6 +133,27 @@ func Test_UpdateNetwork(t *testing.T) {
 				},
 			},
 		},
+		{
+			// The request does not set the leader, but the network has one: the update is enqueued.
+			name:              "UpdateSelfWhileLeaderIsSet",
+			initializeNetwork: setSingleNodeLeader,
+			update: &meilisearch.UpdateNetworkRequest{
+				Self: meilisearch.String("ms-00"),
+			},
+			wantTask: true,
+			want: &meilisearch.Network{
+				Self:   "ms-00",
+				Leader: "ms-00",
+				Remotes: map[string]meilisearch.Remote{
+					"ms-00": {
+						URL:          getDefaultHost(),
+						SearchAPIKey: masterKey,
+						WriteAPIKey:  masterKey,
+						Status:       meilisearch.RemoteStatusAvailable,
+					},
+				},
+			},
+		},
 	}
 
 	for _, tt := range tests {
@@ -145,6 +171,8 @@ func Test_UpdateNetwork(t *testing.T) {
 
 			value, err := sv.UpdateNetwork(context.Background(), tt.update)
 			require.NoError(t, err)
+			_, isTask := value.(*meilisearch.Task)
+			require.Equal(t, tt.wantTask, isTask, "got %T", value)
 
 			if updatedNetwork, ok := value.(*meilisearch.Network); ok {
 				network, err := sv.GetNetwork(context.Background())

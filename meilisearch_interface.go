@@ -69,8 +69,9 @@ type ServiceManager interface {
 
 	// Experimental: UpdateNetwork updates the network object.
 	//
-	// 	- If leader is set to a value then UpdateNetwork will return a *[Task] object.
-	// 	- If leader is not set or explicitly set to null it will return a *[Network] object.
+	// 	- If the network has a leader once updated, Meilisearch enqueues a networkTopologyChange task
+	// 	  and UpdateNetwork returns a *[Task] object, whatever fields are updated.
+	// 	- Otherwise the update is applied immediately and UpdateNetwork returns the updated *[Network] object.
 	//	- Updates are partial; only the provided fields are updated.
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/experimental-features/configure-network-topology
