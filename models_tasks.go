@@ -24,20 +24,34 @@ type Task struct {
 
 // TaskNetwork indicates information about a task network
 //
-// Documentation: https://www.meilisearch.com/docs/reference/api/tasks#network
+// Documentation: https://www.meilisearch.com/docs/reference/api/async-task-management/get-task#response-network
 type TaskNetwork struct {
-	Origin  *Origin                `json:"origin,omitempty"`
-	Remotes map[string]*TaskRemote `json:"remotes,omitempty"`
+	Origin         *Origin                `json:"origin,omitempty"`
+	RemoteTasks    map[string]*TaskRemote `json:"remote_tasks,omitempty"`
+	NetworkVersion string                 `json:"network_version,omitempty"`
+	ImportFrom     *ImportFrom            `json:"import_from,omitempty"`
+	NetworkChange  *Origin                `json:"network_change,omitempty"`
 }
 
+// Origin identifies the remote task a task originates from.
 type Origin struct {
-	RemoteName string `json:"remoteName,omitempty"`
-	TaskUID    string `json:"taskUid,omitempty"`
+	RemoteName     string `json:"remoteName,omitempty"`
+	TaskUID        int64  `json:"taskUid"`
+	NetworkVersion string `json:"networkVersion,omitempty"`
 }
 
+// TaskRemote is the result of replicating a task to a remote:
+// the uid of the task created on the remote, or the error that prevented it.
 type TaskRemote struct {
-	TaskUID *string `json:"task_uid,omitempty"`
-	Error   *string `json:"error,omitempty"`
+	TaskUID *int64           `json:"taskUid,omitempty"`
+	Error   *APIErrorDetails `json:"error,omitempty"`
+}
+
+// ImportFrom describes the documents imported from a remote during a network topology change.
+type ImportFrom struct {
+	RemoteName    string `json:"remoteName"`
+	IndexName     string `json:"indexName"`
+	DocumentCount int64  `json:"documentCount"`
 }
 
 // TaskInfo indicates information regarding a task returned by an asynchronous method
