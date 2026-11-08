@@ -80,6 +80,8 @@ const (
 	TaskTypeSnapshotCreation TaskType = "snapshotCreation"
 	// TaskTypeExport represents a task exportation
 	TaskTypeExport TaskType = "export"
+	// TaskTypeNetworkTopologyChange represents a change of the network topology (Enterprise Edition)
+	TaskTypeNetworkTopologyChange TaskType = "networkTopologyChange"
 )
 
 type (
