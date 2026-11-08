@@ -57,6 +57,7 @@ func Test_UpdateNetwork(t *testing.T) {
 						URL:          getDefaultHost(),
 						SearchAPIKey: masterKey,
 						WriteAPIKey:  masterKey,
+						Status:       meilisearch.RemoteStatusAvailable,
 					},
 				},
 				Shards: map[string]meilisearch.Shard{
@@ -122,6 +123,7 @@ func Test_UpdateNetwork(t *testing.T) {
 						URL:          "https://updated.com",
 						SearchAPIKey: "UPDATED_API_KEY",
 						WriteAPIKey:  "",
+						Status:       meilisearch.RemoteStatusAvailable,
 					},
 				},
 			},

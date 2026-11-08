@@ -13,10 +13,21 @@ type Network struct {
 
 // Remote describes a single remote Meilisearch node.
 type Remote struct {
-	URL          string `json:"url"`
-	SearchAPIKey string `json:"searchApiKey"`
-	WriteAPIKey  string `json:"writeApiKey"`
+	URL          string       `json:"url"`
+	SearchAPIKey string       `json:"searchApiKey"`
+	WriteAPIKey  string       `json:"writeApiKey"`
+	Status       RemoteStatus `json:"status,omitempty"`
 }
+
+// RemoteStatus is the availability of a remote, as seen by the instance answering the request.
+//
+// Documentation: https://www.meilisearch.com/docs/resources/self_hosting/sharding/configure_replication#inspect-remote-availability
+type RemoteStatus string
+
+const (
+	RemoteStatusAvailable   RemoteStatus = "available"
+	RemoteStatusUnavailable RemoteStatus = "unavailable"
+)
 
 // Shard represents a shard in the network
 type Shard struct {

@@ -746,3 +746,33 @@ func TestTaskResult_UnmarshalJSON_WithTaskNetworks(t *testing.T) {
 	require.Equal(t, "movies", got.Results[2].TaskNetwork.ImportFrom.IndexName)
 	require.Equal(t, TaskNetwork{}, got.Results[3].TaskNetwork)
 }
+
+func TestNetwork_UnmarshalJSON(t *testing.T) {
+	t.Parallel()
+
+	payload := `{"self":"ms-0","remotes":{` +
+		`"ms-0":{"url":"http://ms-0:7700","searchApiKey":"searchKey","writeApiKey":"writeKey","status":"available"},` +
+		`"ms-2":{"url":"http://ms-2:7700","searchApiKey":"searchKey","writeApiKey":"writeKey","status":"unavailable"}},` +
+		`"shards":{"s0":{"remotes":["ms-0","ms-2"]}},"leader":"ms-0","version":"01a1b624-b93d-7ef2-a3d0-908584daa4fe"}`
+
+	var got Network
+	require.NoError(t, json.Unmarshal([]byte(payload), &got))
+	require.Equal(t, Network{
+		Self:   "ms-0",
+		Leader: "ms-0",
+		Remotes: map[string]Remote{
+			"ms-0": {URL: "http://ms-0:7700", SearchAPIKey: "searchKey", WriteAPIKey: "writeKey", Status: RemoteStatusAvailable},
+			"ms-2": {URL: "http://ms-2:7700", SearchAPIKey: "searchKey", WriteAPIKey: "writeKey", Status: RemoteStatusUnavailable},
+		},
+		Shards:  map[string]Shard{"s0": {Remotes: []string{"ms-0", "ms-2"}}},
+		Version: "01a1b624-b93d-7ef2-a3d0-908584daa4fe",
+	}, got)
+}
+
+func TestRemote_MarshalJSON_OmitsEmptyStatus(t *testing.T) {
+	t.Parallel()
+
+	got, err := json.Marshal(Remote{URL: "http://ms-0:7700"})
+	require.NoError(t, err)
+	require.JSONEq(t, `{"url":"http://ms-0:7700","searchApiKey":"","writeApiKey":""}`, string(got))
+}
