@@ -3,8 +3,6 @@ package meilisearch
 import (
 	"context"
 	"net/http"
-	"strconv"
-	"strings"
 	"time"
 )
 
@@ -23,39 +21,18 @@ func (i *index) GetTasks(ctx context.Context, param *TasksQuery) (*TaskResult, e
 		acceptedStatusCodes: []int{http.StatusOK},
 		functionName:        "GetTasks",
 	}
+
+	// Work on a copy so the caller's query is never modified, and always
+	// scope the request to this index, even when no query is given.
+	query := TasksQuery{}
 	if param != nil {
-		if param.Limit != 0 {
-			req.withQueryParams["limit"] = strconv.FormatInt(param.Limit, 10)
-		}
-		if param.From != 0 {
-			req.withQueryParams["from"] = strconv.FormatInt(param.From, 10)
-		}
-		if len(param.Statuses) != 0 {
-			statuses := make([]string, len(param.Statuses))
-			for i, status := range param.Statuses {
-				statuses[i] = string(status)
-			}
-			req.withQueryParams["statuses"] = strings.Join(statuses, ",")
-		}
-
-		if len(param.Types) != 0 {
-			types := make([]string, len(param.Types))
-			for i, t := range param.Types {
-				types[i] = string(t)
-			}
-			req.withQueryParams["types"] = strings.Join(types, ",")
-		}
-		if len(param.IndexUIDS) != 0 {
-			param.IndexUIDS = append(param.IndexUIDS, i.uid)
-			req.withQueryParams["indexUids"] = strings.Join(param.IndexUIDS, ",")
-		} else {
-			req.withQueryParams["indexUids"] = i.uid
-		}
-
-		if param.Reverse {
-			req.withQueryParams["reverse"] = "true"
-		}
+		query = *param
 	}
+	indexUIDs := make([]string, 0, len(query.IndexUIDS)+1)
+	indexUIDs = append(indexUIDs, query.IndexUIDS...)
+	query.IndexUIDS = append(indexUIDs, i.uid)
+	encodeTasksQuery(&query, req)
+
 	if err := i.client.executeRequest(ctx, req); err != nil {
 		return nil, err
 	}
