@@ -748,6 +748,10 @@ func Test_GetTasks(t *testing.T) {
 		client   meilisearch.ServiceManager
 		document []docTest
 		query    *meilisearch.TasksQuery
+		// queryForTask, when set, replaces query for filters that must
+		// target the task enqueued by the test.
+		queryForTask func(task *meilisearch.TaskInfo) *meilisearch.TasksQuery
+		wantEmpty    bool
 	}
 	tests := []struct {
 		name string
@@ -837,9 +841,11 @@ func Test_GetTasks(t *testing.T) {
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
-				query: &meilisearch.TasksQuery{
-					Limit: 1,
-					UIDS:  []int64{1},
+				queryForTask: func(task *meilisearch.TaskInfo) *meilisearch.TasksQuery {
+					return &meilisearch.TasksQuery{
+						Limit: 1,
+						UIDS:  []int64{task.TaskUID},
+					}
 				},
 			},
 		},
@@ -851,9 +857,12 @@ func Test_GetTasks(t *testing.T) {
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
-				query: &meilisearch.TasksQuery{
-					Limit:            1,
-					BeforeEnqueuedAt: time.Now(),
+				queryForTask: func(task *meilisearch.TaskInfo) *meilisearch.TasksQuery {
+					// Dates are sent with a precision of one second.
+					return &meilisearch.TasksQuery{
+						Limit:            1,
+						BeforeEnqueuedAt: task.EnqueuedAt.Add(time.Second),
+					}
 				},
 			},
 		},
@@ -865,10 +874,14 @@ func Test_GetTasks(t *testing.T) {
 				document: []docTest{
 					{ID: "123", Name: "Pride and Prejudice"},
 				},
-				query: &meilisearch.TasksQuery{
-					Limit:      1,
-					CanceledBy: []int64{1},
+				// A document addition never cancels any task.
+				queryForTask: func(task *meilisearch.TaskInfo) *meilisearch.TasksQuery {
+					return &meilisearch.TasksQuery{
+						Limit:      1,
+						CanceledBy: []int64{task.TaskUID},
+					}
 				},
+				wantEmpty: true,
 			},
 		},
 	}
@@ -884,19 +897,32 @@ func Test_GetTasks(t *testing.T) {
 			_, err = c.WaitForTask(context.Background(), taskInfo.TaskUID, 0)
 			require.NoError(t, err)
 
-			gotResp, err := i.GetTasks(context.Background(), tt.args.query)
+			query := tt.args.query
+			if tt.args.queryForTask != nil {
+				query = tt.args.queryForTask(taskInfo)
+			}
+
+			gotResp, err := i.GetTasks(context.Background(), query)
 			require.NoError(t, err)
-			require.NotNil(t, (*gotResp).Results[0].Status)
-			require.NotZero(t, (*gotResp).Results[0].UID)
-			require.NotNil(t, (*gotResp).Results[0].Type)
-			if tt.args.query != nil {
-				if tt.args.query.Limit != 0 {
-					require.Equal(t, tt.args.query.Limit, (*gotResp).Limit)
+			if tt.args.wantEmpty {
+				require.Empty(t, (*gotResp).Results)
+			} else {
+				require.NotEmpty(t, (*gotResp).Results)
+				require.NotNil(t, (*gotResp).Results[0].Status)
+				require.NotZero(t, (*gotResp).Results[0].UID)
+				require.NotNil(t, (*gotResp).Results[0].Type)
+				if query != nil && len(query.UIDS) != 0 {
+					require.Contains(t, query.UIDS, (*gotResp).Results[0].UID)
+				}
+			}
+			if query != nil {
+				if query.Limit != 0 {
+					require.Equal(t, query.Limit, (*gotResp).Limit)
 				} else {
 					require.Equal(t, int64(20), (*gotResp).Limit)
 				}
-				if tt.args.query.From != 0 {
-					require.Equal(t, tt.args.query.From, (*gotResp).From)
+				if query.From != 0 {
+					require.Equal(t, query.From, (*gotResp).From)
 				}
 			}
 		})

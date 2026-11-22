@@ -85,6 +85,9 @@ func encodeTasksQuery(param *TasksQuery, req *internalRequest) {
 	if !param.AfterFinishedAt.IsZero() {
 		req.withQueryParams["afterFinishedAt"] = *formatDate(param.AfterFinishedAt, false)
 	}
+	if param.Reverse {
+		req.withQueryParams["reverse"] = "true"
+	}
 }
 
 func formatDate(date time.Time, _ bool) *string {
