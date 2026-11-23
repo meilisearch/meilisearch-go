@@ -57,6 +57,7 @@ func TestEncodeTasksQuery(t *testing.T) {
 		AfterStartedAt:   time.Now().Add(-40 * time.Hour),
 		BeforeFinishedAt: time.Now().Add(-50 * time.Hour),
 		AfterFinishedAt:  time.Now().Add(-60 * time.Hour),
+		Reverse:          true,
 	}
 	req := &internalRequest{}
 	req.init()
@@ -77,6 +78,7 @@ func TestEncodeTasksQuery(t *testing.T) {
 		"afterStartedAt":   formatDateForComparison(param.AfterStartedAt),
 		"beforeFinishedAt": formatDateForComparison(param.BeforeFinishedAt),
 		"afterFinishedAt":  formatDateForComparison(param.AfterFinishedAt),
+		"reverse":          "true",
 	}
 
 	for k, v := range expectedParams {
