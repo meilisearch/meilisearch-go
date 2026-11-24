@@ -1081,3 +1081,52 @@ func (i *index) ResetForeignKeys(ctx context.Context) (*TaskInfo, error) {
 	}
 	return resp, nil
 }
+
+func (i *index) GetWordPosition(ctx context.Context) (*WordPosition, error) {
+	resp := new(WordPosition)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/word-position",
+		method:              http.MethodGet,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusOK},
+		functionName:        "GetWordPosition",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) UpdateWordPosition(ctx context.Context, wordPosition *WordPosition) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/word-position",
+		method:              http.MethodPatch,
+		contentType:         contentTypeJSON,
+		withRequest:         &wordPosition,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "UpdateWordPosition",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}
+
+func (i *index) ResetWordPosition(ctx context.Context) (*TaskInfo, error) {
+	resp := new(TaskInfo)
+	req := &internalRequest{
+		endpoint:            "/indexes/" + i.uid + "/settings/word-position",
+		method:              http.MethodDelete,
+		withRequest:         nil,
+		withResponse:        resp,
+		acceptedStatusCodes: []int{http.StatusAccepted},
+		functionName:        "ResetWordPosition",
+	}
+	if err := i.client.executeRequest(ctx, req); err != nil {
+		return nil, err
+	}
+	return resp, nil
+}

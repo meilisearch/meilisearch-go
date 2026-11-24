@@ -417,6 +417,16 @@ type SettingsManager interface {
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/settings/reset-foreignkeys
 	ResetForeignKeys(ctx context.Context) (*TaskInfo, error)
+
+	// UpdateWordPosition updates the wordPosition setting of the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/settings/update-wordposition
+	UpdateWordPosition(ctx context.Context, wordPosition *WordPosition) (*TaskInfo, error)
+
+	// ResetWordPosition resets the wordPosition setting of the index to its default value.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/settings/reset-wordposition
+	ResetWordPosition(ctx context.Context) (*TaskInfo, error)
 }
 
 type SettingsReader interface {
@@ -536,4 +546,9 @@ type SettingsReader interface {
 	//
 	// docs: https://www.meilisearch.com/docs/reference/api/settings/get-foreignkeys
 	GetForeignKeys(ctx context.Context) ([]ForeignKey, error)
+
+	// GetWordPosition retrieves the wordPosition setting of the index.
+	//
+	// docs: https://www.meilisearch.com/docs/reference/api/settings/get-wordposition
+	GetWordPosition(ctx context.Context) (*WordPosition, error)
 }
