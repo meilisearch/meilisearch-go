@@ -259,6 +259,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
@@ -289,6 +290,7 @@ func TestIndex_GetSettings(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				SeparatorTokens:      make([]string, 0),
 				NonSeparatorTokens:   make([]string, 0),
@@ -902,6 +904,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -934,6 +937,7 @@ func TestIndex_ResetSettings(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -1689,6 +1693,31 @@ func TestIndex_UpdateSettingsForeignKeys(t *testing.T) {
 	assert.Equal(t, want, got)
 }
 
+func TestIndex_UpdateSettingsWordPosition(t *testing.T) {
+	c := setup(t, "")
+	t.Cleanup(cleanup(c))
+	setUpIndexForFaceting(c)
+
+	idx := c.Index("indexUID")
+	want := &meilisearch.WordPosition{
+		Enabled: false,
+	}
+
+	task, err := idx.UpdateSettings(context.Background(), &meilisearch.Settings{
+		WordPosition: want,
+	})
+	require.NoError(t, err)
+	testWaitForIndexTask(t, idx, task)
+
+	got, err := idx.GetWordPosition(context.Background())
+	require.NoError(t, err)
+	require.Equal(t, want, got)
+
+	settings, err := idx.GetSettings(context.Background())
+	require.NoError(t, err)
+	require.Equal(t, want, settings.WordPosition)
+}
+
 func TestIndex_UpdateSearchableAttributes(t *testing.T) {
 	meili := setup(t, "")
 	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
@@ -1854,6 +1883,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				SearchCutoffMs:       150,
 				ProximityPrecision:   meilisearch.ByAttribute,
@@ -1946,6 +1976,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				SearchCutoffMs:       150,
 				ProximityPrecision:   meilisearch.ByWord,
@@ -2027,6 +2058,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2058,6 +2090,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2084,6 +2117,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -2124,6 +2158,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2155,6 +2190,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2181,6 +2217,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -2221,6 +2258,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2252,6 +2290,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2278,6 +2317,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -2318,6 +2358,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2349,6 +2390,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2375,6 +2417,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -2415,6 +2458,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2446,6 +2490,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2472,6 +2517,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -2512,6 +2558,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes: []string{},
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
+					WordPosition:       &defaultWordPosition,
 					Faceting:           &defaultFaceting,
 					ProximityPrecision: meilisearch.ByWord,
 					SeparatorTokens:    make([]string, 0),
@@ -2543,6 +2590,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes: []string{},
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
+					WordPosition:       &defaultWordPosition,
 					Faceting:           &defaultFaceting,
 					ProximityPrecision: meilisearch.ByWord,
 					SeparatorTokens:    make([]string, 0),
@@ -2569,6 +2617,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -2609,6 +2658,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
+					WordPosition:       &defaultWordPosition,
 					Faceting:           &defaultFaceting,
 					ProximityPrecision: meilisearch.ByWord,
 					SeparatorTokens:    make([]string, 0),
@@ -2640,6 +2690,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					},
 					TypoTolerance:      &defaultTypoTolerance,
 					Pagination:         &defaultPagination,
+					WordPosition:       &defaultWordPosition,
 					Faceting:           &defaultFaceting,
 					ProximityPrecision: meilisearch.ByWord,
 					SeparatorTokens:    make([]string, 0),
@@ -2666,6 +2717,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -2720,6 +2772,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					FilterableAttributes: []string{},
 					SortableAttributes:   []string{},
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -2773,6 +2826,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 						DisableOnNumbers: true,
 					},
 					Pagination:         &defaultPagination,
+					WordPosition:       &defaultWordPosition,
 					Faceting:           &defaultFaceting,
 					ProximityPrecision: meilisearch.ByWord,
 					SeparatorTokens:    make([]string, 0),
@@ -2799,6 +2853,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -2896,6 +2951,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -2934,6 +2990,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					ProximityPrecision:   meilisearch.ByWord,
 					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 200,
@@ -2968,6 +3025,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					ProximityPrecision:   meilisearch.ByWord,
 					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 200,
@@ -2999,6 +3057,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -3035,6 +3094,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					ProximityPrecision:   meilisearch.ByAttribute,
 					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 100,
@@ -3070,6 +3130,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					ProximityPrecision:   meilisearch.ByWord,
 					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 100,
@@ -3101,6 +3162,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -3136,6 +3198,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -3174,6 +3237,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					SortableAttributes:   []string{},
 					TypoTolerance:        &defaultTypoTolerance,
 					Pagination:           &defaultPagination,
+					WordPosition:         &defaultWordPosition,
 					Faceting:             &defaultFaceting,
 					ProximityPrecision:   meilisearch.ByWord,
 					SeparatorTokens:      make([]string, 0),
@@ -3207,6 +3271,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 				SortableAttributes:   []string{},
 				TypoTolerance:        &defaultTypoTolerance,
 				Pagination:           &defaultPagination,
+				WordPosition:         &defaultWordPosition,
 				Faceting:             &defaultFaceting,
 				ProximityPrecision:   meilisearch.ByWord,
 				SeparatorTokens:      make([]string, 0),
@@ -4961,6 +5026,163 @@ func TestIndex_ResetFacetSearch(t *testing.T) {
 			testWaitForIndexTask(t, i, gotTask)
 
 			gotResp, err := i.GetFacetSearch(context.Background())
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+		})
+	}
+}
+
+func TestIndex_GetWordPosition(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
+	type args struct {
+		UID    string
+		client meilisearch.ServiceManager
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantResp *meilisearch.WordPosition
+	}{
+		{
+			name: "TestIndexBasicGetWordPosition",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+			},
+			wantResp: &defaultWordPosition,
+		},
+		{
+			name: "TestIndexGetWordPositionWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customMeili,
+			},
+			wantResp: &defaultWordPosition,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpIndexForFaceting(tt.args.client)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			gotResp, err := i.GetWordPosition(context.Background())
+			require.NoError(t, err)
+			require.Equal(t, tt.wantResp, gotResp)
+		})
+	}
+}
+
+func TestIndex_UpdateWordPosition(t *testing.T) {
+	tests := []struct {
+		name string
+		args meilisearch.WordPosition
+		want *meilisearch.WordPosition
+	}{
+		{
+			name: "DisableWordPosition",
+			args: meilisearch.WordPosition{
+				Enabled: false,
+			},
+			want: &meilisearch.WordPosition{
+				Enabled: false,
+			},
+		},
+		{
+			name: "EnableWordPosition",
+			args: meilisearch.WordPosition{
+				Enabled: true,
+			},
+			want: &meilisearch.WordPosition{
+				Enabled: true,
+			},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := setup(t, "")
+			t.Cleanup(cleanup(c))
+			setUpIndexForFaceting(c)
+			i := c.Index("indexUID")
+
+			task, err := i.UpdateWordPosition(context.Background(), &tt.args)
+			require.NoError(t, err)
+			testWaitForIndexTask(t, i, task)
+
+			got, err := i.GetWordPosition(context.Background())
+			require.NoError(t, err)
+			require.Equal(t, tt.want, got)
+		})
+	}
+}
+
+func TestIndex_ResetWordPosition(t *testing.T) {
+	meili := setup(t, "")
+	customMeili := setup(t, "", meilisearch.WithCustomClientWithTLS(&tls.Config{
+		InsecureSkipVerify: true,
+	}))
+
+	type args struct {
+		UID    string
+		client meilisearch.ServiceManager
+	}
+	tests := []struct {
+		name     string
+		args     args
+		wantTask *meilisearch.TaskInfo
+		wantResp *meilisearch.WordPosition
+	}{
+		{
+			name: "TestIndexBasicResetWordPosition",
+			args: args{
+				UID:    "indexUID",
+				client: meili,
+			},
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &defaultWordPosition,
+		},
+		{
+			name: "TestIndexResetWordPositionWithCustomClient",
+			args: args{
+				UID:    "indexUID",
+				client: customMeili,
+			},
+			wantTask: &meilisearch.TaskInfo{
+				TaskUID: 1,
+			},
+			wantResp: &defaultWordPosition,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			setUpIndexForFaceting(tt.args.client)
+			c := tt.args.client
+			i := c.Index(tt.args.UID)
+			t.Cleanup(cleanup(c))
+
+			// Move away from the default first, so the reset is actually observable.
+			task, err := i.UpdateWordPosition(context.Background(), &meilisearch.WordPosition{Enabled: false})
+			require.NoError(t, err)
+			testWaitForIndexTask(t, i, task)
+
+			gotResp, err := i.GetWordPosition(context.Background())
+			require.NoError(t, err)
+			require.False(t, gotResp.Enabled)
+
+			gotTask, err := i.ResetWordPosition(context.Background())
+			require.NoError(t, err)
+			require.GreaterOrEqual(t, gotTask.TaskUID, tt.wantTask.TaskUID)
+			testWaitForIndexTask(t, i, gotTask)
+
+			gotResp, err = i.GetWordPosition(context.Background())
 			require.NoError(t, err)
 			require.Equal(t, tt.wantResp, gotResp)
 		})
