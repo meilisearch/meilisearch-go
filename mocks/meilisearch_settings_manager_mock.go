@@ -1405,6 +1405,68 @@ func (_c *MockmeilisearchSettingsManager_GetTypoTolerance_Call) RunAndReturn(run
 	return _c
 }
 
+// GetWordPosition provides a mock function for the type MockmeilisearchSettingsManager
+func (_mock *MockmeilisearchSettingsManager) GetWordPosition(ctx context.Context) (*meilisearch.WordPosition, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetWordPosition")
+	}
+
+	var r0 *meilisearch.WordPosition
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) (*meilisearch.WordPosition, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) *meilisearch.WordPosition); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.WordPosition)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsManager_GetWordPosition_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetWordPosition'
+type MockmeilisearchSettingsManager_GetWordPosition_Call struct {
+	*mock.Call
+}
+
+// GetWordPosition is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockmeilisearchSettingsManager_Expecter) GetWordPosition(ctx any) *MockmeilisearchSettingsManager_GetWordPosition_Call {
+	return &MockmeilisearchSettingsManager_GetWordPosition_Call{Call: _e.mock.On("GetWordPosition", ctx)}
+}
+
+func (_c *MockmeilisearchSettingsManager_GetWordPosition_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsManager_GetWordPosition_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_GetWordPosition_Call) Return(wordPosition *meilisearch.WordPosition, err error) *MockmeilisearchSettingsManager_GetWordPosition_Call {
+	_c.Call.Return(wordPosition, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_GetWordPosition_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.WordPosition, error)) *MockmeilisearchSettingsManager_GetWordPosition_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // ResetDictionary provides a mock function for the type MockmeilisearchSettingsManager
 func (_mock *MockmeilisearchSettingsManager) ResetDictionary(ctx context.Context) (*meilisearch.TaskInfo, error) {
 	ret := _mock.Called(ctx)
@@ -2765,6 +2827,68 @@ func (_c *MockmeilisearchSettingsManager_ResetTypoTolerance_Call) Return(taskInf
 }
 
 func (_c *MockmeilisearchSettingsManager_ResetTypoTolerance_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.TaskInfo, error)) *MockmeilisearchSettingsManager_ResetTypoTolerance_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// ResetWordPosition provides a mock function for the type MockmeilisearchSettingsManager
+func (_mock *MockmeilisearchSettingsManager) ResetWordPosition(ctx context.Context) (*meilisearch.TaskInfo, error) {
+	ret := _mock.Called(ctx)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ResetWordPosition")
+	}
+
+	var r0 *meilisearch.TaskInfo
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context) (*meilisearch.TaskInfo, error)); ok {
+		return returnFunc(ctx)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context) *meilisearch.TaskInfo); ok {
+		r0 = returnFunc(ctx)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.TaskInfo)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context) error); ok {
+		r1 = returnFunc(ctx)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsManager_ResetWordPosition_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'ResetWordPosition'
+type MockmeilisearchSettingsManager_ResetWordPosition_Call struct {
+	*mock.Call
+}
+
+// ResetWordPosition is a helper method to define mock.On call
+//   - ctx context.Context
+func (_e *MockmeilisearchSettingsManager_Expecter) ResetWordPosition(ctx any) *MockmeilisearchSettingsManager_ResetWordPosition_Call {
+	return &MockmeilisearchSettingsManager_ResetWordPosition_Call{Call: _e.mock.On("ResetWordPosition", ctx)}
+}
+
+func (_c *MockmeilisearchSettingsManager_ResetWordPosition_Call) Run(run func(ctx context.Context)) *MockmeilisearchSettingsManager_ResetWordPosition_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		run(
+			arg0,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_ResetWordPosition_Call) Return(taskInfo *meilisearch.TaskInfo, err error) *MockmeilisearchSettingsManager_ResetWordPosition_Call {
+	_c.Call.Return(taskInfo, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_ResetWordPosition_Call) RunAndReturn(run func(ctx context.Context) (*meilisearch.TaskInfo, error)) *MockmeilisearchSettingsManager_ResetWordPosition_Call {
 	_c.Call.Return(run)
 	return _c
 }
@@ -4261,6 +4385,74 @@ func (_c *MockmeilisearchSettingsManager_UpdateTypoTolerance_Call) Return(taskIn
 }
 
 func (_c *MockmeilisearchSettingsManager_UpdateTypoTolerance_Call) RunAndReturn(run func(ctx context.Context, request *meilisearch.TypoTolerance) (*meilisearch.TaskInfo, error)) *MockmeilisearchSettingsManager_UpdateTypoTolerance_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
+// UpdateWordPosition provides a mock function for the type MockmeilisearchSettingsManager
+func (_mock *MockmeilisearchSettingsManager) UpdateWordPosition(ctx context.Context, wordPosition *meilisearch.WordPosition) (*meilisearch.TaskInfo, error) {
+	ret := _mock.Called(ctx, wordPosition)
+
+	if len(ret) == 0 {
+		panic("no return value specified for UpdateWordPosition")
+	}
+
+	var r0 *meilisearch.TaskInfo
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.WordPosition) (*meilisearch.TaskInfo, error)); ok {
+		return returnFunc(ctx, wordPosition)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, *meilisearch.WordPosition) *meilisearch.TaskInfo); ok {
+		r0 = returnFunc(ctx, wordPosition)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*meilisearch.TaskInfo)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, *meilisearch.WordPosition) error); ok {
+		r1 = returnFunc(ctx, wordPosition)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockmeilisearchSettingsManager_UpdateWordPosition_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'UpdateWordPosition'
+type MockmeilisearchSettingsManager_UpdateWordPosition_Call struct {
+	*mock.Call
+}
+
+// UpdateWordPosition is a helper method to define mock.On call
+//   - ctx context.Context
+//   - wordPosition *meilisearch.WordPosition
+func (_e *MockmeilisearchSettingsManager_Expecter) UpdateWordPosition(ctx any, wordPosition any) *MockmeilisearchSettingsManager_UpdateWordPosition_Call {
+	return &MockmeilisearchSettingsManager_UpdateWordPosition_Call{Call: _e.mock.On("UpdateWordPosition", ctx, wordPosition)}
+}
+
+func (_c *MockmeilisearchSettingsManager_UpdateWordPosition_Call) Run(run func(ctx context.Context, wordPosition *meilisearch.WordPosition)) *MockmeilisearchSettingsManager_UpdateWordPosition_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 *meilisearch.WordPosition
+		if args[1] != nil {
+			arg1 = args[1].(*meilisearch.WordPosition)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_UpdateWordPosition_Call) Return(taskInfo *meilisearch.TaskInfo, err error) *MockmeilisearchSettingsManager_UpdateWordPosition_Call {
+	_c.Call.Return(taskInfo, err)
+	return _c
+}
+
+func (_c *MockmeilisearchSettingsManager_UpdateWordPosition_Call) RunAndReturn(run func(ctx context.Context, wordPosition *meilisearch.WordPosition) (*meilisearch.TaskInfo, error)) *MockmeilisearchSettingsManager_UpdateWordPosition_Call {
 	_c.Call.Return(run)
 	return _c
 }
