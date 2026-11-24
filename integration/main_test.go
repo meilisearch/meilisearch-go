@@ -34,7 +34,7 @@ var (
 		MaxTotalHits: 1000,
 	}
 	defaultWordPosition = meilisearch.WordPosition{
-		Enabled: true,
+		Enabled: meilisearch.BoolPtr(true),
 	}
 	defaultFaceting = meilisearch.Faceting{
 		MaxValuesPerFacet: 100,

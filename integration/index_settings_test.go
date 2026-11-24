@@ -1694,28 +1694,75 @@ func TestIndex_UpdateSettingsForeignKeys(t *testing.T) {
 }
 
 func TestIndex_UpdateSettingsWordPosition(t *testing.T) {
-	c := setup(t, "")
-	t.Cleanup(cleanup(c))
-	setUpIndexForFaceting(c)
-
-	idx := c.Index("indexUID")
-	want := &meilisearch.WordPosition{
-		Enabled: false,
+	tests := []struct {
+		name   string
+		before *meilisearch.WordPosition
+		args   *meilisearch.WordPosition
+		want   *meilisearch.WordPosition
+	}{
+		{
+			name: "DisableWordPosition",
+			args: &meilisearch.WordPosition{
+				Enabled: meilisearch.BoolPtr(false),
+			},
+			want: &meilisearch.WordPosition{
+				Enabled: meilisearch.BoolPtr(false),
+			},
+		},
+		{
+			name: "EnableWordPosition",
+			before: &meilisearch.WordPosition{
+				Enabled: meilisearch.BoolPtr(false),
+			},
+			args: &meilisearch.WordPosition{
+				Enabled: meilisearch.BoolPtr(true),
+			},
+			want: &meilisearch.WordPosition{
+				Enabled: meilisearch.BoolPtr(true),
+			},
+		},
+		{
+			name: "NullEnabledResetsToDefault",
+			before: &meilisearch.WordPosition{
+				Enabled: meilisearch.BoolPtr(false),
+			},
+			args: &meilisearch.WordPosition{
+				Enabled: nil,
+			},
+			want: &defaultWordPosition,
+		},
 	}
 
-	task, err := idx.UpdateSettings(context.Background(), &meilisearch.Settings{
-		WordPosition: want,
-	})
-	require.NoError(t, err)
-	testWaitForIndexTask(t, idx, task)
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := setup(t, "")
+			t.Cleanup(cleanup(c))
+			setUpIndexForFaceting(c)
+			idx := c.Index("indexUID")
 
-	got, err := idx.GetWordPosition(context.Background())
-	require.NoError(t, err)
-	require.Equal(t, want, got)
+			if tt.before != nil {
+				task, err := idx.UpdateSettings(context.Background(), &meilisearch.Settings{
+					WordPosition: tt.before,
+				})
+				require.NoError(t, err)
+				testWaitForIndexTask(t, idx, task)
+			}
 
-	settings, err := idx.GetSettings(context.Background())
-	require.NoError(t, err)
-	require.Equal(t, want, settings.WordPosition)
+			task, err := idx.UpdateSettings(context.Background(), &meilisearch.Settings{
+				WordPosition: tt.args,
+			})
+			require.NoError(t, err)
+			testWaitForIndexTask(t, idx, task)
+
+			got, err := idx.GetWordPosition(context.Background())
+			require.NoError(t, err)
+			require.Equal(t, tt.want, got)
+
+			settings, err := idx.GetSettings(context.Background())
+			require.NoError(t, err)
+			require.Equal(t, tt.want, settings.WordPosition)
+		})
+	}
 }
 
 func TestIndex_UpdateSearchableAttributes(t *testing.T) {
@@ -5084,27 +5131,41 @@ func TestIndex_GetWordPosition(t *testing.T) {
 
 func TestIndex_UpdateWordPosition(t *testing.T) {
 	tests := []struct {
-		name string
-		args meilisearch.WordPosition
-		want *meilisearch.WordPosition
+		name   string
+		before *meilisearch.WordPosition
+		args   meilisearch.WordPosition
+		want   *meilisearch.WordPosition
 	}{
 		{
 			name: "DisableWordPosition",
 			args: meilisearch.WordPosition{
-				Enabled: false,
+				Enabled: meilisearch.BoolPtr(false),
 			},
 			want: &meilisearch.WordPosition{
-				Enabled: false,
+				Enabled: meilisearch.BoolPtr(false),
 			},
 		},
 		{
 			name: "EnableWordPosition",
+			before: &meilisearch.WordPosition{
+				Enabled: meilisearch.BoolPtr(false),
+			},
 			args: meilisearch.WordPosition{
-				Enabled: true,
+				Enabled: meilisearch.BoolPtr(true),
 			},
 			want: &meilisearch.WordPosition{
-				Enabled: true,
+				Enabled: meilisearch.BoolPtr(true),
 			},
+		},
+		{
+			name: "NullEnabledResetsToDefault",
+			before: &meilisearch.WordPosition{
+				Enabled: meilisearch.BoolPtr(false),
+			},
+			args: meilisearch.WordPosition{
+				Enabled: nil,
+			},
+			want: &defaultWordPosition,
 		},
 	}
 
@@ -5114,6 +5175,12 @@ func TestIndex_UpdateWordPosition(t *testing.T) {
 			t.Cleanup(cleanup(c))
 			setUpIndexForFaceting(c)
 			i := c.Index("indexUID")
+
+			if tt.before != nil {
+				task, err := i.UpdateWordPosition(context.Background(), tt.before)
+				require.NoError(t, err)
+				testWaitForIndexTask(t, i, task)
+			}
 
 			task, err := i.UpdateWordPosition(context.Background(), &tt.args)
 			require.NoError(t, err)
@@ -5173,13 +5240,14 @@ func TestIndex_ResetWordPosition(t *testing.T) {
 			t.Cleanup(cleanup(c))
 
 			// Move away from the default first, so the reset is actually observable.
-			task, err := i.UpdateWordPosition(context.Background(), &meilisearch.WordPosition{Enabled: false})
+			disabled := &meilisearch.WordPosition{Enabled: meilisearch.BoolPtr(false)}
+			task, err := i.UpdateWordPosition(context.Background(), disabled)
 			require.NoError(t, err)
 			testWaitForIndexTask(t, i, task)
 
 			gotResp, err := i.GetWordPosition(context.Background())
 			require.NoError(t, err)
-			require.False(t, gotResp.Enabled)
+			require.Equal(t, disabled, gotResp)
 
 			gotTask, err := i.ResetWordPosition(context.Background())
 			require.NoError(t, err)
