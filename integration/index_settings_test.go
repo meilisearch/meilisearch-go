@@ -1845,6 +1845,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					Pagination: &meilisearch.Pagination{
 						MaxTotalHits: 1200,
 					},
+					WordPosition: &defaultWordPosition,
 					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 200,
 						SortFacetValuesBy: map[string]meilisearch.SortFacetType{
@@ -1944,6 +1945,7 @@ func TestIndex_UpdateSettings(t *testing.T) {
 					Pagination: &meilisearch.Pagination{
 						MaxTotalHits: 1200,
 					},
+					WordPosition: &defaultWordPosition,
 					Faceting: &meilisearch.Faceting{
 						MaxValuesPerFacet: 200,
 						SortFacetValuesBy: map[string]meilisearch.SortFacetType{
@@ -2904,6 +2906,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
 					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
+					WordPosition:       &defaultWordPosition,
 				},
 				secondRequest: meilisearch.Settings{
 					Pagination: &meilisearch.Pagination{
@@ -2935,6 +2938,7 @@ func TestIndex_UpdateSettingsOneByOne(t *testing.T) {
 					Embedders:          make(map[string]meilisearch.Embedder),
 					Chat:               &defaultChat,
 					ForeignKeys:        make([]meilisearch.ForeignKey, 0),
+					WordPosition:       &defaultWordPosition,
 				},
 			},
 			wantTask: &meilisearch.TaskInfo{
