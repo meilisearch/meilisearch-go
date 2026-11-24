@@ -49,7 +49,9 @@ type ForeignKey struct {
 
 // WordPosition is the type that represents the wordPosition setting in meilisearch
 type WordPosition struct {
-	Enabled bool `json:"enabled"`
+	// Enabled controls whether word positions are computed at indexing time.
+	// A nil value is sent as null, which resets the setting to its default (true).
+	Enabled *bool `json:"enabled"`
 }
 
 type LocalizedAttributes struct {
