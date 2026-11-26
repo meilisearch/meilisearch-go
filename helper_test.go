@@ -1,6 +1,9 @@
 package meilisearch
 
 import (
+	"context"
+	"net/http"
+	"net/http/httptest"
 	"net/url"
 	"reflect"
 	"strconv"
@@ -16,7 +19,7 @@ func (req *internalRequest) init() {
 
 func formatDateForComparison(date time.Time) string {
 	const format = "2006-01-02T15:04:05Z"
-	return date.Format(format)
+	return date.UTC().Format(format)
 }
 
 func TestConvertKeyToParsedKey(t *testing.T) {
@@ -85,6 +88,44 @@ func TestEncodeTasksQuery(t *testing.T) {
 		if req.withQueryParams[k] != v {
 			t.Errorf("encodeTasksQuery() param %v = %v; want %v", k, req.withQueryParams[k], v)
 		}
+	}
+}
+
+func TestDatesAreSentAsUTC(t *testing.T) {
+	// 12:00 at UTC+1 is 11:00 UTC.
+	date := time.Date(2026, 11, 26, 12, 0, 0, 0, time.FixedZone("CET", 3600))
+	const want = "2026-11-26T11:00:00Z"
+
+	assert.Equal(t, want, *convertKeyToParsedKey(Key{ExpiresAt: date}).ExpiresAt)
+
+	var got url.Values
+	srv := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		got = r.URL.Query()
+		w.Header().Set("Content-Type", "application/json")
+		_, _ = w.Write([]byte(`{"results":[],"total":0,"limit":20,"from":0,"next":0}`))
+	}))
+	defer srv.Close()
+	client := New(srv.URL)
+	params := []string{"beforeEnqueuedAt", "afterEnqueuedAt", "beforeStartedAt", "afterStartedAt", "beforeFinishedAt", "afterFinishedAt"}
+
+	_, err := client.GetTasks(context.Background(), &TasksQuery{
+		BeforeEnqueuedAt: date, AfterEnqueuedAt: date,
+		BeforeStartedAt: date, AfterStartedAt: date,
+		BeforeFinishedAt: date, AfterFinishedAt: date,
+	})
+	assert.NoError(t, err)
+	for _, p := range params {
+		assert.Equal(t, want, got.Get(p), "GetTasks %s", p)
+	}
+
+	_, err = client.GetBatches(context.Background(), &BatchesQuery{
+		BeforeEnqueuedAt: date, AfterEnqueuedAt: date,
+		BeforeStartedAt: date, AfterStartedAt: date,
+		BeforeFinishedAt: date, AfterFinishedAt: date,
+	})
+	assert.NoError(t, err)
+	for _, p := range params {
+		assert.Equal(t, want, got.Get(p), "GetBatches %s", p)
 	}
 }
 

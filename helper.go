@@ -92,7 +92,7 @@ func encodeTasksQuery(param *TasksQuery, req *internalRequest) {
 
 func formatDate(date time.Time, _ bool) *string {
 	const format = "2006-01-02T15:04:05Z"
-	timeParsedToString := date.Format(format)
+	timeParsedToString := date.UTC().Format(format)
 	return &timeParsedToString
 }
 
