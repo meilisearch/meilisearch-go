@@ -90,15 +90,17 @@ func (g *gzipEncoder) Encode(rc io.Reader) (io.ReadCloser, error) {
 	if w.err != nil {
 		return nil, w.err
 	}
-	defer func() {
-		_ = w.writer.Close()
-	}()
 
 	buf := g.bufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
 	w.writer.Reset(buf)
 
-	if _, err := copyZeroAlloc(w.writer, rc); err != nil {
+	// Close before buf leaves this function: Close writes the trailer into buf.
+	_, err := copyZeroAlloc(w.writer, rc)
+	if closeErr := w.writer.Close(); err == nil {
+		err = closeErr
+	}
+	if err != nil {
 		g.bufferPool.Put(buf)
 		return nil, err
 	}
@@ -156,15 +158,17 @@ func (f *flateEncoder) Encode(rc io.Reader) (io.ReadCloser, error) {
 	if w.err != nil {
 		return nil, w.err
 	}
-	defer func() {
-		_ = w.writer.Close()
-	}()
 
 	buf := f.bufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
 	w.writer.Reset(buf)
 
-	if _, err := copyZeroAlloc(w.writer, rc); err != nil {
+	// Close before buf leaves this function: Close writes the trailer into buf.
+	_, err := copyZeroAlloc(w.writer, rc)
+	if closeErr := w.writer.Close(); err == nil {
+		err = closeErr
+	}
+	if err != nil {
 		f.bufferPool.Put(buf)
 		return nil, err
 	}
@@ -213,16 +217,18 @@ type brotliEncoder struct {
 
 func (b *brotliEncoder) Encode(rc io.Reader) (io.ReadCloser, error) {
 	w := b.brWriterPool.Get().(*brotli.Writer)
-	defer func() {
-		_ = w.Close()
-	}()
 	defer b.brWriterPool.Put(w)
 
 	buf := b.bufferPool.Get().(*bytes.Buffer)
 	buf.Reset()
 	w.Reset(buf)
 
-	if _, err := copyZeroAlloc(w, rc); err != nil {
+	// Close before w goes back to the pool and before buf leaves this function.
+	_, err := copyZeroAlloc(w, rc)
+	if closeErr := w.Close(); err == nil {
+		err = closeErr
+	}
+	if err != nil {
 		b.bufferPool.Put(buf)
 		return nil, err
 	}
