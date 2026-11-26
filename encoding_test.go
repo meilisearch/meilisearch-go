@@ -103,6 +103,45 @@ func Test_Encode_ErrorInCopyZeroAlloc(t *testing.T) {
 	require.Error(t, err)
 }
 
+// Encode shares its writers and buffers through pools, so concurrent calls,
+// including ones whose reader fails, must not write into each other's bodies.
+func TestEncoder_ConcurrentEncode(t *testing.T) {
+	for _, ce := range []ContentEncoding{GzipEncoding, DeflateEncoding, BrotliEncoding} {
+		t.Run(string(ce), func(t *testing.T) {
+			enc := newEncoding(ce, DefaultCompression)
+			var wg sync.WaitGroup
+			for g := 0; g < 16; g++ {
+				wg.Add(2)
+				go func() {
+					defer wg.Done()
+					for i := 0; i < 50; i++ {
+						_, err := enc.Encode(io.MultiReader(strings.NewReader(strings.Repeat("failed ", 500)), &errorReader{}))
+						assert.Error(t, err)
+					}
+				}()
+				go func(g int) {
+					defer wg.Done()
+					for i := 0; i < 50; i++ {
+						want := &mockData{Name: strings.Repeat(fmt.Sprintf("g%d-i%d ", g, i), 300), Age: i}
+						raw, _ := json.Marshal(want)
+						encoded, err := enc.Encode(bytes.NewReader(raw))
+						if !assert.NoError(t, err) {
+							return
+						}
+						data, _ := io.ReadAll(encoded)
+						_ = encoded.Close()
+						var got mockData
+						if !assert.NoError(t, enc.Decode(data, &got)) || !assert.Equal(t, want, &got) {
+							return
+						}
+					}
+				}(g)
+			}
+			wg.Wait()
+		})
+	}
+}
+
 func Test_InvalidContentType(t *testing.T) {
 	enc := newEncoding("invalid", DefaultCompression)
 	require.Nil(t, enc)
