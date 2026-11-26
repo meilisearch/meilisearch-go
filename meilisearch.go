@@ -632,22 +632,22 @@ func (m *meilisearch) GetBatches(ctx context.Context, param *BatchesQuery) (*Bat
 			req.withQueryParams["reverse"] = "true"
 		}
 		if !param.BeforeEnqueuedAt.IsZero() {
-			req.withQueryParams["beforeEnqueuedAt"] = param.BeforeEnqueuedAt.String()
+			req.withQueryParams["beforeEnqueuedAt"] = *formatDate(param.BeforeEnqueuedAt, false)
 		}
 		if !param.BeforeStartedAt.IsZero() {
-			req.withQueryParams["beforeStartedAt"] = param.BeforeStartedAt.String()
+			req.withQueryParams["beforeStartedAt"] = *formatDate(param.BeforeStartedAt, false)
 		}
 		if !param.BeforeFinishedAt.IsZero() {
-			req.withQueryParams["beforeFinishedAt"] = param.BeforeFinishedAt.String()
+			req.withQueryParams["beforeFinishedAt"] = *formatDate(param.BeforeFinishedAt, false)
 		}
 		if !param.AfterEnqueuedAt.IsZero() {
-			req.withQueryParams["afterEnqueuedAt"] = param.AfterEnqueuedAt.String()
+			req.withQueryParams["afterEnqueuedAt"] = *formatDate(param.AfterEnqueuedAt, false)
 		}
 		if !param.AfterStartedAt.IsZero() {
-			req.withQueryParams["afterStartedAt"] = param.AfterStartedAt.String()
+			req.withQueryParams["afterStartedAt"] = *formatDate(param.AfterStartedAt, false)
 		}
 		if !param.AfterFinishedAt.IsZero() {
-			req.withQueryParams["afterFinishedAt"] = param.AfterFinishedAt.String()
+			req.withQueryParams["afterFinishedAt"] = *formatDate(param.AfterFinishedAt, false)
 		}
 	}
 	if err := m.client.executeRequest(ctx, req); err != nil {

@@ -334,7 +334,7 @@ func Test_CreateKey(t *testing.T) {
 			require.Equal(t, tt.Key.Actions, gotKey.Actions)
 			require.Equal(t, tt.Key.Indexes, gotKey.Indexes)
 			if !tt.Key.ExpiresAt.IsZero() {
-				require.Equal(t, tt.Key.ExpiresAt.Format(Format), gotKey.ExpiresAt.Format(Format))
+				require.Equal(t, tt.Key.ExpiresAt.UTC().Format(Format), gotKey.ExpiresAt.Format(Format))
 			}
 		})
 	}
@@ -416,7 +416,7 @@ func Test_UpdateKey(t *testing.T) {
 				require.Equal(t, tt.keyToCreate.Indexes, gotResp.Indexes)
 			}
 			if !tt.keyToCreate.ExpiresAt.IsZero() {
-				require.Equal(t, tt.keyToCreate.ExpiresAt.Format(Format), gotResp.ExpiresAt.Format(Format))
+				require.Equal(t, tt.keyToCreate.ExpiresAt.UTC().Format(Format), gotResp.ExpiresAt.Format(Format))
 			}
 
 			gotKey, err := c.UpdateKey(context.Background(), gotResp.Key, &tt.keyToUpdate)
@@ -1321,7 +1321,7 @@ func Test_CancelTasks(t *testing.T) {
 					BeforeEnqueuedAt: time.Now(),
 				},
 			},
-			want: strings.NewReplacer(":", "%3A").Replace("?beforeEnqueuedAt=" + time.Now().Format("2006-01-02T15:04:05Z")),
+			want: strings.NewReplacer(":", "%3A").Replace("?beforeEnqueuedAt=" + time.Now().UTC().Format("2006-01-02T15:04:05Z")),
 		},
 		{
 			name: "TestCancelTasksWithParameters",
@@ -1336,7 +1336,7 @@ func Test_CancelTasks(t *testing.T) {
 					AfterEnqueuedAt: time.Now(),
 				},
 			},
-			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&types=documentAdditionOrUpdate&uids=1",
+			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().UTC().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&types=documentAdditionOrUpdate&uids=1",
 		},
 	}
 	for _, tt := range tests {
@@ -1445,7 +1445,7 @@ func Test_DeleteTasks(t *testing.T) {
 					BeforeEnqueuedAt: time.Now(),
 				},
 			},
-			want: strings.NewReplacer(":", "%3A").Replace("?beforeEnqueuedAt=" + time.Now().Format("2006-01-02T15:04:05Z")),
+			want: strings.NewReplacer(":", "%3A").Replace("?beforeEnqueuedAt=" + time.Now().UTC().Format("2006-01-02T15:04:05Z")),
 		},
 		{
 			name: "TestDeleteTasksWithCanceledByFilter",
@@ -1470,7 +1470,7 @@ func Test_DeleteTasks(t *testing.T) {
 					AfterEnqueuedAt: time.Now(),
 				},
 			},
-			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&uids=1",
+			want: "?afterEnqueuedAt=" + strings.NewReplacer(":", "%3A").Replace(time.Now().UTC().Format("2006-01-02T15:04:05Z")) + "&indexUids=indexUID&statuses=enqueued&uids=1",
 		},
 	}
 	for _, tt := range tests {
