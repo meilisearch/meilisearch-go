@@ -39,11 +39,19 @@ type Settings struct {
 	FacetSearch          bool                   `json:"facetSearch,omitempty"`
 	Chat                 *Chat                  `json:"chat,omitempty"`
 	ForeignKeys          []ForeignKey           `json:"foreignKeys,omitempty"`
+	WordPosition         *WordPosition          `json:"wordPosition,omitempty"`
 }
 
 type ForeignKey struct {
 	FieldName       string `json:"fieldName"`
 	ForeignIndexUid string `json:"foreignIndexUid"`
+}
+
+// WordPosition is the type that represents the wordPosition setting in meilisearch
+type WordPosition struct {
+	// Enabled controls whether word positions are computed at indexing time.
+	// A nil value is sent as null, which resets the setting to its default (true).
+	Enabled *bool `json:"enabled"`
 }
 
 type LocalizedAttributes struct {

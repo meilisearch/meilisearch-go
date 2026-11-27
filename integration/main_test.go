@@ -33,6 +33,9 @@ var (
 	defaultPagination = meilisearch.Pagination{
 		MaxTotalHits: 1000,
 	}
+	defaultWordPosition = meilisearch.WordPosition{
+		Enabled: meilisearch.BoolPtr(true),
+	}
 	defaultFaceting = meilisearch.Faceting{
 		MaxValuesPerFacet: 100,
 		SortFacetValuesBy: map[string]meilisearch.SortFacetType{

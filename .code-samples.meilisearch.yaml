@@ -827,3 +827,11 @@ update_foreign_keys_setting_1: |-
   })
 reset_foreign_keys_setting_1: |-
   client.Index("books").ResetForeignKeys()
+get_word_position_settings_1: |-
+  client.Index("books").GetWordPosition()
+update_word_position_settings_1: |-
+  client.Index("books").UpdateWordPosition(&meilisearch.WordPosition{
+    Enabled: meilisearch.BoolPtr(false),
+  })
+reset_word_position_settings_1: |-
+  client.Index("books").ResetWordPosition()
