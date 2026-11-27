@@ -2388,7 +2388,12 @@ func TestClient_MultiSearch(t *testing.T) {
 			} else {
 				require.NoError(t, err)
 				require.NotNil(t, got)
-				got.ProcessingTimeMs = 0 // Can vary.
+
+				// Can vary.
+				got.ProcessingTimeMs = 0
+				for i := range got.Results {
+					got.Results[i].ProcessingTimeMs = 0
+				}
 
 				// Compare results while ignoring ProcessingTimeMs
 				require.Equal(t, tt.want.Results, got.Results)
